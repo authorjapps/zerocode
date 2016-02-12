@@ -12,6 +12,6 @@ public class HelloFirstTest {
         HelloFirst helloFirst = new HelloFirst();
         int sum = helloFirst.add(4, 6);
 
-        assertThat("Did not add properly", sum, is(101));
+        assertThat("Addition failed for two whole numbers", sum, is(10));
     }
 }
