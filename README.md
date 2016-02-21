@@ -1,4 +1,4 @@
-# build-proving
-Online build for the maven module - Build Status below
+# Smart Tester Core
+IPT Smart Testing Framework
 
-[![Build Status](https://travis-ci.org/nirmalchandra/build-proving.svg?branch=master)](https://travis-ci.org/nirmalchandra/build-proving)
+[![Build Status](https://travis-ci.org/nirmalchandra/smart-tester-core.svg?branch=master)](https://travis-ci.org/nirmalchandra/smart-tester)

@@ -1,4 +1,4 @@
-package org.jsmart.online.hello;
+package org.jsmart.smarttester.core;
 
 public class HelloFirst {
 
