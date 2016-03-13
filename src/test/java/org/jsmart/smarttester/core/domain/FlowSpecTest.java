@@ -1,11 +1,13 @@
 package org.jsmart.smarttester.core.domain;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -27,8 +29,11 @@ public class FlowSpecTest {
         String jsonDocumentAsString = SmartUtils.getJsonDocumentAsString("smart_test_cases/02_test_json_flow_single_step.json", this);
         FlowSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, FlowSpec.class);
 
+        System.out.println(flowDeserialized);
+
         assertThat(flowDeserialized, notNullValue());
         assertThat(flowDeserialized.getSteps().size(), is(1));
+        assertThat(flowDeserialized.getLoop(), is(5));
         assertThat(flowDeserialized.getFlowName(), containsString("Given_When_Then-Flow"));
     }
 
@@ -41,6 +46,21 @@ public class FlowSpecTest {
         assertThat(flowDeserialized.getSteps().size(), is(2));
         assertThat(flowDeserialized.getFlowName(), containsString("Given_When_Then-Flow"));
         assertThat(flowDeserialized.getSteps().get(1).getUrl(), containsString("/url2/path"));
+    }
+
+    @Test
+    public void shouldSerializeSingleFlow() throws Exception {
+        String jsonDocumentAsString = SmartUtils.getJsonDocumentAsString("smart_test_cases/03_test_json_flow_multi_step.json", this);
+        FlowSpec flowSpec = mapper.readValue(jsonDocumentAsString, FlowSpec.class);
+
+        JsonNode flowSpecNode = mapper.valueToTree(flowSpec);
+
+        // jayway json assert with this string.
+        JSONAssert.assertEquals(flowSpecNode.toString(), jsonDocumentAsString, true);
+
+        assertThat(flowSpecNode.get("flowName").asText(), containsString("Given_When_Then"));
+        assertThat(flowSpecNode.get("loop").asInt(), is(5));
+
     }
 
     @Test

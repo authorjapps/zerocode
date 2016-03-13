@@ -1,6 +1,6 @@
 {
   "flowName": "Given_When_Then-Flow name which involves multiple REST calls eg CREATE then UPDATE",
-  "loop": 5, //comments -- Allowed
+  "loop": 5,
   "steps": [
     {
       "loop": 3,
@@ -31,7 +31,7 @@
     },
     {
       "loop": 3,
-      "name": "StepNameWithoutSpaceEgCREATESD", //<-- should Complain For this same name
+      "name": "StepNameWithoutSpaceEgCREATESD",
       "url": "/url2/path",
       "operation": "POST",
       "request": {

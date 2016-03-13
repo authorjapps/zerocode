@@ -4,16 +4,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class FlowSpec {
 
     private final Integer loop;
     private final String flowName;
-    private List<Step> steps; // = new ArrayList<Step>();
+    private final List<Step> steps;
 
     @JsonCreator
     public FlowSpec(
@@ -25,14 +24,16 @@ public class FlowSpec {
         this.steps = steps;
     }
 
+    public Integer getLoop() {
+        return loop;
+    }
+
     public String getFlowName() {
         return flowName;
     }
 
     public List<Step> getSteps() {
-        // return steps;
-        return Optional.ofNullable(steps)
-                .orElse(Collections.<Step>emptyList());
+        return steps == null? (new ArrayList<>()) : steps;
     }
 
     @Override
