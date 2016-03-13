@@ -31,8 +31,8 @@
     },
     {
       "loop": 3,
-      "name": "StepNameWithoutSpaceEgCREATESD", //<-- Complain For this same name
-      "url": "/service-deliveries",
+      "name": "StepNameWithoutSpaceEgCREATESD", //<-- should Complain For this same name
+      "url": "/url2/path",
       "operation": "POST",
       "request": {
         "headers": {

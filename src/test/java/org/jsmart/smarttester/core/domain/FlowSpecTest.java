@@ -40,6 +40,7 @@ public class FlowSpecTest {
         assertThat(flowDeserialized, notNullValue());
         assertThat(flowDeserialized.getSteps().size(), is(2));
         assertThat(flowDeserialized.getFlowName(), containsString("Given_When_Then-Flow"));
+        assertThat(flowDeserialized.getSteps().get(1).getUrl(), containsString("/url2/path"));
     }
 
     @Test
@@ -51,6 +52,12 @@ public class FlowSpecTest {
     @Test
     @Ignore
     public void willComplainForDuplicateNames_Flow() throws Exception {
+        fail();
+    }
+
+    @Test
+    @Ignore
+    public void willReadAllJsonFiles_AND_Complain_for_Duplicate_names() throws Exception {
         fail();
     }
 }
