@@ -55,7 +55,10 @@ public class FlowSpecTest {
 
         JsonNode flowSpecNode = mapper.valueToTree(flowSpec);
 
-        // jayway json assert with this string.
+        /**
+         * Note:
+         * jayway json assertEquals has issues if json doc has got comments. So find out how to ignore or allow comments
+         */
         JSONAssert.assertEquals(flowSpecNode.toString(), jsonDocumentAsString, true);
 
         assertThat(flowSpecNode.get("flowName").asText(), containsString("Given_When_Then"));
