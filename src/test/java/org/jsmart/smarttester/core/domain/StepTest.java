@@ -33,8 +33,6 @@ public class StepTest {
         assertThat(stepDeserialized.getRequest().getHeaders().get("Cookie"), is("cookie_123"));
         assertThat(stepDeserialized.getRequest().getQueryParams().get("invId"), is(10101));
         assertThat(stepDeserialized.getAssertions().getStatus(), is(201));
-
-        System.out.println(stepDeserialized.getRequest().getBody().toString());
     }
 
     @Test
