@@ -3,9 +3,14 @@ package org.jsmart.smarttester.core.domain;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
+import com.google.inject.Inject;
+import org.jsmart.smarttester.core.di.SmartServiceModule;
 import org.jsmart.smarttester.core.utils.SmartUtils;
+import org.jukito.JukitoRunner;
+import org.jukito.UseModules;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
@@ -16,12 +21,19 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@RunWith(JukitoRunner.class)
+@UseModules(SmartServiceModule.class)
 public class StepTest {
+    @Inject
     private ObjectMapper mapper;
 
     @Before
     public void beforeMethod() throws Exception {
-        mapper = new ObjectMapper();
+        /**
+         * This also tests your injection wirings.
+         * Running via JukitoRunner doesnt need this.
+         */
+        //mapper = new ObjectMapper();
     }
 
     @Test

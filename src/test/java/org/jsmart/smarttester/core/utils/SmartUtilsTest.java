@@ -1,9 +1,11 @@
 package org.jsmart.smarttester.core.utils;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 public class SmartUtilsTest {
 
@@ -17,4 +19,11 @@ public class SmartUtilsTest {
         assertThat(jsonDocumentAsString, containsString("}"));
     }
 
+    @Test
+    @Ignore
+    public void willReadAllfilesFromTestResource() throws Exception {
+
+        fail();
+
+    }
 }

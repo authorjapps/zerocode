@@ -3,11 +3,17 @@ package org.jsmart.smarttester.core.domain;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jsmart.smarttester.core.di.SmartServiceModule;
 import org.jsmart.smarttester.core.utils.SmartUtils;
+import org.jukito.JukitoRunner;
+import org.jukito.UseModules;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
+
+import javax.inject.Inject;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -15,13 +21,17 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
+@RunWith(JukitoRunner.class)
+@UseModules(SmartServiceModule.class)
 public class FlowSpecTest {
+    @Inject
     private ObjectMapper mapper;
 
     @Before
     public void beforeMethod() throws Exception {
-        mapper = new ObjectMapper();
-        mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+
+        //mapper = new ObjectMapper();
+        //mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
     }
 
     @Test

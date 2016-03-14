@@ -4,7 +4,7 @@
   "steps": [
     {
       "loop": 3,
-      "name": "StepNameWithoutSpaceEgCREATESD",
+      "name": "StepNameWithoutSpaceEgCREATESD", //<---- with comments
       "url": "/service-deliveries",
       "operation": "POST",
       "request": {
