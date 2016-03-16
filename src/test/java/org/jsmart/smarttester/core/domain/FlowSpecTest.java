@@ -29,7 +29,7 @@ public class FlowSpecTest {
 
     @Before
     public void beforeMethod() throws Exception {
-
+        // No need of this as the mapper has been set to all these.
         //mapper = new ObjectMapper();
         //mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
     }
