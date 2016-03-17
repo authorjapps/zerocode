@@ -25,6 +25,9 @@ import static org.junit.Assert.fail;
 @UseModules(SmartServiceModule.class)
 public class FlowSpecTest {
     @Inject
+    SmartUtils smartUtils;
+
+    @Inject
     private ObjectMapper mapper;
 
     @Before
@@ -36,7 +39,7 @@ public class FlowSpecTest {
 
     @Test
     public void willDeserializeA_VanilaFlow() throws Exception {
-        String jsonDocumentAsString = SmartUtils.getJsonDocumentAsString("smart_test_cases/02_test_json_flow_single_step.json", this);
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("smart_test_cases/02_test_json_flow_single_step.json");
         FlowSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, FlowSpec.class);
 
         System.out.println(flowDeserialized);
@@ -49,7 +52,7 @@ public class FlowSpecTest {
 
     @Test
     public void willDeserializeA_MultiSteps() throws Exception {
-        String jsonDocumentAsString = SmartUtils.getJsonDocumentAsString("smart_test_cases/03_test_json_flow_multi_step.json", this);
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("smart_test_cases/03_test_json_flow_multi_step.json");
         FlowSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, FlowSpec.class);
 
         assertThat(flowDeserialized, notNullValue());
@@ -60,7 +63,7 @@ public class FlowSpecTest {
 
     @Test
     public void shouldSerializeSingleFlow() throws Exception {
-        String jsonDocumentAsString = SmartUtils.getJsonDocumentAsString("smart_test_cases/03_test_json_flow_multi_step.json", this);
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("smart_test_cases/03_test_json_flow_multi_step.json");
         FlowSpec flowSpec = mapper.readValue(jsonDocumentAsString, FlowSpec.class);
 
         JsonNode flowSpecNode = mapper.valueToTree(flowSpec);

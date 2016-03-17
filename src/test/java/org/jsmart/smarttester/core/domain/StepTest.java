@@ -24,6 +24,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(JukitoRunner.class)
 @UseModules(SmartServiceModule.class)
 public class StepTest {
+
+    @Inject
+    SmartUtils smartUtils;
+
     @Inject
     private ObjectMapper mapper;
 
@@ -34,11 +38,12 @@ public class StepTest {
          * Running via JukitoRunner doesnt need this.
          */
         //mapper = new ObjectMapper();
+
     }
 
     @Test
     public void shouldDeserializeSingleStep() throws Exception {
-        String jsonDocumentAsString = SmartUtils.getJsonDocumentAsString("smart_test_cases/01_test_json_single_step.json", this);
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("smart_test_cases/01_test_json_single_step.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
         assertThat(stepDeserialized, notNullValue());
         assertThat(stepDeserialized.getRequest().getBody().toString(), containsString("externalHandleSpace"));
@@ -49,7 +54,7 @@ public class StepTest {
 
     @Test
     public void shouldSerializeSingleStep() throws Exception {
-        String jsonDocumentAsString = SmartUtils.getJsonDocumentAsString("smart_test_cases/01_test_json_single_step.json", this);
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("smart_test_cases/01_test_json_single_step.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
 
         JsonNode singleStepNode = mapper.valueToTree(stepDeserialized);
@@ -78,7 +83,9 @@ public class StepTest {
          */
     }
 
-    /** Do not use this private method as this has been moved to SmartUtils **/
+    /**
+     * Do not use this private method as this has been moved to SmartUtils
+     **/
     protected String getJsonDocumentAsString(String name) throws IOException {
         String jsonAsString = Resources.toString(getClass().getClassLoader().getResource(name), StandardCharsets.UTF_8);
         return jsonAsString;
