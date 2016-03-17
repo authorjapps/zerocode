@@ -6,7 +6,9 @@ import org.jsmart.smarttester.core.domain.FlowSpec;
 import org.jsmart.smarttester.core.domain.Step;
 import org.jukito.JukitoRunner;
 import org.jukito.UseModules;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import java.util.List;
@@ -23,6 +25,9 @@ public class SmartUtilsTest {
     @Inject //<---- Without this inject you can not have the ObjectMapper injected inside SmartUtils. Also you cant have the Object mapper as static.
     SmartUtils smartUtils;
 
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
 
     @Test
     public void testGetItRight_Guice() throws Exception {
@@ -31,10 +36,10 @@ public class SmartUtilsTest {
 
     @Test
     public void testJsonToJavaFor_jsonFileName() throws Exception {
-        Step stepJava = smartUtils.jsonToJava("smart_test_cases/01_test_json_single_step.json", Step.class);
+        Step stepJava = smartUtils.jsonFileToJava("smart_test_cases/01_test_json_single_step.json", Step.class);
         assertThat(stepJava.getLoop(), is(3));
 
-        FlowSpec flowJava = smartUtils.jsonToJava("smart_test_cases/02_test_json_flow_single_step.json", FlowSpec.class);
+        FlowSpec flowJava = smartUtils.jsonFileToJava("smart_test_cases/02_test_json_flow_single_step.json", FlowSpec.class);
         assertThat(flowJava.getLoop(), is(5));
     }
 
@@ -58,23 +63,21 @@ public class SmartUtilsTest {
     public void willReadAllfileNames_AND_return_FlowSpecList() throws Exception {
         List<FlowSpec> allTestCaseFiles = smartUtils.getFlowSpecListByPackage("test_flow_cases");
 
-        assertThat(allTestCaseFiles.size(), is(2));
+        assertThat(allTestCaseFiles.size(), is(3));
         assertThat(allTestCaseFiles.get(0).getFlowName(), is("Given_When_Then_1"));
-        assertThat(allTestCaseFiles.get(1).getFlowName(), is("Given_When_Then-Flow2"));
+        assertThat(allTestCaseFiles.get(2).getFlowName(), is("Given_When_Then-Flow2"));
     }
 
-    /*@Test
-    public void willReadAllfiles_and_ReadTheContents_And_find_Duplicates() throws Exception {
-        List<String> allTestCaseFiles = SmartUtils.getAllEndPointFiles("smart_test_cases");
 
-        allTestCaseFiles.stream()
-                .forEach(flowSpecFile -> {
-                    try {
-                        System.out.println(SmartUtils.getJsonDocumentAsString(flowSpecFile, this));
-                    } catch (IOException e) {
-                        throw new RuntimeException("Exception Details: " + e);
-                    }
-                });
+    @Test(expected = RuntimeException.class)
+    public void willReadAllfiles_find_DuplicatesFlownames_old_style() throws Exception {
+        smartUtils.checkDuplicateNames("test_flow_cases");
+    }
 
-    }*/
+    @Test
+    public void willReadAllfiles_find_DuplicatesFlownames() throws Exception {
+        expectedException.expect(RuntimeException.class);
+        expectedException.expectMessage("Oops! Can not run with multiple flow with same name.");
+        smartUtils.checkDuplicateNames("test_flow_cases");
+    }
 }

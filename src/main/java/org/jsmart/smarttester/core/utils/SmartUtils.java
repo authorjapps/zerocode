@@ -11,7 +11,9 @@ import org.jsmart.smarttester.core.domain.FlowSpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SmartUtils {
@@ -32,15 +34,15 @@ public class SmartUtils {
         ClassPathFactory factory = new ClassPathFactory();
         ClassPath jvmClassPath = factory.createFromJVM();
         String[] allSimulationFiles = jvmClassPath.findResources(packageName, new RegExpResourceFilter(".*", ".*\\.json$"));
-        if(null == allSimulationFiles || allSimulationFiles.length == 0) {
-            throw new RuntimeException("OverSmartTryingToNothingException: Check the (" + packageName + ") integration test repo folder(empty?). " );
+        if (null == allSimulationFiles || allSimulationFiles.length == 0) {
+            throw new RuntimeException("OverSmartTryingToNothingException: Check the (" + packageName + ") integration test repo folder(empty?). ");
         }
 
         return Arrays.asList(allSimulationFiles);
     }
 
 
-    public  <T> T jsonToJava(String jsonFileName, Class<T> clazz) throws IOException {
+    public <T> T jsonFileToJava(String jsonFileName, Class<T> clazz) throws IOException {
         return mapper.readValue(getJsonDocumentAsString(jsonFileName), clazz);
     }
 
@@ -48,17 +50,36 @@ public class SmartUtils {
         List<String> allEndPointFiles = getAllEndPointFiles(packageName);
         List<FlowSpec> flowSpecList = allEndPointFiles.stream()
                 .map(flowSpecFile -> {
-                    FlowSpec spec = null;
                     try {
-                        //spec = jsonToFlowSpec(flowSpecFile);
-                        spec = jsonToJava(flowSpecFile, FlowSpec.class);
+                        return jsonFileToJava(flowSpecFile, FlowSpec.class);
                     } catch (IOException e) {
                         throw new RuntimeException("Exception while deserializing to Spec. Details: " + e);
                     }
-                    return spec;
                 })
                 .collect(Collectors.toList());
 
         return flowSpecList;
+    }
+
+    public void checkDuplicateNames(String testPackageName) {
+        Set<String> oops = new HashSet<>();
+
+        getFlowSpecListByPackage(testPackageName).stream()
+                .forEach(flowSpec -> {
+                    if (!oops.add(flowSpec.getFlowName())) {
+                        throw new RuntimeException("Oops! Can not run with multiple flow with same name. Found duplicate: " + flowSpec.getFlowName());
+                    }
+
+                    /**
+                     * Add this if project needs to avoid duplicate step names
+                     */
+                    /*Set<String> oops = new HashSet<>();
+                    flowSpec.getSteps()
+                            .forEach(step -> {
+                                if(!oops.add(step.getName())){
+                                    throw new RuntimeException("Oops! Avoid same step names. Duplicate found: " + step.getName());
+                                }
+                            });*/
+                });
     }
 }
