@@ -13,6 +13,8 @@
         <guava.version>16.0</guava.version>
         <jsonassert.version>1.2.3</jsonassert.version>
         <classpath-explorer.version>1.0</classpath-explorer.version>
+        <jukito.version>1.4.1</jukito.version>
+        <guice.version>4.0</guice.version>
     </properties>
 
     <dependencies>
@@ -25,12 +27,12 @@
         <dependency>
             <groupId>org.jukito</groupId>
             <artifactId>jukito</artifactId>
-            <version>1.4.1</version>
+            <version>${jukito.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>4.0</version>
+            <version>${guice.version}</version>
         </dependency>
         <dependency>
             <groupId>org.skyscreamer</groupId>
@@ -71,7 +73,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
-            <scope>test</scope>
+            <!--<scope>test</scope>--> <!-- add this compile scope. Do not change this -->
         </dependency>
     </dependencies>
 
