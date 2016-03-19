@@ -43,7 +43,7 @@ public class StepTest {
 
     @Test
     public void shouldDeserializeSingleStep() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("smart_test_cases/01_test_json_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("test_smart_test_cases/01_test_json_single_step.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
         assertThat(stepDeserialized, notNullValue());
         assertThat(stepDeserialized.getRequest().getBody().toString(), containsString("externalHandleSpace"));
@@ -54,7 +54,7 @@ public class StepTest {
 
     @Test
     public void shouldSerializeSingleStep() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("smart_test_cases/01_test_json_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("test_smart_test_cases/01_test_json_single_step.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
 
         JsonNode singleStepNode = mapper.valueToTree(stepDeserialized);

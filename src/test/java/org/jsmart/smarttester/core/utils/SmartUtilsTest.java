@@ -36,16 +36,16 @@ public class SmartUtilsTest {
 
     @Test
     public void testJsonToJavaFor_jsonFileName() throws Exception {
-        Step stepJava = smartUtils.jsonFileToJava("smart_test_cases/01_test_json_single_step.json", Step.class);
+        Step stepJava = smartUtils.jsonFileToJava("test_smart_test_cases/01_test_json_single_step.json", Step.class);
         assertThat(stepJava.getLoop(), is(3));
 
-        FlowSpec flowJava = smartUtils.jsonFileToJava("smart_test_cases/02_test_json_flow_single_step.json", FlowSpec.class);
+        FlowSpec flowJava = smartUtils.jsonFileToJava("test_smart_test_cases/02_test_json_flow_single_step.json", FlowSpec.class);
         assertThat(flowJava.getLoop(), is(5));
     }
 
     @Test
     public void willGetJsonFileIntoA_JavaString() throws  Exception{
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("smart_test_cases/01_test_json_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("test_smart_test_cases/01_test_json_single_step.json");
         assertThat(jsonDocumentAsString, containsString("assertions"));
         assertThat(jsonDocumentAsString, containsString("request"));
         assertThat(jsonDocumentAsString, containsString("{"));
@@ -54,9 +54,9 @@ public class SmartUtilsTest {
 
     @Test
     public void willReadAllfileNamesFrom_TestResource() throws Exception {
-        List<String> allTestCaseFiles = SmartUtils.getAllEndPointFiles("smart_test_cases");
+        List<String> allTestCaseFiles = SmartUtils.getAllEndPointFiles("test_smart_test_cases");
         assertThat(allTestCaseFiles.size(), is(4));
-        assertThat(allTestCaseFiles.get(0).toString(), is("smart_test_cases/01_test_json_single_step.json"));
+        assertThat(allTestCaseFiles.get(0).toString(), is("test_smart_test_cases/01_test_json_single_step.json"));
     }
 
     @Test

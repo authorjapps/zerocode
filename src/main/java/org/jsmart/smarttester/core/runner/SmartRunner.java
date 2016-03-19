@@ -1,7 +1,6 @@
 package org.jsmart.smarttester.core.runner;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.jsmart.smarttester.core.domain.FlowSpec;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.runner.Description;
@@ -38,9 +37,13 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
      */
     @Override
     protected List<FlowSpec> getChildren() {
-        String packageName = testClass.getAnnotation(TestPackageRoot.class).value();
+        TestPackageRoot rootPackageAnnotation = testClass.getAnnotation(TestPackageRoot.class);
+        if(rootPackageAnnotation == null){
+            throw new RuntimeException("Ah! Almost there. Missing root package details." +
+                    "e.g. Annotate your Test class e.g. @TestPackageRoot(\"resource_folder_for_test_cases\")\n");
+        }
 
-        return smartUtils.getFlowSpecListByPackage(packageName);
+        return smartUtils.getFlowSpecListByPackage(rootPackageAnnotation.value());
     }
 
     /**
@@ -51,7 +54,23 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
      */
     @Override
     protected Description describeChild(FlowSpec child) {
-        return null;
+
+        Description testDescription = Description.createTestDescription(testClass, child.getFlowName());
+        return testDescription;
+
+        /**
+         * Commented for right click, fix and enable, Try for IntelliJ or Eclipse
+         */
+        //Class<?> clazz, String name, Annotation... annotations
+        /*Annotation annotation = null;
+        try {
+            annotation = (Annotation)Class.forName("org.junit.Test").newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Right Click Error. Ah, error while introducing annotation" + e);
+        }
+
+        //Description testDescription = Description.createTestDescription(testClass, child.getFlowName(), annotation);
+        */
     }
 
     /**
@@ -69,4 +88,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
     }
 
 
+    public void setSmartUtils(SmartUtils smartUtils) {
+        this.smartUtils = smartUtils;
+    }
 }
