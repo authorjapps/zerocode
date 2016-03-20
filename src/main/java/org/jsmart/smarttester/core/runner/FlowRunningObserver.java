@@ -1,5 +1,5 @@
 package org.jsmart.smarttester.core.runner;
 
-public interface FlowRunningListener {
+public interface FlowRunningObserver {
     public void testRanSuccessFully();
 }

@@ -61,7 +61,7 @@ public class SmartRunnerTest {
     @Test
     public void willComplain_If_Annotation_Missing() throws Exception {
         expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Ah! Almost there. Missing root package details.");
+        expectedException.expectMessage("Ah! Almost there. Just missing root package details");
         smartRunner = new SmartRunner(FlowExampleWithoutAnnotationClass.class, smartUtils);
         smartRunner.getChildren();
     }

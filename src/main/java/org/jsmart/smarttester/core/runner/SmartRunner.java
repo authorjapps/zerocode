@@ -1,6 +1,9 @@
 package org.jsmart.smarttester.core.runner;
 
+import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import org.jsmart.smarttester.core.di.SmartServiceModule;
 import org.jsmart.smarttester.core.domain.FlowSpec;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.runner.Description;
@@ -12,23 +15,26 @@ import java.util.List;
 
 public class SmartRunner extends ParentRunner<FlowSpec> {
 
-    @Inject
-    SmartUtils smartUtils;
-
-    private MultiStepsRunner<FlowSpec, FlowRunningListener> multiStepsRunner;
+    private MultiStepsRunner multiStepsRunner;
     private final Class<?> testClass;
     List<FlowSpec> flowSpecs;
+    Injector injector;
+    SmartUtils smartUtils;
 
     protected Description flowDescription;
     protected boolean isRunSuccess;
     protected boolean passed;
     protected boolean isComplete;
 
-    @Inject
     public SmartRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
         this.testClass = testClass;
 
+        /**
+         * Get the SmartUtil, MultiStepsRunner injected from the Module.
+         */
+        this.multiStepsRunner = getInjectedMultiStepsRunner();
+        this.smartUtils = getInjector().getInstance(SmartUtils.class);
     }
 
     @Inject
@@ -44,8 +50,8 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
     protected List<FlowSpec> getChildren() {
         TestPackageRoot rootPackageAnnotation = testClass.getAnnotation(TestPackageRoot.class);
         if(rootPackageAnnotation == null){
-            throw new RuntimeException("Ah! Almost there. Missing root package details." +
-                    "e.g. Annotate your Test class e.g. @TestPackageRoot(\"resource_folder_for_test_cases\")\n");
+            throw new RuntimeException("Ah! Almost there. Just missing root package details." +
+                    "\ne.g. Annotate your Test class now, e.g. @TestPackageRoot(\"resource_folder_for_test_cases\")");
         }
 
         return smartUtils.getFlowSpecListByPackage(rootPackageAnnotation.value());
@@ -89,9 +95,12 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
      */
     @Override
     protected void runChild(FlowSpec child, RunNotifier notifier) {
-        notifier.fireTestStarted(getDescription());
 
-        passed = multiStepsRunner.runSteps(child, new FlowRunningListener() {
+        // Notify that this single test was started.
+        // Supply the flowDescription
+        notifier.fireTestStarted(flowDescription);
+
+        passed = getInjectedMultiStepsRunner().runSteps(child, new FlowRunningObserver() {
             @Override
             public void testRanSuccessFully() {
                 isRunSuccess = true;
@@ -103,10 +112,16 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
         }
     }
 
-    private MultiStepsRunner<Object, Object> getMultiStepsRunner() {
-        return null;
+    private MultiStepsRunner getInjectedMultiStepsRunner() {
+        multiStepsRunner = getInjector().getInstance(MultiStepsRunner.class);
+        return multiStepsRunner;
     }
 
+    public Injector getInjector() {
+        //Synchronise this with e.g. synchronized (IptSmartRunner.class) {}
+        injector = Guice.createInjector(new SmartServiceModule());
+        return injector;
+    }
 
     public void setSmartUtils(SmartUtils smartUtils) {
         this.smartUtils = smartUtils;
@@ -124,7 +139,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
         return isComplete;
     }
 
-    public void setMultiStepsRunner(MultiStepsRunner<FlowSpec, FlowRunningListener> multiStepsRunner) {
+    public void setMultiStepsRunner(MultiStepsRunner multiStepsRunner) {
         this.multiStepsRunner = multiStepsRunner;
     }
 }

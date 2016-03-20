@@ -6,10 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import org.jsmart.smarttester.core.domain.FlowSpec;
 import org.jsmart.smarttester.core.runner.DefaultSmartMultiStepsRunner;
 import org.jsmart.smarttester.core.runner.MultiStepsRunner;
-import org.jsmart.smarttester.core.runner.SmartRunner;
+import org.jsmart.smarttester.core.utils.SmartUtils;
 
 import javax.inject.Singleton;
 
@@ -22,6 +21,7 @@ public class SmartServiceModule implements Module {
         //binder.bind(ObjectMapper.class).to(ObjectMapper.class);
         //binder.bind(Class.class).to(FlowExamplePackagePicker.class);
         binder.bind(MultiStepsRunner.class).to(DefaultSmartMultiStepsRunner.class);
+        binder.bind(SmartUtils.class);
     }
 
     @Provides
@@ -50,4 +50,13 @@ public class SmartServiceModule implements Module {
         */
 
     }
+
+    /*@Provides
+    @Singleton
+    public SmartUtils getSingletomSmartUtils(ObjectMapper objectMapper) {
+        SmartUtils smartUtils = new SmartUtils();
+        smartUtils.setMapper(objectMapper);
+
+        return smartUtils;
+    }*/
 }

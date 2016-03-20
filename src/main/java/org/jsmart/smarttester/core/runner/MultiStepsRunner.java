@@ -1,6 +1,8 @@
 package org.jsmart.smarttester.core.runner;
 
-public interface MultiStepsRunner<T, Q> {
+import org.jsmart.smarttester.core.domain.FlowSpec;
 
-    boolean runSteps(T t, Q q);
+public interface MultiStepsRunner {
+
+    boolean runSteps(FlowSpec flowSpec, FlowRunningObserver observer);
 }

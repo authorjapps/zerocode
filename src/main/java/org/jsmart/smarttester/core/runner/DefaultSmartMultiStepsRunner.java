@@ -1,8 +1,12 @@
 package org.jsmart.smarttester.core.runner;
 
-public class DefaultSmartMultiStepsRunner<T, Q>  implements MultiStepsRunner<T, Q> {
+import com.google.inject.Singleton;
+import org.jsmart.smarttester.core.domain.FlowSpec;
+
+@Singleton
+public class DefaultSmartMultiStepsRunner  implements MultiStepsRunner{
     @Override
-    public boolean runSteps(T t, Q q) {
+    public boolean runSteps(FlowSpec flowSpec, FlowRunningObserver flowRunningObserver) {
         return true;
     }
 }
