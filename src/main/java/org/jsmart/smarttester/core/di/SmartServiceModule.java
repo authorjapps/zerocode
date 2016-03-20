@@ -7,6 +7,8 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.runner.DefaultSmartMultiStepsRunner;
+import org.jsmart.smarttester.core.runner.MultiStepsRunner;
 import org.jsmart.smarttester.core.runner.SmartRunner;
 
 import javax.inject.Singleton;
@@ -19,6 +21,7 @@ public class SmartServiceModule implements Module {
         //Names.bindProperties(binder, PropertiesProvider.getProperties());
         //binder.bind(ObjectMapper.class).to(ObjectMapper.class);
         //binder.bind(Class.class).to(FlowExamplePackagePicker.class);
+        binder.bind(MultiStepsRunner.class).to(DefaultSmartMultiStepsRunner.class);
     }
 
     @Provides

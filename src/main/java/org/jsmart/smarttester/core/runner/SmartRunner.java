@@ -19,6 +19,11 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
     private final Class<?> testClass;
     List<FlowSpec> flowSpecs;
 
+    protected Description flowDescription;
+    protected boolean isRunSuccess;
+    protected boolean passed;
+    protected boolean isComplete;
+
     @Inject
     public SmartRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
@@ -55,8 +60,8 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
     @Override
     protected Description describeChild(FlowSpec child) {
 
-        Description testDescription = Description.createTestDescription(testClass, child.getFlowName());
-        return testDescription;
+        this.flowDescription = Description.createTestDescription(testClass, child.getFlowName());
+        return flowDescription;
 
         /**
          * Commented for right click, fix and enable, Try for IntelliJ or Eclipse
@@ -84,11 +89,42 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
      */
     @Override
     protected void runChild(FlowSpec child, RunNotifier notifier) {
+        notifier.fireTestStarted(getDescription());
 
+        passed = multiStepsRunner.runSteps(child, new FlowRunningListener() {
+            @Override
+            public void testRanSuccessFully() {
+                isRunSuccess = true;
+            }
+        });
+
+        if (passed) {
+            notifier.fireTestFinished(flowDescription);
+        }
+    }
+
+    private MultiStepsRunner<Object, Object> getMultiStepsRunner() {
+        return null;
     }
 
 
     public void setSmartUtils(SmartUtils smartUtils) {
         this.smartUtils = smartUtils;
+    }
+
+    public boolean isRunSuccess() {
+        return isRunSuccess;
+    }
+
+    public boolean isPassed() {
+        return passed;
+    }
+
+    public boolean isComplete() {
+        return isComplete;
+    }
+
+    public void setMultiStepsRunner(MultiStepsRunner<FlowSpec, FlowRunningListener> multiStepsRunner) {
+        this.multiStepsRunner = multiStepsRunner;
     }
 }

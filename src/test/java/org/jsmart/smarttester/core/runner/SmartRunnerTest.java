@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.RunNotifier;
 
 import java.util.List;
 
@@ -26,6 +27,9 @@ public class SmartRunnerTest {
 
     @Inject
     SmartUtils smartUtils;
+
+    @Inject
+    MultiStepsRunner multiStepsRunner;
 
     SmartRunner smartRunner;
 
@@ -78,5 +82,22 @@ public class SmartRunnerTest {
     @Ignore
     public void testCanDescribeAChild_RightClick_And_Runnable() throws Exception {
 
+    }
+
+    @Test
+    public void testWillFireASingleStep_Child() throws Exception {
+        //Injection over
+        smartRunner = new SmartRunner(FlowExamplePackagePickerClass.class, smartUtils);
+        smartRunner.setMultiStepsRunner(multiStepsRunner);
+
+        // Now prepare the steps as if they were run via junit
+        List<FlowSpec> children = smartRunner.getChildren();
+        smartRunner.describeChild(children.get(0));
+
+        RunNotifier notifier = new RunNotifier();
+        smartRunner.runChild(children.get(0), notifier);
+
+        //assertThat(smartRunner.isRunSuccess(), is(true));
+        assertThat(smartRunner.isPassed(), is(true));
     }
 }
