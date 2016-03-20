@@ -7,6 +7,9 @@ import org.jsmart.smarttester.core.domain.FlowSpec;
 public class DefaultSmartMultiStepsRunner  implements MultiStepsRunner{
     @Override
     public boolean runSteps(FlowSpec flowSpec, FlowRunningObserver flowRunningObserver) {
+
+        flowRunningObserver.testRanSuccessFully();
+
         return true;
     }
 }

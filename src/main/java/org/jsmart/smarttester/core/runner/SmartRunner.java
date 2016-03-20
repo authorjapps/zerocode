@@ -31,10 +31,14 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
         this.testClass = testClass;
 
         /**
-         * Get the SmartUtil, MultiStepsRunner injected from the Module.
+         * Get the SmartUtil, MultiStepsRunner injected from the main guice-Module.
          */
         this.multiStepsRunner = getInjectedMultiStepsRunner();
-        this.smartUtils = getInjector().getInstance(SmartUtils.class);
+        this.smartUtils = getInjectedSmartUtilsClass();
+    }
+
+    protected SmartUtils getInjectedSmartUtilsClass() {
+        return getInjector().getInstance(SmartUtils.class);
     }
 
     @Inject
