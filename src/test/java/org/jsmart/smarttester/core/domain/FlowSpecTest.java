@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.smarttester.core.di.SmartServiceModule;
 import org.jsmart.smarttester.core.utils.SmartUtils;
+import org.jukito.Description;
 import org.jukito.JukitoRunner;
 import org.jukito.UseModules;
 import org.junit.Before;
@@ -36,6 +37,7 @@ public class FlowSpecTest {
         //mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
     }
 
+    //@Description("JukitoDescription")
     @Test
     public void willDeserializeA_VanilaFlow() throws Exception {
         String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("test_smart_test_cases/02_test_json_flow_single_step.json");

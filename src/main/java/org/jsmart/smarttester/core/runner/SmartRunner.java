@@ -104,13 +104,20 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
         // Supply the flowDescription
         notifier.fireTestStarted(flowDescription);
 
-        passed = getInjectedMultiStepsRunner().runSteps(child, new FlowRunningObserver() {
+        /*passed = getInjectedMultiStepsRunner().runSteps(child, new FlowRunningObserver() {
             @Override
             public void testRanSuccessFully() {
                 isRunSuccess = true;
             }
-        });
+        });*/
 
+        //
+        passed = getInjectedMultiStepsRunner().runChildStep(child,
+                (flowName, stepName) -> {
+                    isRunSuccess = true;
+                }
+        );
+        //
         if (passed) {
             notifier.fireTestFinished(flowDescription);
         }
