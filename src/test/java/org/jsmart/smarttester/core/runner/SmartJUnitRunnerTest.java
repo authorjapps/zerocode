@@ -16,7 +16,7 @@ public class SmartJUnitRunnerTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    public static class TinySmartJUnitRunnerExampleTest {
+    public static class TinySmartJUnitRunnerExampleTester {
 
         @SmartTestCase("/abcd/path")
         @Test
@@ -31,7 +31,7 @@ public class SmartJUnitRunnerTest {
 
     @Before
     public void initializeRunner() throws Exception {
-        smartJUnitRunner = new SmartJUnitRunner(TinySmartJUnitRunnerExampleTest.class);
+        smartJUnitRunner = new SmartJUnitRunner(TinySmartJUnitRunnerExampleTester.class);
     }
 
     @Test

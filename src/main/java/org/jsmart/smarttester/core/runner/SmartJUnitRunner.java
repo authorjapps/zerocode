@@ -1,5 +1,7 @@
 package org.jsmart.smarttester.core.runner;
 
+import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -9,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
+    static int i = 1;
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
@@ -52,10 +55,16 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
 
         /**
          * TODO: Run the Single JSON and assert, create the JUNIT Assertion report.
+         * Capability testes, Navigation SUCCESS
+         *
          */
-        // TODO
 
-        super.runChild(method, notifier);
+        notifier.fireTestStarted(describeChild(method));
+        if(true){
+            notifier.fireTestFinished(describeChild(method));
+        } else{
+            notifier.fireTestFailure(new Failure(describeChild(method), new RuntimeException("still wip")));
+        }
     }
 
     public List<String> getSmartTestCaseNames() {
