@@ -46,7 +46,7 @@ public class StepTest {
         String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("test_smart_test_cases/01_test_json_single_step.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
         assertThat(stepDeserialized, notNullValue());
-        assertThat(stepDeserialized.getRequest().getBody().toString(), containsString("externalHandleSpace"));
+        assertThat(stepDeserialized.getRequest().getBody().toString(), containsString("firstName"));
         assertThat(stepDeserialized.getRequest().getHeaders().get("Cookie"), is("cookie_123"));
         assertThat(stepDeserialized.getRequest().getQueryParams().get("invId"), is(10101));
         assertThat(stepDeserialized.getAssertions().getStatus(), is(201));

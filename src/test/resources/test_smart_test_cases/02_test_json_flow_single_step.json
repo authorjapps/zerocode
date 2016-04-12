@@ -5,7 +5,7 @@
     {
       "loop": 3,
       "name": "StepNameWithoutSpaceEgCREATESD", //<---- with comments
-      "url": "/service-deliveries",
+      "url": "/persons",
       "operation": "POST",
       "request": {
         "headers": {
@@ -17,8 +17,8 @@
           "param2": "value2"
         },
         "body": {
-          "ServiceDelivery": {
-            "externalHandleSpace": "CID_CASES"
+          "Customer": {
+            "firstName": "FIRST_NAME"
           }
         }
       },

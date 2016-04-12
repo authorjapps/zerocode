@@ -1,7 +1,7 @@
 {
   "loop": 3,
   "name": "StepNameWithoutSpaceEgCREATE",
-  "url": "/service-deliveries",
+  "url": "/persons",
   "operation": "POST",
   "request": {
     "headers": {
@@ -13,8 +13,8 @@
       "invId": 10101
     },
     "body": {
-      "ServiceDelivery": {
-        "externalHandleSpace": "CID_CASES"
+      "Customer": {
+        "firstName": "FIRST_NAME"
       }
     }
   },

@@ -4,7 +4,7 @@
   "steps": [
     {
       "name": "StepNameWithoutSpaceEgCREATE",
-      "service": "/service-deliveries",
+      "service": "/persons",
       "operation": "POST",
       "request": {
         "headers": {
@@ -16,10 +16,10 @@
           "param2": "value2"
         },
         "body": {
-          "ServiceDelivery": {
-            "externalHandleSpace": "CID_CASES",
+          "Customer": {
+            "firstName": "FIRST_NAME",
             "externalHandleValue": "test-pre-enrich-002",
-            "serviceDeliveryType": {
+            "CustomerType": {
               "refDataValueId": 10302,
               "refDataValueCode": "ASYC-Something"
             },
