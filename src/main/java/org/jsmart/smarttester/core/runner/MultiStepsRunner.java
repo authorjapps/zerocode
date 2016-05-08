@@ -3,12 +3,13 @@ package org.jsmart.smarttester.core.runner;
 import org.jsmart.smarttester.core.domain.FlowSpec;
 
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 
 public interface MultiStepsRunner {
 
-    boolean runSteps(FlowSpec flowSpec, FlowRunningObserver observer);
+    boolean runSteps(FlowSpec flowSpec, FlowStepStatusNotifier flowStepStatusNotifier);
+
     boolean runChildStep(FlowSpec flowSpec,
                                  BiConsumer<String, String> testPassHandler
                                  );
+
 }

@@ -15,10 +15,15 @@
         <classpath-explorer.version>1.0</classpath-explorer.version>
         <jukito.version>1.4.1</jukito.version>
         <guice.version>4.0</guice.version>
+        <commons-lang.version>2.6</commons-lang.version>
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.google.classpath-explorer</groupId>
             <artifactId>classpath-explorer</artifactId>

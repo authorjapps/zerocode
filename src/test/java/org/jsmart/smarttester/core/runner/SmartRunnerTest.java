@@ -71,7 +71,7 @@ public class SmartRunnerTest {
 
     @Test
     public void testWillFireASingleStep_Child() throws Exception {
-        //Injection over
+        //Injection done
         smartRunner = new SmartRunner(FlowExamplePackagePickerClass.class);
 
         // Now prepare the steps as if they were run via junit
@@ -81,7 +81,7 @@ public class SmartRunnerTest {
         smartRunner.runChild(children.get(0), notifier);
 
         //assertion sections
-        assertThat(smartRunner.isRunSuccess(), is(true));
+        assertThat(smartRunner.passed, is(true));
         assertThat(smartRunner.isPassed(), is(true));
     }
 }
