@@ -16,9 +16,15 @@
         <jukito.version>1.4.1</jukito.version>
         <guice.version>4.0</guice.version>
         <commons-lang.version>2.6</commons-lang.version>
+        <jayway-version>0.5.3</jayway-version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${jayway-version}</version>
+        </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>

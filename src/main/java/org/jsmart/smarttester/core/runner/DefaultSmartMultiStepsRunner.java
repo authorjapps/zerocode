@@ -1,5 +1,6 @@
 package org.jsmart.smarttester.core.runner;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Singleton;
 import org.jsmart.smarttester.core.domain.FlowSpec;
 import org.jsmart.smarttester.core.domain.Request;
@@ -16,7 +17,7 @@ public class DefaultSmartMultiStepsRunner implements MultiStepsRunner {
 
         for(Step thisStep : flowSpec.getSteps()){
 
-            final Request restRequest = thisStep.getRequest();
+            final JsonNode restRequest = thisStep.getRequest();
             System.out.println( "### RAW: restRequest : " + restRequest);
 
             // TODO: Resolve the place holders at this point including .SIZE etc

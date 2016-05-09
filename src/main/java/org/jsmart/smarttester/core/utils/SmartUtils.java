@@ -1,5 +1,6 @@
 package org.jsmart.smarttester.core.utils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
@@ -13,8 +14,10 @@ import org.jsmart.smarttester.core.domain.FlowSpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,13 @@ public class SmartUtils {
     public <T> String getJsonDocumentAsString(String name) throws IOException {
         String jsonAsString = Resources.toString(getClass().getClassLoader().getResource(name), StandardCharsets.UTF_8);
         return jsonAsString;
+    }
+
+    public Map<String, Object> readJsonStringAsMap(String json) throws IOException {
+        java.util.Map<java.lang.String, java.lang.Object> map = new HashMap<>();
+        map = mapper.readValue(json, new TypeReference<Map<String, java.lang.Object>>(){});
+
+        return map;
     }
 
     public static List<String> getAllEndPointFiles(String packageName) {

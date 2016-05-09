@@ -1,9 +1,11 @@
 package org.jsmart.smarttester.core.domain;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
+import com.jayway.jsonpath.JsonPath;
 import org.jsmart.smarttester.core.di.SmartServiceModule;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
@@ -15,6 +17,8 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -46,9 +50,23 @@ public class StepTest {
         String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("test_smart_test_cases/01_test_json_single_step.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
         assertThat(stepDeserialized, notNullValue());
-        assertThat(stepDeserialized.getRequest().getBody().toString(), containsString("firstName"));
-        assertThat(stepDeserialized.getRequest().getHeaders().get("Cookie"), is("cookie_123"));
-        assertThat(stepDeserialized.getRequest().getQueryParams().get("invId"), is(10101));
+        final String requestJsonAsString = stepDeserialized.getRequest().toString();
+        assertThat(requestJsonAsString, containsString("firstName"));
+
+        Object queryParams = JsonPath.read(requestJsonAsString, "$.queryParams");
+        Object requestHeaders = JsonPath.read(requestJsonAsString, "$.headers");
+
+        System.out.println("### Raw: queryParams" +  queryParams);
+        System.out.println("### Raw: requestHeaders" +  requestHeaders);
+
+        assertThat(queryParams.toString(), is("{\"invId\":10101,\"param1\":\"value1\"}"));
+        assertThat(requestHeaders.toString(), is("{\"Cookie\":\"cookie_123\",\"Content-Type\":\"application\\/json;charset=UTF-8\"}"));
+
+        Map<String, Object> headerMap = smartUtils.readJsonStringAsMap(requestHeaders.toString());
+        Map<String, Object> queryParamsMap = smartUtils.readJsonStringAsMap(queryParams.toString());
+
+        assertThat(headerMap.get("Cookie"), is("cookie_123"));
+        assertThat(queryParamsMap.get("invId"), is(10101));
         assertThat(stepDeserialized.getAssertions().getStatus(), is(201));
     }
 
@@ -58,10 +76,10 @@ public class StepTest {
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
 
         JsonNode singleStepNode = mapper.valueToTree(stepDeserialized);
-        System.out.println(singleStepNode);
+        String singleStepNodeString = mapper.writeValueAsString(singleStepNode);
 
         // jayway json assert with this string.
-        JSONAssert.assertEquals(singleStepNode.toString(), jsonDocumentAsString, true);
+        JSONAssert.assertEquals(singleStepNodeString, jsonDocumentAsString, true);
 
         assertThat(singleStepNode.get("name").asText(), is("StepNameWithoutSpaceEgCREATE"));
         assertThat(singleStepNode.get("loop").asInt(), is(3));

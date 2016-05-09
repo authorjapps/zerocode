@@ -2,6 +2,7 @@ package org.jsmart.smarttester.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -15,7 +16,7 @@ public class Step {
     private final String name;
     private final String operation;
     private final String url;
-    private final Request request;
+    private final JsonNode request;
     private final Assertions assertions;
 
 
@@ -35,7 +36,7 @@ public class Step {
         return url;
     }
 
-    public Request getRequest() {
+    public JsonNode getRequest() {
         return request;
     }
 
@@ -49,7 +50,7 @@ public class Step {
             @JsonProperty("name") String name,
             @JsonProperty("operation") String operation,
             @JsonProperty("url") String url,
-            @JsonProperty("request") Request request,
+            @JsonProperty("request") JsonNode request,
             @JsonProperty("assertions") Assertions assertions) {
         this.loop = loop;
         this.name = name;
