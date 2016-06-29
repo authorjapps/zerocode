@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SmartJUnitRunner.class);
@@ -124,26 +125,26 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
                 @Override
                 public Boolean notifyFlowStepExecutionPassed(String flowName, String stepName) {
                     // log that flowname with stepname passed.
-                    logger.info(String.format("PASSED:%s->%s", flowName, stepName));
+                    logger.info(String.format("\n**Step PASSED:%s->%s", flowName, stepName));
                     return true;
                 }
 
             });
         } catch (Exception ioEx) {
             notifier.fireTestFailure(new Failure(description, ioEx));
-            ioEx.printStackTrace();
+            //return false;
+            //ioEx.printStackTrace();
         }
 
         testRunCompleted = true;
         //
 
         if (passed) {
-            logger.info(String.format("All Steps for [%s] PASSED.\nSteps are:%s", child.getFlowName(), child.getSteps()));
+            logger.info(String.format("\n**All Steps for [%s] FINISHED**.\nSteps are:%s",
+                    child.getFlowName(),
+                    child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
             notifier.fireTestFinished(description);
         }
-//        else{
-//            notifier.fireTestFailure(new Failure(description, new RuntimeException("still wip")));
-//        }
     }
 
     public List<String> getSmartTestCaseNames() {

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface JsonTestProcesor {
 
-    String resolveRequestJson(String requestJsonAsString, String resolvedScenarioState);
+    String resolveStringJson(String requestJsonAsString, String resolvedScenarioState);
 
     List<String> getAllTokens(String requestJsonAsString);
 

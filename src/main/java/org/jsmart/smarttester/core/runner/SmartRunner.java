@@ -145,7 +145,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
             @Override
             public Boolean notifyFlowStepExecutionPassed(String flowName, String stepName) {
                 // log that flowname with stepname passed.
-
+                logger.info(String.format("\n***Step PASSED:%s->%s", flowName, stepName));
                 return true;
             }
 

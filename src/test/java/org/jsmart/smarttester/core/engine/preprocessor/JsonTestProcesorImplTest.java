@@ -54,7 +54,7 @@ public class JsonTestProcesorImplTest {
         FlowSpec flowSpec = smartUtils.jsonFileToJava("09_test_engine/01_request_with_place_holders.json", FlowSpec.class);
         final String requestJsonAsString = flowSpec.getSteps().get(0).getRequest().toString();
 
-        final String resolvedRequestJson = jsonPreProcessor.resolveRequestJson(requestJsonAsString, requestJsonAsString);
+        final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
 
         System.out.println("### resolvedRequestJson: " + resolvedRequestJson);
         String lastName = JsonPath.read(resolvedRequestJson, "$.body.Customer.lastName");
@@ -71,11 +71,11 @@ public class JsonTestProcesorImplTest {
         final List<String> placeHolders = jsonPreProcessor.getAllTokens(requestJsonAsString);
         assertThat(placeHolders.size(), is(4));
 
-        final String resolvedRequestJson = jsonPreProcessor.resolveRequestJson(requestJsonAsString, requestJsonAsString);
+        final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
         assertThat(resolvedRequestJson, containsString("\"staticName\":\"ABCDE\""));
 
         String specAsString = smartUtils.getJsonDocumentAsString("09_test_engine/01_request_with_place_holders.json");
-        final String resolvedSpecString = jsonPreProcessor.resolveRequestJson(specAsString, specAsString);
+        final String resolvedSpecString = jsonPreProcessor.resolveStringJson(specAsString, specAsString);
         assertThat(resolvedSpecString, containsString("\"url\": \"/persons/ABC\""));
     }
 
@@ -86,7 +86,7 @@ public class JsonTestProcesorImplTest {
         final List<String> jsonPaths = jsonPreProcessor.getAllJsonPathTokens(specAsString);
         assertThat(jsonPaths.size(), is(2));
 
-        final String resolvedSpecWithPaths = jsonPreProcessor.resolveRequestJson(specAsString, specAsString);
+        final String resolvedSpecWithPaths = jsonPreProcessor.resolveStringJson(specAsString, specAsString);
         assertThat(resolvedSpecWithPaths, containsString("\"staticName\": \"ABCDE\""));
 
         //final String resolvedSpecResolvedPaths = jsonPreProcessor.resolveJsonPaths(resolvedSpecWithPaths);
@@ -117,7 +117,7 @@ public class JsonTestProcesorImplTest {
                 "        }\n" +
                 "    }\n" +
                 "}";
-        final String resolvedSpecWithPaths = jsonPreProcessor.resolveRequestJson(specAsString, scenarioState);
+        final String resolvedSpecWithPaths = jsonPreProcessor.resolveStringJson(specAsString, scenarioState);
         assertThat(resolvedSpecWithPaths, containsString("\"staticName\": \"ABCDE\""));
         assertThat(resolvedSpecWithPaths, containsString("\"firstName\": \"FIRST_NAME\""));
         assertThat(resolvedSpecWithPaths, containsString("\"firstName2\": \"FIRST_NAME\""));
@@ -148,7 +148,7 @@ public class JsonTestProcesorImplTest {
                 "    }\n" +
                 "}";
 
-        final String resolvedAssertions = jsonPreProcessor.resolveRequestJson(assertionsSectionAsString, scenarioState);
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, scenarioState);
         assertThat(resolvedAssertions, containsString("\"actualName\":\"ANOTHER_NAME\""));
 
         // start assertion

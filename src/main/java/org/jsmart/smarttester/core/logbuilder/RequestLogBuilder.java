@@ -11,6 +11,7 @@ public class RequestLogBuilder {
     String url;
     String method;
     String request;
+    String stepName;
 
     @JsonCreator
     public RequestLogBuilder() {
@@ -41,6 +42,11 @@ public class RequestLogBuilder {
         return this;
     }
 
+    public RequestLogBuilder step(String stepName) {
+        this.stepName = stepName;
+        return this;
+    }
+
     public LocalDateTime getRequestTimeStamp() {
         return requestTimeStamp;
     }
@@ -49,9 +55,11 @@ public class RequestLogBuilder {
     public String toString() {
         return relationshipId +
                 "\nrequestTimeStamp:" + requestTimeStamp +
-                "\nurl:'" + url +
+                "\nstep:" + stepName +
+                "\nurl:" + url +
                 "\nmethod:" + method +
                 "\nrequest:" + request;
     }
+
 
 }

@@ -26,6 +26,19 @@
           "availability": true
         }
       }
+    },
+    {
+      "name": "Get Bathroom by Id 21",
+      "operation": "GET",
+      "url": "/home/bathroom/21",
+      "response": {
+        "status": 200,
+        "body": {
+          "id": 21,
+          "name": "Shower-21",
+          "availability": true
+        }
+      }
     }
 
   ]

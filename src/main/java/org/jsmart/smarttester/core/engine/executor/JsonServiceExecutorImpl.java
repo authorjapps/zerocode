@@ -26,7 +26,6 @@ import static java.lang.String.format;
 
 public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     private static final Logger logger = LoggerFactory.getLogger(JsonServiceExecutorImpl.class);
-    private static final String DISPLAY_DEMARCATION_ = "\n------------------ RELATIONSHIP-ID: %s ------------------";
 
     //guice
     @Inject
@@ -49,14 +48,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         if( javaExecutor == null) {
             throw new RuntimeException("Can not proceed as the framework could not load the executors. ");
         }
-        final String logPrefixRelationshipId = createRelationshipId();
 
-        logCorelationshipPrinter.aRequestBuilder()
-                .relationshipId(logPrefixRelationshipId)
-                .requestTimeStamp(LocalDateTime.now())
-                .url(serviceName)
-                .method(methodName)
-                .request(SmartUtils.prettyPrintJson(requestJson));
 
         List<Class<?>> argumentTypes = javaExecutor.argumentTypes(serviceName, methodName);
 
@@ -66,55 +58,28 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
             final String resultJson = objectMapper.writeValueAsString(result);
 
-            logCorelationshipPrinter.aResponseBuilder()
-                    .relationshipId(logPrefixRelationshipId)
-                    .responseTimeStamp(LocalDateTime.now())
-                    .response(resultJson);
-
             return resultJson;
 
         } catch (Exception e) {
-            logCorelationshipPrinter.aResponseBuilder()
-                    .relationshipId(logPrefixRelationshipId)
-                    .responseTimeStamp(LocalDateTime.now())
-                    .response(e.getMessage());
 
             throw new RuntimeException(e);
 
-        } finally {
-            logCorelationshipPrinter.print();
         }
     }
 
     public String executeRESTService(String urlName, String methodName, String requestJson) {
 
-        final String logPrefixRelationshipId = createRelationshipId();
-        logCorelationshipPrinter.aRequestBuilder()
-                .relationshipId(logPrefixRelationshipId)
-                .requestTimeStamp(LocalDateTime.now())
-                .url(urlName)
-                .method(methodName)
-                .request(SmartUtils.prettyPrintJson(requestJson));
-
         try {
             String responseJson =  executeRESTInternal(urlName, methodName, requestJson);
-            logCorelationshipPrinter.aResponseBuilder()
-                    .relationshipId(logPrefixRelationshipId)
-                    .responseTimeStamp(LocalDateTime.now())
-                    .response(responseJson);
 
             return responseJson;
 
         } catch (Exception exc) {
-            logCorelationshipPrinter.aResponseBuilder()
-                    .relationshipId(logPrefixRelationshipId)
-                    .responseTimeStamp(LocalDateTime.now())
-                    .response(exc.getMessage());
 
             throw new RuntimeException(exc);
 
         } finally {
-            logCorelationshipPrinter.print();
+            //logCorelationshipPrinter.print();
         }
     }
 
@@ -236,7 +201,4 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         this.httpClientExecutor = httpClientExecutor;
     }
 
-    private String createRelationshipId() {
-        return format(DISPLAY_DEMARCATION_, UUID.randomUUID().toString());
-    }
 }

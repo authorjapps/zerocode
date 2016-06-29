@@ -53,10 +53,10 @@ public class JsonTestProcesorImpl implements JsonTestProcesor {
 
 
     @Override
-    public String resolveRequestJson(String requestJsonAsString, String scenarioState) {
+    public String resolveStringJson(String requestJsonOrAnyString, String scenarioStateJson) {
         Map<String, String> parammap = new HashMap<>();
 
-        final List<String> allTokens = getAllTokens(requestJsonAsString);
+        final List<String> allTokens = getAllTokens(requestJsonOrAnyString);
         allTokens.forEach(runTimeToken -> {
             availableTokens.forEach(inStoreToken -> {
                 if (runTimeToken.startsWith(inStoreToken)) {
@@ -81,9 +81,9 @@ public class JsonTestProcesorImpl implements JsonTestProcesor {
         });
 
         StrSubstitutor sub = new StrSubstitutor(parammap);
-        String resolvedFromTemplate = sub.replace(requestJsonAsString);
+        String resolvedFromTemplate = sub.replace(requestJsonOrAnyString);
 
-        return resolveJsonPaths(resolvedFromTemplate, scenarioState);
+        return resolveJsonPaths(resolvedFromTemplate, scenarioStateJson);
     }
 
     @Override
@@ -143,8 +143,6 @@ public class JsonTestProcesorImpl implements JsonTestProcesor {
             for (Map.Entry<String, Object> entry : createFieldsKeyValuesMap.entrySet()) {
                 String path = entry.getKey();
                 Object value = entry.getValue();
-
-                System.out.println(i++ + ": -------path:" + path + " -------value: " + value);
 
                 JsonAsserter asserter;
                 if ("$NOT_NULL".equals(value)) {

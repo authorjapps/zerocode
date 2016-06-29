@@ -3,12 +3,17 @@ package org.jsmart.smarttester.core.logbuilder;
 import org.slf4j.Logger;
 
 import java.time.Duration;
+import java.util.UUID;
+
+import static java.lang.String.format;
 
 public class LogCorelationshipPrinter {
+    private static final String DISPLAY_DEMARCATION_ = "\n------------------ RELATIONSHIP-ID: %s ------------------";
 
     Logger logger;
     RequestLogBuilder requestLogBuilder = new RequestLogBuilder();
     ResponseLogBuilder responseLogBuilder = new ResponseLogBuilder();
+    ScenarioLogBuilder scenarioLogBuilder = new ScenarioLogBuilder();
 
     public LogCorelationshipPrinter(Logger logger) {
         this.logger = logger;
@@ -24,12 +29,13 @@ public class LogCorelationshipPrinter {
 
     public ResponseLogBuilder aResponseBuilder() {
         return responseLogBuilder;
+    }
 
+    public ScenarioLogBuilder aScenarioBuilder() {
+        return scenarioLogBuilder;
     }
 
     public void print() {
-        System.out.println("#### Diff" + requestLogBuilder.getRequestTimeStamp() +
-                responseLogBuilder.getResponseTimeStamp());
 
         logger.info(String.format("%s %s \nResponse delay:%s milli-secs \n-done-\n\n",
                 requestLogBuilder.toString(),
@@ -45,4 +51,7 @@ public class LogCorelationshipPrinter {
         );
     }
 
+    public static String createRelationshipId() {
+        return format(DISPLAY_DEMARCATION_, UUID.randomUUID().toString());
+    }
 }
