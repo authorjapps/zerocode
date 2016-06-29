@@ -1,0 +1,21 @@
+{
+  "flowName": "DEV-Java Service",
+  "loop": 5,
+  "steps": [
+    {
+      "loop": 3,
+      "name": "javaMethodExecution", //<-- with comments
+      "url": "org.jsmart.smarttester.core.AddService",
+      "operation": "squareMyNumber",
+      "request": {
+        "number": 30
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": 1001
+        }
+      }
+    }
+  ]
+}

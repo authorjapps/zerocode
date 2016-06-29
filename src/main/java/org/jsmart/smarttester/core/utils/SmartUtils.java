@@ -1,14 +1,15 @@
 package org.jsmart.smarttester.core.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import org.jsmart.smarttester.core.di.ObjectMapperProvider;
 import org.jsmart.smarttester.core.domain.FlowSpec;
 
 import java.io.IOException;
@@ -21,6 +22,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.Charset.defaultCharset;
+
 @Singleton
 public class SmartUtils {
     @Inject
@@ -31,14 +34,19 @@ public class SmartUtils {
         return jsonAsString;
     }
 
-    public <T> String getJsonDocumentAsString(String name) throws IOException {
-        String jsonAsString = Resources.toString(getClass().getClassLoader().getResource(name), StandardCharsets.UTF_8);
+    public <T> String getJsonDocumentAsString(String fileName) throws IOException {
+        String jsonAsString = Resources.toString(getClass().getClassLoader().getResource(fileName), StandardCharsets.UTF_8);
         return jsonAsString;
     }
 
+    public static String readJsonAsString(String jsonFileName) throws IOException {
+        return Resources.toString(Resources.getResource(jsonFileName), defaultCharset());
+    }
+
+
     public Map<String, Object> readJsonStringAsMap(String json) throws IOException {
-        java.util.Map<java.lang.String, java.lang.Object> map = new HashMap<>();
-        map = mapper.readValue(json, new TypeReference<Map<String, java.lang.Object>>(){});
+        Map<String, Object> map = new HashMap<>();
+        map = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
 
         return map;
     }
@@ -56,7 +64,7 @@ public class SmartUtils {
 
 
     public <T> T jsonFileToJava(String jsonFileName, Class<T> clazz) throws IOException {
-        return mapper.readValue(getJsonDocumentAsString(jsonFileName), clazz);
+        return mapper.readValue(readJsonAsString(jsonFileName), clazz);
     }
 
     public List<FlowSpec> getFlowSpecListByPackage(String packageName) {
@@ -96,7 +104,52 @@ public class SmartUtils {
                 });
     }
 
+//    public static void main(String[] args) {
+//        String jsonString = "{\"age\":29,\"messages\":[\"msg 1\",\"msg 2\",\"msg 3\"],\"name\":\"mkyong\"}";
+//        jsonString = prettyPrintJson(jsonString);
+//        System.out.println("###Pretty: " + jsonString);
+//    }
+
+    public static String prettyPrintJson(String jsonString) {
+        String indented = jsonString;
+        final ObjectMapper objectMapper = new ObjectMapperProvider().get();
+        try {
+            final JsonNode jsonNode = objectMapper.readValue(jsonString, JsonNode.class);
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
+
+        } catch (IOException e) {
+            // Prettyprint logic threw an exception, not a big deal, print the original json then.
+            return jsonString;
+        }
+
+    }
+
+    public static String prettyPrintJson(JsonNode jsonNode) {
+        String indented = jsonNode.toString();
+
+        final ObjectMapper objectMapper = new ObjectMapperProvider().get();
+
+        try {
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
+
+        } catch (IOException e) {
+            // Prettyprint logic threw an exception, not a big deal, print the original json then.
+            return indented;
+        }
+    }
+
+//    public static String prettyPrintJson(JsonElement element) {
+//        GsonBuilder builder=new GsonBuilder();
+//        builder.setPrettyPrinting();
+//        Gson gson = builder.create();
+//        return gson.toJson(element);
+//    }
+
     public void setMapper(ObjectMapper mapper) {
         this.mapper = mapper;
+    }
+
+    public ObjectMapper getMapper() {
+        return mapper;
     }
 }

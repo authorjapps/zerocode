@@ -2,11 +2,11 @@ package org.jsmart.smarttester.core.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jsmart.smarttester.core.di.SmartServiceModule;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import org.jsmart.smarttester.core.di.ApplicationMainModule;
 import org.jsmart.smarttester.core.utils.SmartUtils;
-import org.jukito.Description;
 import org.jukito.JukitoRunner;
-import org.jukito.UseModules;
+import org.jukito.TestModule;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -22,8 +22,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(JukitoRunner.class)
-@UseModules(SmartServiceModule.class)
+//@UseModules(ApplicationMainModule.class)
 public class FlowSpecTest {
+    public static class JukitoModule extends TestModule {
+        @Override
+        protected void configureTest() {
+            ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test.properties");
+
+            /* Finally install the main module */
+            install(applicationMainModule);
+        }
+    }
+
     @Inject
     SmartUtils smartUtils;
 
@@ -40,7 +50,7 @@ public class FlowSpecTest {
     //@Description("JukitoDescription")
     @Test
     public void willDeserializeA_VanilaFlow() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("test_smart_test_cases/02_test_json_flow_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/02_test_json_flow_single_step.json");
         FlowSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, FlowSpec.class);
 
         System.out.println(flowDeserialized);
@@ -53,7 +63,7 @@ public class FlowSpecTest {
 
     @Test
     public void willDeserializeA_MultiSteps() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("test_smart_test_cases/03_test_json_flow_multi_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/03_test_json_flow_multi_step.json");
         FlowSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, FlowSpec.class);
 
         assertThat(flowDeserialized, notNullValue());
@@ -64,7 +74,7 @@ public class FlowSpecTest {
 
     @Test
     public void shouldSerializeSingleFlow() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("test_smart_test_cases/03_test_json_flow_multi_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/03_test_json_flow_multi_step.json");
         FlowSpec flowSpec = mapper.readValue(jsonDocumentAsString, FlowSpec.class);
 
         JsonNode flowSpecNode = mapper.valueToTree(flowSpec);
@@ -96,5 +106,60 @@ public class FlowSpecTest {
     @Ignore
     public void willReadAllJsonFiles_AND_Complain_for_Duplicate_names() throws Exception {
         fail();
+    }
+
+    @Test
+    public void testJSOnAssert() throws Exception {
+
+        String jsonString = "{\n" +
+                "  \"createPerson\": {\n" +
+                "    \"request\":{\n" +
+                "      \"id\" : \"10101\"\n" +
+                "    },\n" +
+                "    \"response\": {\n" +
+                "      \"status\" : 201\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"id\": \"100\", \n" +
+                "  \"id2\": 100 \n" +
+                "}";
+        JsonNode jsonNode = mapper.readTree(jsonString);
+        System.out.println("###jsonNode: " + jsonNode.getNodeType());
+
+        final JsonNode id = jsonNode.get("id");
+        System.out.println("###id: " + id.getNodeType());
+
+        final JsonNode createPerson = jsonNode.get("createPerson");
+        System.out.println("###createPerson: " + createPerson.getNodeType());
+
+        final JsonNode status = jsonNode.get("createPerson").get("response").get("status");
+        System.out.println("###status: " + status.getNodeType());
+
+        final int idAsNumber = id.asInt();
+        System.out.println("###idAsNumber: " + idAsNumber);
+
+        final String idAsString = id.asText();
+        System.out.println("###idAsString: " + idAsString);
+
+
+        final JsonNode id2 = jsonNode.get("id2");
+        System.out.println("###id2 equlas to id: " + id.asText().equals(id2.asText()));
+
+
+//        if(id.getNodeType() == JsonNodeType.STRING){
+//            System.out.println("String");
+//        }
+
+//        JSONAssert.assertEquals(
+//                "{\n" +
+//                        "  \"id\": \"10101\"\n" +
+//                        "}",
+//                "{\n" +
+//                        "  \"id\": \"10101\",\n" +
+//                        "  \"id\": \"10101\"\n" +
+//                        "}",
+//                false);
+
+
     }
 }

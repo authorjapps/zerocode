@@ -17,7 +17,7 @@ public class Step {
     private final String operation;
     private final String url;
     private final JsonNode request;
-    private final Assertions assertions;
+    private final JsonNode assertions;
 
 
     public Integer getLoop() {
@@ -40,7 +40,7 @@ public class Step {
         return request;
     }
 
-    public Assertions getAssertions() {
+    public JsonNode getAssertions() {
         return assertions;
     }
 
@@ -51,7 +51,7 @@ public class Step {
             @JsonProperty("operation") String operation,
             @JsonProperty("url") String url,
             @JsonProperty("request") JsonNode request,
-            @JsonProperty("assertions") Assertions assertions) {
+            @JsonProperty("assertions") JsonNode assertions) {
         this.loop = loop;
         this.name = name;
         this.operation = operation;

@@ -4,7 +4,7 @@ import org.jsmart.smarttester.core.domain.FlowSpec;
 
 import java.util.function.BiConsumer;
 
-public interface MultiStepsRunner {
+public interface MultiStepsScenarioRunner {
 
     boolean runSteps(FlowSpec flowSpec, FlowStepStatusNotifier flowStepStatusNotifier);
 

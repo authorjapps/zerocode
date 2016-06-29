@@ -1,0 +1,83 @@
+{
+  "flowName": "see assertion section",
+  "loop": 5,
+  "steps": [
+    {
+      "name": "step1",
+      "loop": 3,
+      "url": "/persons/${STATIC_ALPHABET:3}",
+      "operation": "POST",
+      "request": {
+        "body": {
+          "customer": {
+            "firstName": "FIRST_NAME",
+            "staticName": "${STATIC_ALPHABET:5}",
+            "addresses": [
+              "office-1",
+              "home-2"
+            ]
+          }
+        }
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": 1001,
+          "actualName": "ACTUAL NAME",
+          "actualNameSize": 5
+        }
+      }
+    },
+    {
+      "name": "step2",
+      "loop": 3,
+      "url": "/persons/${STATIC_ALPHABET:3}",
+      "operation": "POST",
+      "request": {
+        "body": {
+          "Customer": {
+            "firstName2": "${$.step1.request.body.customer.firstName}",
+            "nickName": "${X_REQUEST_ID}",
+            "noOfAddresses": "${$.step1.request.body.customer.addresses.length()}"
+          }
+        }
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": "$NOT_NULL",
+          "actualName": "${$.step1.request.body.customer.staticName}",
+          "addresses.SIZE": 5,
+          "job": {
+            "rate": 700,
+            "type": "contract"
+          },
+          "allNames": [
+            "Rose, Call me by Any Name would Smell Sweet",
+            {
+              "firstName": "R Payal",
+              "when": "Initiation",
+              "citizenship": [
+                {
+                  "country": "Italy"
+                },
+                {
+                  "country": "Noorway"
+                }
+              ],
+              "citizenship": "$[]",
+              "citizenship.SIZE": 4,
+              "personalities": "$[]",
+              "pastActivities": "$[]"
+
+            },
+            {
+              "firstName": "$CONTAINS_STRING:DaddyWithMac",
+              "when": "$NULL"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

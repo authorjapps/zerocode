@@ -1,15 +1,14 @@
 package org.jsmart.smarttester.core.domain;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
-import org.jsmart.smarttester.core.di.SmartServiceModule;
+import org.jsmart.smarttester.core.di.ApplicationMainModule;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
-import org.jukito.UseModules;
+import org.jukito.TestModule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +25,17 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(JukitoRunner.class)
-@UseModules(SmartServiceModule.class)
+//@UseModules(ApplicationMainModule.class)
 public class StepTest {
+    public static class JukitoModule extends TestModule {
+        @Override
+        protected void configureTest() {
+            ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test.properties");
+
+            /* Finally install the main module */
+            install(applicationMainModule);
+        }
+    }
 
     @Inject
     SmartUtils smartUtils;
@@ -47,7 +55,7 @@ public class StepTest {
 
     @Test
     public void shouldDeserializeSingleStep() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("test_smart_test_cases/01_test_json_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/01_test_json_single_step.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
         assertThat(stepDeserialized, notNullValue());
         final String requestJsonAsString = stepDeserialized.getRequest().toString();
@@ -56,23 +64,26 @@ public class StepTest {
         Object queryParams = JsonPath.read(requestJsonAsString, "$.queryParams");
         Object requestHeaders = JsonPath.read(requestJsonAsString, "$.headers");
 
-        System.out.println("### Raw: queryParams" +  queryParams);
-        System.out.println("### Raw: requestHeaders" +  requestHeaders);
+        assertThat(queryParams.toString(), is("{param1=value1, invId=10101}"));
+        assertThat(requestHeaders.toString(), is("{Content-Type=application/json;charset=UTF-8, Cookie=cookie_123}"));
 
-        assertThat(queryParams.toString(), is("{\"invId\":10101,\"param1\":\"value1\"}"));
-        assertThat(requestHeaders.toString(), is("{\"Cookie\":\"cookie_123\",\"Content-Type\":\"application\\/json;charset=UTF-8\"}"));
+        //Map<String, Object> headerMap = smartUtils.readJsonStringAsMap(requestHeaders.toString());
+        //Map<String, Object> queryParamsMap = smartUtils.readJsonStringAsMap(queryParams.toString());
 
-        Map<String, Object> headerMap = smartUtils.readJsonStringAsMap(requestHeaders.toString());
-        Map<String, Object> queryParamsMap = smartUtils.readJsonStringAsMap(queryParams.toString());
+        Map<String, Object> headerMap = (HashMap)requestHeaders;
+        Map<String, Object> queryParamsMap = (HashMap)queryParams;
 
         assertThat(headerMap.get("Cookie"), is("cookie_123"));
         assertThat(queryParamsMap.get("invId"), is(10101));
-        assertThat(stepDeserialized.getAssertions().getStatus(), is(201));
+        //assertThat(stepDeserialized.getAssertions().getStatus(), is(201));
+        assertThat(stepDeserialized.getAssertions().get("status").asInt(), is(201));
+        assertThat(stepDeserialized.getAssertions().get("status").asLong(), is(201L));
+        assertThat(stepDeserialized.getAssertions().get("status").asText(), is("201"));
     }
 
     @Test
     public void shouldSerializeSingleStep() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("test_smart_test_cases/01_test_json_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/01_test_json_single_step.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
 
         JsonNode singleStepNode = mapper.valueToTree(stepDeserialized);

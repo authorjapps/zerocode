@@ -4,20 +4,25 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import org.apache.commons.lang.StringUtils;
-import org.jsmart.smarttester.core.di.SmartServiceModule;
+import org.jsmart.smarttester.core.di.ApplicationMainModule;
 import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.TargetEnv;
+import org.jsmart.smarttester.core.domain.TestPackageRoot;
+import org.jsmart.smarttester.core.engine.assertion.AssertionReport;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class SmartRunner extends ParentRunner<FlowSpec> {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SmartRunner.class);
 
-    private MultiStepsRunner multiStepsRunner;
+    private MultiStepsScenarioRunner multiStepsScenarioRunner;
     private final Class<?> testClass;
     List<FlowSpec> flowSpecs;
     Injector injector;
@@ -26,16 +31,16 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
     protected Description flowDescription;
     protected boolean isRunSuccess;
     protected boolean passed;
-    protected boolean isComplete;
+    protected boolean testRunCompleted;
 
     public SmartRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
         this.testClass = testClass;
 
         /**
-         * Get the SmartUtil, MultiStepsRunner injected from the main guice-Module.
+         * Get the SmartUtil, MultiStepsScenarioRunner injected from the main guice-Module.
          */
-        this.multiStepsRunner = getInjectedMultiStepsRunner();
+        this.multiStepsScenarioRunner = getInjectedMultiStepsRunner();
         this.smartUtils = getInjectedSmartUtilsClass();
     }
 
@@ -76,7 +81,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
         this.flowDescription = Description.createTestDescription(testClass, child.getFlowName());
         return flowDescription;
 
-        /**
+        /*
          * Commented for right click, fix and enable, Try with IntelliJ or Eclipse, see if it works
          */
 
@@ -104,27 +109,21 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
     @Override
     protected void runChild(FlowSpec child, RunNotifier notifier) {
 
+        final Description description = Description.createTestDescription(testClass, child.getFlowName());
+
         // Notify that this single test has been started.
-        // Supply the flowDescription
-        notifier.fireTestStarted(flowDescription);
+        // Supply the scenario/journey name
+        notifier.fireTestStarted(description);
 
-        //
-//        passed = getInjectedMultiStepsRunner().runChildStep(child,
-//                (flowName, stepName) -> {
-//                    isRunSuccess = true;
-//                }
-//        );
-
-        // -OR-
         passed = getInjectedMultiStepsRunner().runSteps(child, new FlowStepStatusNotifier() {
 
             @Override
             public Boolean notifyFlowStepAssertionFailed(String flowName,
                                                       String stepName,
-                                                      List<JsonAssertionFailureResult> failureReportList) {
+                                                      List<AssertionReport> failureReportList) {
 
                 // Generate error report and display in the console stating which expectation(s) did not match
-                notifier.fireTestFailure(new Failure(flowDescription, new RuntimeException(
+                notifier.fireTestFailure(new Failure(description, new RuntimeException(
                         String.format( "Assertion failed for step %s, details:%n%s%n", stepName, StringUtils.join(failureReportList, "\n"))
                 )));
 
@@ -136,10 +135,9 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
                                                          String stepName,
                                                          Exception stepException) {
 
-                // Simply throw the exception, then framework will take care.
-                System.out.println(String.format("Exception occurred while executing Scenario: %s, Step: %s, Details: %s",
+                logger.info(String.format("Exception occurred while executing Scenario: %s, Step: %s, Details: %s",
                         flowName, stepName, stepException));
-                notifier.fireTestFailure(new Failure(flowDescription, stepException));
+                notifier.fireTestFailure(new Failure(description, stepException));
 
                 return false;
             }
@@ -153,20 +151,25 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
 
         });
 
+        testRunCompleted = true;
+
         //
         if (passed) {
-            notifier.fireTestFinished(flowDescription);
+            notifier.fireTestFinished(description);
         }
     }
 
-    private MultiStepsRunner getInjectedMultiStepsRunner() {
-        multiStepsRunner = getInjector().getInstance(MultiStepsRunner.class);
-        return multiStepsRunner;
+    private MultiStepsScenarioRunner getInjectedMultiStepsRunner() {
+        multiStepsScenarioRunner = getInjector().getInstance(MultiStepsScenarioRunner.class);
+        return multiStepsScenarioRunner;
     }
 
     public Injector getInjector() {
-        //Synchronise this with e.g. synchronized (IptSmartRunner.class) {}
-        injector = Guice.createInjector(new SmartServiceModule());
+        //TODO: Synchronise this with e.g. synchronized (IptSmartRunner.class) {}
+        final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
+        String serverEnv = envAnnotation != null? envAnnotation.value() : "config_hosts.properties";
+        injector = Guice.createInjector(new ApplicationMainModule(serverEnv));
+        //injector = Guice.createInjector(new ApplicationMainModule());
         return injector;
     }
 
@@ -182,11 +185,11 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
         return passed;
     }
 
-    public boolean isComplete() {
-        return isComplete;
+    public boolean isTestRunCompleted() {
+        return testRunCompleted;
     }
 
-    public void setMultiStepsRunner(MultiStepsRunner multiStepsRunner) {
-        this.multiStepsRunner = multiStepsRunner;
+    public void setMultiStepsScenarioRunner(MultiStepsScenarioRunner multiStepsScenarioRunner) {
+        this.multiStepsScenarioRunner = multiStepsScenarioRunner;
     }
 }

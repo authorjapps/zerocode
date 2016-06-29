@@ -1,5 +1,6 @@
 package org.jsmart.smarttester.core.runner;
 
+import org.jsmart.smarttester.core.domain.SmartTestCase;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

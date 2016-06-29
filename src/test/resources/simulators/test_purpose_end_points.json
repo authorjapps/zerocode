@@ -1,0 +1,32 @@
+{
+  "name" : "Bathroom-Simulator",
+  "apis" : [
+    {
+      "name": "Get Bathroom by Id",
+      "operation": "GET",
+      "url": "/home/bathroom/1",
+      "response": {
+        "status": 200,
+        "body": {
+          "id": 1,
+          "name": "Shower",
+          "availability": true
+        }
+      }
+    },
+    {
+      "name": "POST Bathroom - Create",
+      "operation": "POST",
+      "url": "/home/bathroom",
+      "response": {
+        "status": 201,
+        "body": {
+          "id": 1,
+          "name": "Shower",
+          "availability": true
+        }
+      }
+    }
+
+  ]
+}

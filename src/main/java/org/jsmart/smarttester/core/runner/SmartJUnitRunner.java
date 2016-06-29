@@ -1,17 +1,37 @@
 package org.jsmart.smarttester.core.runner;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import org.apache.commons.lang.StringUtils;
+import org.jsmart.smarttester.core.di.ApplicationMainModule;
+import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.SmartTestCase;
+import org.jsmart.smarttester.core.domain.TargetEnv;
+import org.jsmart.smarttester.core.engine.assertion.AssertionReport;
+import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SmartJUnitRunner.class);
+
     static int i = 1;
+    protected boolean isRunSuccess;
+    protected boolean passed;
+    protected boolean testRunCompleted;
+    private MultiStepsScenarioRunner multiStepsScenarioRunner;
+    private final Class<?> testClass;
+    Injector injector;
+    SmartUtils smartUtils;
+
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
@@ -23,6 +43,10 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
 
     public SmartJUnitRunner(Class<?> klass) throws InitializationError {
         super(klass);
+
+        this.testClass = klass;
+        this.smartUtils = getInjectedSmartUtilsClass();
+
         smartTestCaseNames = getSmartChildrenList();
     }
 
@@ -55,16 +79,71 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
 
         /**
          * TODO: Run the Single JSON and assert, create the JUNIT Assertion report.
-         * Capability testes, Navigation SUCCESS
+         * Capability tests, Navigation SUCCESS
          *
          */
+        final Description description = describeChild(method);
 
-        notifier.fireTestStarted(describeChild(method));
-        if(true){
-            notifier.fireTestFinished(describeChild(method));
-        } else{
-            notifier.fireTestFailure(new Failure(describeChild(method), new RuntimeException("still wip")));
+        notifier.fireTestStarted(description);
+
+        //
+        logger.info("### Running currentTestCase : " + currentTestCase);
+
+        FlowSpec child = null;
+        try {
+            child = smartUtils.jsonFileToJava(currentTestCase, FlowSpec.class);
+            logger.info("### Found currentTestCase : -" + child + "-###");
+
+            passed = getInjectedMultiStepsRunner().runSteps(child, new FlowStepStatusNotifier() {
+
+                @Override
+                public Boolean notifyFlowStepAssertionFailed(String flowName,
+                                                             String stepName,
+                                                             List<AssertionReport> failureReportList) {
+
+                    // Generate error report and display in the console stating which expectation(s) did not match
+                    notifier.fireTestFailure(new Failure(description, new RuntimeException(
+                            String.format("Assertion failed for step %s, details:%n%s%n", stepName, StringUtils.join(failureReportList, "\n"))
+                    )));
+
+                    return false;
+                }
+
+                @Override
+                public Boolean notifyFlowStepExecutionException(String flowName,
+                                                                String stepName,
+                                                                Exception stepException) {
+
+                    logger.info(String.format("Exception occurred while executing Scenario: %s, Step: %s, Details: %s",
+                            flowName, stepName, stepException));
+                    notifier.fireTestFailure(new Failure(description, stepException));
+
+                    return false;
+                }
+
+                @Override
+                public Boolean notifyFlowStepExecutionPassed(String flowName, String stepName) {
+                    // log that flowname with stepname passed.
+                    logger.info(String.format("PASSED:%s->%s", flowName, stepName));
+                    return true;
+                }
+
+            });
+        } catch (Exception ioEx) {
+            notifier.fireTestFailure(new Failure(description, ioEx));
+            ioEx.printStackTrace();
         }
+
+        testRunCompleted = true;
+        //
+
+        if (passed) {
+            logger.info(String.format("All Steps for [%s] PASSED.\nSteps are:%s", child.getFlowName(), child.getSteps()));
+            notifier.fireTestFinished(description);
+        }
+//        else{
+//            notifier.fireTestFailure(new Failure(description, new RuntimeException("still wip")));
+//        }
     }
 
     public List<String> getSmartTestCaseNames() {
@@ -74,4 +153,23 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
     public String getCurrentTestCase() {
         return currentTestCase;
     }
+
+    //
+    private MultiStepsScenarioRunner getInjectedMultiStepsRunner() {
+        multiStepsScenarioRunner = getInjector().getInstance(MultiStepsScenarioRunner.class);
+        return multiStepsScenarioRunner;
+    }
+
+    public Injector getInjector() {
+        //TODO: Synchronise this with e.g. synchronized (IptSmartRunner.class) {}
+        final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
+        String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
+        injector = Guice.createInjector(new ApplicationMainModule(serverEnv));
+        return injector;
+    }
+
+    protected SmartUtils getInjectedSmartUtilsClass() {
+        return getInjector().getInstance(SmartUtils.class);
+    }
+    //
 }
