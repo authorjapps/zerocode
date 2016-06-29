@@ -6,7 +6,7 @@ import org.jsmart.smarttester.core.runner.SmartRunner;
 import org.junit.runner.RunWith;
 
 @TargetEnv("dev_test.properties")
-@TestPackageRoot("01_test_cases")
+@TestPackageRoot("01_verification_test_cases")
 @RunWith(SmartRunner.class)
 public class SmartPackagedVerification {
 

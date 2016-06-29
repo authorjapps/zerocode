@@ -25,7 +25,6 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SmartJUnitRunner.class);
 
     static int i = 1;
-    protected boolean isRunSuccess;
     protected boolean passed;
     protected boolean testRunCompleted;
     private MultiStepsScenarioRunner multiStepsScenarioRunner;
@@ -79,15 +78,12 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
         }
 
         /**
-         * TODO: Run the Single JSON and assert, create the JUNIT Assertion report.
          * Capability tests, Navigation SUCCESS
-         *
          */
         final Description description = describeChild(method);
 
         notifier.fireTestStarted(description);
 
-        //
         logger.info("### Running currentTestCase : " + currentTestCase);
 
         FlowSpec child = null;
@@ -137,7 +133,6 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
         }
 
         testRunCompleted = true;
-        //
 
         if (passed) {
             logger.info(String.format("\n**All Steps for [%s] FINISHED**.\nSteps are:%s",
@@ -155,7 +150,6 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
         return currentTestCase;
     }
 
-    //
     private MultiStepsScenarioRunner getInjectedMultiStepsRunner() {
         multiStepsScenarioRunner = getInjector().getInstance(MultiStepsScenarioRunner.class);
         return multiStepsScenarioRunner;
@@ -172,5 +166,4 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
     protected SmartUtils getInjectedSmartUtilsClass() {
         return getInjector().getInstance(SmartUtils.class);
     }
-    //
 }

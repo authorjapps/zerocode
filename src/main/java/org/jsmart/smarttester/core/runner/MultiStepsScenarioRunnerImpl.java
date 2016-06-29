@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static java.lang.String.format;
 import static org.jsmart.smarttester.core.logbuilder.LogCorelationshipPrinter.createRelationshipId;
 import static org.jsmart.smarttester.core.utils.SmartUtils.prettyPrintJson;
 
@@ -130,6 +129,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
 
                 LOGGER.info("\n---------> Assertion: <----------\n{}", prettyPrintJson(resolvedAssertionJson));
 
+                // TODO: capture the assertions into log. currently not writing bcaz it's only printing
                 List<JsonAsserter> asserters = jsonTestProcesor.createAssertersFrom(resolvedAssertionJson);
                 List<AssertionReport> failureResults = jsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult); //<-- write code
 

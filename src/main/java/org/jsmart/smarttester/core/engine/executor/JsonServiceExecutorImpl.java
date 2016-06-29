@@ -9,18 +9,15 @@ import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 import org.jsmart.smarttester.core.engine.mocker.RestEndPointMocker;
-import org.jsmart.smarttester.core.logbuilder.LogCorelationshipPrinter;
 import org.jsmart.smarttester.core.utils.HomeOfficeJsonUtils;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import static java.lang.String.format;
 
@@ -37,7 +34,6 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     @Inject
     SmartUtils smartUtils;
     //guice
-    LogCorelationshipPrinter logCorelationshipPrinter = LogCorelationshipPrinter.newInstance(logger);
 
     private Object COOKIE_JSESSIONID_VALUE;
 
@@ -78,8 +74,6 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
             throw new RuntimeException(exc);
 
-        } finally {
-            //logCorelationshipPrinter.print();
         }
     }
 
@@ -188,7 +182,6 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     }
 
     private ClientRequest setRequestHeaders(Object headers, ClientRequest clientExecutor) {
-        //Map headersMap = HomeOfficeJsonUtils.readHeadersAsMap(headers);
         Map headersMap = (HashMap)headers;
         for(Object key: headersMap.keySet()){
             clientExecutor.header((String)key, headersMap.get(key));
