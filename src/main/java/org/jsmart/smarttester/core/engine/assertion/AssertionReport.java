@@ -31,6 +31,6 @@ public class AssertionReport {
 
     @Override
     public String toString() {
-        return String.format("Path '%s' with actual value '%s' did not match the expected value '%s'", path, actual, expected);
+        return String.format("Assertion path '%s' with actual value '%s' did not match the expected value '%s'", path, actual, expected);
     }
 }

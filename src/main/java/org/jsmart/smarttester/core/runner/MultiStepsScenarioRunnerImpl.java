@@ -13,11 +13,14 @@ import org.jsmart.smarttester.core.engine.executor.JsonServiceExecutor;
 import org.jsmart.smarttester.core.engine.preprocessor.JsonTestProcesor;
 import org.jsmart.smarttester.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.smarttester.core.engine.preprocessor.StepExecutionState;
+import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+
+import static org.jsmart.smarttester.core.utils.SmartUtils.prettyPrintJson;
 
 @Singleton
 public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
@@ -53,6 +56,9 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
         for(Step thisStep : scenario.getSteps()){
+            // Another way to get the String
+            // String requestJson = objectMapper.valueToTree(thisStep.getRequest()).toString();
+
             final String requestJsonAsString = thisStep.getRequest().toString();
             LOGGER.info(String.format("\n###RAW: Journey:%s, Step:%s", scenario.getFlowName(), thisStep.getName()));
 
@@ -67,9 +73,6 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
 
             String executionResult;
             try{
-                // Another way to get the String
-                // String requestJson = objectMapper.valueToTree(thisStep.getRequest()).toString();
-
                 String serviceName = thisStep.getUrl();
                 String operationName = thisStep.getOperation();
 
@@ -94,6 +97,9 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                         thisStep.getAssertions().toString(),
                         scenarioExecutionState.getResolvedScenarioState()
                 );
+
+                LOGGER.info("\n---------> Assertion: <----------\n"
+                        + prettyPrintJson(resolvedAssertionJson));
 
                 // TODO: Collect the assertion result into this list, say field by field
                 List<JsonAsserter> asserters = jsonTestProcesor.createAssertersFrom(resolvedAssertionJson);

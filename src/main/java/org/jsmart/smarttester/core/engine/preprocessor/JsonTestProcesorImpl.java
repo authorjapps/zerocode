@@ -239,7 +239,7 @@ public class JsonTestProcesorImpl implements JsonTestProcesor {
                 return null;
 
             } else {
-                throw new RuntimeException(format("Opps! Unsupported JSON primitive to Java : %s by the framework", jsonNode.getClass().getName()));
+                throw new RuntimeException(format("Oops! Unsupported JSON primitive to Java : %s by the framework", jsonNode.getClass().getName()));
             }
         } else {
             throw new RuntimeException(format("Unsupported JSON Type: %s", jsonNode.getClass().getName()));
