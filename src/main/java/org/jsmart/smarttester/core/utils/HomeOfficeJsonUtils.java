@@ -75,8 +75,6 @@ public class HomeOfficeJsonUtils {
                 "	\"body\" : " + resultBodyContent + "\n" +
                 " }";
 
-        logger.info("\n#bodyJson -> assertJson: " + assertJson);
-
         String formattedStr = SmartUtils.prettyPrintJson(assertJson);
 
         return formattedStr;

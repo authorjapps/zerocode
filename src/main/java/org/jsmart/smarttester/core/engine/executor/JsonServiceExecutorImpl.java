@@ -153,7 +153,6 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         }
 
         String resultForAssertion = HomeOfficeJsonUtils.createAndReturnAssertionResultJson(httpResponseCode, resultBodyContent, locationHref);
-        //String resultForAssertion = HomeOfficeJsonUtils.javaObjectAsString(serverResponse);
 
         return resultForAssertion;
     }
@@ -162,7 +161,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         try{
             return JsonPath.read(requestJson, jsonPath);
         } catch(PathNotFoundException pEx){
-            logger.warn("No " + jsonPath + " was present in the request.");
+            logger.debug("No " + jsonPath + " was present in the request.");
             return  null;
         }
     }

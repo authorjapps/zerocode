@@ -27,6 +27,11 @@ public class LogCorelationshipPrinter {
         return requestLogBuilder;
     }
 
+    public LogCorelationshipPrinter assertion(String assertionJson){
+        responseLogBuilder.assertionSection(assertionJson);
+        return this;
+    }
+
     public ResponseLogBuilder aResponseBuilder() {
         return responseLogBuilder;
     }
@@ -37,11 +42,13 @@ public class LogCorelationshipPrinter {
 
     public void print() {
 
-        logger.info(String.format("%s %s \nResponse delay:%s milli-secs \n-done-\n\n",
+        logger.info(String.format("%s %s \n*Response delay:%s milli-secs \n-done-\n",
                 requestLogBuilder.toString(),
                 responseLogBuilder.toString(),
-                Duration.between(requestLogBuilder.getRequestTimeStamp(),
+                Duration.between(
+                        requestLogBuilder.getRequestTimeStamp(),
                         responseLogBuilder.getResponseTimeStamp())
+
                         /*
                          * 1000000D: Without D it does a integer division and the precision is lost
                          * Note: Java does not have a get(millisec-tem[poral) as of now, only nano

@@ -84,12 +84,12 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
 
         notifier.fireTestStarted(description);
 
-        logger.info("### Running currentTestCase : " + currentTestCase);
+        logger.debug("### Running currentTestCase : " + currentTestCase);
 
         FlowSpec child = null;
         try {
             child = smartUtils.jsonFileToJava(currentTestCase, FlowSpec.class);
-            logger.info("### Found currentTestCase : -" + child + "-###");
+            logger.debug("### Found currentTestCase : -" + child + "-###");
 
             passed = getInjectedMultiStepsRunner().runSteps(child, new FlowStepStatusNotifier() {
 

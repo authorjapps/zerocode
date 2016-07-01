@@ -127,7 +127,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                         scenarioExecutionState.getResolvedScenarioState()
                 );
 
-                LOGGER.info("\n---------> Assertion: <----------\n{}", prettyPrintJson(resolvedAssertionJson));
+                logCorelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
 
                 // TODO: capture the assertions into log. currently not writing bcaz it's only printing
                 List<JsonAsserter> asserters = jsonTestProcesor.createAssertersFrom(resolvedAssertionJson);

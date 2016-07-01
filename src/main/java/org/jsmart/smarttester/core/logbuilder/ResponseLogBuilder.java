@@ -6,6 +6,7 @@ public class ResponseLogBuilder {
     String relationshipId;
     LocalDateTime responseTimeStamp;
     String response;
+    String assertion;
 
 
     public ResponseLogBuilder relationshipId(String relationshipId) {
@@ -31,7 +32,12 @@ public class ResponseLogBuilder {
     public String toString() {
         return relationshipId +
                 "\nResponse:\n" + response +
-                "\nresponseTimeStamp:" + responseTimeStamp;
+                "\n*responseTimeStamp:" + responseTimeStamp +
+                "\n\n---------> Assertion: <----------\n" + assertion;
     }
 
+    public ResponseLogBuilder assertionSection(String assertionJson) {
+        this.assertion = assertionJson;
+        return this;
+    }
 }
