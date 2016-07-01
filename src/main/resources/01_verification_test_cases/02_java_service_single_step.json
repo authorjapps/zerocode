@@ -1,5 +1,5 @@
 {
-  "flowName": "DEV-Java Service",
+  "scenarioName": "DEV-Java Service",
   "loop": 5,
   "steps": [
     {

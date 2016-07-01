@@ -1,5 +1,5 @@
 {
-  "flowName": "Given_When_Then-Flow name",
+  "scenarioName": "Given_When_Then-Flow name",
   "loop": 5,
   "steps": [
     {

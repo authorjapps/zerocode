@@ -11,16 +11,16 @@ import java.util.List;
 public class FlowSpec {
 
     private final Integer loop;
-    private final String flowName;
+    private final String scenarioName;
     private final List<Step> steps;
 
     @JsonCreator
     public FlowSpec(
             @JsonProperty("loop") Integer loop,
-            @JsonProperty("flowName") String flowName,
+            @JsonProperty("scenarioName") String scenarioName,
             @JsonProperty("steps") List<Step> steps) {
         this.loop = loop;
-        this.flowName = flowName;
+        this.scenarioName = scenarioName;
         this.steps = steps;
     }
 
@@ -28,8 +28,8 @@ public class FlowSpec {
         return loop;
     }
 
-    public String getFlowName() {
-        return flowName;
+    public String getScenarioName() {
+        return scenarioName;
     }
 
     public List<Step> getSteps() {
@@ -40,7 +40,7 @@ public class FlowSpec {
     public String toString() {
         return "FlowSpec{" +
                 "loop=" + loop +
-                ", flowName='" + flowName + '\'' +
+                ", scenarioName='" + scenarioName + '\'' +
                 ", steps=" + steps +
                 '}';
     }

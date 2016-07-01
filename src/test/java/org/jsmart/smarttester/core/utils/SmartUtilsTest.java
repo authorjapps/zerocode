@@ -76,18 +76,18 @@ public class SmartUtilsTest {
         List<FlowSpec> allTestCaseFiles = smartUtils.getFlowSpecListByPackage("04_test_flow_cases");
 
         assertThat(allTestCaseFiles.size(), is(3));
-        assertThat(allTestCaseFiles.get(0).getFlowName(), is("Given_When_Then_1"));
-        assertThat(allTestCaseFiles.get(2).getFlowName(), is("Given_When_Then-Flow2"));
+        assertThat(allTestCaseFiles.get(0).getScenarioName(), is("Given_When_Then_1"));
+        assertThat(allTestCaseFiles.get(2).getScenarioName(), is("Given_When_Then-Flow2"));
     }
 
 
     @Test(expected = RuntimeException.class)
-    public void willReadAllfiles_find_DuplicatesFlownames_old_style() throws Exception {
+    public void willReadAllfiles_find_DuplicatesScenarioNamenames_old_style() throws Exception {
         smartUtils.checkDuplicateNames("04_test_flow_cases");
     }
 
     @Test
-    public void willReadAllfiles_find_DuplicatesFlownames() throws Exception {
+    public void willReadAllfiles_find_DuplicateScenarioNames() throws Exception {
         expectedException.expect(RuntimeException.class);
         expectedException.expectMessage("Oops! Can not run with multiple flow with same name.");
         smartUtils.checkDuplicateNames("04_test_flow_cases");

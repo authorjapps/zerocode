@@ -1,5 +1,5 @@
 {
-  "flowName": "Given_When_Then-Flow name For Java Service",
+  "scenarioName": "Given_When_Then-Flow name For Java Service",
   "loop": 5,
   //comments -- Allowed
   "steps": [

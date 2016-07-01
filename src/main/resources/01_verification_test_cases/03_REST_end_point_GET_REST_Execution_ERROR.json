@@ -1,5 +1,5 @@
 {
-  "flowName": "DEV-Will Execute GET and Fail - Due to REST Execution",
+  "scenarioName": "DEV-Will Execute GET and Fail - Due to REST Execution",
   "loop": 5, //comments -- Allowed
   "steps": [
     {

@@ -78,7 +78,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
     @Override
     protected Description describeChild(FlowSpec child) {
 
-        this.flowDescription = Description.createTestDescription(testClass, child.getFlowName());
+        this.flowDescription = Description.createTestDescription(testClass, child.getScenarioName());
         return flowDescription;
 
         /*
@@ -93,7 +93,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
             throw new RuntimeException("Right Click Error. Ah, error while introducing annotation" + e);
         }
 
-        //Description testDescription = Description.createTestDescription(testClass, child.getFlowName(), annotation);
+        //Description testDescription = Description.createTestDescription(testClass, child.getScenarioName(), annotation);
         */
     }
 
@@ -109,7 +109,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
     @Override
     protected void runChild(FlowSpec child, RunNotifier notifier) {
 
-        final Description description = Description.createTestDescription(testClass, child.getFlowName());
+        final Description description = Description.createTestDescription(testClass, child.getScenarioName());
 
         // Notify that this single test has been started.
         // Supply the scenario/journey name
@@ -118,7 +118,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
         passed = getInjectedMultiStepsRunner().runSteps(child, new FlowStepStatusNotifier() {
 
             @Override
-            public Boolean notifyFlowStepAssertionFailed(String flowName,
+            public Boolean notifyFlowStepAssertionFailed(String scenarioName,
                                                       String stepName,
                                                       List<AssertionReport> failureReportList) {
 
@@ -131,21 +131,21 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
             }
 
             @Override
-            public Boolean notifyFlowStepExecutionException(String flowName,
+            public Boolean notifyFlowStepExecutionException(String scenarioName,
                                                          String stepName,
                                                          Exception stepException) {
 
                 logger.info(String.format("Exception occurred while executing Scenario: %s, Step: %s, Details: %s",
-                        flowName, stepName, stepException));
+                        scenarioName, stepName, stepException));
                 notifier.fireTestFailure(new Failure(description, stepException));
 
                 return false;
             }
 
             @Override
-            public Boolean notifyFlowStepExecutionPassed(String flowName, String stepName) {
-                // log that flowname with stepname passed.
-                logger.info(String.format("\n***Step PASSED:%s->%s", flowName, stepName));
+            public Boolean notifyFlowStepExecutionPassed(String scenarioName, String stepName) {
+                // log that scenarioName with stepname passed.
+                logger.info(String.format("\n***Step PASSED:%s->%s", scenarioName, stepName));
                 return true;
             }
 

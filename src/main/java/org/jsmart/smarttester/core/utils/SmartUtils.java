@@ -87,8 +87,8 @@ public class SmartUtils {
 
         getFlowSpecListByPackage(testPackageName).stream()
                 .forEach(flowSpec -> {
-                    if (!oops.add(flowSpec.getFlowName())) {
-                        throw new RuntimeException("Oops! Can not run with multiple flow with same name. Found duplicate: " + flowSpec.getFlowName());
+                    if (!oops.add(flowSpec.getScenarioName())) {
+                        throw new RuntimeException("Oops! Can not run with multiple flow with same name. Found duplicate: " + flowSpec.getScenarioName());
                     }
 
                     /**

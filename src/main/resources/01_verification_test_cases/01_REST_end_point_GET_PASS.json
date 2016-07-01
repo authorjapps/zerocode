@@ -1,5 +1,5 @@
 {
-  "flowName": "DEV-Will Execute GET And Pass _IF No Connection Error",
+  "scenarioName": "DEV-Will Execute GET And Pass _IF No Connection Error",
   "loop": 5, //comments -- Allowed
   "steps": [
     {

@@ -1,5 +1,5 @@
 {
-  "flowName": "Will Execute GET",
+  "scenarioName": "Will Execute GET",
   "loop": 5, //comments -- Allowed
   "steps": [
     {

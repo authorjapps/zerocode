@@ -1,5 +1,5 @@
 {
-  "flowName": "Will Get A bath Room",
+  "scenarioName": "Will Get A bath Room",
   "loop": 5, //comments -- Allowed
   "steps": [
     {

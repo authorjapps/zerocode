@@ -57,7 +57,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
     @Override
     public boolean runSteps(FlowSpec scenario, FlowStepStatusNotifier flowStepStatusNotifier) {
 
-        LOGGER.info("\n-------------------------- Scenario:{} -------------------------\n", scenario.getFlowName());
+        LOGGER.info("\n-------------------------- Scenario:{} -------------------------\n", scenario.getScenarioName());
 
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
@@ -135,11 +135,11 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
 
                 // TODO: During this step: if assertion failed
                 if (!failureResults.isEmpty()) {
-                    return flowStepStatusNotifier.notifyFlowStepAssertionFailed(scenario.getFlowName(), thisStep.getName(), failureResults);
+                    return flowStepStatusNotifier.notifyFlowStepAssertionFailed(scenario.getScenarioName(), thisStep.getName(), failureResults);
                 }
 
                 // TODO: Otherwise test passed
-                flowStepStatusNotifier.notifyFlowStepExecutionPassed(scenario.getFlowName(), thisStep.getName());
+                flowStepStatusNotifier.notifyFlowStepExecutionPassed(scenario.getScenarioName(), thisStep.getName());
 
             } catch(Exception ex){
                 logCorelationshipPrinter.aResponseBuilder()
@@ -149,7 +149,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
 
                 // During this step: if any exception occurred
                 return flowStepStatusNotifier.notifyFlowStepExecutionException(
-                        scenario.getFlowName(),
+                        scenario.getScenarioName(),
                         thisStep.getName(),
                         new RuntimeException("Smart Step execution failed. Details:" + ex)
                 );
@@ -179,7 +179,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
     public boolean runChildStep(FlowSpec flowSpec, BiConsumer testPassHandler) {
 
         flowSpec.getSteps()
-                .forEach(step -> testPassHandler.accept(flowSpec.getFlowName(), step.getName()));
+                .forEach(step -> testPassHandler.accept(flowSpec.getScenarioName(), step.getName()));
 
         return true;
     }
@@ -193,7 +193,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                     testObserver.acc
                 });
 
-                //.forEach(step -> testPassHandler.accept(flowSpec.getFlowName(), step.getName()));
+                //.forEach(step -> testPassHandler.accept(flowSpec.getScenarioName(), step.getName()));
 
         return true;
     }*/

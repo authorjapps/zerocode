@@ -89,12 +89,12 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
         FlowSpec child = null;
         try {
             child = smartUtils.jsonFileToJava(currentTestCase, FlowSpec.class);
-            logger.debug("### Found currentTestCase : -" + child + "-###");
+            logger.debug("### Found currentTestCase : -" + child);
 
             passed = getInjectedMultiStepsRunner().runSteps(child, new FlowStepStatusNotifier() {
 
                 @Override
-                public Boolean notifyFlowStepAssertionFailed(String flowName,
+                public Boolean notifyFlowStepAssertionFailed(String scenarioName,
                                                              String stepName,
                                                              List<AssertionReport> failureReportList) {
 
@@ -107,21 +107,21 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
                 }
 
                 @Override
-                public Boolean notifyFlowStepExecutionException(String flowName,
+                public Boolean notifyFlowStepExecutionException(String scenarioName,
                                                                 String stepName,
                                                                 Exception stepException) {
 
                     logger.info(String.format("Exception occurred while executing Scenario: %s, Step: %s, Details: %s",
-                            flowName, stepName, stepException));
+                            scenarioName, stepName, stepException));
                     notifier.fireTestFailure(new Failure(description, stepException));
 
                     return false;
                 }
 
                 @Override
-                public Boolean notifyFlowStepExecutionPassed(String flowName, String stepName) {
-                    // log that flowname with stepname passed.
-                    logger.info(String.format("\n**Step PASSED:%s->%s", flowName, stepName));
+                public Boolean notifyFlowStepExecutionPassed(String scenarioName, String stepName) {
+                    // log that scenarioName with stepname passed.
+                    logger.info(String.format("\n**Step PASSED:%s->%s", scenarioName, stepName));
                     return true;
                 }
 
@@ -136,7 +136,7 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
 
         if (passed) {
             logger.info(String.format("\n**All Steps for [%s] FINISHED**.\nSteps are:%s",
-                    child.getFlowName(),
+                    child.getScenarioName(),
                     child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
             notifier.fireTestFinished(description);
         }

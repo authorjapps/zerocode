@@ -1,5 +1,5 @@
 {
-  "flowName": "Will Simulate POST",
+  "scenarioName": "Will Simulate POST",
   "loop": 5, //comments -- Allowed
   "steps": [
     {

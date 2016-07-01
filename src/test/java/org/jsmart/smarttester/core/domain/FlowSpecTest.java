@@ -2,7 +2,6 @@ package org.jsmart.smarttester.core.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
 import org.jsmart.smarttester.core.di.ApplicationMainModule;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
@@ -58,7 +57,7 @@ public class FlowSpecTest {
         assertThat(flowDeserialized, notNullValue());
         assertThat(flowDeserialized.getSteps().size(), is(1));
         assertThat(flowDeserialized.getLoop(), is(5));
-        assertThat(flowDeserialized.getFlowName(), containsString("Given_When_Then-Flow"));
+        assertThat(flowDeserialized.getScenarioName(), containsString("Given_When_Then-Flow"));
     }
 
     @Test
@@ -68,7 +67,7 @@ public class FlowSpecTest {
 
         assertThat(flowDeserialized, notNullValue());
         assertThat(flowDeserialized.getSteps().size(), is(2));
-        assertThat(flowDeserialized.getFlowName(), containsString("Given_When_Then-Flow"));
+        assertThat(flowDeserialized.getScenarioName(), containsString("Given_When_Then-Flow"));
         assertThat(flowDeserialized.getSteps().get(1).getUrl(), containsString("/url2/path"));
     }
 
@@ -85,7 +84,7 @@ public class FlowSpecTest {
          */
         JSONAssert.assertEquals(flowSpecNode.toString(), jsonDocumentAsString, true);
 
-        assertThat(flowSpecNode.get("flowName").asText(), containsString("Given_When_Then"));
+        assertThat(flowSpecNode.get("scenarioName").asText(), containsString("Given_When_Then"));
         assertThat(flowSpecNode.get("loop").asInt(), is(5));
 
     }
