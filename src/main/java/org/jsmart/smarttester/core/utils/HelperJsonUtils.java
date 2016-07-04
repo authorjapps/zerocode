@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-// Move this to Smartutils class
+// TODO: Move this to Smartutils class
 public class HelperJsonUtils {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(HelperJsonUtils.class);
     private static ObjectMapper mapper = new ObjectMapperProvider().get();
@@ -43,6 +43,7 @@ public class HelperJsonUtils {
             return bodyJsonNode.toString();
 
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
 
@@ -92,6 +93,7 @@ public class HelperJsonUtils {
             ObjectMapper ow = new ObjectMapperProvider().get();
             return ow.writeValueAsString(value);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException("Exception while converting IPT Java Object to JsonString" + e);
         }
     }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.lang.String.format;
+import static org.jsmart.smarttester.core.utils.SmartUtils.prettyPrintJson;
 
 public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     private static final Logger logger = LoggerFactory.getLogger(JsonServiceExecutorImpl.class);
@@ -47,7 +49,6 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         if( javaExecutor == null) {
             throw new RuntimeException("Can not proceed as the framework could not load the executors. ");
         }
-
 
         List<Class<?>> argumentTypes = javaExecutor.argumentTypes(serviceName, methodName);
 
@@ -107,48 +108,74 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
             logger.info("#SUCCESS: End point simulated.");
             return "{\"status\": 200}";
         }
-        //
 
+        /*
+         * Get the request body content
+         */
+        String reqBodyAsString = HelperJsonUtils.getContentAsItIsJson(bodyContent);
 
-        // TODO: String restMethodParam = smartUtils.getContentAsItIsJson(bodyContent);
-        String restMethodParam = HelperJsonUtils.getContentAsItIsJson(bodyContent);
-
-        //set the query parameters
+        /*
+         * set the query parameters
+         */
         if(queryParams != null){
             String qualifiedQueryParams = createQualifiedQueryParams(queryParams);
             httpUrl = httpUrl + qualifiedQueryParams;
         }
-
         ClientRequest clientExecutor = httpClientExecutor.createRequest(httpUrl);
 
-        //set headers
+        /*
+         * set the headers
+         */
         if(headers != null){
             setRequestHeaders(headers, clientExecutor);
         }
+
+        /*
+         * Highly discouraged to use sessions, but in case any server uses session,
+         * then it's taken care here.
+         */
         if(COOKIE_JSESSIONID_VALUE != null) {
             clientExecutor.header("Cookie", COOKIE_JSESSIONID_VALUE);
         }
 
-        // set the body
-        if(restMethodParam != null){
-            clientExecutor.body("application/json", restMethodParam);
+        /*
+         * set the request body
+         */
+        if(reqBodyAsString != null){
+            clientExecutor.body("application/json", reqBodyAsString);
         }
 
         // set GET POST PUT DELETE
         // TODO: if none of these then throw exception
         clientExecutor.setHttpMethod(methodName);
 
-        // now execute
+        /*
+         * now execute the request
+         */
         ClientResponse serverResponse = clientExecutor.execute();
 
-        // now read the response for headers, body, status
-        final MultivaluedMap responseHeaders = serverResponse.getHeaders();
-        final String bodyAsString = (String)serverResponse.getEntity(String.class);
-        final JsonNode bodyAsNode = objectMapper.readValue(bodyAsString, JsonNode.class);
+        /*
+         * now read the response for :
+         * - headers
+         * - body
+         * - status
+         */
         final int responseStatus = serverResponse.getResponseStatus().getStatusCode();
-        final String locationHref = serverResponse.getLocation() != null? serverResponse.getLocation().getHref(): null;
 
-        Response response = new Response(responseStatus, responseHeaders, bodyAsNode, locationHref);
+        final MultivaluedMap responseHeaders = serverResponse.getHeaders();
+
+        final String respBodyAsString = (String)serverResponse.getEntity(String.class);
+        final JsonNode bodyAsNode;
+        if(StringUtils.isEmpty(respBodyAsString)){
+            bodyAsNode = null;
+        } else {
+            bodyAsNode = objectMapper.readValue(respBodyAsString, JsonNode.class);
+        }
+
+        // location is already part of header, but in an array
+        // final String locationHref = serverResponse.getLocation() != null? serverResponse.getLocation().getHref(): null;
+
+        Response response = new Response(responseStatus, responseHeaders, bodyAsNode, null);
         final String relevantResponse = objectMapper.writeValueAsString(response);
 
         Set headerKeySet = serverResponse.getHeaders().keySet();
@@ -158,7 +185,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
             }
         }
 
-        return SmartUtils.prettyPrintJson(relevantResponse);
+        return prettyPrintJson(relevantResponse);
     }
 
     private Object readJsonPathOrElseNull(String requestJson, String jsonPath) {

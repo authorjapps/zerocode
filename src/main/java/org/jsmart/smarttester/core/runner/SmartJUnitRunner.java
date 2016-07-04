@@ -128,6 +128,7 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
 
             });
         } catch (Exception ioEx) {
+            ioEx.printStackTrace();
             notifier.fireTestFailure(new Failure(description, ioEx));
             //return false;
             //ioEx.printStackTrace();
@@ -136,7 +137,7 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
         testRunCompleted = true;
 
         if (passed) {
-            logger.info(String.format("\n**All Steps for [%s] FINISHED**.\nSteps are:%s",
+            logger.info(String.format("\n**All Steps for [%s] FINISHED**.\nSteps were:%s",
                     child.getScenarioName(),
                     child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
             notifier.fireTestFinished(description);
