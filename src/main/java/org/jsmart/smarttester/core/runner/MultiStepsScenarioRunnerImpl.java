@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import static org.jsmart.smarttester.core.logbuilder.LogCorelationshipPrinter.createRelationshipId;
+import static org.jsmart.smarttester.core.logbuilder.LogCorelationshipPrinter.newInstance;
 import static org.jsmart.smarttester.core.utils.SmartUtils.prettyPrintJson;
 
 @Singleton
@@ -52,10 +53,10 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
     private String applicationContext;
     //guice -ends
 
-    LogCorelationshipPrinter logCorelationshipPrinter = LogCorelationshipPrinter.newInstance(LOGGER);
+    LogCorelationshipPrinter logCorelationshipPrinter = newInstance(LOGGER);
 
     @Override
-    public boolean runSteps(FlowSpec scenario, FlowStepStatusNotifier flowStepStatusNotifier) {
+    public boolean runScenario(FlowSpec scenario, FlowStepStatusNotifier flowStepStatusNotifier) {
 
         LOGGER.info("\n-------------------------- Scenario:{} -------------------------\n", scenario.getScenarioName());
 
@@ -88,7 +89,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                         scenarioExecutionState.getResolvedScenarioState()
                 );
 
-                //
+                // logging request
                 logCorelationshipPrinter.aRequestBuilder()
                         .relationshipId(logPrefixRelationshipId)
                         .requestTimeStamp(LocalDateTime.now())
@@ -96,7 +97,6 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                         .url(serviceName)
                         .method(operationName)
                         .request(SmartUtils.prettyPrintJson(resolvedRequestJson));
-                //
 
                 // REST call execution
                 Boolean isRESTCall = false;
@@ -111,12 +111,11 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                     executionResult = serviceExecutor.executeJavaService(serviceName, operationName, resolvedRequestJson);
                 }
 
-                //
+                // logging response
                 logCorelationshipPrinter.aResponseBuilder()
                         .relationshipId(logPrefixRelationshipId)
                         .responseTimeStamp(LocalDateTime.now())
                         .response(executionResult);
-                //
 
                 stepExecutionState.addResponse(executionResult);
                 scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
@@ -127,21 +126,20 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                         scenarioExecutionState.getResolvedScenarioState()
                 );
 
+                // logging assertion
                 logCorelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
-
-                // TODO: capture the assertions into log. currently not writing bcaz it's only printing
                 List<JsonAsserter> asserters = jsonTestProcesor.createAssertersFrom(resolvedAssertionJson);
                 List<AssertionReport> failureResults = jsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult); //<-- write code
 
-                // TODO: During this step: if assertion failed
                 if (!failureResults.isEmpty()) {
                     return flowStepStatusNotifier.notifyFlowStepAssertionFailed(scenario.getScenarioName(), thisStep.getName(), failureResults);
                 }
 
-                // TODO: Otherwise test passed
                 flowStepStatusNotifier.notifyFlowStepExecutionPassed(scenario.getScenarioName(), thisStep.getName());
 
             } catch(Exception ex){
+                ex.printStackTrace();
+                // logging exception
                 logCorelationshipPrinter.aResponseBuilder()
                         .relationshipId(logPrefixRelationshipId)
                         .responseTimeStamp(LocalDateTime.now())

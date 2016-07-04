@@ -58,7 +58,7 @@ public class RequestLogBuilder {
                 "\nstep:" + stepName +
                 "\nurl:" + url +
                 "\nmethod:" + method +
-                "\nrequest:" + request;
+                "\nrequest:\n" + request;
     }
 
 

@@ -6,7 +6,7 @@ public class ResponseLogBuilder {
     String relationshipId;
     LocalDateTime responseTimeStamp;
     String response;
-    String assertion;
+    String assertion = "{Opps! not decided. No response from server}";
 
 
     public ResponseLogBuilder relationshipId(String relationshipId) {
@@ -32,12 +32,16 @@ public class ResponseLogBuilder {
     public String toString() {
         return relationshipId +
                 "\nResponse:\n" + response +
-                "\n*responseTimeStamp:" + responseTimeStamp +
-                "\n\n---------> Assertion: <----------\n" + assertion;
+                "\n*responseTimeStamp:" + responseTimeStamp;
+                //"\n\n---------> Assertion: <----------\n" + assertion;
     }
 
     public ResponseLogBuilder assertionSection(String assertionJson) {
         this.assertion = assertionJson;
         return this;
+    }
+
+    public String getAssertion() {
+        return assertion;
     }
 }

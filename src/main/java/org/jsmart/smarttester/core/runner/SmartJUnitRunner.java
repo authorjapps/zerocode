@@ -15,6 +15,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SmartJUnitRunner.class);
+    private static final Logger logger = LoggerFactory.getLogger(SmartJUnitRunner.class);
 
     static int i = 1;
     protected boolean passed;
@@ -91,7 +92,7 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
             child = smartUtils.jsonFileToJava(currentTestCase, FlowSpec.class);
             logger.debug("### Found currentTestCase : -" + child);
 
-            passed = getInjectedMultiStepsRunner().runSteps(child, new FlowStepStatusNotifier() {
+            passed = getInjectedMultiStepsRunner().runScenario(child, new FlowStepStatusNotifier() {
 
                 @Override
                 public Boolean notifyFlowStepAssertionFailed(String scenarioName,

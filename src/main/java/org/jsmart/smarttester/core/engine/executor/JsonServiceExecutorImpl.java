@@ -1,6 +1,7 @@
 package org.jsmart.smarttester.core.engine.executor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
@@ -8,12 +9,14 @@ import com.jayway.jsonpath.PathNotFoundException;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
+import org.jsmart.smarttester.core.domain.Response;
 import org.jsmart.smarttester.core.engine.mocker.RestEndPointMocker;
-import org.jsmart.smarttester.core.utils.HomeOfficeJsonUtils;
+import org.jsmart.smarttester.core.utils.HelperJsonUtils;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.MultivaluedMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,9 +82,6 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
 
     private String executeRESTInternal(String httpUrl, String methodName, String requestJson) throws Exception {
-        String locationHref = null;
-        String resultBodyContent = null;
-        int httpResponseCode = 0;
 
         Object queryParams = readJsonPathOrElseNull(requestJson, "$.queryParams");
         Object headers = readJsonPathOrElseNull(requestJson, "$.headers");
@@ -111,7 +111,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
 
         // TODO: String restMethodParam = smartUtils.getContentAsItIsJson(bodyContent);
-        String restMethodParam = HomeOfficeJsonUtils.getContentAsItIsJson(bodyContent);
+        String restMethodParam = HelperJsonUtils.getContentAsItIsJson(bodyContent);
 
         //set the query parameters
         if(queryParams != null){
@@ -141,9 +141,15 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         // now execute
         ClientResponse serverResponse = clientExecutor.execute();
 
-        httpResponseCode = serverResponse.getResponseStatus().getStatusCode();
-        resultBodyContent = (String) serverResponse.getEntity(String.class);
-        locationHref = serverResponse.getLocation() != null? serverResponse.getLocation().getHref(): null;
+        // now read the response for headers, body, status
+        final MultivaluedMap responseHeaders = serverResponse.getHeaders();
+        final String bodyAsString = (String)serverResponse.getEntity(String.class);
+        final JsonNode bodyAsNode = objectMapper.readValue(bodyAsString, JsonNode.class);
+        final int responseStatus = serverResponse.getResponseStatus().getStatusCode();
+        final String locationHref = serverResponse.getLocation() != null? serverResponse.getLocation().getHref(): null;
+
+        Response response = new Response(responseStatus, responseHeaders, bodyAsNode, locationHref);
+        final String relevantResponse = objectMapper.writeValueAsString(response);
 
         Set headerKeySet = serverResponse.getHeaders().keySet();
         for(Object key: headerKeySet){
@@ -152,23 +158,21 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
             }
         }
 
-        String resultForAssertion = HomeOfficeJsonUtils.createAndReturnAssertionResultJson(httpResponseCode, resultBodyContent, locationHref);
-
-        return resultForAssertion;
+        return SmartUtils.prettyPrintJson(relevantResponse);
     }
 
     private Object readJsonPathOrElseNull(String requestJson, String jsonPath) {
         try{
             return JsonPath.read(requestJson, jsonPath);
         } catch(PathNotFoundException pEx){
-            logger.debug("No " + jsonPath + " was present in the request.");
+            logger.debug("No " + jsonPath + " was present in the request. returned null.");
             return  null;
         }
     }
 
     private String createQualifiedQueryParams(Object queryParams) {
         String qualifiedQueryParam = "?";
-        Map queryParamsMap = HomeOfficeJsonUtils.readHeadersAsMap(queryParams);
+        Map queryParamsMap = HelperJsonUtils.readHeadersAsMap(queryParams);
         for(Object key: queryParamsMap.keySet()){
             if("?".equals(qualifiedQueryParam)){
                 qualifiedQueryParam = qualifiedQueryParam + format("%s=%s", (String)key, (String)queryParamsMap.get(key));
@@ -193,4 +197,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         this.httpClientExecutor = httpClientExecutor;
     }
 
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 }

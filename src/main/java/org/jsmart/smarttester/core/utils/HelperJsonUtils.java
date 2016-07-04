@@ -5,16 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jsmart.smarttester.core.di.ObjectMapperProvider;
-import org.jsmart.smarttester.core.runner.MultiStepsScenarioRunnerImpl;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 // Move this to Smartutils class
-public class HomeOfficeJsonUtils {
-    private static final Logger logger = Logger.getLogger(MultiStepsScenarioRunnerImpl.class.getName());
+public class HelperJsonUtils {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(HelperJsonUtils.class);
     private static ObjectMapper mapper = new ObjectMapperProvider().get();
 
 
@@ -63,7 +62,7 @@ public class HomeOfficeJsonUtils {
 
     public static String createAndReturnAssertionResultJson(int httpResponseCode,
                                                             String resultBodyContent, String locationHref) {
-        logger.info("\n#locationHref: " + locationHref);
+        logger.debug("\n#locationHref: " + locationHref);
 
         if (StringUtils.isEmpty(resultBodyContent)) {
             resultBodyContent = "{}";
@@ -81,7 +80,7 @@ public class HomeOfficeJsonUtils {
     }
 
     private void setRequestHeaders(Object headers, ClientRequest clientExecutor) {
-        Map<String, Object> headersMap = HomeOfficeJsonUtils.readHeadersAsMap(headers);
+        Map<String, Object> headersMap = HelperJsonUtils.readHeadersAsMap(headers);
         for (Object key : headersMap.keySet()) {
             clientExecutor.header((String) key, headersMap.get(key));
         }

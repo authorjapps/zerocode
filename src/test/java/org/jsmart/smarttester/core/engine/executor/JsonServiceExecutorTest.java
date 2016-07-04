@@ -6,6 +6,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 import org.jsmart.simulator.main.SimpleRestJsonSimulatorsMain;
 import org.jsmart.smarttester.core.di.ApplicationMainModule;
+import org.jsmart.smarttester.core.di.ObjectMapperProvider;
 import org.jsmart.smarttester.core.domain.FlowSpec;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.After;
@@ -38,6 +39,7 @@ public class JsonServiceExecutorTest {
 
         jsonServiceExecutor = new JsonServiceExecutorImpl();
         jsonServiceExecutor.setHttpClientExecutor(new ApacheHttpClientExecutor());
+        jsonServiceExecutor.setObjectMapper(new ObjectMapperProvider().get());
 
         injector = Guice.createInjector(new ApplicationMainModule("config_hosts_test.properties"));
         smartUtils = injector.getInstance(SmartUtils.class);
@@ -73,14 +75,14 @@ public class JsonServiceExecutorTest {
          */
         String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + "/home/bathroom/1", "GET", "{}");
         assertThat(responseString, containsString("Shower"));
-        JSONAssert.assertEquals(responseString, "{\n" +
+        JSONAssert.assertEquals("{\n" +
                 "  \"status\": 200,\n" +
                 "  \"body\": {\n" +
                 "    \"id\": 1,\n" +
                 "    \"name\": \"Shower\",\n" +
                 "    \"availability\": true\n" +
                 "  }\n" +
-                "}", true);
+                "}", responseString, false);
     }
 
     @Test
@@ -97,14 +99,14 @@ public class JsonServiceExecutorTest {
 
         final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
         assertThat(responseString, containsString("Shower"));
-        JSONAssert.assertEquals(responseString, "{\n" +
+        JSONAssert.assertEquals("{\n" +
                 "  \"status\": 200,\n" +
                 "  \"body\": {\n" +
                 "    \"id\": 1,\n" +
                 "    \"name\": \"Shower\",\n" +
                 "    \"availability\": true\n" +
                 "  }\n" +
-                "}", true);
+                "}", responseString, false);
     }
 
     @Test

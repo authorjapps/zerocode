@@ -42,7 +42,7 @@ public class LogCorelationshipPrinter {
 
     public void print() {
 
-        logger.info(String.format("%s %s \n*Response delay:%s milli-secs \n-done-\n",
+        logger.info(String.format("%s %s \n*Response delay:%s milli-secs \n%s \n-done-\n",
                 requestLogBuilder.toString(),
                 responseLogBuilder.toString(),
                 Duration.between(
@@ -54,7 +54,9 @@ public class LogCorelationshipPrinter {
                          * Note: Java does not have a get(millisec-tem[poral) as of now, only nano
                          * or sec precision is supported
                          */
-                        .getNano()/1000000D)
+                        .getNano()/1000000D,
+                "---------> Assertion: <----------\n" + responseLogBuilder.getAssertion()
+                )
         );
     }
 

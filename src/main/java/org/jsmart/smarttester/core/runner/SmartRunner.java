@@ -115,7 +115,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
         // Supply the scenario/journey name
         notifier.fireTestStarted(description);
 
-        passed = getInjectedMultiStepsRunner().runSteps(child, new FlowStepStatusNotifier() {
+        passed = getInjectedMultiStepsRunner().runScenario(child, new FlowStepStatusNotifier() {
 
             @Override
             public Boolean notifyFlowStepAssertionFailed(String scenarioName,

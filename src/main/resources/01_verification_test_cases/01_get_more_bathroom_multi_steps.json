@@ -57,7 +57,7 @@
         }
       },
       "assertions": {
-        "status": 500,
+        "status": 200,
         "body": {
           "id": 21,
           "name": "Shower-21",
