@@ -6,7 +6,7 @@ public class ResponseLogBuilder {
     String relationshipId;
     LocalDateTime responseTimeStamp;
     String response;
-    String assertion = "{Opps! not decided. No response from server}";
+    String assertion = "{Oops! Not decided. Probably a round trip connection problem occurred}";
 
 
     public ResponseLogBuilder relationshipId(String relationshipId) {

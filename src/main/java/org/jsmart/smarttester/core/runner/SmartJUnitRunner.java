@@ -121,8 +121,7 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
 
                 @Override
                 public Boolean notifyFlowStepExecutionPassed(String scenarioName, String stepName) {
-                    // log that scenarioName with stepname passed.
-                    logger.info(String.format("\n**Step PASSED:%s->%s", scenarioName, stepName));
+                    logger.info(String.format("\n**Step PASSED:%s --> %s\n", scenarioName, stepName));
                     return true;
                 }
 
@@ -130,14 +129,12 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
         } catch (Exception ioEx) {
             ioEx.printStackTrace();
             notifier.fireTestFailure(new Failure(description, ioEx));
-            //return false;
-            //ioEx.printStackTrace();
         }
 
         testRunCompleted = true;
 
         if (passed) {
-            logger.info(String.format("\n**All Steps for [%s] FINISHED**.\nSteps were:%s",
+            logger.info(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
                     child.getScenarioName(),
                     child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
             notifier.fireTestFinished(description);
@@ -158,7 +155,7 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     public Injector getInjector() {
-        //TODO: Synchronise this with e.g. synchronized (IptSmartRunner.class) {}
+        //TODO: Synchronise this if needed with e.g. synchronized (IptSmartRunner.class) {}
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
         injector = Guice.createInjector(new ApplicationMainModule(serverEnv));
