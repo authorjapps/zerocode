@@ -22,7 +22,7 @@ import static org.junit.Assert.fail;
 
 @RunWith(JukitoRunner.class)
 //@UseModules(ApplicationMainModule.class)
-public class FlowSpecTest {
+public class ScenarioSpecTest {
     public static class JukitoModule extends TestModule {
         @Override
         protected void configureTest() {
@@ -50,7 +50,7 @@ public class FlowSpecTest {
     @Test
     public void willDeserializeA_VanilaFlow() throws Exception {
         String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/02_test_json_flow_single_step.json");
-        FlowSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, FlowSpec.class);
+        ScenarioSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         System.out.println(flowDeserialized);
 
@@ -63,7 +63,7 @@ public class FlowSpecTest {
     @Test
     public void willDeserializeA_MultiSteps() throws Exception {
         String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/03_test_json_flow_multi_step.json");
-        FlowSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, FlowSpec.class);
+        ScenarioSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         assertThat(flowDeserialized, notNullValue());
         assertThat(flowDeserialized.getSteps().size(), is(2));
@@ -74,9 +74,9 @@ public class FlowSpecTest {
     @Test
     public void shouldSerializeSingleFlow() throws Exception {
         String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/03_test_json_flow_multi_step.json");
-        FlowSpec flowSpec = mapper.readValue(jsonDocumentAsString, FlowSpec.class);
+        ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
-        JsonNode flowSpecNode = mapper.valueToTree(flowSpec);
+        JsonNode flowSpecNode = mapper.valueToTree(scenarioSpec);
 
         /**
          * Note:

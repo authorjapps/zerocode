@@ -2,13 +2,12 @@ package org.jsmart.smarttester.core.tests;
 
 import org.jsmart.smarttester.core.domain.SmartTestCase;
 import org.jsmart.smarttester.core.domain.TargetEnv;
-import org.jsmart.smarttester.core.runner.SmartJUnitRunner;
-import org.jsmart.smarttester.core.tests.customrunner.TestOnlySmartJUnitRunner;
+import org.jsmart.smarttester.core.tests.customrunner.TestOnlyZeroCodeJUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @TargetEnv("dev_test.properties")
-@RunWith(TestOnlySmartJUnitRunner.class)
+@RunWith(TestOnlyZeroCodeJUnitRunner.class)
 public class SmartJUnitRunnerTestCases {
 
     @SmartTestCase("07_some_test_cases/01_REST_end_point_GET_PASS.json")

@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.smarttester.core.di.ApplicationMainModule;
-import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.ScenarioSpec;
 import org.jsmart.smarttester.core.domain.TargetEnv;
 import org.jsmart.smarttester.core.domain.TestPackageRoot;
 import org.jsmart.smarttester.core.engine.assertion.AssertionReport;
@@ -19,12 +19,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class SmartRunner extends ParentRunner<FlowSpec> {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SmartRunner.class);
+public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ZeroCodePackageRunner.class);
 
     private MultiStepsScenarioRunner multiStepsScenarioRunner;
     private final Class<?> testClass;
-    List<FlowSpec> flowSpecs;
+    List<ScenarioSpec> scenarioSpecs;
     Injector injector;
     SmartUtils smartUtils;
 
@@ -33,7 +33,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
     protected boolean passed;
     protected boolean testRunCompleted;
 
-    public SmartRunner(Class<?> testClass) throws InitializationError {
+    public ZeroCodePackageRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
         this.testClass = testClass;
 
@@ -49,7 +49,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
     }
 
     @Inject
-    public SmartRunner(Class<?> testClass, SmartUtils smartUtils) throws InitializationError {
+    public ZeroCodePackageRunner(Class<?> testClass, SmartUtils smartUtils) throws InitializationError {
         super(testClass);
         this.testClass = testClass;
         this.smartUtils = smartUtils;
@@ -59,7 +59,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
      * Returns a list of objects that define the children of this Runner.
      */
     @Override
-    protected List<FlowSpec> getChildren() {
+    protected List<ScenarioSpec> getChildren() {
         TestPackageRoot rootPackageAnnotation = testClass.getAnnotation(TestPackageRoot.class);
         if (rootPackageAnnotation == null) {
             throw new RuntimeException("Ah! Almost there. Just missing root package details." +
@@ -76,7 +76,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
      * @param child
      */
     @Override
-    protected Description describeChild(FlowSpec child) {
+    protected Description describeChild(ScenarioSpec child) {
 
         this.flowDescription = Description.createTestDescription(testClass, child.getScenarioName());
         return flowDescription;
@@ -107,7 +107,7 @@ public class SmartRunner extends ParentRunner<FlowSpec> {
      * @param notifier
      */
     @Override
-    protected void runChild(FlowSpec child, RunNotifier notifier) {
+    protected void runChild(ScenarioSpec child, RunNotifier notifier) {
 
         final Description description = Description.createTestDescription(testClass, child.getScenarioName());
 

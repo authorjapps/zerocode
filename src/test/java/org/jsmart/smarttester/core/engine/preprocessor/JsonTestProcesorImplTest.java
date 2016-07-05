@@ -5,7 +5,7 @@ import com.google.inject.Injector;
 import com.jayway.jsonpath.JsonPath;
 import org.jsmart.simulator.main.SimpleRestJsonSimulatorsMain;
 import org.jsmart.smarttester.core.di.ApplicationMainModule;
-import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.ScenarioSpec;
 import org.jsmart.smarttester.core.engine.assertion.AssertionReport;
 import org.jsmart.smarttester.core.engine.assertion.JsonAsserter;
 import org.jsmart.smarttester.core.engine.executor.JsonServiceExecutorImpl;
@@ -51,8 +51,8 @@ public class JsonTestProcesorImplTest {
 
     @Test
     public void willResolveWithParamMap() throws Exception {
-        FlowSpec flowSpec = smartUtils.jsonFileToJava("09_test_engine/01_request_with_place_holders.json", FlowSpec.class);
-        final String requestJsonAsString = flowSpec.getSteps().get(0).getRequest().toString();
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava("09_test_engine/01_request_with_place_holders.json", ScenarioSpec.class);
+        final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();
 
         final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
 
@@ -65,8 +65,8 @@ public class JsonTestProcesorImplTest {
 
     @Test
     public void willCaptureAllPlaceHolders() throws Exception {
-        FlowSpec flowSpec = smartUtils.jsonFileToJava("09_test_engine/01_request_with_place_holders.json", FlowSpec.class);
-        final String requestJsonAsString = flowSpec.getSteps().get(0).getRequest().toString();
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava("09_test_engine/01_request_with_place_holders.json", ScenarioSpec.class);
+        final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();
 
         final List<String> placeHolders = jsonPreProcessor.getAllTokens(requestJsonAsString);
         assertThat(placeHolders.size(), is(4));
@@ -129,7 +129,7 @@ public class JsonTestProcesorImplTest {
 
     @Test
     public void willResolveJsonPathOfJayWayFor_AssertionSection() throws Exception {
-        FlowSpec scenarioSpec = smartUtils.jsonFileToJava("09_test_engine/02_1_two_requests_with_json_path_assertion.json", FlowSpec.class);
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava("09_test_engine/02_1_two_requests_with_json_path_assertion.json", ScenarioSpec.class);
         final String assertionsSectionAsString = scenarioSpec.getSteps().get(1).getAssertions().toString();
         String scenarioState = "{\n" +
                 "    \"step1\": {\n" +

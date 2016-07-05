@@ -10,7 +10,7 @@ import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.jsmart.smarttester.core.di.ObjectMapperProvider;
-import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.ScenarioSpec;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -67,19 +67,19 @@ public class SmartUtils {
         return mapper.readValue(readJsonAsString(jsonFileName), clazz);
     }
 
-    public List<FlowSpec> getFlowSpecListByPackage(String packageName) {
+    public List<ScenarioSpec> getFlowSpecListByPackage(String packageName) {
         List<String> allEndPointFiles = getAllEndPointFiles(packageName);
-        List<FlowSpec> flowSpecList = allEndPointFiles.stream()
+        List<ScenarioSpec> scenarioSpecList = allEndPointFiles.stream()
                 .map(flowSpecFile -> {
                     try {
-                        return jsonFileToJava(flowSpecFile, FlowSpec.class);
+                        return jsonFileToJava(flowSpecFile, ScenarioSpec.class);
                     } catch (IOException e) {
                         throw new RuntimeException("Exception while deserializing to Spec. Details: " + e);
                     }
                 })
                 .collect(Collectors.toList());
 
-        return flowSpecList;
+        return scenarioSpecList;
     }
 
     public void checkDuplicateNames(String testPackageName) {

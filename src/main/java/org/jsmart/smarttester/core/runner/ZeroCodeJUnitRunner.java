@@ -4,7 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.smarttester.core.di.ApplicationMainModule;
-import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.ScenarioSpec;
 import org.jsmart.smarttester.core.domain.SmartTestCase;
 import org.jsmart.smarttester.core.domain.TargetEnv;
 import org.jsmart.smarttester.core.engine.assertion.AssertionReport;
@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
-    private static final Logger logger = LoggerFactory.getLogger(SmartJUnitRunner.class);
+public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
+    private static final Logger logger = LoggerFactory.getLogger(ZeroCodeJUnitRunner.class);
 
     static int i = 1;
     protected boolean passed;
@@ -42,7 +42,7 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
     List<String> smartTestCaseNames = new ArrayList<>();
     String currentTestCase;
 
-    public SmartJUnitRunner(Class<?> klass) throws InitializationError {
+    public ZeroCodeJUnitRunner(Class<?> klass) throws InitializationError {
         super(klass);
 
         this.testClass = klass;
@@ -87,9 +87,9 @@ public class SmartJUnitRunner extends BlockJUnit4ClassRunner {
 
         logger.debug("### Running currentTestCase : " + currentTestCase);
 
-        FlowSpec child = null;
+        ScenarioSpec child = null;
         try {
-            child = smartUtils.jsonFileToJava(currentTestCase, FlowSpec.class);
+            child = smartUtils.jsonFileToJava(currentTestCase, ScenarioSpec.class);
             logger.debug("### Found currentTestCase : -" + child);
 
             passed = getInjectedMultiStepsRunner().runScenario(child, new FlowStepStatusNotifier() {

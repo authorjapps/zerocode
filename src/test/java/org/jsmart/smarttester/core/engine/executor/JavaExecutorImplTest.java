@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jsmart.smarttester.core.di.ApplicationMainModule;
-import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.ScenarioSpec;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,11 +54,11 @@ public class JavaExecutorImplTest {
     @Test
     public void willExecuteJsonRequestFor_java_method() throws Exception {
         String scenariosJsonAsString = SmartUtils.readJsonAsString("05_test_java_service/01_test_json_java_service_method_Integer.json");
-        final FlowSpec flowSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, FlowSpec.class);
+        final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
 
-        String serviceName = flowSpec.getSteps().get(0).getUrl();
-        String methodName = flowSpec.getSteps().get(0).getOperation();
-        String requestJson = flowSpec.getSteps().get(0).getRequest().toString();
+        String serviceName = scenarioSpec.getSteps().get(0).getUrl();
+        String methodName = scenarioSpec.getSteps().get(0).getOperation();
+        String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
         List<Class<?>> argumentTypes = defaultJavaExecutor.argumentTypes(serviceName, methodName);
 
         Object request = mapper.readValue(requestJson, argumentTypes.get(0));
@@ -69,11 +69,11 @@ public class JavaExecutorImplTest {
     @Test
     public void willExecuteJsonRequestFor_CustomObject_java_method() throws Exception {
         String scenariosJsonAsString = SmartUtils.readJsonAsString("05_test_java_service/01_test_json_java_service_method_MyNumber.json");
-        final FlowSpec flowSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, FlowSpec.class);
+        final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
 
-        String serviceName = flowSpec.getSteps().get(0).getUrl();
-        String methodName = flowSpec.getSteps().get(0).getOperation();
-        String requestJson = flowSpec.getSteps().get(0).getRequest().toString();
+        String serviceName = scenarioSpec.getSteps().get(0).getUrl();
+        String methodName = scenarioSpec.getSteps().get(0).getOperation();
+        String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
         List<Class<?>> argumentTypes = defaultJavaExecutor.argumentTypes(serviceName, methodName);
 
         Object request = mapper.readValue(requestJson, argumentTypes.get(0));

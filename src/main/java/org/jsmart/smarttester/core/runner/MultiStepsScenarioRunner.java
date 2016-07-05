@@ -1,14 +1,14 @@
 package org.jsmart.smarttester.core.runner;
 
-import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.ScenarioSpec;
 
 import java.util.function.BiConsumer;
 
 public interface MultiStepsScenarioRunner {
 
-    boolean runScenario(FlowSpec flowSpec, FlowStepStatusNotifier flowStepStatusNotifier);
+    boolean runScenario(ScenarioSpec scenarioSpec, FlowStepStatusNotifier flowStepStatusNotifier);
 
-    boolean runChildStep(FlowSpec flowSpec,
+    boolean runChildStep(ScenarioSpec scenarioSpec,
                                  BiConsumer<String, String> testPassHandler
                                  );
 

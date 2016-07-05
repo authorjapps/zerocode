@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.apache.commons.lang.StringUtils;
-import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.ScenarioSpec;
 import org.jsmart.smarttester.core.domain.Step;
 import org.jsmart.smarttester.core.engine.assertion.AssertionReport;
 import org.jsmart.smarttester.core.engine.assertion.JsonAsserter;
@@ -56,7 +56,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
     LogCorelationshipPrinter logCorelationshipPrinter = newInstance(LOGGER);
 
     @Override
-    public boolean runScenario(FlowSpec scenario, FlowStepStatusNotifier flowStepStatusNotifier) {
+    public boolean runScenario(ScenarioSpec scenario, FlowStepStatusNotifier flowStepStatusNotifier) {
 
         LOGGER.info("\n-------------------------- Scenario:{} -------------------------\n", scenario.getScenarioName());
 
@@ -174,17 +174,17 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
     }
 
     @Override
-    public boolean runChildStep(FlowSpec flowSpec, BiConsumer testPassHandler) {
+    public boolean runChildStep(ScenarioSpec scenarioSpec, BiConsumer testPassHandler) {
 
-        flowSpec.getSteps()
-                .forEach(step -> testPassHandler.accept(flowSpec.getScenarioName(), step.getName()));
+        scenarioSpec.getSteps()
+                .forEach(step -> testPassHandler.accept(scenarioSpec.getScenarioName(), step.getName()));
 
         return true;
     }
 
 
     /*@Override
-    public boolean runChildStepWithObserver(FlowSpec flowSpec, BiConsumer<FlowStepStatusNotifier, String> testObserver) {
+    public boolean runChildStepWithObserver(ScenarioSpec flowSpec, BiConsumer<FlowStepStatusNotifier, String> testObserver) {
 
         flowSpec.getSteps()
                 .forEach(step -> {

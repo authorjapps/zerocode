@@ -2,7 +2,7 @@ package org.jsmart.smarttester.core.utils;
 
 import com.google.inject.Inject;
 import org.jsmart.smarttester.core.di.ApplicationMainModule;
-import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.ScenarioSpec;
 import org.jsmart.smarttester.core.domain.Step;
 import org.jukito.JukitoRunner;
 import org.jukito.TestModule;
@@ -51,7 +51,7 @@ public class SmartUtilsTest {
         Step stepJava = smartUtils.jsonFileToJava("01_test_smart_test_cases/01_test_json_single_step.json", Step.class);
         assertThat(stepJava.getLoop(), is(3));
 
-        FlowSpec flowJava = smartUtils.jsonFileToJava("01_test_smart_test_cases/02_test_json_flow_single_step.json", FlowSpec.class);
+        ScenarioSpec flowJava = smartUtils.jsonFileToJava("01_test_smart_test_cases/02_test_json_flow_single_step.json", ScenarioSpec.class);
         assertThat(flowJava.getLoop(), is(5));
     }
 
@@ -73,7 +73,7 @@ public class SmartUtilsTest {
 
     @Test
     public void willReadAllfileNames_AND_return_FlowSpecList() throws Exception {
-        List<FlowSpec> allTestCaseFiles = smartUtils.getFlowSpecListByPackage("04_test_flow_cases");
+        List<ScenarioSpec> allTestCaseFiles = smartUtils.getFlowSpecListByPackage("04_test_flow_cases");
 
         assertThat(allTestCaseFiles.size(), is(3));
         assertThat(allTestCaseFiles.get(0).getScenarioName(), is("Given_When_Then_1"));

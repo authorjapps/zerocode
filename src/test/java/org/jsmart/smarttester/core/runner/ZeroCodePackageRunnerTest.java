@@ -1,6 +1,6 @@
 package org.jsmart.smarttester.core.runner;
 
-import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.ScenarioSpec;
 import org.jsmart.smarttester.core.domain.TestPackageRoot;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -16,9 +16,9 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class SmartRunnerTest {
+public class ZeroCodePackageRunnerTest {
 
-    SmartRunner smartRunner;
+    ZeroCodePackageRunner zeroCodePackageRunner;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -29,19 +29,19 @@ public class SmartRunnerTest {
 
     @Before
     public void initializeRunner() throws Exception {
-        smartRunner = new SmartRunner(FlowSpecExampleTest.class);
+        zeroCodePackageRunner = new ZeroCodePackageRunner(FlowSpecExampleTest.class);
     }
 
     @Test
     public void willHaveListOf_TestCases_Here() throws Exception {
-        List<FlowSpec> children = smartRunner.getChildren();
+        List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
         assertThat(children.size(), is(2));
     }
 
     @Test
     public void willHaveListOf_TestCases_Frompackage() throws Exception {
-        smartRunner = new SmartRunner(FlowExamplePackagePickerClass.class);
-        List<FlowSpec> children = smartRunner.getChildren();
+        zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExamplePackagePickerClass.class);
+        List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
         assertThat(children.size(), is(2));
     }
 
@@ -49,16 +49,16 @@ public class SmartRunnerTest {
     public void willComplain_If_Annotation_Missing() throws Exception {
         expectedException.expect(RuntimeException.class);
         expectedException.expectMessage("Ah! Almost there. Just missing root package details");
-        smartRunner = new SmartRunner(FlowExampleWithoutAnnotationClass.class);
-        smartRunner.getChildren();
+        zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExampleWithoutAnnotationClass.class);
+        zeroCodePackageRunner.getChildren();
     }
 
     @Test
     public void testCanDescribeAChild_oldFashined() throws Exception {
-        smartRunner = new SmartRunner(FlowExamplePackagePickerClass.class);
+        zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExamplePackagePickerClass.class);
 
-        List<FlowSpec> children = smartRunner.getChildren();
-        Description childDescription = smartRunner.describeChild(children.get(0));
+        List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
+        Description childDescription = zeroCodePackageRunner.describeChild(children.get(0));
 
         assertThat(childDescription.getDisplayName(), containsString("Given_When_Then-Flow name"));
 
@@ -73,32 +73,32 @@ public class SmartRunnerTest {
     @Test
     public void testWillFireASingleStep_Child() throws Exception {
         //Injection done
-        smartRunner = new SmartRunner(FlowExamplePackagePickerClass.class);
+        zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExamplePackagePickerClass.class);
 
         // Now prepare the steps as if they were run via junit
-        List<FlowSpec> children = smartRunner.getChildren();
-        smartRunner.describeChild(children.get(0));
+        List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
+        zeroCodePackageRunner.describeChild(children.get(0));
         RunNotifier notifier = new RunNotifier();
-        smartRunner.runChild(children.get(0), notifier);
+        zeroCodePackageRunner.runChild(children.get(0), notifier);
 
         //assertion sections
-        assertThat(smartRunner.testRunCompleted, is(true));
-        assertThat(smartRunner.isPassed(), is(false)); //<--- Not necessary to test as this can change dependeing on test
+        assertThat(zeroCodePackageRunner.testRunCompleted, is(true));
+        assertThat(zeroCodePackageRunner.isPassed(), is(false)); //<--- Not necessary to test as this can change dependeing on test
     }
 
     @Test
     public void testWillResolve_PlaceHolders_InASingleStep_Child() throws Exception {
         //Injection done
-        smartRunner = new SmartRunner(MultiStepWithPlaceHolderTestClass.class);
+        zeroCodePackageRunner = new ZeroCodePackageRunner(MultiStepWithPlaceHolderTestClass.class);
 
         // Now prepare the steps as if they were run via junit
-        List<FlowSpec> children = smartRunner.getChildren();
-        smartRunner.describeChild(children.get(0));
+        List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
+        zeroCodePackageRunner.describeChild(children.get(0));
         RunNotifier notifier = new RunNotifier();
-        smartRunner.runChild(children.get(0), notifier);
+        zeroCodePackageRunner.runChild(children.get(0), notifier);
 
         //assertion sections
-        assertThat(smartRunner.testRunCompleted, is(true));
+        assertThat(zeroCodePackageRunner.testRunCompleted, is(true));
     }
 
     @TestPackageRoot("06_test_with_place_holders")

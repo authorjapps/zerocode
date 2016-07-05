@@ -7,7 +7,7 @@ import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 import org.jsmart.simulator.main.SimpleRestJsonSimulatorsMain;
 import org.jsmart.smarttester.core.di.ApplicationMainModule;
 import org.jsmart.smarttester.core.di.ObjectMapperProvider;
-import org.jsmart.smarttester.core.domain.FlowSpec;
+import org.jsmart.smarttester.core.domain.ScenarioSpec;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -91,11 +91,11 @@ public class JsonServiceExecutorTest {
          * End-point available: http://localhost:9999/home/bathroom/1
          */
         String scenariosJsonAsString = SmartUtils.readJsonAsString("06_test_with_place_holders/02_REST_end_point_GET.json");
-        final FlowSpec flowSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, FlowSpec.class);
+        final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
 
-        String serviceName = flowSpec.getSteps().get(0).getUrl();
-        String methodName = flowSpec.getSteps().get(0).getOperation();
-        String requestJson = flowSpec.getSteps().get(0).getRequest().toString();
+        String serviceName = scenarioSpec.getSteps().get(0).getUrl();
+        String methodName = scenarioSpec.getSteps().get(0).getOperation();
+        String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
 
         final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
         assertThat(responseString, containsString("Shower"));
@@ -112,11 +112,11 @@ public class JsonServiceExecutorTest {
     @Test
     public void willExecuteARESTCallForA_POST() throws Exception {
         String scenariosJsonAsString = SmartUtils.readJsonAsString("06_test_with_place_holders/03_REST_end_point_POST.json");
-        final FlowSpec flowSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, FlowSpec.class);
+        final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
 
-        String serviceName = flowSpec.getSteps().get(0).getUrl();
-        String methodName = flowSpec.getSteps().get(0).getOperation();
-        String requestJson = flowSpec.getSteps().get(0).getRequest().toString();
+        String serviceName = scenarioSpec.getSteps().get(0).getUrl();
+        String methodName = scenarioSpec.getSteps().get(0).getOperation();
+        String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
 
         final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
         assertThat(responseString, containsString("201"));

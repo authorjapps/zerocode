@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class FlowSpec {
+public class ScenarioSpec {
 
     private final Integer loop;
     private final String scenarioName;
     private final List<Step> steps;
 
     @JsonCreator
-    public FlowSpec(
+    public ScenarioSpec(
             @JsonProperty("loop") Integer loop,
             @JsonProperty("scenarioName") String scenarioName,
             @JsonProperty("steps") List<Step> steps) {
@@ -38,7 +38,7 @@ public class FlowSpec {
 
     @Override
     public String toString() {
-        return "FlowSpec{" +
+        return "ScenarioSpec{" +
                 "loop=" + loop +
                 ", scenarioName='" + scenarioName + '\'' +
                 ", steps=" + steps +

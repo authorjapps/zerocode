@@ -10,9 +10,9 @@ import org.junit.runner.notification.RunNotifier;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class SmartJUnitRunnerTest {
+public class ZeroCodeJUnitRunnerTest {
 
-    SmartJUnitRunner smartJUnitRunner;
+    ZeroCodeJUnitRunner zeroCodeJUnitRunner;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -32,18 +32,18 @@ public class SmartJUnitRunnerTest {
 
     @Before
     public void initializeRunner() throws Exception {
-        smartJUnitRunner = new SmartJUnitRunner(TinySmartJUnitRunnerExampleTester.class);
+        zeroCodeJUnitRunner = new ZeroCodeJUnitRunner(TinySmartJUnitRunnerExampleTester.class);
     }
 
     @Test
     public void testWillReadTheAnnotationAndRunVia_BlockJunitRunner() throws Exception {
-        assertThat(smartJUnitRunner.getSmartTestCaseNames().size(), is(2));
-        assertThat(smartJUnitRunner.getSmartTestCaseNames().get(0), is("/mac-daddy"));
+        assertThat(zeroCodeJUnitRunner.getSmartTestCaseNames().size(), is(2));
+        assertThat(zeroCodeJUnitRunner.getSmartTestCaseNames().get(0), is("/mac-daddy"));
     }
 
     @Test
     public void testWillReadTheAnnotationAnd_Notify() throws Exception {
-        smartJUnitRunner.run(new RunNotifier());
-        assertThat(smartJUnitRunner.getCurrentTestCase(), is("/abcd/path"));
+        zeroCodeJUnitRunner.run(new RunNotifier());
+        assertThat(zeroCodeJUnitRunner.getCurrentTestCase(), is("/abcd/path"));
     }
 }
