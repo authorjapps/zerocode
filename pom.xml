@@ -25,7 +25,7 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/authorjapps/simulator</url>
+        <url>https://github.com/authorjapps/zerocode</url>
         <connection>scm:git:git@github.com:authorjapps/zerocode.git</connection>
         <developerConnection>scm:git:git@github.com:authorjapps/zerocode.git</developerConnection>
     </scm>
@@ -35,7 +35,7 @@
             <id>authorjapps</id>
             <name>jApps</name>
             <email>author.japps@gmail.com</email>
-            <url>https://github.com/authorjapps/simulator</url>
+            <url>https://github.com/authorjapps/zerocode</url>
             <organization>jSmart</organization>
             <organizationUrl>http://www.jsmart.org</organizationUrl>
         </developer>
@@ -157,9 +157,9 @@
             <!--<scope>test</scope>--> <!-- added with compile scope. Do not change this -->
         </dependency>
         <dependency>
-            <groupId>org.jsmart.simulator</groupId>
+            <groupId>org.jsmart</groupId>
             <artifactId>micro-simulator</artifactId>
-            <version>1.1.2</version>
+            <version>1.1.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
