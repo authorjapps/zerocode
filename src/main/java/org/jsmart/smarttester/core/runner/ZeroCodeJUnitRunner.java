@@ -92,7 +92,7 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
             child = smartUtils.jsonFileToJava(currentTestCase, ScenarioSpec.class);
             logger.debug("### Found currentTestCase : -" + child);
 
-            passed = getInjectedMultiStepsRunner().runScenario(child, new FlowStepStatusNotifier() {
+            passed = getInjectedMultiStepsRunner().runScenario(child, new ScenarioSingleStepStatusNotifier() {
 
                 @Override
                 public Boolean notifyFlowStepAssertionFailed(String scenarioName,

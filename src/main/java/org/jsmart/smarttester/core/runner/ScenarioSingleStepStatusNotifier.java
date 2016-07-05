@@ -4,7 +4,7 @@ import org.jsmart.smarttester.core.engine.assertion.AssertionReport;
 
 import java.util.List;
 
-public interface FlowStepStatusNotifier {
+public interface ScenarioSingleStepStatusNotifier {
     Boolean notifyFlowStepAssertionFailed(String scenarioName,
                                           String stepName,
                                           List<AssertionReport> failureReportList);

@@ -56,7 +56,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
     LogCorelationshipPrinter logCorelationshipPrinter = newInstance(LOGGER);
 
     @Override
-    public boolean runScenario(ScenarioSpec scenario, FlowStepStatusNotifier flowStepStatusNotifier) {
+    public boolean runScenario(ScenarioSpec scenario, ScenarioSingleStepStatusNotifier scenarioSingleStepStatusNotifier) {
 
         LOGGER.info("\n-------------------------- Scenario:{} -------------------------\n", scenario.getScenarioName());
 
@@ -132,10 +132,10 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                 List<AssertionReport> failureResults = jsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult); //<-- write code
 
                 if (!failureResults.isEmpty()) {
-                    return flowStepStatusNotifier.notifyFlowStepAssertionFailed(scenario.getScenarioName(), thisStep.getName(), failureResults);
+                    return scenarioSingleStepStatusNotifier.notifyFlowStepAssertionFailed(scenario.getScenarioName(), thisStep.getName(), failureResults);
                 }
 
-                flowStepStatusNotifier.notifyFlowStepExecutionPassed(scenario.getScenarioName(), thisStep.getName());
+                scenarioSingleStepStatusNotifier.notifyFlowStepExecutionPassed(scenario.getScenarioName(), thisStep.getName());
 
             } catch(Exception ex){
                 ex.printStackTrace();
@@ -146,7 +146,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                         .response(ex.getMessage());
 
                 // During this step: if any exception occurred
-                return flowStepStatusNotifier.notifyFlowStepExecutionException(
+                return scenarioSingleStepStatusNotifier.notifyFlowStepExecutionException(
                         scenario.getScenarioName(),
                         thisStep.getName(),
                         new RuntimeException("Smart Step execution failed. Details:" + ex)
@@ -184,7 +184,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
 
 
     /*@Override
-    public boolean runChildStepWithObserver(ScenarioSpec flowSpec, BiConsumer<FlowStepStatusNotifier, String> testObserver) {
+    public boolean runChildStepWithObserver(ScenarioSpec flowSpec, BiConsumer<ScenarioSingleStepStatusNotifier, String> testObserver) {
 
         flowSpec.getSteps()
                 .forEach(step -> {

@@ -115,7 +115,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         // Supply the scenario/journey name
         notifier.fireTestStarted(description);
 
-        passed = getInjectedMultiStepsRunner().runScenario(child, new FlowStepStatusNotifier() {
+        passed = getInjectedMultiStepsRunner().runScenario(child, new ScenarioSingleStepStatusNotifier() {
 
             @Override
             public Boolean notifyFlowStepAssertionFailed(String scenarioName,

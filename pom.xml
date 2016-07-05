@@ -53,6 +53,7 @@
     </distributionManagement>
 
     <properties>
+        <!-- this project properties -->
         <junit.version>4.12</junit.version>
         <jackson-databind.version>2.7.1</jackson-databind.version>
         <guava.version>16.0</guava.version>

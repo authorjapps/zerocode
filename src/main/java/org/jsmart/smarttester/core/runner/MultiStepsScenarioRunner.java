@@ -6,7 +6,7 @@ import java.util.function.BiConsumer;
 
 public interface MultiStepsScenarioRunner {
 
-    boolean runScenario(ScenarioSpec scenarioSpec, FlowStepStatusNotifier flowStepStatusNotifier);
+    boolean runScenario(ScenarioSpec scenarioSpec, ScenarioSingleStepStatusNotifier scenarioSingleStepStatusNotifier);
 
     boolean runChildStep(ScenarioSpec scenarioSpec,
                                  BiConsumer<String, String> testPassHandler
