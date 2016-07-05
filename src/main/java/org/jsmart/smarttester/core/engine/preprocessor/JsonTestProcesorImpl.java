@@ -30,16 +30,14 @@ import static java.lang.String.format;
 
 public class JsonTestProcesorImpl implements JsonTestProcesor {
 
-    private static final String RANDOM_IPT_STRING = "RANDOM_IPT_STRING:";
-    private static final String IPT_REFERENCE_PREFIX = "ASU";
-    private static final String RANDOM_X_REQUEST_ID = "X_REQUEST_ID";
+    private static final String PREFIX_ASU = "ASU";
+    private static final String RANDOM_NUMBER = "RANDOM.NUMBER";
     private static final String RANDOM_STRING_PREFIX = "RANDOM_STRING:";
     private static final String STATIC_ALPHABET = "STATIC_ALPHABET:";
 
     private static final List<String> availableTokens = Arrays.asList(
-            RANDOM_IPT_STRING,
-            IPT_REFERENCE_PREFIX,
-            RANDOM_X_REQUEST_ID,
+            PREFIX_ASU,
+            RANDOM_NUMBER,
             RANDOM_STRING_PREFIX,
             STATIC_ALPHABET
     );
@@ -60,11 +58,7 @@ public class JsonTestProcesorImpl implements JsonTestProcesor {
         allTokens.forEach(runTimeToken -> {
             availableTokens.forEach(inStoreToken -> {
                 if (runTimeToken.startsWith(inStoreToken)) {
-                    if (runTimeToken.startsWith(RANDOM_IPT_STRING)) {
-                        int length = Integer.parseInt(runTimeToken.substring(RANDOM_STRING_PREFIX.length()));
-                        parammap.put(runTimeToken, createRandomAlphaString(length));
-
-                    } else if (runTimeToken.startsWith(RANDOM_X_REQUEST_ID)) {
+                    if (runTimeToken.startsWith(RANDOM_NUMBER)) {
                         parammap.put(runTimeToken, System.currentTimeMillis() + "");
 
                     } else if (runTimeToken.startsWith(RANDOM_STRING_PREFIX)) {
@@ -145,7 +139,7 @@ public class JsonTestProcesorImpl implements JsonTestProcesor {
                 Object value = entry.getValue();
 
                 JsonAsserter asserter;
-                if ("$NOT_NULL".equals(value)) {
+                if ("$NOT.NULL".equals(value)) {
                     asserter = new FieldIsNotNullAsserter(path);
                 }
                 else if ("$NULL".equals(value)) {
@@ -155,8 +149,8 @@ public class JsonTestProcesorImpl implements JsonTestProcesor {
                 } else if (path.endsWith(".SIZE")) {
                     path = path.substring(0, path.length() - ".SIZE".length());
                     asserter = new ArraySizeAsserter(path, ((Integer) value).intValue());
-                } else if (value instanceof String && ((String) value).startsWith("$CONTAINS_STRING:")) {
-                    String expected = ((String) value).substring("$CONTAINS_STRING:".length());
+                } else if (value instanceof String && ((String) value).startsWith("$CONTAINS.STRING:")) {
+                    String expected = ((String) value).substring("$CONTAINS.STRING:".length());
                     asserter = new FieldHasSubStringValueAsserter(path, expected);
                 } else {
                     //TODO
@@ -267,17 +261,7 @@ public class JsonTestProcesorImpl implements JsonTestProcesor {
         StringBuilder builder = new StringBuilder();
         Random r = new Random();
         for (int i = 0; i < length; i++) {
-            builder.append((char) ('A' + r.nextInt(26)));
-        }
-        String randomString = builder.toString();
-        return randomString;
-    }
-
-    private String createRandomIPTString(int length) {
-        StringBuilder builder = new StringBuilder();
-        Random r = new Random();
-        for (int i = 0; i < length; i++) {
-            builder.append((char) ('0' + r.nextInt(10)));
+            builder.append((char) ('a' + r.nextInt(26)));
         }
         String randomString = builder.toString();
         return randomString;
@@ -286,7 +270,7 @@ public class JsonTestProcesorImpl implements JsonTestProcesor {
     private String createStaticAlphaString(int length) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            builder.append((char) ('A' + i));
+            builder.append((char) ('a' + i));
 
             /*
              * This will repeat after A to Z

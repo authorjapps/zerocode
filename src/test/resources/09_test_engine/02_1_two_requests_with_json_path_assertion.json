@@ -37,7 +37,7 @@
         "body": {
           "Customer": {
             "firstName2": "${$.step1.request.body.customer.firstName}",
-            "nickName": "${X_REQUEST_ID}",
+            "nickName": "${RANDOM.NUMBER}",
             "noOfAddresses": "${$.step1.request.body.customer.addresses.length()}"
           }
         }
@@ -45,7 +45,7 @@
       "assertions": {
         "status": 201,
         "body": {
-          "id": "$NOT_NULL",
+          "id": "$NOT.NULL",
           "actualName": "${$.step1.request.body.customer.staticName}",
           "addresses.SIZE": 5,
           "job": {
@@ -72,7 +72,7 @@
 
             },
             {
-              "firstName": "$CONTAINS_STRING:DaddyWithMac",
+              "firstName": "$CONTAINS.STRING:DaddyWithMac",
               "when": "$NULL"
             }
           ]

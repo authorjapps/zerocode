@@ -72,11 +72,11 @@ public class JsonTestProcesorImplTest {
         assertThat(placeHolders.size(), is(4));
 
         final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
-        assertThat(resolvedRequestJson, containsString("\"staticName\":\"ABCDE\""));
+        assertThat(resolvedRequestJson, containsString("\"staticName\":\"abcde\""));
 
         String specAsString = smartUtils.getJsonDocumentAsString("09_test_engine/01_request_with_place_holders.json");
         final String resolvedSpecString = jsonPreProcessor.resolveStringJson(specAsString, specAsString);
-        assertThat(resolvedSpecString, containsString("\"url\": \"/persons/ABC\""));
+        assertThat(resolvedSpecString, containsString("\"url\": \"/persons/abc\""));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class JsonTestProcesorImplTest {
         assertThat(jsonPaths.size(), is(2));
 
         final String resolvedSpecWithPaths = jsonPreProcessor.resolveStringJson(specAsString, specAsString);
-        assertThat(resolvedSpecWithPaths, containsString("\"staticName\": \"ABCDE\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"staticName\": \"abcde\""));
 
         //final String resolvedSpecResolvedPaths = jsonPreProcessor.resolveJsonPaths(resolvedSpecWithPaths);
         assertThat(resolvedSpecWithPaths, containsString("\"actualName\": \"${STATIC_ALPHABET:5}\""));
@@ -118,7 +118,7 @@ public class JsonTestProcesorImplTest {
                 "    }\n" +
                 "}";
         final String resolvedSpecWithPaths = jsonPreProcessor.resolveStringJson(specAsString, scenarioState);
-        assertThat(resolvedSpecWithPaths, containsString("\"staticName\": \"ABCDE\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"staticName\": \"abcde\""));
         assertThat(resolvedSpecWithPaths, containsString("\"firstName\": \"FIRST_NAME\""));
         assertThat(resolvedSpecWithPaths, containsString("\"firstName2\": \"FIRST_NAME\""));
         assertThat(resolvedSpecWithPaths, containsString("\"actualName\": \"ANOTHER_NAME\""));
@@ -171,13 +171,6 @@ public class JsonTestProcesorImplTest {
         assertThat(failedReports.toString(), containsString("did not match the expected value 'Array of size 4'"));
         assertThat(failedReports.toString(), containsString("did not match the expected value 'containing sub-string:DaddyWithMac'"));
         assertThat(failedReports.size(), is(8));
-
-//        asserters.forEach(asserter -> {
-//            asserter.assertWith(sapmleExecutionResult);
-//        });
-//
-//
-//        asserters.getFailureReports();
 
     }
 }

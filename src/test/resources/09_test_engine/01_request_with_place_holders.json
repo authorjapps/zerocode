@@ -20,7 +20,7 @@
           "Customer": {
             "firstName": "FIRST_NAME",
             "lastName": "${RANDOM_STRING:3}",
-            "nickName": "${X_REQUEST_ID}",
+            "nickName": "${RANDOM.NUMBER}",
             "staticName": "${STATIC_ALPHABET:5}",
             "addresses" : [
               {
