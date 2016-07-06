@@ -2,12 +2,10 @@ package org.jsmart.smarttester.core.runner;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.apache.commons.lang.StringUtils;
 import org.jsmart.smarttester.core.di.ApplicationMainModule;
 import org.jsmart.smarttester.core.domain.ScenarioSpec;
 import org.jsmart.smarttester.core.domain.SmartTestCase;
 import org.jsmart.smarttester.core.domain.TargetEnv;
-import org.jsmart.smarttester.core.engine.assertion.AssertionReport;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -92,40 +90,8 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
             child = smartUtils.jsonFileToJava(currentTestCase, ScenarioSpec.class);
             logger.debug("### Found currentTestCase : -" + child);
 
-            passed = getInjectedMultiStepsRunner().runScenario(child, new ScenarioSingleStepStatusNotifier() {
+            passed = getInjectedMultiStepsRunner().runScenario(child, notifier, description);
 
-                @Override
-                public Boolean notifyFlowStepAssertionFailed(String scenarioName,
-                                                             String stepName,
-                                                             List<AssertionReport> failureReportList) {
-
-                    // Generate error report and display in the console stating which expectation(s) did not match
-                    notifier.fireTestFailure(new Failure(description, new RuntimeException(
-                            String.format("Assertion failed for step %s, details:%n%s%n", stepName, StringUtils.join(failureReportList, "\n"))
-                    )));
-
-                    return false;
-                }
-
-                @Override
-                public Boolean notifyFlowStepExecutionException(String scenarioName,
-                                                                String stepName,
-                                                                Exception stepException) {
-
-                    logger.info(String.format("Exception occurred while executing Scenario: %s, Step: %s, Details: %s",
-                            scenarioName, stepName, stepException));
-                    notifier.fireTestFailure(new Failure(description, stepException));
-
-                    return false;
-                }
-
-                @Override
-                public Boolean notifyFlowStepExecutionPassed(String scenarioName, String stepName) {
-                    logger.info(String.format("\n**Step PASSED:%s --> %s\n", scenarioName, stepName));
-                    return true;
-                }
-
-            });
         } catch (Exception ioEx) {
             ioEx.printStackTrace();
             notifier.fireTestFailure(new Failure(description, ioEx));

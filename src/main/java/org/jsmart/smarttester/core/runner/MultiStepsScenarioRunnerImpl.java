@@ -15,6 +15,8 @@ import org.jsmart.smarttester.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.smarttester.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.smarttester.core.logbuilder.LogCorelationshipPrinter;
 import org.jsmart.smarttester.core.utils.SmartUtils;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
@@ -53,10 +55,11 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
     private String applicationContext;
     //guice -ends
 
-    LogCorelationshipPrinter logCorelationshipPrinter = newInstance(LOGGER);
+    private LogCorelationshipPrinter logCorelationshipPrinter = newInstance(LOGGER);
+    private static StepNotificationHandler notificationHandler = new StepNotificationHandler();
 
     @Override
-    public boolean runScenario(ScenarioSpec scenario, ScenarioSingleStepStatusNotifier scenarioSingleStepStatusNotifier) {
+    public boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
 
         LOGGER.info("\n-------------------------- Scenario:{} -------------------------\n", scenario.getScenarioName());
 
@@ -132,25 +135,47 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                 List<AssertionReport> failureResults = jsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult); //<-- write code
 
                 if (!failureResults.isEmpty()) {
-                    return scenarioSingleStepStatusNotifier.notifyFlowStepAssertionFailed(scenario.getScenarioName(), thisStep.getName(), failureResults);
+                    /*
+                     * Step failed
+                     */
+                    return notificationHandler.handleAssertion(
+                            notifier,
+                            description,
+                            scenario.getScenarioName(),
+                            thisStep.getName(),
+                            failureResults,
+                            notificationHandler::handleAssertionFailed);
                 }
 
-                scenarioSingleStepStatusNotifier.notifyFlowStepExecutionPassed(scenario.getScenarioName(), thisStep.getName());
+                /*
+                 * Test step passed
+                 */
+                notificationHandler.handleAssertion(
+                        notifier,
+                        description,
+                        scenario.getScenarioName(),
+                        thisStep.getName(),
+                        failureResults,
+                        notificationHandler::handleAssertionPassed);
 
             } catch(Exception ex){
                 ex.printStackTrace();
-                // logging exception
                 logCorelationshipPrinter.aResponseBuilder()
                         .relationshipId(logPrefixRelationshipId)
                         .responseTimeStamp(LocalDateTime.now())
                         .response(ex.getMessage());
 
-                // During this step: if any exception occurred
-                return scenarioSingleStepStatusNotifier.notifyFlowStepExecutionException(
+                /*
+                 * Step threw an exception
+                 */
+                return notificationHandler.handleAssertion(
+                        notifier,
+                        description,
                         scenario.getScenarioName(),
                         thisStep.getName(),
-                        new RuntimeException("Smart Step execution failed. Details:" + ex)
-                );
+                        (new RuntimeException("ZeroCode Step execution failed. Details:" + ex)),
+                        notificationHandler::handleStepException);
+
             }
             finally {
                 logCorelationshipPrinter.print();
@@ -181,19 +206,5 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
 
         return true;
     }
-
-
-    /*@Override
-    public boolean runChildStepWithObserver(ScenarioSpec flowSpec, BiConsumer<ScenarioSingleStepStatusNotifier, String> testObserver) {
-
-        flowSpec.getSteps()
-                .forEach(step -> {
-                    testObserver.acc
-                });
-
-                //.forEach(step -> testPassHandler.accept(flowSpec.getScenarioName(), step.getName()));
-
-        return true;
-    }*/
 
 }
