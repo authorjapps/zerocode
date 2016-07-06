@@ -12,7 +12,7 @@
     <version>1.1.1-SNAPSHOT</version>
 
     <packaging>jar</packaging>
-    <name>Zero Code REST BDD Tester</name>
+    <name>ZeroCode REST BDD</name>
     <description>Zero Code BDD framework for RESTFUL applications</description>
     <url>http://www.jsmart.org</url>
     <licenses>

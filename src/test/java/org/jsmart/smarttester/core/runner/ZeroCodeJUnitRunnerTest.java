@@ -1,6 +1,6 @@
 package org.jsmart.smarttester.core.runner;
 
-import org.jsmart.smarttester.core.domain.SmartTestCase;
+import org.jsmart.smarttester.core.domain.JsonTestCase;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,12 +19,12 @@ public class ZeroCodeJUnitRunnerTest {
 
     public static class TinySmartJUnitRunnerExampleTester {
 
-        @SmartTestCase("/abcd/path")
+        @JsonTestCase("/abcd/path")
         @Test
         public void tinyTestCase2() throws Exception {
         }
 
-        @SmartTestCase("/mac-daddy") //<---- This one will be first in the list, alphabetically sorted
+        @JsonTestCase("/mac-daddy") //<---- This one will be first in the list, alphabetically sorted
         @Test
         public void tinyTestCase1() throws Exception {
         }

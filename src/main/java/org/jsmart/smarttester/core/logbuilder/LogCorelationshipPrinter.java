@@ -8,7 +8,7 @@ import java.util.UUID;
 import static java.lang.String.format;
 
 public class LogCorelationshipPrinter {
-    private static final String DISPLAY_DEMARCATION_ = "\n------------------ RELATIONSHIP-ID: %s ------------------";
+    private static final String DISPLAY_DEMARCATION_ = "\n--------- RELATIONSHIP-ID: %s ---------";
 
     Logger logger;
     RequestLogBuilder requestLogBuilder = new RequestLogBuilder();

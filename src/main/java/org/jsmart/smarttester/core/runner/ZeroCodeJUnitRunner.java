@@ -4,7 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jsmart.smarttester.core.di.ApplicationMainModule;
 import org.jsmart.smarttester.core.domain.ScenarioSpec;
-import org.jsmart.smarttester.core.domain.SmartTestCase;
+import org.jsmart.smarttester.core.domain.JsonTestCase;
 import org.jsmart.smarttester.core.domain.TargetEnv;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.runner.Description;
@@ -53,7 +53,7 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
         List<FrameworkMethod> children = getChildren();
         children.forEach(
                 frameworkMethod -> {
-                    SmartTestCase annotation = frameworkMethod.getAnnotation(SmartTestCase.class);
+                    JsonTestCase annotation = frameworkMethod.getAnnotation(JsonTestCase.class);
                     if (annotation != null) {
                         smartTestCaseNames.add(annotation.value());
                     } else {
@@ -68,7 +68,7 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 
-        SmartTestCase annotation = method.getMethod().getAnnotation(SmartTestCase.class);
+        JsonTestCase annotation = method.getMethod().getAnnotation(JsonTestCase.class);
 
         if (annotation != null) {
             currentTestCase = annotation.value();
@@ -88,6 +88,7 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
         ScenarioSpec child = null;
         try {
             child = smartUtils.jsonFileToJava(currentTestCase, ScenarioSpec.class);
+
             logger.debug("### Found currentTestCase : -" + child);
 
             passed = getInjectedMultiStepsRunner().runScenario(child, notifier, description);

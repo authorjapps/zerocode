@@ -1,6 +1,6 @@
 package org.jsmart.smarttester.core.verify;
 
-import org.jsmart.smarttester.core.domain.SmartTestCase;
+import org.jsmart.smarttester.core.domain.JsonTestCase;
 import org.jsmart.smarttester.core.domain.TargetEnv;
 import org.jsmart.smarttester.core.runner.ZeroCodeJUnitRunner;
 import org.junit.Test;
@@ -10,22 +10,22 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeJUnitRunner.class)
 public class SmartJUnitNavigatorVerification {
 
-    @SmartTestCase("01_verification_test_cases/01_REST_end_point_GET_PASS.json")
+    @JsonTestCase("01_verification_test_cases/01_REST_end_point_GET_PASS.json")
     @Test
     public void testASmartTestCase_PASSIfNoConnectionError() throws Exception {
     }
 
-    @SmartTestCase("01_verification_test_cases/02_java_service_single_step.json")
+    @JsonTestCase("01_verification_test_cases/02_java_service_single_step.json")
     @Test
     public void testASmartTestCase_Another() throws Exception {
     }
 
-    @SmartTestCase("01_verification_test_cases/999_file_not_there_.json")
+    @JsonTestCase("01_verification_test_cases/999_file_not_there_.json")
     @Test
     public void testASmartTestCase_WrongFile() throws Exception {
     }
 
-    @SmartTestCase("01_verification_test_cases/01_get_more_bathroom_multi_steps.json")
+    @JsonTestCase("01_verification_test_cases/01_get_more_bathroom_multi_steps.json")
     @Test
     public void testASmartTestCase_sdCreateUpdate() throws Exception {
     }
