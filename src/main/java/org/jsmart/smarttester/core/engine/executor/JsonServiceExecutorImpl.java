@@ -58,7 +58,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
             final String resultJson = objectMapper.writeValueAsString(result);
 
-            return resultJson;
+            return prettyPrintJson(resultJson);
 
         } catch (Exception e) {
 
@@ -145,8 +145,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
             clientExecutor.body("application/json", reqBodyAsString);
         }
 
-        // set GET POST PUT DELETE
-        // TODO: if none of these then throw exception
+        // TODO: if none of the [GET POST PUT DELETE] then throw exception
         clientExecutor.setHttpMethod(methodName);
 
         /*

@@ -14,12 +14,12 @@
         },
         "queryParams": {
           "param1": "value1",
-          "param2": "RANDOM_STRING:5"
+          "param2": "RANDOM.STRING:5"
         },
         "body": {
           "Customer": {
             "firstName": "FIRST_NAME",
-            "lastName": "RANDOM_STRING:10"
+            "lastName": "RANDOM.STRING:10"
           }
         }
       },

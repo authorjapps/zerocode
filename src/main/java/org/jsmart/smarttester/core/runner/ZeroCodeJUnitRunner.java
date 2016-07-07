@@ -117,12 +117,12 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     private MultiStepsScenarioRunner getInjectedMultiStepsRunner() {
-        multiStepsScenarioRunner = getInjector().getInstance(MultiStepsScenarioRunner.class);
+        multiStepsScenarioRunner = getMainModuleInjector().getInstance(MultiStepsScenarioRunner.class);
         return multiStepsScenarioRunner;
     }
 
-    public Injector getInjector() {
-        //TODO: Synchronise this if needed with e.g. synchronized (IptSmartRunner.class) {}
+    public Injector getMainModuleInjector() {
+        // TODO: Synchronise this if needed with e.g. synchronized (IptSmartRunner.class) {}
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
         injector = Guice.createInjector(new ApplicationMainModule(serverEnv));
@@ -130,6 +130,6 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     protected SmartUtils getInjectedSmartUtilsClass() {
-        return getInjector().getInstance(SmartUtils.class);
+        return getMainModuleInjector().getInstance(SmartUtils.class);
     }
 }

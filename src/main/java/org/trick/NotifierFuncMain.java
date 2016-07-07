@@ -2,7 +2,7 @@ package org.trick;
 
 import org.jsmart.smarttester.core.runner.Notifier;
 
-public class NotifierImpl {
+public class NotifierFuncMain {
 
     /*
      * overloaded functions
@@ -41,7 +41,7 @@ public class NotifierImpl {
 
     public static void main(String[] args) {
 
-        NotifierImpl adderImpl = new NotifierImpl();
+        NotifierFuncMain adderImpl = new NotifierFuncMain();
 
         final int result = adderImpl.callAdd(1, 2, 3, 4, null, adderImpl::addThreeNums);
 

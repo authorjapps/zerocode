@@ -131,7 +131,6 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null? envAnnotation.value() : "config_hosts.properties";
         injector = Guice.createInjector(new ApplicationMainModule(serverEnv));
-        //injector = Guice.createInjector(new ApplicationMainModule());
         return injector;
     }
 

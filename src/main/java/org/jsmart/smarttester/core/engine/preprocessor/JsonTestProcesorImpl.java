@@ -32,7 +32,7 @@ public class JsonTestProcesorImpl implements JsonTestProcesor {
 
     private static final String PREFIX_ASU = "ASU";
     private static final String RANDOM_NUMBER = "RANDOM.NUMBER";
-    private static final String RANDOM_STRING_PREFIX = "RANDOM_STRING:";
+    private static final String RANDOM_STRING_PREFIX = "RANDOM.STRING:";
     private static final String STATIC_ALPHABET = "STATIC_ALPHABET:";
 
     private static final List<String> availableTokens = Arrays.asList(
