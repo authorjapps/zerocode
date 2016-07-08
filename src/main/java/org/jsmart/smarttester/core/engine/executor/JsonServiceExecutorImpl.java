@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.lang.String.format;
+import static org.jsmart.smarttester.core.utils.HelperJsonUtils.getContentAsItIsJson;
 import static org.jsmart.smarttester.core.utils.SmartUtils.prettyPrintJson;
 
 public class JsonServiceExecutorImpl implements JsonServiceExecutor {
@@ -76,6 +77,8 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
         } catch (Exception exc) {
 
+            exc.printStackTrace();
+
             throw new RuntimeException(exc);
 
         }
@@ -112,7 +115,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         /*
          * Get the request body content
          */
-        String reqBodyAsString = HelperJsonUtils.getContentAsItIsJson(bodyContent);
+        String reqBodyAsString = getContentAsItIsJson(bodyContent);
 
         /*
          * set the query parameters

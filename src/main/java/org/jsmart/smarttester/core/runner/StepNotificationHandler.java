@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class StepNotificationHandler {
-    private static final Logger logger = LoggerFactory.getLogger(ZeroCodePackageRunner.class);
+    private static final Logger logger = LoggerFactory.getLogger(StepNotificationHandler.class);
 
     Boolean handleAssertionFailed(RunNotifier notifier,
                                   Description description,

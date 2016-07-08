@@ -92,15 +92,6 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                         scenarioExecutionState.getResolvedScenarioState()
                 );
 
-                // logging request
-                logCorelationshipPrinter.aRequestBuilder()
-                        .relationshipId(logPrefixRelationshipId)
-                        .requestTimeStamp(LocalDateTime.now())
-                        .step(thisStep.getName())
-                        .url(serviceName)
-                        .method(operationName)
-                        .request(SmartUtils.prettyPrintJson(resolvedRequestJson));
-
                 // REST call execution
                 Boolean isRESTCall = false;
                 if( serviceName != null && serviceName.contains("/")) {
@@ -108,9 +99,28 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                 }
                 if(isRESTCall) {
                     serviceName = getFullyQualifiedRestUrl(serviceName);
+
+                    // logging REST request
+                    logCorelationshipPrinter.aRequestBuilder()
+                            .relationshipId(logPrefixRelationshipId)
+                            .requestTimeStamp(LocalDateTime.now())
+                            .step(thisStep.getName())
+                            .url(serviceName)
+                            .method(operationName)
+                            .request(SmartUtils.prettyPrintJson(resolvedRequestJson));
+
                     executionResult = serviceExecutor.executeRESTService(serviceName, operationName, resolvedRequestJson);
                 }
                 else {
+                    // logging Java request
+                    logCorelationshipPrinter.aRequestBuilder()
+                            .relationshipId(logPrefixRelationshipId)
+                            .requestTimeStamp(LocalDateTime.now())
+                            .step(thisStep.getName())
+                            .url(serviceName)
+                            .method(operationName)
+                            .request(SmartUtils.prettyPrintJson(resolvedRequestJson));
+
                     executionResult = serviceExecutor.executeJavaService(serviceName, operationName, resolvedRequestJson);
                 }
 
@@ -193,7 +203,11 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
         if(serviceEndPoint.startsWith("http://") || serviceEndPoint.startsWith("https://")) {
             return serviceEndPoint;
         } else {
-            applicationContext = StringUtils.isEmpty(applicationContext) ? "" : "/" + applicationContext;
+            /*
+             * Make sure your property file contains contextpath with a front slash like "/google-map".
+             * -OR-
+             * Empty context path is also ok if it requires. In this case dont put front slash.
+             */
             return String.format("%s:%s%s%s",host, port, applicationContext, serviceEndPoint );
         }
     }
