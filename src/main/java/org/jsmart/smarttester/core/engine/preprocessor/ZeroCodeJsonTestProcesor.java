@@ -5,7 +5,7 @@ import org.jsmart.smarttester.core.engine.assertion.JsonAsserter;
 
 import java.util.List;
 
-public interface JsonTestProcesor {
+public interface ZeroCodeJsonTestProcesor {
 
     String resolveStringJson(String requestJsonAsString, String resolvedScenarioState);
 

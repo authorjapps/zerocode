@@ -21,7 +21,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
-public class JsonTestProcesorImplTest {
+public class ZeroCodeJsonTestProcesorImplTest {
     public static final int PORT = 9999;
     public static final String HOST_WITH_CONTEXT = "http://localhost:" + PORT;
 
@@ -30,13 +30,13 @@ public class JsonTestProcesorImplTest {
     SmartUtils smartUtils;
     SimpleRestJsonSimulatorsMain simulator ;
 
-    JsonTestProcesor jsonPreProcessor;
+    ZeroCodeJsonTestProcesor jsonPreProcessor;
 
     @Before
     public void setUpStuff() throws Exception {
         injector = Guice.createInjector(new ApplicationMainModule("config_hosts_test.properties"));
         smartUtils = injector.getInstance(SmartUtils.class);
-        jsonPreProcessor = new JsonTestProcesorImpl(smartUtils.getMapper());
+        jsonPreProcessor = new ZeroCodeJsonTestProcesorImpl(smartUtils.getMapper());
 
         /*
          * See: All simulated end points: test/resources/simulators/test_purpose_end_points.json
@@ -90,7 +90,7 @@ public class JsonTestProcesorImplTest {
         assertThat(resolvedSpecWithPaths, containsString("\"staticName\": \"abcde\""));
 
         //final String resolvedSpecResolvedPaths = jsonPreProcessor.resolveJsonPaths(resolvedSpecWithPaths);
-        assertThat(resolvedSpecWithPaths, containsString("\"actualName\": \"${STATIC_ALPHABET:5}\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"actualName\": \"${STATIC.ALPHABET:5}\""));
         assertThat(resolvedSpecWithPaths, containsString("\"actualNameSize\": \"2\""));
     }
 

@@ -4,20 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import org.apache.commons.lang.StringUtils;
 import org.jsmart.smarttester.core.domain.ScenarioSpec;
 import org.jsmart.smarttester.core.domain.Step;
 import org.jsmart.smarttester.core.engine.assertion.AssertionReport;
 import org.jsmart.smarttester.core.engine.assertion.JsonAsserter;
 import org.jsmart.smarttester.core.engine.executor.JsonServiceExecutor;
-import org.jsmart.smarttester.core.engine.preprocessor.JsonTestProcesor;
 import org.jsmart.smarttester.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.smarttester.core.engine.preprocessor.StepExecutionState;
+import org.jsmart.smarttester.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
 import org.jsmart.smarttester.core.logbuilder.LogCorelationshipPrinter;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,18 +24,19 @@ import java.util.function.BiConsumer;
 import static org.jsmart.smarttester.core.logbuilder.LogCorelationshipPrinter.createRelationshipId;
 import static org.jsmart.smarttester.core.logbuilder.LogCorelationshipPrinter.newInstance;
 import static org.jsmart.smarttester.core.utils.SmartUtils.prettyPrintJson;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Singleton
 public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MultiStepsScenarioRunnerImpl.class);
+    private static final org.slf4j.Logger LOGGER = getLogger(MultiStepsScenarioRunnerImpl.class);
 
     //guice -starts
     @Inject
     ObjectMapper objectMapper;
 
     @Inject
-    JsonTestProcesor jsonTestProcesor;
+    ZeroCodeJsonTestProcesor zeroCodeJsonTestProcesor;
 
     @Inject
     private JsonServiceExecutor serviceExecutor;
@@ -56,6 +55,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
     //guice -ends
 
     private LogCorelationshipPrinter logCorelationshipPrinter;
+
     private static StepNotificationHandler notificationHandler = new StepNotificationHandler();
 
     @Override
@@ -76,7 +76,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
             StepExecutionState stepExecutionState = new StepExecutionState();
             stepExecutionState.addStep(thisStep.getName());
 
-            String resolvedRequestJson = jsonTestProcesor.resolveStringJson(
+            String resolvedRequestJson = zeroCodeJsonTestProcesor.resolveStringJson(
                     requestJsonAsString,
                     scenarioExecutionState.getResolvedScenarioState()
             );
@@ -89,7 +89,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                 String operationName = thisStep.getOperation();
 
                 // Resolve the URL patterns if any
-                serviceName = jsonTestProcesor.resolveStringJson(
+                serviceName = zeroCodeJsonTestProcesor.resolveStringJson(
                         serviceName,
                         scenarioExecutionState.getResolvedScenarioState()
                 );
@@ -136,7 +136,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                 scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
 
                 // Handle assertion section
-                String resolvedAssertionJson = jsonTestProcesor.resolveStringJson(
+                String resolvedAssertionJson = zeroCodeJsonTestProcesor.resolveStringJson(
                         thisStep.getAssertions().toString(),
                         scenarioExecutionState.getResolvedScenarioState()
                 );
@@ -144,8 +144,8 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                 // logging assertion
                 logCorelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
 
-                List<JsonAsserter> asserters = jsonTestProcesor.createAssertersFrom(resolvedAssertionJson);
-                List<AssertionReport> failureResults = jsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
+                List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createAssertersFrom(resolvedAssertionJson);
+                List<AssertionReport> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
 
                 if (!failureResults.isEmpty()) {
                     /*
@@ -175,6 +175,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
 
                 ex.printStackTrace();
 
+                // logging exception message
                 logCorelationshipPrinter.aResponseBuilder()
                         .relationshipId(logPrefixRelationshipId)
                         .responseTimeStamp(LocalDateTime.now())

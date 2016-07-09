@@ -7,8 +7,8 @@ import org.jsmart.smarttester.core.engine.executor.JavaExecutorImpl;
 import org.jsmart.smarttester.core.engine.executor.JavaExecutor;
 import org.jsmart.smarttester.core.engine.executor.JsonServiceExecutor;
 import org.jsmart.smarttester.core.engine.executor.JsonServiceExecutorImpl;
-import org.jsmart.smarttester.core.engine.preprocessor.JsonTestProcesor;
-import org.jsmart.smarttester.core.engine.preprocessor.JsonTestProcesorImpl;
+import org.jsmart.smarttester.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
+import org.jsmart.smarttester.core.engine.preprocessor.ZeroCodeJsonTestProcesorImpl;
 import org.jsmart.smarttester.core.runner.MultiStepsScenarioRunnerImpl;
 import org.jsmart.smarttester.core.runner.MultiStepsScenarioRunner;
 
@@ -38,7 +38,7 @@ public class ApplicationMainModule extends AbstractModule {
         bind(MultiStepsScenarioRunner.class).to(MultiStepsScenarioRunnerImpl.class);
         bind(JsonServiceExecutor.class).to(JsonServiceExecutorImpl.class);
         bind(JavaExecutor.class).to(JavaExecutorImpl.class);
-        bind(JsonTestProcesor.class).to(JsonTestProcesorImpl.class);
+        bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
         //bind(SmartUtils.class);
 
         /*

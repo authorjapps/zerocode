@@ -5,13 +5,13 @@
     {
       "name": "step1",
       "loop": 3,
-      "url": "/persons/${STATIC_ALPHABET:3}",
+      "url": "/persons/${STATIC.ALPHABET:3}",
       "operation": "POST",
       "request": {
         "body": {
           "customer": {
             "firstName": "FIRST_NAME",
-            "staticName": "${STATIC_ALPHABET:5}",
+            "staticName": "${STATIC.ALPHABET:5}",
             "addresses": [
               "office-1",
               "home-2"
@@ -31,7 +31,7 @@
     {
       "name": "step2",
       "loop": 3,
-      "url": "/persons/${STATIC_ALPHABET:3}",
+      "url": "/persons/${STATIC.ALPHABET:3}",
       "operation": "POST",
       "request": {
         "body": {

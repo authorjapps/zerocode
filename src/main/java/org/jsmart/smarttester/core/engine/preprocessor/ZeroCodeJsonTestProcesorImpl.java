@@ -28,12 +28,12 @@ import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
-public class JsonTestProcesorImpl implements JsonTestProcesor {
+public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
     private static final String PREFIX_ASU = "ASU";
     private static final String RANDOM_NUMBER = "RANDOM.NUMBER";
     private static final String RANDOM_STRING_PREFIX = "RANDOM.STRING:";
-    private static final String STATIC_ALPHABET = "STATIC_ALPHABET:";
+    private static final String STATIC_ALPHABET = "STATIC.ALPHABET:";
 
     private static final List<String> availableTokens = Arrays.asList(
             PREFIX_ASU,
@@ -45,7 +45,7 @@ public class JsonTestProcesorImpl implements JsonTestProcesor {
     private final ObjectMapper mapper;
 
     @Inject
-    public JsonTestProcesorImpl(ObjectMapper mapper) {
+    public ZeroCodeJsonTestProcesorImpl(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 

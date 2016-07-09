@@ -5,7 +5,7 @@
     {
       "loop": 3,
       "name": "StepNameWithoutSpaceEgCREATESD",
-      "url": "/persons/${STATIC_ALPHABET:3}",
+      "url": "/persons/${STATIC.ALPHABET:3}",
       "operation": "POST",
       "request": {
         "headers": {
@@ -21,7 +21,7 @@
             "firstName": "FIRST_NAME",
             "lastName": "${RANDOM.STRING:3}",
             "nickName": "${RANDOM.NUMBER}",
-            "staticName": "${STATIC_ALPHABET:5}",
+            "staticName": "${STATIC.ALPHABET:5}",
             "addresses" : [
               {
                  "addressLine1" : "19 Pm Road"
