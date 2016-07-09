@@ -22,7 +22,7 @@ public class StepNotificationHandler {
         logger.info(String.format("Failed assertion during Scenario:%s, --> Step:%s, Details: %s",
                 scenarioName, stepName, StringUtils.join(failureReportList, "\n")));
         notifier.fireTestFailure(new Failure(description, new RuntimeException(
-                String.format( "Assertion failed for step %s, details:%n%s%n", stepName, StringUtils.join(failureReportList, "\n"))
+                String.format( "Assertion failed for [%s]: step--> [%s], details:%n%s%n", scenarioName, stepName, StringUtils.join(failureReportList, "\n"))
         )));
 
         return false;
@@ -32,7 +32,7 @@ public class StepNotificationHandler {
                                 String scenarioName,
                                 String stepName,
                                 Exception stepException){
-        logger.info(String.format("Exception occurred while executing Scenario: %s, Step: %s, Details: %s",
+        logger.info(String.format("Exception occurred while executing Scenario:[%s], --> Step:[%s], Details: %s",
                 scenarioName, stepName, stepException));
         notifier.fireTestFailure(new Failure(description, stepException));
 

@@ -58,6 +58,7 @@ public class LogCorelationshipPrinter {
                 "---------> Assertion: <----------\n" + responseLogBuilder.getAssertion()
                 )
         );
+
     }
 
     public static String createRelationshipId() {

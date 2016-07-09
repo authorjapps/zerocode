@@ -6,7 +6,8 @@ public class ResponseLogBuilder {
     String relationshipId;
     LocalDateTime responseTimeStamp;
     String response;
-    String assertion = "{Oops! Not decided. Probably a round trip connection problem occurred}";
+    String exceptionMsg;
+    String assertion = "{Oops! Not decided. See connection or assertion path log}";
 
 
     public ResponseLogBuilder relationshipId(String relationshipId) {
@@ -21,6 +22,11 @@ public class ResponseLogBuilder {
 
     public ResponseLogBuilder response(String response) {
         this.response = response;
+        return this;
+    }
+
+    public ResponseLogBuilder exceptionMessage(String exceptionMsg) {
+        this.exceptionMsg = exceptionMsg;
         return this;
     }
 
@@ -44,4 +50,5 @@ public class ResponseLogBuilder {
     public String getAssertion() {
         return assertion;
     }
+
 }

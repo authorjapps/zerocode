@@ -55,7 +55,6 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
     private String applicationContext;
     //guice -ends
 
-    private LogCorelationshipPrinter logCorelationshipPrinter = newInstance(LOGGER);
     private static StepNotificationHandler notificationHandler = new StepNotificationHandler();
 
     @Override
@@ -69,6 +68,8 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
             // Another way to get the String
             // String requestJson = objectMapper.valueToTree(thisStep.getRequest()).toString();
 
+            LogCorelationshipPrinter logCorelationshipPrinter = newInstance(LOGGER);
+
             final String requestJsonAsString = thisStep.getRequest().toString();
 
             StepExecutionState stepExecutionState = new StepExecutionState();
@@ -80,7 +81,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
             );
             stepExecutionState.addRequest(resolvedRequestJson);
 
-            String executionResult;
+            String executionResult = "-response not decided-";
             final String logPrefixRelationshipId = createRelationshipId();
             try{
                 String serviceName = thisStep.getUrl();
@@ -141,6 +142,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
 
                 // logging assertion
                 logCorelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
+
                 List<JsonAsserter> asserters = jsonTestProcesor.createAssertersFrom(resolvedAssertionJson);
                 List<AssertionReport> failureResults = jsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult); //<-- write code
 
@@ -173,7 +175,8 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                 logCorelationshipPrinter.aResponseBuilder()
                         .relationshipId(logPrefixRelationshipId)
                         .responseTimeStamp(LocalDateTime.now())
-                        .response(ex.getMessage());
+                        .response(executionResult)
+                        .exceptionMessage(ex.getMessage());
 
                 /*
                  * Step threw an exception
