@@ -55,12 +55,13 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
     private String applicationContext;
     //guice -ends
 
+    private LogCorelationshipPrinter logCorelationshipPrinter;
     private static StepNotificationHandler notificationHandler = new StepNotificationHandler();
 
     @Override
     public boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
 
-        LOGGER.info("\n-------------------------- Scenario:{} -------------------------\n", scenario.getScenarioName());
+        LOGGER.info("\n-------------------------- BDD: Scenario:{} -------------------------\n", scenario.getScenarioName());
 
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
@@ -68,7 +69,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
             // Another way to get the String
             // String requestJson = objectMapper.valueToTree(thisStep.getRequest()).toString();
 
-            LogCorelationshipPrinter logCorelationshipPrinter = newInstance(LOGGER);
+            logCorelationshipPrinter = newInstance(LOGGER);
 
             final String requestJsonAsString = thisStep.getRequest().toString();
 
@@ -144,7 +145,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                 logCorelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
 
                 List<JsonAsserter> asserters = jsonTestProcesor.createAssertersFrom(resolvedAssertionJson);
-                List<AssertionReport> failureResults = jsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult); //<-- write code
+                List<AssertionReport> failureResults = jsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
 
                 if (!failureResults.isEmpty()) {
                     /*
@@ -171,7 +172,9 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
                         notificationHandler::handleAssertionPassed);
 
             } catch(Exception ex){
+
                 ex.printStackTrace();
+
                 logCorelationshipPrinter.aResponseBuilder()
                         .relationshipId(logPrefixRelationshipId)
                         .responseTimeStamp(LocalDateTime.now())
@@ -207,7 +210,7 @@ public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
             return serviceEndPoint;
         } else {
             /*
-             * Make sure your property file contains contextpath with a front slash like "/google-map".
+             * Make sure your property file contains context-path with a front slash like "/google-map".
              * -OR-
              * Empty context path is also ok if it requires. In this case dont put front slash.
              */
