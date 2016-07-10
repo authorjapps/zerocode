@@ -52,8 +52,6 @@ public class ScenarioSpecTest {
         String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/02_test_json_flow_single_step.json");
         ScenarioSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
-        System.out.println(flowDeserialized);
-
         assertThat(flowDeserialized, notNullValue());
         assertThat(flowDeserialized.getSteps().size(), is(1));
         assertThat(flowDeserialized.getLoop(), is(5));
@@ -123,42 +121,18 @@ public class ScenarioSpecTest {
                 "  \"id2\": 100 \n" +
                 "}";
         JsonNode jsonNode = mapper.readTree(jsonString);
-        System.out.println("###jsonNode: " + jsonNode.getNodeType());
 
         final JsonNode id = jsonNode.get("id");
-        System.out.println("###id: " + id.getNodeType());
 
         final JsonNode createPerson = jsonNode.get("createPerson");
-        System.out.println("###createPerson: " + createPerson.getNodeType());
 
         final JsonNode status = jsonNode.get("createPerson").get("response").get("status");
-        System.out.println("###status: " + status.getNodeType());
 
         final int idAsNumber = id.asInt();
-        System.out.println("###idAsNumber: " + idAsNumber);
 
         final String idAsString = id.asText();
-        System.out.println("###idAsString: " + idAsString);
-
 
         final JsonNode id2 = jsonNode.get("id2");
-        System.out.println("###id2 equlas to id: " + id.asText().equals(id2.asText()));
-
-
-//        if(id.getNodeType() == JsonNodeType.STRING){
-//            System.out.println("String");
-//        }
-
-//        JSONAssert.assertEquals(
-//                "{\n" +
-//                        "  \"id\": \"10101\"\n" +
-//                        "}",
-//                "{\n" +
-//                        "  \"id\": \"10101\",\n" +
-//                        "  \"id\": \"10101\"\n" +
-//                        "}",
-//                false);
-
 
     }
 }

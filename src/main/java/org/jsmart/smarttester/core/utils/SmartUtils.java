@@ -104,12 +104,6 @@ public class SmartUtils {
                 });
     }
 
-//    public static void main(String[] args) {
-//        String jsonString = "{\"age\":29,\"messages\":[\"msg 1\",\"msg 2\",\"msg 3\"],\"name\":\"mkyong\"}";
-//        jsonString = prettyPrintJson(jsonString);
-//        System.out.println("###Pretty: " + jsonString);
-//    }
-
     public static String prettyPrintJson(String jsonString) {
         String indented = jsonString;
         final ObjectMapper objectMapper = new ObjectMapperProvider().get();

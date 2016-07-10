@@ -13,17 +13,29 @@ public class FieldHasExactValueAsserter implements JsonAsserter {
     public AssertionReport actualEqualsToExpected(Object actualResult) {
         boolean areEqual;
 
+        /*
+         * Any number
+         */
         if (actualResult instanceof Number && expected instanceof Number) {
             NumberComparator comparator = new NumberComparator();
             areEqual = comparator.compare((Number) expected, (Number) actualResult) == 0;
 
-        } else if (actualResult == null && expected == null) {
+        }
+        /*
+         * Both are null
+         */
+        else if (actualResult == null && expected == null) {
             areEqual = true;
 
-        } else if (actualResult != null) {
+        }
+        /*
+         * Any String
+         */
+        else if (actualResult != null) {
             areEqual = actualResult.equals(expected);
 
-        } else {
+        }
+        else {
             areEqual = false;
 
         }

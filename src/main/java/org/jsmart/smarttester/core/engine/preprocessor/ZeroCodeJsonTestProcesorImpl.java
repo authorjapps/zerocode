@@ -10,12 +10,15 @@ import org.jsmart.smarttester.core.engine.assertion.ArrayIsEmptyAsserter;
 import org.jsmart.smarttester.core.engine.assertion.ArraySizeAsserter;
 import org.jsmart.smarttester.core.engine.assertion.AssertionReport;
 import org.jsmart.smarttester.core.engine.assertion.FieldHasExactValueAsserter;
+import org.jsmart.smarttester.core.engine.assertion.FieldHasGreaterThanValueAsserter;
+import org.jsmart.smarttester.core.engine.assertion.FieldHasLesserThanValueAsserter;
 import org.jsmart.smarttester.core.engine.assertion.FieldHasSubStringValueAsserter;
 import org.jsmart.smarttester.core.engine.assertion.FieldIsNotNullAsserter;
 import org.jsmart.smarttester.core.engine.assertion.FieldIsNullAsserter;
 import org.jsmart.smarttester.core.engine.assertion.JsonAsserter;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,6 +33,9 @@ import static java.lang.String.format;
 
 public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
+    /*
+         * General place holders
+         */
     private static final String PREFIX_ASU = "ASU";
     private static final String RANDOM_NUMBER = "RANDOM.NUMBER";
     private static final String RANDOM_STRING_PREFIX = "RANDOM.STRING:";
@@ -41,6 +47,17 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
             RANDOM_STRING_PREFIX,
             STATIC_ALPHABET
     );
+
+    /*
+     * Assertion place holders
+     */
+    public static final String ASSERT_VALUE_NOT_NULL = "$NOT.NULL";
+    public static final String ASSERT_VALUE_NULL = "$NULL";
+    public static final String ASSERT_VALUE_EMPTY_ARRAY = "$[]";
+    public static final String ASSERT_PATH_SIZE = ".SIZE";
+    public static final String ASSERT_VALUE_CONTAINS_STRING = "$CONTAINS.STRING:";
+    public static final String ASSERT_VALUE_GREATER_THAN = "$GT.";
+    public static final String ASSERT_VALUE_LESSER_THAN = "$LT.";
 
     private final ObjectMapper mapper;
 
@@ -139,26 +156,40 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 Object value = entry.getValue();
 
                 JsonAsserter asserter;
-                if ("$NOT.NULL".equals(value)) {
+                if (ASSERT_VALUE_NOT_NULL.equals(value)) {
                     asserter = new FieldIsNotNullAsserter(path);
                 }
-                else if ("$NULL".equals(value)) {
+                else if (ASSERT_VALUE_NULL.equals(value)) {
                     asserter = new FieldIsNullAsserter(path);
-                } else if ("$[]".equals(value)) {
+                }
+                else if (ASSERT_VALUE_EMPTY_ARRAY.equals(value)) {
                     asserter = new ArrayIsEmptyAsserter(path);
-                } else if (path.endsWith(".SIZE")) {
-                    path = path.substring(0, path.length() - ".SIZE".length());
+                }
+                else if (path.endsWith(ASSERT_PATH_SIZE)) {
+                    path = path.substring(0, path.length() - ASSERT_PATH_SIZE.length());
                     asserter = new ArraySizeAsserter(path, ((Integer) value).intValue());
-                } else if (value instanceof String && ((String) value).startsWith("$CONTAINS.STRING:")) {
-                    String expected = ((String) value).substring("$CONTAINS.STRING:".length());
+                }
+                else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_CONTAINS_STRING)) {
+                    String expected = ((String) value).substring(ASSERT_VALUE_CONTAINS_STRING.length());
                     asserter = new FieldHasSubStringValueAsserter(path, expected);
-                } else {
+                }
+                else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_GREATER_THAN)) {
+                    String expected = ((String) value).substring(ASSERT_VALUE_GREATER_THAN.length());
+                    asserter = new FieldHasGreaterThanValueAsserter(path, new BigDecimal(expected));
+                }
+                else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_LESSER_THAN)) {
+                    String expected = ((String) value).substring(ASSERT_VALUE_LESSER_THAN.length());
+                    asserter = new FieldHasLesserThanValueAsserter(path, new BigDecimal(expected));
+                }
+                else {
                     //TODO
                     asserter = new FieldHasExactValueAsserter(path, value);
                 }
 
+                //System.out.println("### Asserter: " + asserter.toString());
                 asserters.add(asserter);
             }
+            //System.out.println("### Asserters size: " + asserters.size());
         } catch (IOException parEx) {
             throw new RuntimeException(parEx);
         }
@@ -167,7 +198,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     }
 
     private Map<String, Object> createAssertionKV(JsonNode jsonNode, String pathDslPrefix) {
-        HashMap<String, Object> result = new HashMap<String, Object>();
+        HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
         if (jsonNode.getNodeType().equals(JsonNodeType.OBJECT)) {
             jsonNode.fieldNames().forEachRemaining(fieldName -> {
@@ -176,11 +207,11 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
                 if (thisNode.isValueNode()) {
                     Object value = convertJsonTypeToJavaType(jsonNode.get(fieldName));
-                    result.put(qualifiedName, value);
+                    resultMap.put(qualifiedName, value);
 
                 } else {
                     String newPrefix = qualifiedName + ".";
-                    result.putAll(createAssertionKV(thisNode, newPrefix));
+                    resultMap.putAll(createAssertionKV(thisNode, newPrefix));
 
                 }
             });
@@ -194,11 +225,11 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
                 if (thisElementValue.isValueNode()) {
                     Object value = convertJsonTypeToJavaType(thisElementValue);
-                    result.put(elementName, value);
+                    resultMap.put(elementName, value);
 
                 } else {
                     String newPrefix = elementName + ".";
-                    result.putAll(createAssertionKV(thisElementValue, newPrefix));
+                    resultMap.putAll(createAssertionKV(thisElementValue, newPrefix));
 
                 }
             }
@@ -207,7 +238,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
         }
 
-        return result;
+        return resultMap;
     }
 
     private Object convertJsonTypeToJavaType(JsonNode jsonNode) {

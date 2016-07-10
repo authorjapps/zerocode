@@ -1,5 +1,7 @@
 package org.jsmart.smarttester.core.engine.assertion;
 
+import net.minidev.json.JSONArray;
+
 public class ArrayIsEmptyAsserter implements JsonAsserter {
     private final String path;
 
@@ -14,9 +16,9 @@ public class ArrayIsEmptyAsserter implements JsonAsserter {
 
     @Override
     public AssertionReport actualEqualsToExpected(Object result) {
-        if(result instanceof net.minidev.json.JSONArray){
+        if(result instanceof JSONArray){
 
-            final net.minidev.json.JSONArray actualArrayValue = (net.minidev.json.JSONArray) result;
+            final JSONArray actualArrayValue = (JSONArray) result;
 
             if(actualArrayValue.isEmpty()){
 

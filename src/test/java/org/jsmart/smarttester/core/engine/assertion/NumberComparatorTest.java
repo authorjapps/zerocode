@@ -14,6 +14,7 @@ public class NumberComparatorTest {
         assertThat((new BigDecimal("3")).compareTo(new BigDecimal("3")), is(0));
         assertThat((new BigDecimal("3.0")).compareTo(new BigDecimal("3")), is(0));
         assertThat((new BigDecimal("3")).compareTo(new BigDecimal("3.0009")), is(-1));
+        assertThat((new BigDecimal("3.0009")).compareTo(new BigDecimal("3")), is(1));
         assertThat((new BigDecimal("3.00009")).compareTo(new BigDecimal("3.00009")), is(0));
 
         NumberComparator comparator = new NumberComparator();

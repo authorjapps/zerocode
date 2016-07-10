@@ -2,6 +2,7 @@
   "status": 201,
   "body": {
     "id": null,
+    "salary": 1400,
     "times": null,
     "actualName": "ACTUAL NAME",
     "addresses": [

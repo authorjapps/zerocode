@@ -1,5 +1,7 @@
 package org.jsmart.smarttester.core.engine.assertion;
 
+import net.minidev.json.JSONArray;
+
 public class ArraySizeAsserter implements JsonAsserter {
     private final String path;
     private final int expectedSize;
@@ -16,21 +18,22 @@ public class ArraySizeAsserter implements JsonAsserter {
 
     @Override
     public AssertionReport actualEqualsToExpected(Object result) {
-        if(result instanceof net.minidev.json.JSONArray){
+        if (result instanceof JSONArray) {
 
-            final net.minidev.json.JSONArray actualArrayValue = (net.minidev.json.JSONArray) result;
+            final JSONArray actualArrayValue = (JSONArray) result;
 
-            if(actualArrayValue.size() == this.expectedSize){
+            if (actualArrayValue.size() == this.expectedSize) {
 
                 return AssertionReport.createFieldMatchesReport();
             }
 
-            return AssertionReport.createFieldDoesNotMatchReport(path, String.format("Array of size %d",expectedSize), result);
+            return AssertionReport.createFieldDoesNotMatchReport(path, String.format("Array of size %d", expectedSize), result);
 
         } else {
 
             return AssertionReport.createFieldDoesNotMatchReport(path, "[]", result);
 
-        }    }
+        }
+    }
 
 }

@@ -56,7 +56,6 @@ public class ZeroCodeJsonTestProcesorImplTest {
 
         final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
 
-        System.out.println("### resolvedRequestJson: " + resolvedRequestJson);
         String lastName = JsonPath.read(resolvedRequestJson, "$.body.Customer.lastName");
         String nickName = JsonPath.read(resolvedRequestJson, "$.body.Customer.nickName");
 
@@ -124,12 +123,13 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(resolvedSpecWithPaths, containsString("\"actualName\": \"ANOTHER_NAME\""));
         assertThat(resolvedSpecWithPaths, containsString("\"noOfAddresses\": \"2\""));
 
-        System.out.println("###resolvedSpecResolvedPaths--- " + resolvedSpecWithPaths);
     }
 
     @Test
     public void willResolveJsonPathOfJayWayFor_AssertionSection() throws Exception {
         ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava("09_test_engine/02_1_two_requests_with_json_path_assertion.json", ScenarioSpec.class);
+
+        // Get the 2nd step
         final String assertionsSectionAsString = scenarioSpec.getSteps().get(1).getAssertions().toString();
         String scenarioState = "{\n" +
                 "    \"step1\": {\n" +
@@ -155,7 +155,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         String sapmleExecutionResult =
                 smartUtils.getJsonDocumentAsString("09_test_engine/02_2_sample_resolved_execution_response.json");
         List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
-        assertThat(asserters.size(), is(15));
+        assertThat(asserters.size(), is(17));
 
         List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, sapmleExecutionResult);
 
@@ -170,7 +170,10 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(failedReports.toString(), containsString("did not match the expected value 'Array of size 5'"));
         assertThat(failedReports.toString(), containsString("did not match the expected value 'Array of size 4'"));
         assertThat(failedReports.toString(), containsString("did not match the expected value 'containing sub-string:DaddyWithMac'"));
-        assertThat(failedReports.size(), is(8));
+        assertThat(failedReports.toString(), containsString("did not match the expected value 'Greater Than:499'"));
+        assertThat(failedReports.toString(), containsString("'null' did not match the expected value 'Greater Than:388'"));
+        assertThat(failedReports.toString(), containsString("actual value '1400' did not match the expected value 'Lesser Than:1300'"));
+        assertThat(failedReports.size(), is(11));
 
     }
 }
