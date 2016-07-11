@@ -176,4 +176,74 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(failedReports.size(), is(11));
 
     }
+
+    @Test
+    public void willResolveTextNodeFor_Assertion() throws Exception {
+
+        final String assertionsSectionTextNodeAsString = "\"id-generated-0101\"";
+
+        String scenarioState = "{\n" +
+                "    \"step1\": {\n" +
+                "        \"request\": {\n" +
+                "            \"body\": {\n" +
+                "                \"customer\": {\n" +
+                "                    \"firstName\": \"FIRST_NAME\",\n" +
+                "                    \"staticName\": \"ANOTHER_NAME\",\n" +
+                "                    \"addresses\":[\"office-1\", \"home-2\"]\n" +
+                "                }\n" +
+                "            }\n" +
+                "        },\n" +
+                "        \"response\": \"id-generated-0101-aga-baga\"" + //<--- In this case this is not relevant as this path is not used
+                "    }\n" +
+                "}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionTextNodeAsString, scenarioState);
+        assertThat(resolvedAssertions, containsString("\"id-generated-0101\""));
+
+        // start assertion
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(1));
+
+        String sampleExecutionResult = "\"id-generated-0101-XY\"";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, sampleExecutionResult);
+
+        System.out.println("###failedReports : " + failedReports);
+        assertThat(failedReports.toString(), containsString("'$' with actual value 'id-generated-0101-XY' did not match the expected value 'id-generated-0101'"));
+        assertThat(failedReports.size(), is(1));
+    }
+
+    @Test
+    public void willResolveIntegerNodeFor_Assertion() throws Exception {
+
+        final Integer assertionsSectionInt = 1099;
+
+        String scenarioState = "{\n" +
+                "    \"step1\": {\n" +
+                "        \"request\": {\n" +
+                "            \"body\": {\n" +
+                "                \"customer\": {\n" +
+                "                    \"firstName\": \"FIRST_NAME\",\n" +
+                "                    \"staticName\": \"ANOTHER_NAME\",\n" +
+                "                    \"addresses\":[\"office-1\", \"home-2\"]\n" +
+                "                }\n" +
+                "            }\n" +
+                "        },\n" +
+                "        \"response\": 300000" + //<--- In this case this is not relevant as this path is not used
+                "    }\n" +
+                "}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionInt.toString(), scenarioState);
+        assertThat(resolvedAssertions, containsString("1099"));
+
+        // start assertion
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(1));
+
+        Integer sampleExecutionResult = 1077;
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, sampleExecutionResult.toString());
+
+        System.out.println("###failedReports : " + failedReports);
+        assertThat(failedReports.toString(), containsString("'$' with actual value '1077' did not match the expected value '1099'"));
+        assertThat(failedReports.size(), is(1));
+    }
 }

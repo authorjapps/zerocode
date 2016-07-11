@@ -34,8 +34,8 @@ import static java.lang.String.format;
 public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
     /*
-         * General place holders
-         */
+     * General place holders
+     */
     private static final String PREFIX_ASU = "ASU";
     private static final String RANDOM_NUMBER = "RANDOM.NUMBER";
     private static final String RANDOM_STRING_PREFIX = "RANDOM.STRING:";
@@ -58,6 +58,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_VALUE_CONTAINS_STRING = "$CONTAINS.STRING:";
     public static final String ASSERT_VALUE_GREATER_THAN = "$GT.";
     public static final String ASSERT_VALUE_LESSER_THAN = "$LT.";
+    public static final String ASSERT_PATH_VALUE_NODE = "$";
 
     private final ObjectMapper mapper;
 
@@ -182,7 +183,6 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     asserter = new FieldHasLesserThanValueAsserter(path, new BigDecimal(expected));
                 }
                 else {
-                    //TODO
                     asserter = new FieldHasExactValueAsserter(path, value);
                 }
 
@@ -216,7 +216,8 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 }
             });
 
-        } else if (jsonNode.getNodeType().equals(JsonNodeType.ARRAY)) {
+        }
+        else if (jsonNode.getNodeType().equals(JsonNodeType.ARRAY)) {
             int i = 0;
             final Iterator<JsonNode> arrayIterator = jsonNode.elements();
             while (arrayIterator.hasNext()) {
@@ -233,7 +234,17 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
                 }
             }
-        } else {
+        }
+        /*
+         * This is useful when only value is present without a key
+         * i.e. still a valid JSON even if it doesnt start-end with a '{'
+         */
+        else if(jsonNode.isValueNode()){
+            Object value = convertJsonTypeToJavaType(jsonNode);
+            resultMap.put("$", value);
+
+        }
+        else {
             throw new RuntimeException(format("Oops! Unsupported JSON Type: %s", jsonNode.getClass().getName()));
 
         }
@@ -315,4 +326,5 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static List<String> getAvailableTokens() {
         return availableTokens;
     }
+
 }
