@@ -17,8 +17,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
 
 @RunWith(JukitoRunner.class)
 //@UseModules(ApplicationMainModule.class) //<--- Only if you dont pass any value to it's constructor
@@ -35,7 +33,7 @@ public class SmartUtilsTest {
     }
 
     @Inject //<---- Without this inject you can not have the ObjectMapper injected inside SmartUtils. Also you cant have the Object mapper as static.
-            SmartUtils smartUtils;
+    SmartUtils smartUtils;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

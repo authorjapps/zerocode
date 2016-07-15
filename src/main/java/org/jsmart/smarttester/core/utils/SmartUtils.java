@@ -132,13 +132,6 @@ public class SmartUtils {
         }
     }
 
-//    public static String prettyPrintJson(JsonElement element) {
-//        GsonBuilder builder=new GsonBuilder();
-//        builder.setPrettyPrinting();
-//        Gson gson = builder.create();
-//        return gson.toJson(element);
-//    }
-
     public void setMapper(ObjectMapper mapper) {
         this.mapper = mapper;
     }

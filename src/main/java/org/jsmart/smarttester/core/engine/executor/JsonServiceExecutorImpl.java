@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
+import org.jsmart.smarttester.core.domain.MockSteps;
 import org.jsmart.smarttester.core.domain.Response;
 import org.jsmart.smarttester.core.engine.mocker.RestEndPointMocker;
 import org.jsmart.smarttester.core.utils.HelperJsonUtils;
@@ -24,6 +25,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.lang.String.format;
+import static org.jsmart.smarttester.core.engine.mocker.RestEndPointMocker.createWithLocalMock;
+import static org.jsmart.smarttester.core.engine.mocker.RestEndPointMocker.createWithVirtuosoMock;
+import static org.jsmart.smarttester.core.engine.mocker.RestEndPointMocker.createWithWireMock;
 import static org.jsmart.smarttester.core.utils.HelperJsonUtils.getContentAsItIsJson;
 import static org.jsmart.smarttester.core.utils.SmartUtils.prettyPrintJson;
 
@@ -84,6 +88,8 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         }
     }
 
+//    @Rule
+//    public WireMockRule rule = new WireMockRule(8888);
 
     private String executeRESTInternal(String httpUrl, String methodName, String requestJson) throws Exception {
 
@@ -91,24 +97,10 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         Object headers = readJsonPathOrElseNull(requestJson, "$.headers");
         Object bodyContent = readJsonPathOrElseNull(requestJson, "$.body");
 
-        //
-        if(httpUrl.contains("/$VIRTUOSO")){
-            logger.info("\n#body:\n" + bodyContent);
-
-            //read the content of the "request". This contains the complete rest API.
-            RestEndPointMocker.createVirtuosoMock(bodyContent != null ? bodyContent.toString() : null);
-
-            logger.info("#SUCCESS: End point simulated.");
-            return "{\"status\": 200}";
-        }
-
-        if(httpUrl.contains("/$MOCK")){
-            logger.info("\n#body:\n" + bodyContent);
-
-            //read the content of the "request". This contains the complete rest API.
-            RestEndPointMocker.createLocalMock(bodyContent != null ? bodyContent.toString() : null);
-
-            logger.info("#SUCCESS: End point simulated.");
+        /*
+         * Create mock endpoints supplied for this scenario
+         */
+        if (completedMockingEndPoints(httpUrl, requestJson, methodName, bodyContent)) {
             return "{\"status\": 200}";
         }
 
@@ -188,6 +180,41 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         }
 
         return prettyPrintJson(relevantResponse);
+    }
+
+    private boolean completedMockingEndPoints(String httpUrl, String requestJson, String methodName, Object bodyContent) throws java.io.IOException {
+        if(httpUrl.contains("/$MOCK") && methodName.equals("$USE.WIREMOCK")){
+
+            MockSteps mockSteps = smartUtils.getMapper().readValue(requestJson, MockSteps.class);
+
+            createWithWireMock(mockSteps);
+
+            logger.info("#SUCCESS: End points simulated via wiremock.");
+
+            return true;
+        }
+
+        else if(httpUrl.contains("/$MOCK") && methodName.equals("$USE.VIRTUOSO")){
+            logger.info("\n#body:\n" + bodyContent);
+
+            //read the content of the "request". This contains the complete rest API.
+            createWithVirtuosoMock(bodyContent != null ? bodyContent.toString() : null);
+
+            logger.info("#SUCCESS: End point simulated via virtuoso.");
+            return true;
+        }
+
+        else if(httpUrl.contains("/$MOCK") && methodName.equals("$USE.SIMULATOR")){
+            logger.info("\n#body:\n" + bodyContent);
+
+            //read the content of the "request". This contains the complete rest API.
+            createWithLocalMock(bodyContent != null ? bodyContent.toString() : null);
+
+            logger.info("#SUCCESS: End point simulated via local simulator.");
+
+            return true;
+        }
+        return false;
     }
 
     private Object readJsonPathOrElseNull(String requestJson, String jsonPath) {

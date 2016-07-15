@@ -42,4 +42,12 @@ public class SmartJUnitRunnerTestCases {
     public void testASmartTestCase_request_response__and_assertion_path() throws Exception {
 
     }
+
+    @Test
+    @JsonTestCase("07_some_test_cases/06_will_mock_using_wiremock_and_run_other_steps.json")
+    public void willMockAndRunNextStep() throws Exception {
+
+    }
+
+
 }
