@@ -8,6 +8,6 @@ import org.junit.runner.RunWith;
 @TargetEnv("dev_test.properties")
 @TestPackageRoot("01_verification_test_cases")
 @RunWith(ZeroCodePackageRunner.class)
-public class SmartPackagedVerification {
+public class ZeroCodePackageRunnerVerification {
 
 }

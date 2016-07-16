@@ -71,9 +71,20 @@
         <java-compiler-source.version>1.8</java-compiler-source.version>
         <java-compiler-target.version>1.8</java-compiler-target.version>
         <maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
+        <tomcat-embed-core.version>8.0.28</tomcat-embed-core.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>${tomcat-embed-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-logging-juli</artifactId>
+            <version>${tomcat-embed-core.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock</artifactId>
