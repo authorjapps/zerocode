@@ -10,14 +10,14 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeTomcatUnitRunner.class)
 public class ZeroCodeUnitTomcatNavigatorVerificationOther {
 
-    @JsonTestCase("01_verification_test_cases/01_REST_end_point_GET_PASS.json")
     @Test
+    @JsonTestCase("01_verification_test_cases/01_REST_end_point_GET_PASS.json")
     public void testASmartTestCase_PASSIfNoConnectionError() throws Exception {
 
     }
 
-    @JsonTestCase("01_verification_test_cases/02_java_service_single_step.json")
     @Test
+    @JsonTestCase("01_verification_test_cases/02_java_service_single_step.json")
     public void testASmartTestCase_Another() throws Exception {
     }
 

@@ -7,6 +7,7 @@ import org.jsmart.smarttester.core.di.ApplicationMainModule;
 import org.jsmart.smarttester.core.domain.JsonTestCase;
 import org.jsmart.smarttester.core.domain.ScenarioSpec;
 import org.jsmart.smarttester.core.domain.TargetEnv;
+import org.jsmart.smarttester.core.domain.TomcatWarProperties;
 import org.jsmart.smarttester.core.listener.EmbeddedTomcatJunitListener;
 import org.jsmart.smarttester.core.utils.SmartUtils;
 import org.junit.runner.Description;
@@ -25,7 +26,11 @@ import java.util.stream.Collectors;
 public class ZeroCodeTomcatUnitRunner extends BlockJUnit4ClassRunner {
     private static final Logger logger = LoggerFactory.getLogger(ZeroCodeTomcatUnitRunner.class);
 
-    static int i = 1;
+    private int port;
+    private String warLocation;
+    private String context;
+    private boolean runningViaSuite;
+
     protected boolean passed;
     protected boolean testRunCompleted;
     private MultiStepsScenarioRunner multiStepsScenarioRunner;
@@ -41,15 +46,20 @@ public class ZeroCodeTomcatUnitRunner extends BlockJUnit4ClassRunner {
      */
     List<String> smartTestCaseNames = new ArrayList<>();
     String currentTestCase;
-    private boolean runningViaSuite;
 
-    public ZeroCodeTomcatUnitRunner(Class<?> klass) throws InitializationError {
+    public ZeroCodeTomcatUnitRunner(Class<?> klass) throws Exception {
         super(klass);
-
         this.testClass = klass;
         this.smartUtils = getInjectedSmartUtilsClass();
-
         smartTestCaseNames = getSmartChildrenList();
+
+        /*
+         * Read the port, context etc from annotation
+         */
+        TomcatWarProperties tomcatAnnotation = testClass.getAnnotation(TomcatWarProperties.class);
+        context = tomcatAnnotation.tomcatContext();
+        warLocation = tomcatAnnotation.tomcatWarLocation();
+        port = tomcatAnnotation.tomcatPort() > 0 ? tomcatAnnotation.tomcatPort() : 43210;
     }
 
     private List<String> getSmartChildrenList() {
@@ -70,13 +80,12 @@ public class ZeroCodeTomcatUnitRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier) {
-        //
-        logger.info("### Starting tomcat at run()...............");
-        //notifier.addListener(new EmbeddedTomcatJunitListener(43210, "target/war", ""));
+        logger.info("### Starting tomcat at run()...");
 
-        EmbeddedTomcatJunitListener tomcatwithWebApp = new EmbeddedTomcatJunitListener(43210, "target/wars", "/ipt-ss-address-management-services");
+        EmbeddedTomcatJunitListener tomcatwithWebApp = new EmbeddedTomcatJunitListener(port, warLocation, context);
         if (!runningViaSuite) {
             try {
+
                 tomcatwithWebApp.startNow();
 
             } catch (Exception e) {
@@ -94,17 +103,13 @@ public class ZeroCodeTomcatUnitRunner extends BlockJUnit4ClassRunner {
             }
         }
 
-        logger.info("### run() finished. Tomcat stopped...............");
+        logger.info("### run() finished. Tomcat stopped.");
 
         testRunCompleted = true;
     }
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        //
-        logger.info("### running Child ...............");
-        //
-
         JsonTestCase annotation = method.getMethod().getAnnotation(JsonTestCase.class);
 
         if (annotation != null) {
@@ -126,8 +131,6 @@ public class ZeroCodeTomcatUnitRunner extends BlockJUnit4ClassRunner {
         try {
             child = smartUtils.jsonFileToJava(currentTestCase, ScenarioSpec.class);
 
-            logger.debug("### Found currentTestCase : -" + child);
-
             passed = getInjectedMultiStepsRunner().runScenario(child, notifier, description);
 
         } catch (Exception ioEx) {
@@ -144,18 +147,6 @@ public class ZeroCodeTomcatUnitRunner extends BlockJUnit4ClassRunner {
             notifier.fireTestFinished(description);
         }
 
-        //
-        logger.info("### child finished running...............");
-        //
-
-    }
-
-    public List<String> getSmartTestCaseNames() {
-        return smartTestCaseNames;
-    }
-
-    public String getCurrentTestCase() {
-        return currentTestCase;
     }
 
     private MultiStepsScenarioRunner getInjectedMultiStepsRunner() {
@@ -164,10 +155,10 @@ public class ZeroCodeTomcatUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     public Injector getMainModuleInjector() {
-        // TODO: Synchronise this if needed with e.g. synchronized (IptSmartRunner.class) {}
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
         injector = Guice.createInjector(new ApplicationMainModule(serverEnv));
+
         return injector;
     }
 
@@ -177,5 +168,17 @@ public class ZeroCodeTomcatUnitRunner extends BlockJUnit4ClassRunner {
 
     public void setRunningViaSuite(boolean runningViaSuite) {
         this.runningViaSuite = runningViaSuite;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setWarLocation(String warLocation) {
+        this.warLocation = warLocation;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
     }
 }
