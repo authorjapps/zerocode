@@ -49,5 +49,11 @@ public class SmartJUnitRunnerTestCases {
 
     }
 
+    @Test
+    @JsonTestCase("07_some_test_cases/07_REST_with_loop_test.json")
+    public void restViaLoop() throws Exception {
+
+    }
+
 
 }
