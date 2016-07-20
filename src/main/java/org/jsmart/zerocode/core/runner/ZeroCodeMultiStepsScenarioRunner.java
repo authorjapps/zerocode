@@ -6,7 +6,7 @@ import org.junit.runner.notification.RunNotifier;
 
 import java.util.function.BiConsumer;
 
-public interface MultiStepsScenarioRunner {
+public interface ZeroCodeMultiStepsScenarioRunner {
 
     boolean runScenario(ScenarioSpec scenarioSpec, RunNotifier notifier, Description description);
 

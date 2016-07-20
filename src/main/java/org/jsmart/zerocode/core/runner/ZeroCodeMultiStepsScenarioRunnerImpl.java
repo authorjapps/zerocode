@@ -25,9 +25,9 @@ import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Singleton
-public class MultiStepsScenarioRunnerImpl implements MultiStepsScenarioRunner {
+public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsScenarioRunner {
 
-    private static final org.slf4j.Logger LOGGER = getLogger(MultiStepsScenarioRunnerImpl.class);
+    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeMultiStepsScenarioRunnerImpl.class);
 
     //guice -starts
     @Inject

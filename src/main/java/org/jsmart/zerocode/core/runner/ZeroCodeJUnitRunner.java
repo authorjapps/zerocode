@@ -26,7 +26,7 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
     static int i = 1;
     protected boolean passed;
     protected boolean testRunCompleted;
-    private MultiStepsScenarioRunner multiStepsScenarioRunner;
+    private ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner;
     private final Class<?> testClass;
     Injector injector;
     SmartUtils smartUtils;
@@ -116,9 +116,9 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
         return currentTestCase;
     }
 
-    private MultiStepsScenarioRunner getInjectedMultiStepsRunner() {
-        multiStepsScenarioRunner = getMainModuleInjector().getInstance(MultiStepsScenarioRunner.class);
-        return multiStepsScenarioRunner;
+    private ZeroCodeMultiStepsScenarioRunner getInjectedMultiStepsRunner() {
+        zeroCodeMultiStepsScenarioRunner = getMainModuleInjector().getInstance(ZeroCodeMultiStepsScenarioRunner.class);
+        return zeroCodeMultiStepsScenarioRunner;
     }
 
     public Injector getMainModuleInjector() {

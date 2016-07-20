@@ -19,7 +19,7 @@ import java.util.List;
 public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ZeroCodePackageRunner.class);
 
-    private MultiStepsScenarioRunner multiStepsScenarioRunner;
+    private ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner;
     private final Class<?> testClass;
     List<ScenarioSpec> scenarioSpecs;
     Injector injector;
@@ -35,9 +35,9 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         this.testClass = testClass;
 
         /**
-         * Get the SmartUtil, MultiStepsScenarioRunner injected from the main guice-Module.
+         * Get the SmartUtil, ZeroCodeMultiStepsScenarioRunner injected from the main guice-Module.
          */
-        this.multiStepsScenarioRunner = getInjectedMultiStepsRunner();
+        this.zeroCodeMultiStepsScenarioRunner = getInjectedMultiStepsRunner();
         this.smartUtils = getInjectedSmartUtilsClass();
     }
 
@@ -121,9 +121,9 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         }
     }
 
-    private MultiStepsScenarioRunner getInjectedMultiStepsRunner() {
-        multiStepsScenarioRunner = getInjector().getInstance(MultiStepsScenarioRunner.class);
-        return multiStepsScenarioRunner;
+    private ZeroCodeMultiStepsScenarioRunner getInjectedMultiStepsRunner() {
+        zeroCodeMultiStepsScenarioRunner = getInjector().getInstance(ZeroCodeMultiStepsScenarioRunner.class);
+        return zeroCodeMultiStepsScenarioRunner;
     }
 
     public Injector getInjector() {
@@ -150,7 +150,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         return testRunCompleted;
     }
 
-    public void setMultiStepsScenarioRunner(MultiStepsScenarioRunner multiStepsScenarioRunner) {
-        this.multiStepsScenarioRunner = multiStepsScenarioRunner;
+    public void setZeroCodeMultiStepsScenarioRunner(ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner) {
+        this.zeroCodeMultiStepsScenarioRunner = zeroCodeMultiStepsScenarioRunner;
     }
 }

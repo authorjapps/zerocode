@@ -9,8 +9,8 @@ import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesorImpl;
-import org.jsmart.zerocode.core.runner.MultiStepsScenarioRunnerImpl;
-import org.jsmart.zerocode.core.runner.MultiStepsScenarioRunner;
+import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunnerImpl;
+import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunner;
 
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -35,7 +35,7 @@ public class ApplicationMainModule extends AbstractModule {
         /*
          * Bind Direct classes, classes to interfaces etc
          */
-        bind(MultiStepsScenarioRunner.class).to(MultiStepsScenarioRunnerImpl.class);
+        bind(ZeroCodeMultiStepsScenarioRunner.class).to(ZeroCodeMultiStepsScenarioRunnerImpl.class);
         bind(JsonServiceExecutor.class).to(JsonServiceExecutorImpl.class);
         bind(JavaExecutor.class).to(JavaExecutorImpl.class);
         bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
