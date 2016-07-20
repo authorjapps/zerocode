@@ -1,6 +1,6 @@
 package org.trick;
 
-import org.jsmart.smarttester.core.runner.Notifier;
+import org.jsmart.zerocode.core.runner.Notifier;
 
 public class NotifierFuncMain {
 

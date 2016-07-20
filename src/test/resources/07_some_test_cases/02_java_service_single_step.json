@@ -5,7 +5,7 @@
     {
       "name": "javaMethodExecution", //<-- with comments
       "loop": 3,
-      "url": "org.jsmart.smarttester.core.AddService",
+      "url": "org.jsmart.zerocode.core.AddService",
       "operation": "squareMyNumber",
       "request": {
         "number": 30
