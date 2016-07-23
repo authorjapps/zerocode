@@ -3,8 +3,8 @@ package org.jsmart.zerocode.core.domain.reports.builders;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.ObjectMapperProvider;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeExecResult;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
-import org.jsmart.zerocode.core.domain.reports.ZeroCodeResult;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class ZeroCodeReportBuilder {
 
     public static final String TARGET_REPORT_DIR = "target/test-reports/";
     private LocalDateTime timeStamp;
-    private List<ZeroCodeResult> results = new ArrayList<ZeroCodeResult>();
+    private List<ZeroCodeExecResult> results = new ArrayList<ZeroCodeExecResult>();
     private ZeroCodeReport built;
 
     public static ZeroCodeReportBuilder newInstance() {
@@ -39,12 +39,12 @@ public class ZeroCodeReportBuilder {
         return this;
     }
 
-    public ZeroCodeReportBuilder results(List<ZeroCodeResult> results) {
+    public ZeroCodeReportBuilder results(List<ZeroCodeExecResult> results) {
         this.results = results;
         return this;
     }
 
-    public ZeroCodeReportBuilder result(ZeroCodeResult result) {
+    public ZeroCodeReportBuilder result(ZeroCodeExecResult result) {
         this.results.add(result);
         return this;
     }

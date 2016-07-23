@@ -15,12 +15,12 @@ public class ZeroCodeReport {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeStamp;
-    private List<ZeroCodeResult> results = new ArrayList<ZeroCodeResult>();
+    private List<ZeroCodeExecResult> results = new ArrayList<ZeroCodeExecResult>();
 
     @JsonCreator
     public ZeroCodeReport(
             @JsonProperty("timeStamp")LocalDateTime timeStamp,
-            @JsonProperty("results")List<ZeroCodeResult> results) {
+            @JsonProperty("results")List<ZeroCodeExecResult> results) {
         this.timeStamp = timeStamp;
         this.results = results;
     }
@@ -29,7 +29,7 @@ public class ZeroCodeReport {
         return timeStamp;
     }
 
-    public List<ZeroCodeResult> getResults() {
+    public List<ZeroCodeExecResult> getResults() {
         return results;
     }
 

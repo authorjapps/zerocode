@@ -9,7 +9,7 @@ import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
 import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportBuilder;
 import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportStepBuilder;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeResultBuilder;
+import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeExecResultBuilder;
 import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeResultBuilder.newInstance;
+import static org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -79,7 +79,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             /*
              * Build Report scenario for each k
              */
-            ZeroCodeResultBuilder reportResultBuilder = newInstance()
+            ZeroCodeExecResultBuilder reportResultBuilder = newInstance()
                     .loop(k > 0 ? (k) : null)
                     .scenarioName(scenario.getScenarioName());
 

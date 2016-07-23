@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportBuilder;
 import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportStepBuilder;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeResultBuilder;
+import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeExecResultBuilder;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Test;
 
@@ -24,7 +24,7 @@ public class ZeroCodeReportTest {
 
         ZeroCodeReport javaBuilt = ZeroCodeReportBuilder.newInstance()
                 .timeStamp(LocalDateTime.now())
-                .results(Arrays.asList(ZeroCodeResultBuilder.newInstance()
+                .results(Arrays.asList(ZeroCodeExecResultBuilder.newInstance()
                         .scenarioName("scenario name")
                         .loop(1)
                         .steps(Arrays.asList(ZeroCodeReportStepBuilder.newInstance()
