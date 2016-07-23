@@ -1,0 +1,19 @@
+{
+  "timeStamp": "2016-07-23T08:11:15.217",
+  "results": [
+    {
+      "scenarioName": "scenario name",
+      "loop": 10,
+      "steps": [
+        {
+          "loop": 30,
+          "name": "step_create",
+          "url": "/home/googly",
+          "correlationId": "correlation Id",
+          "operation": "POST-POST",
+          "result": "PASS-PASS"
+        }
+      ]
+    }
+  ]
+}
