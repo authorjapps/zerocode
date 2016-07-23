@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ZerocodeResult {
+public class ZeroCodeResult {
     private String scenarioName;
     private Integer loop;
     private List<ZeroCodeReportStep> steps = new ArrayList<>();
 
     @JsonCreator
-    public ZerocodeResult(
+    public ZeroCodeResult(
             @JsonProperty("scenarioName")String scenarioName,
             @JsonProperty("loop")Integer loop,
             @JsonProperty("steps")List<ZeroCodeReportStep> steps) {
@@ -37,7 +37,7 @@ public class ZerocodeResult {
 
     @Override
     public String toString() {
-        return "ZerocodeResult{" +
+        return "ZeroCodeResult{" +
                 "scenarioName='" + scenarioName + '\'' +
                 ", loop=" + loop +
                 ", steps=" + steps +

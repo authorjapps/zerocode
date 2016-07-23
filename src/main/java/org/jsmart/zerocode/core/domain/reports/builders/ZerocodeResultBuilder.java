@@ -1,7 +1,7 @@
 package org.jsmart.zerocode.core.domain.reports.builders;
 
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
-import org.jsmart.zerocode.core.domain.reports.ZerocodeResult;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,8 @@ public class ZeroCodeResultBuilder {
         return new ZeroCodeResultBuilder();
     }
 
-    public ZerocodeResult build() {
-        ZerocodeResult built = new ZerocodeResult(scenarioName, loop, steps);
+    public ZeroCodeResult build() {
+        ZeroCodeResult built = new ZeroCodeResult(scenarioName, loop, steps);
         return built;
     }
 
