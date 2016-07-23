@@ -6,10 +6,9 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
-import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
+import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeExecResultBuilder;
 import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportBuilder;
 import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportStepBuilder;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeExecResultBuilder;
 import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
@@ -245,9 +244,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         } //<-- Scenario Loop
 
-        final ZeroCodeReport scenarioReport = reportBuilder.build();
-
         reportBuilder.printToFile(scenario.getScenarioName() + ".json");
+
         /*
          *  There were no steps to execute and the framework will display the test status as Green than Red.
          *  Red symbolises failure, but nothing has failed here.

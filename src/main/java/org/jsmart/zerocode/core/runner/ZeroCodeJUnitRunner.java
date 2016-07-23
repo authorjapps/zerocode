@@ -6,6 +6,7 @@ import org.jsmart.zerocode.core.di.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.TargetEnv;
+import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestListener;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -67,6 +68,7 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier){
+        notifier.addListener(new ZeroCodeTestListener(smartUtils));
         super.run(notifier);
     }
 

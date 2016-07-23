@@ -12,13 +12,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ZeroCodeReportBuilder {
     private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeReportBuilder.class);
 
-    public static final String TARGET_REPORT_DIR = "target/test-reports/";
     private LocalDateTime timeStamp;
     private List<ZeroCodeExecResult> results = new ArrayList<ZeroCodeExecResult>();
     private ZeroCodeReport built;
@@ -61,11 +60,11 @@ public class ZeroCodeReportBuilder {
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            LOGGER.warn("### There was a problem during JSON parsing. Details: " + e);
+            LOGGER.warn("### Report Generation Problem: There was a problem during JSON parsing. Details: " + e);
 
         } catch (IOException e) {
             e.printStackTrace();
-            LOGGER.warn("### There was a problem during writing the report. Details: " + e);
+            LOGGER.warn("### Report Generation Problem: There was a problem during writing the report. Details: " + e);
         }
     }
 }
