@@ -66,6 +66,11 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     @Override
+    public void run(RunNotifier notifier){
+        super.run(notifier);
+    }
+
+    @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 
         JsonTestCase annotation = method.getMethod().getAnnotation(JsonTestCase.class);
@@ -106,6 +111,7 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
                     child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
             notifier.fireTestFinished(description);
         }
+
     }
 
     public List<String> getSmartTestCaseNames() {

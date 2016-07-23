@@ -1,0 +1,43 @@
+{
+  "results": [
+    {
+      "scenarioName": "Will Get A bath Room Multi Multi",
+      "steps": [
+        {
+          "name": "get_shower_room"
+        },
+        {
+          "name": "get_another_shower_room"
+        },
+        {
+          "loop": 1,
+          "name": "get_another_shower_room1"
+        },
+        {
+          "loop": 2,
+          "name": "get_another_shower_room2"
+        }
+      ]
+    },
+    {
+      "scenarioName": "Will Get A bath Room Multi Multi",
+      "loop": 1,
+      "steps": [
+        {
+          "name": "get_shower_room"
+        },
+        {
+          "name": "get_another_shower_room"
+        },
+        {
+          "loop": 1,
+          "name": "get_another_shower_room1"
+        },
+        {
+          "loop": 2,
+          "name": "get_another_shower_room2"
+        }
+      ]
+    }
+  ]
+}

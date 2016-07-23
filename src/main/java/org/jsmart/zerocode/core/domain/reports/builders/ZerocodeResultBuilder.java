@@ -6,13 +6,13 @@ import org.jsmart.zerocode.core.domain.reports.ZerocodeResult;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ZerocodeResultBuilder {
+public class ZeroCodeResultBuilder {
     private String scenarioName;
     private Integer loop;
     private List<ZeroCodeReportStep> steps = new ArrayList<>();
 
-    public static ZerocodeResultBuilder newInstance() {
-        return new ZerocodeResultBuilder();
+    public static ZeroCodeResultBuilder newInstance() {
+        return new ZeroCodeResultBuilder();
     }
 
     public ZerocodeResult build() {
@@ -20,18 +20,23 @@ public class ZerocodeResultBuilder {
         return built;
     }
 
-    public ZerocodeResultBuilder scenarioName(String scenarioName) {
+    public ZeroCodeResultBuilder scenarioName(String scenarioName) {
         this.scenarioName = scenarioName;
         return this;
     }
 
-    public ZerocodeResultBuilder loop(Integer loop) {
+    public ZeroCodeResultBuilder loop(Integer loop) {
         this.loop = loop;
         return this;
     }
 
-    public ZerocodeResultBuilder steps(List<ZeroCodeReportStep> steps) {
+    public ZeroCodeResultBuilder steps(List<ZeroCodeReportStep> steps) {
         this.steps = steps;
+        return this;
+    }
+
+    public ZeroCodeResultBuilder step(ZeroCodeReportStep step) {
+        this.steps.add(step);
         return this;
     }
 }

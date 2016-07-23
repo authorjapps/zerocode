@@ -7,7 +7,7 @@ public class ResponseLogBuilder {
     LocalDateTime responseTimeStamp;
     String response;
     String exceptionMsg;
-    String assertion = "{Oops! Not decided. See connection or assertion path log}";
+    String assertion = "{Oops! Not decided. Possibly due to non JSON content. See log for details}";
 
 
     public ResponseLogBuilder relationshipId(String relationshipId) {

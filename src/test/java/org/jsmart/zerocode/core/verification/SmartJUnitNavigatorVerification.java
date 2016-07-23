@@ -4,7 +4,10 @@ import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodeJUnitRunner;
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.Failure;
 
 @TargetEnv("config_hosts.properties")
 //@RunWith(ZeroCodeJUnitRunner.class)
@@ -29,6 +32,13 @@ public class SmartJUnitNavigatorVerification {
     @JsonTestCase("01_verification_test_cases/01_get_more_bathroom_multi_steps.json")
     @Test
     public void testASmartTestCase_sdCreateUpdate() throws Exception {
+
+    }
+
+    @JsonTestCase("11_reports/02_multi_scenario_multi_step_report_test.json")
+    @Test
+    public void willGeneratReport_multiSceneMultiSteps() throws Exception {
+
     }
 
 }

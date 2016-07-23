@@ -6,6 +6,10 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
+import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportBuilder;
+import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportStepBuilder;
+import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeResultBuilder;
 import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
@@ -13,7 +17,6 @@ import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
 import org.jsmart.zerocode.core.logbuilder.LogCorelationshipPrinter;
-import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import static org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -56,6 +60,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private static StepNotificationHandler notificationHandler = new StepNotificationHandler();
 
+    private ZeroCodeReportBuilder reportBuilder = ZeroCodeReportBuilder.newInstance().timeStamp(LocalDateTime.now());
+
     @Override
     public boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
 
@@ -65,9 +71,17 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         final int scenarioLoopCount = scenario.getLoop() == null ? 1 : scenario.getLoop();
 
+
         for (int k = 0; k < scenarioLoopCount; k++) {
 
             LOGGER.info("\n### Executing Scenario -->> Count No: " + k);
+
+            /*
+             * Build Report scenario for each k
+             */
+            ZeroCodeResultBuilder reportResultBuilder = newInstance()
+                    .loop(k > 0 ? (k) : null)
+                    .scenarioName(scenario.getScenarioName());
 
             for (Step thisStep : scenario.getSteps()) {
                 // Another way to get the String
@@ -78,6 +92,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     LOGGER.info("\n### Executing Step -->> Count No: " + i);
                     logCorelationshipPrinter = LogCorelationshipPrinter.newInstance(LOGGER);
 
+                    /*
+                     * Build step report for each step
+                     */
+                    ZeroCodeReportStepBuilder reportStepBuilder = ZeroCodeReportStepBuilder.newInstance();
+                    reportStepBuilder.loop(i > 0 ? (i) : null);
+
+
                     final String requestJsonAsString = thisStep.getRequest().toString();
 
                     StepExecutionState stepExecutionState = new StepExecutionState();
@@ -87,7 +108,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                      * Rest of the loops suffix as i ie stepName1, stepName2, stepName3 etc
                      */
                     final String thisStepName = thisStep.getName() + (i == 0 ? "" : i);
-                    ;
+
+                    reportStepBuilder.name(thisStepName);
+
                     stepExecutionState.addStep(thisStepName);
 
                     String resolvedRequestJson = zeroCodeJsonTestProcesor.resolveStringJson(
@@ -123,7 +146,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                     .step(thisStepName)
                                     .url(serviceName)
                                     .method(operationName)
-                                    .request(SmartUtils.prettyPrintJson(resolvedRequestJson));
+                                    .request(prettyPrintJson(resolvedRequestJson));
 
                             executionResult = serviceExecutor.executeRESTService(serviceName, operationName, resolvedRequestJson);
                         } else {
@@ -134,7 +157,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                     .step(thisStepName)
                                     .url(serviceName)
                                     .method(operationName)
-                                    .request(SmartUtils.prettyPrintJson(resolvedRequestJson));
+                                    .request(prettyPrintJson(resolvedRequestJson));
 
                             executionResult = serviceExecutor.executeJavaService(serviceName, operationName, resolvedRequestJson);
                         }
@@ -155,15 +178,15 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         );
 
                         // logging assertion
-                        logCorelationshipPrinter.assertion(SmartUtils.prettyPrintJson(resolvedAssertionJson));
+                        logCorelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
 
                         List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createAssertersFrom(resolvedAssertionJson);
                         List<AssertionReport> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
 
                         if (!failureResults.isEmpty()) {
-                    /*
-                     * Step failed
-                     */
+                            /*
+                             * Step failed
+                             */
                             return notificationHandler.handleAssertion(
                                     notifier,
                                     description,
@@ -209,13 +232,22 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     } finally {
                         logCorelationshipPrinter.print();
                     }
-                } //<-- Step Loop
 
-            }
+                    /*
+                     * Add the report step to the result step list.
+                     */
+                    reportResultBuilder.step(reportStepBuilder.build());
+
+                } //<-- loop for each step
+            } //<--- steps for loop
+
+            reportBuilder.result(reportResultBuilder.build());
 
         } //<-- Scenario Loop
 
+        final ZeroCodeReport scenarioReport = reportBuilder.build();
 
+        reportBuilder.printToFile(scenario.getScenarioName() + ".json");
         /*
          *  There were no steps to execute and the framework will display the test status as Green than Red.
          *  Red symbolises failure, but nothing has failed here.
