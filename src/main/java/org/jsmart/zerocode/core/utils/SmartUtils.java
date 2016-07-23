@@ -67,7 +67,7 @@ public class SmartUtils {
         return mapper.readValue(readJsonAsString(jsonFileName), clazz);
     }
 
-    public List<ScenarioSpec> getFlowSpecListByPackage(String packageName) {
+    public List<ScenarioSpec> getScenarioSpecListByPackage(String packageName) {
         List<String> allEndPointFiles = getAllEndPointFiles(packageName);
         List<ScenarioSpec> scenarioSpecList = allEndPointFiles.stream()
                 .map(flowSpecFile -> {
@@ -85,17 +85,17 @@ public class SmartUtils {
     public void checkDuplicateNames(String testPackageName) {
         Set<String> oops = new HashSet<>();
 
-        getFlowSpecListByPackage(testPackageName).stream()
-                .forEach(flowSpec -> {
-                    if (!oops.add(flowSpec.getScenarioName())) {
-                        throw new RuntimeException("Oops! Can not run with multiple flow with same name. Found duplicate: " + flowSpec.getScenarioName());
+        getScenarioSpecListByPackage(testPackageName).stream()
+                .forEach(scenarioSpec -> {
+                    if (!oops.add(scenarioSpec.getScenarioName())) {
+                        throw new RuntimeException("Oops! Can not run with multiple Scenarios with same name. Found duplicate: " + scenarioSpec.getScenarioName());
                     }
 
                     /**
                      * Add this if project needs to avoid duplicate step names
                      */
                     /*Set<String> oops = new HashSet<>();
-                    flowSpec.getSteps()
+                    scenarioSpec.getSteps()
                             .forEach(step -> {
                                 if(!oops.add(step.getName())){
                                     throw new RuntimeException("Oops! Avoid same step names. Duplicate found: " + step.getName());
@@ -105,14 +105,15 @@ public class SmartUtils {
     }
 
     public static String prettyPrintJson(String jsonString) {
-        String indented = jsonString;
         final ObjectMapper objectMapper = new ObjectMapperProvider().get();
         try {
             final JsonNode jsonNode = objectMapper.readValue(jsonString, JsonNode.class);
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
 
         } catch (IOException e) {
-            // Prettyprint logic threw an exception, not a big deal, print the original json then.
+            /*
+             *  Pretty-print logic threw an exception, not a big deal, print the original json then.
+             */
             return jsonString;
         }
 
@@ -127,7 +128,9 @@ public class SmartUtils {
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
 
         } catch (IOException e) {
-            // Prettyprint logic threw an exception, not a big deal, print the original json then.
+            /*
+             *  Pretty-print logic threw an exception, not a big deal, print the original json then.
+             */
             return indented;
         }
     }

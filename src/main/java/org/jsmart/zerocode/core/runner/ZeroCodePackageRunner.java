@@ -63,7 +63,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
                     "\ne.g. Annotate your Test class now, e.g. @TestPackageRoot(\"resource_folder_for_test_cases\")");
         }
 
-        return smartUtils.getFlowSpecListByPackage(rootPackageAnnotation.value());
+        return smartUtils.getScenarioSpecListByPackage(rootPackageAnnotation.value());
     }
 
     /**

@@ -71,7 +71,7 @@ public class SmartUtilsTest {
 
     @Test
     public void willReadAllfileNames_AND_return_FlowSpecList() throws Exception {
-        List<ScenarioSpec> allTestCaseFiles = smartUtils.getFlowSpecListByPackage("04_test_flow_cases");
+        List<ScenarioSpec> allTestCaseFiles = smartUtils.getScenarioSpecListByPackage("04_test_flow_cases");
 
         assertThat(allTestCaseFiles.size(), is(3));
         assertThat(allTestCaseFiles.get(0).getScenarioName(), is("Given_When_Then_1"));
@@ -87,7 +87,7 @@ public class SmartUtilsTest {
     @Test
     public void willReadAllfiles_find_DuplicateScenarioNames() throws Exception {
         expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Oops! Can not run with multiple flow with same name.");
+        expectedException.expectMessage("Oops! Can not run with multiple Scenarios with same name.");
         smartUtils.checkDuplicateNames("04_test_flow_cases");
     }
 }
