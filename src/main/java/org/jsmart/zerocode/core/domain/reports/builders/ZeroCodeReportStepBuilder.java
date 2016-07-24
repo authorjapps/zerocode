@@ -12,17 +12,21 @@ public class ZeroCodeReportStepBuilder {
     String operation;
     LocalDateTime requestTimeStamp;
     LocalDateTime responseTimeStamp;
-    String responseDelay;
+    Double responseDelay;
     String result;
+    String request;
+    String response;
 
     public static ZeroCodeReportStepBuilder newInstance() {
         return new ZeroCodeReportStepBuilder();
     }
 
     public ZeroCodeReportStep build() {
-        ZeroCodeReportStep built = new ZeroCodeReportStep(loop, name, url,
+        ZeroCodeReportStep built = new ZeroCodeReportStep(
+                loop, name, url,
                 correlationId, operation, requestTimeStamp,
-                responseTimeStamp, responseDelay, result);
+                responseTimeStamp, responseDelay, result,
+                request, response);
         return built;
     }
 
@@ -56,13 +60,23 @@ public class ZeroCodeReportStepBuilder {
         return this;
     }
 
-    public ZeroCodeReportStepBuilder setResponseTimeStamp(LocalDateTime responseTimeStamp) {
+    public ZeroCodeReportStepBuilder responseTimeStamp(LocalDateTime responseTimeStamp) {
         this.responseTimeStamp = responseTimeStamp;
         return this;
     }
 
-    public ZeroCodeReportStepBuilder responseDelay(String responseDelay) {
+    public ZeroCodeReportStepBuilder responseDelay(double responseDelay) {
         this.responseDelay = responseDelay;
+        return this;
+    }
+
+    public ZeroCodeReportStepBuilder request(String request) {
+        this.request = request;
+        return this;
+    }
+
+    public ZeroCodeReportStepBuilder response(String response) {
+        this.response = response;
         return this;
     }
 
@@ -70,4 +84,5 @@ public class ZeroCodeReportStepBuilder {
         this.result = result;
         return this;
     }
+
 }

@@ -85,6 +85,9 @@ public class ZeroCodeTestListener extends RunListener {
                     csvFileBuilder.stepName(thisStep.getName());
                     csvFileBuilder.correlationId(thisStep.getCorrelationId()); //<-- to search in the log
                     csvFileBuilder.result(thisStep.getResult()); //<-- passed or failed
+                    csvFileBuilder.requestTimeStamp(thisStep.getRequestTimeStamp().toString());
+                    csvFileBuilder.responseTimeStamp(thisStep.getResponseTimeStamp().toString());
+                    csvFileBuilder.responseDelayMilliSec(thisStep.getResponseDelay());
 
                     /*
                      * Add one by one row
@@ -105,6 +108,9 @@ public class ZeroCodeTestListener extends RunListener {
                 .addColumn("stepName")
                 .addColumn("stepLoop", CsvSchema.ColumnType.NUMBER)
                 .addColumn("correlationId")
+                .addColumn("requestTimeStamp")
+                .addColumn("responseTimeStamp")
+                .addColumn("responseDelayMilliSec", CsvSchema.ColumnType.NUMBER)
                 .addColumn("result")
                 .build();
 

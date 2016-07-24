@@ -59,9 +59,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     private static StepNotificationHandler notificationHandler = new StepNotificationHandler();
 
     private ZeroCodeReportBuilder reportBuilder = ZeroCodeReportBuilder.newInstance().timeStamp(LocalDateTime.now());
-    ZeroCodeExecResultBuilder reportResultBuilder;
-    //ZeroCodeReportStepBuilder reportStepBuilder;
-    private Boolean passed;
+
+    private ZeroCodeExecResultBuilder reportResultBuilder;
+
+    private Boolean testPassed;
 
     @Override
     public boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
@@ -102,8 +103,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                      * Rest of the loops suffix as i ie stepName1, stepName2, stepName3 etc
                      */
                     final String thisStepName = thisStep.getName() + (i == 0 ? "" : i);
-
-                    //reportStepBuilder.name(thisStepName);
 
                     stepExecutionState.addStep(thisStepName);
 
@@ -188,7 +187,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             /*
                              * Step failed
                              */
-                            passed = notificationHandler.handleAssertion(
+                            testPassed = notificationHandler.handleAssertion(
                                     notifier,
                                     description,
                                     scenario.getScenarioName(),
@@ -196,15 +195,15 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                     failureResults,
                                     notificationHandler::handleAssertionFailed);
 
-                            logCorelationshipPrinter.result(passed);
+                            logCorelationshipPrinter.result(testPassed);
 
-                            return passed;
+                            return testPassed;
                         }
 
                         /*
-                         * Test step passed
+                         * Test step testPassed
                          */
-                        passed = notificationHandler.handleAssertion(
+                        testPassed = notificationHandler.handleAssertion(
                                 notifier,
                                 description,
                                 scenario.getScenarioName(),
@@ -212,7 +211,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 failureResults,
                                 notificationHandler::handleAssertionPassed);
 
-                        logCorelationshipPrinter.result(passed);
+                        logCorelationshipPrinter.result(testPassed);
 
                     } catch (Exception ex) {
 
@@ -229,7 +228,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         /*
                          * Step threw an exception
                          */
-                        passed = notificationHandler.handleAssertion(
+                        testPassed = notificationHandler.handleAssertion(
                                 notifier,
                                 description,
                                 scenario.getScenarioName(),
@@ -237,9 +236,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 (new RuntimeException("ZeroCode Step execution failed. Details:" + ex)),
                                 notificationHandler::handleStepException);
 
-                        logCorelationshipPrinter.result(passed);
+                        logCorelationshipPrinter.result(testPassed);
 
-                        return passed;
+                        return testPassed;
 
                     } finally {
                         logCorelationshipPrinter.print();
@@ -253,7 +252,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         /*
                          * failed and exception reports are generated here
                          */
-                        if(!passed){
+                        if(!testPassed){
                             reportBuilder.result(reportResultBuilder.build());
                             reportBuilder.printToFile(scenario.getScenarioName() + ".json");
                         }

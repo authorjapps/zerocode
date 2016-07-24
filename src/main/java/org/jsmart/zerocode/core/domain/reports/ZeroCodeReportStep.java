@@ -20,8 +20,10 @@ public class ZeroCodeReportStep {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     LocalDateTime responseTimeStamp;
-    String responseDelay;
+    Double responseDelay;
     String result;
+    String request;
+    String response;
 
     @JsonCreator
     public ZeroCodeReportStep(
@@ -32,8 +34,11 @@ public class ZeroCodeReportStep {
             @JsonProperty("operation")String operation,
             @JsonProperty("requestTimeStamp")LocalDateTime requestTimeStamp,
             @JsonProperty("responseTimeStamp")LocalDateTime responseTimeStamp,
-            @JsonProperty("responseDelay")String responseDelay,
-            @JsonProperty("result")String result) {
+            @JsonProperty("responseDelay")Double responseDelay,
+            @JsonProperty("result")String result,
+            @JsonProperty("request")String request,
+            @JsonProperty("response")String response
+    ) {
         this.loop = loop;
         this.name = name;
         this.url = url;
@@ -43,6 +48,8 @@ public class ZeroCodeReportStep {
         this.responseTimeStamp = responseTimeStamp;
         this.responseDelay = responseDelay;
         this.result = result;
+        this.request = request;
+        this.response = response;
     }
 
     public Integer getLoop() {
@@ -73,7 +80,7 @@ public class ZeroCodeReportStep {
         return responseTimeStamp;
     }
 
-    public String getResponseDelay() {
+    public Double getResponseDelay() {
         return responseDelay;
     }
 
@@ -81,10 +88,22 @@ public class ZeroCodeReportStep {
         return result;
     }
 
+    public String getRequest() {
+        return request;
+    }
+
+//    public JsonNode getRequest() throws IOException {
+//        return new ObjectMapperProvider().get().readTree(request);
+//    }
+
+    public String getResponse() {
+        return response;
+    }
+
     @Override
     public String toString() {
         return "ZeroCodeReportStep{" +
-                "stepLoop=" + loop +
+                "loop=" + loop +
                 ", name='" + name + '\'' +
                 ", url='" + url + '\'' +
                 ", correlationId='" + correlationId + '\'' +
@@ -93,6 +112,8 @@ public class ZeroCodeReportStep {
                 ", responseTimeStamp=" + responseTimeStamp +
                 ", responseDelay='" + responseDelay + '\'' +
                 ", result='" + result + '\'' +
+                ", request='" + request + '\'' +
+                ", response='" + response + '\'' +
                 '}';
     }
 }

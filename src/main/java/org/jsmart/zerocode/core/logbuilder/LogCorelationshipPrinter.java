@@ -5,6 +5,7 @@ import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportStepBuilde
 import org.slf4j.Logger;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -21,6 +22,7 @@ public class LogCorelationshipPrinter {
     ScenarioLogBuilder scenarioLogBuilder = new ScenarioLogBuilder();
     Integer stepLoop;
     private Boolean result;
+    private Double responseDelay;
 
     public LogCorelationshipPrinter(Logger logger) {
         this.logger = logger;
@@ -52,11 +54,17 @@ public class LogCorelationshipPrinter {
     public ZeroCodeReportStep buildReportSingleStep() {
 
         ZeroCodeReportStep zeroCodeReportStep = ZeroCodeReportStepBuilder.newInstance()
+                //.request(requestLogBuilder.request) //TODO
+                //.response(responseLogBuilder.response) //TODO
                 .loop(stepLoop)
                 .name(requestLogBuilder.stepName)
                 .correlationId(correlationId)
                 .result(result == true? RESULT_PASS : RESULT_FAIL)
-                //.requestTimeStamp(requestLogBuilder.requestTimeStamp)
+                .url(requestLogBuilder.url)
+                .operation(requestLogBuilder.method)
+                .requestTimeStamp(requestLogBuilder.requestTimeStamp)
+                .responseTimeStamp(responseLogBuilder.responseTimeStamp)
+                .responseDelay(responseDelay)
                 .build();
 
         return zeroCodeReportStep;
@@ -72,23 +80,32 @@ public class LogCorelationshipPrinter {
 
     public void print() {
 
+        responseDelay = durationMilliSecBetween(
+                requestLogBuilder.getRequestTimeStamp(),
+                responseLogBuilder.getResponseTimeStamp()
+        );
+
         logger.info(format("%s %s \n*Response delay:%s milli-secs \n%s \n-done-\n",
                 requestLogBuilder.toString(),
                 responseLogBuilder.toString(),
-                Duration.between(
-                        requestLogBuilder.getRequestTimeStamp(),
-                        responseLogBuilder.getResponseTimeStamp())
-
-                        /*
-                         * 1000000D: Without D it does a integer division and the precision is lost
-                         * Note: Java does not have a get(millisec-tem[poral) as of now, only nano
-                         * or sec precision is supported
-                         */
-                        .getNano()/1000000D,
+                responseDelay,
                 "---------> Assertion: <----------\n" + responseLogBuilder.getAssertion()
                 )
         );
 
+    }
+
+    public static double durationMilliSecBetween(LocalDateTime requestTimeStamp, LocalDateTime responseTimeStamp) {
+        return Duration.between(
+                requestTimeStamp,
+                responseTimeStamp)
+
+                /*
+                 * 1000000D: Without D it does a integer division and the precision is lost
+                 * Note: Java does not have a get(millisec-tem[poral) as of now, only nano
+                 * or sec precision is supported
+                 */
+                .getNano()/1000000D;
     }
 
     public static String createRelationshipId() {
