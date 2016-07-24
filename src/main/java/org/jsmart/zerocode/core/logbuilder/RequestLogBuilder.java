@@ -12,9 +12,15 @@ public class RequestLogBuilder {
     String method;
     String request;
     String stepName;
+    Integer loop;
 
     @JsonCreator
     public RequestLogBuilder() {
+    }
+
+    public RequestLogBuilder stepLoop(Integer loop) {
+        this.loop = loop;
+        return this;
     }
 
     public RequestLogBuilder relationshipId(String relationshipId) {

@@ -25,7 +25,7 @@ public class ZeroCodeReportStep {
 
     @JsonCreator
     public ZeroCodeReportStep(
-            @JsonProperty("loop")Integer loop,
+            @JsonProperty("stepLoop")Integer loop,
             @JsonProperty("name")String name,
             @JsonProperty("url")String url,
             @JsonProperty("correlationId")String correlationId,
@@ -84,7 +84,7 @@ public class ZeroCodeReportStep {
     @Override
     public String toString() {
         return "ZeroCodeReportStep{" +
-                "loop=" + loop +
+                "stepLoop=" + loop +
                 ", name='" + name + '\'' +
                 ", url='" + url + '\'' +
                 ", correlationId='" + correlationId + '\'' +

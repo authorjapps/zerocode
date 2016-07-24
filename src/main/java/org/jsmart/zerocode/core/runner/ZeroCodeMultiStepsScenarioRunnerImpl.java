@@ -8,7 +8,6 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeExecResultBuilder;
 import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportBuilder;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportStepBuilder;
 import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
@@ -60,6 +59,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     private static StepNotificationHandler notificationHandler = new StepNotificationHandler();
 
     private ZeroCodeReportBuilder reportBuilder = ZeroCodeReportBuilder.newInstance().timeStamp(LocalDateTime.now());
+    ZeroCodeExecResultBuilder reportResultBuilder;
+    //ZeroCodeReportStepBuilder reportStepBuilder;
+    private Boolean passed;
 
     @Override
     public boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
@@ -68,47 +70,40 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
-        final int scenarioLoopCount = scenario.getLoop() == null ? 1 : scenario.getLoop();
+        final int scenarioLoopTimes = scenario.getLoop() == null ? 1 : scenario.getLoop();
 
-
-        for (int k = 0; k < scenarioLoopCount; k++) {
+        for (int k = 0; k < scenarioLoopTimes; k++) {
 
             LOGGER.info("\n### Executing Scenario -->> Count No: " + k);
 
             /*
              * Build Report scenario for each k
              */
-            ZeroCodeExecResultBuilder reportResultBuilder = newInstance()
-                    .loop(k > 0 ? (k) : null)
+            reportResultBuilder = newInstance()
+                    .loop(k)
                     .scenarioName(scenario.getScenarioName());
 
             for (Step thisStep : scenario.getSteps()) {
                 // Another way to get the String
                 // String requestJson = objectMapper.valueToTree(thisStep.getRequest()).toString();
 
-                final int loop = thisStep.getLoop() == null ? 1 : thisStep.getLoop();
-                for (int i = 0; i < loop; i++) {
+                final int stepLoopTimes = thisStep.getLoop() == null ? 1 : thisStep.getLoop();
+                for (int i = 0; i < stepLoopTimes; i++) {
                     LOGGER.info("\n### Executing Step -->> Count No: " + i);
                     logCorelationshipPrinter = LogCorelationshipPrinter.newInstance(LOGGER);
-
-                    /*
-                     * Build step report for each step
-                     */
-                    ZeroCodeReportStepBuilder reportStepBuilder = ZeroCodeReportStepBuilder.newInstance();
-                    reportStepBuilder.loop(i > 0 ? (i) : null);
-
+                    logCorelationshipPrinter.stepLoop(i);
 
                     final String requestJsonAsString = thisStep.getRequest().toString();
 
                     StepExecutionState stepExecutionState = new StepExecutionState();
 
                     /*
-                     * Create the step name as it is for the 1st loop ie i=0.
+                     * Create the step name as it is for the 1st stepLoopTimes ie i=0.
                      * Rest of the loops suffix as i ie stepName1, stepName2, stepName3 etc
                      */
                     final String thisStepName = thisStep.getName() + (i == 0 ? "" : i);
 
-                    reportStepBuilder.name(thisStepName);
+                    //reportStepBuilder.name(thisStepName);
 
                     stepExecutionState.addStep(thisStepName);
 
@@ -119,7 +114,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     stepExecutionState.addRequest(resolvedRequestJson);
 
                     String executionResult = "-response not decided-";
-                    final String logPrefixRelationshipId = LogCorelationshipPrinter.createRelationshipId();
+
+                    final String logPrefixRelationshipId = logCorelationshipPrinter.createRelationshipId();
+
                     try {
                         String serviceName = thisStep.getUrl();
                         String operationName = thisStep.getOperation();
@@ -139,9 +136,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             serviceName = getFullyQualifiedRestUrl(serviceName);
 
                             // logging REST request
+                            final LocalDateTime requestTimeStamp = LocalDateTime.now();
                             logCorelationshipPrinter.aRequestBuilder()
+                                    .stepLoop(i)
                                     .relationshipId(logPrefixRelationshipId)
-                                    .requestTimeStamp(LocalDateTime.now())
+                                    .requestTimeStamp(requestTimeStamp)
                                     .step(thisStepName)
                                     .url(serviceName)
                                     .method(operationName)
@@ -150,9 +149,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             executionResult = serviceExecutor.executeRESTService(serviceName, operationName, resolvedRequestJson);
                         } else {
                             // logging Java request
+                            final LocalDateTime requestTimeStamp = LocalDateTime.now();
                             logCorelationshipPrinter.aRequestBuilder()
+                                    .stepLoop(i)
                                     .relationshipId(logPrefixRelationshipId)
-                                    .requestTimeStamp(LocalDateTime.now())
+                                    .requestTimeStamp(requestTimeStamp)
                                     .step(thisStepName)
                                     .url(serviceName)
                                     .method(operationName)
@@ -162,9 +163,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         }
 
                         // logging response
+                        final LocalDateTime responseTimeStamp = LocalDateTime.now();
                         logCorelationshipPrinter.aResponseBuilder()
                                 .relationshipId(logPrefixRelationshipId)
-                                .responseTimeStamp(LocalDateTime.now())
+                                .responseTimeStamp(responseTimeStamp)
                                 .response(executionResult);
 
                         stepExecutionState.addResponse(executionResult);
@@ -186,19 +188,23 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             /*
                              * Step failed
                              */
-                            return notificationHandler.handleAssertion(
+                            passed = notificationHandler.handleAssertion(
                                     notifier,
                                     description,
                                     scenario.getScenarioName(),
                                     thisStepName,
                                     failureResults,
                                     notificationHandler::handleAssertionFailed);
+
+                            logCorelationshipPrinter.result(passed);
+
+                            return passed;
                         }
 
                         /*
                          * Test step passed
                          */
-                        notificationHandler.handleAssertion(
+                        passed = notificationHandler.handleAssertion(
                                 notifier,
                                 description,
                                 scenario.getScenarioName(),
@@ -206,21 +212,24 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 failureResults,
                                 notificationHandler::handleAssertionPassed);
 
+                        logCorelationshipPrinter.result(passed);
+
                     } catch (Exception ex) {
 
                         ex.printStackTrace();
 
                         // logging exception message
+                        final LocalDateTime responseTimeStampEx = LocalDateTime.now();
                         logCorelationshipPrinter.aResponseBuilder()
                                 .relationshipId(logPrefixRelationshipId)
-                                .responseTimeStamp(LocalDateTime.now())
+                                .responseTimeStamp(responseTimeStampEx)
                                 .response(executionResult)
                                 .exceptionMessage(ex.getMessage());
 
                         /*
                          * Step threw an exception
                          */
-                        return notificationHandler.handleAssertion(
+                        passed = notificationHandler.handleAssertion(
                                 notifier,
                                 description,
                                 scenario.getScenarioName(),
@@ -228,17 +237,31 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 (new RuntimeException("ZeroCode Step execution failed. Details:" + ex)),
                                 notificationHandler::handleStepException);
 
+                        logCorelationshipPrinter.result(passed);
+
+                        return passed;
+
                     } finally {
                         logCorelationshipPrinter.print();
+
+                        /*
+                         * Build step report for each step
+                         * Add the report step to the result step list.
+                         */
+                        reportResultBuilder.step(logCorelationshipPrinter.buildReportSingleStep());
+
+                        /*
+                         * failed and exception reports are generated here
+                         */
+                        if(!passed){
+                            reportBuilder.result(reportResultBuilder.build());
+                            reportBuilder.printToFile(scenario.getScenarioName() + ".json");
+                        }
                     }
 
-                    /*
-                     * Add the report step to the result step list.
-                     */
-                    reportResultBuilder.step(reportStepBuilder.build());
+                } //<-- for each step-stepLoopTimes
 
-                } //<-- loop for each step
-            } //<--- steps for loop
+            } //<--- steps for-each
 
             reportBuilder.result(reportResultBuilder.build());
 

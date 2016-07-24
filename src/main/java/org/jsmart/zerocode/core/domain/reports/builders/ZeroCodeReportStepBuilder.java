@@ -1,8 +1,5 @@
 package org.jsmart.zerocode.core.domain.reports.builders;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 
 import java.time.LocalDateTime;

@@ -46,7 +46,7 @@ public class Step {
 
     @JsonCreator
     public Step(
-            @JsonProperty("loop") Integer loop,
+            @JsonProperty("stepLoop") Integer loop,
             @JsonProperty("name") String name,
             @JsonProperty("operation") String operation,
             @JsonProperty("url") String url,
@@ -63,7 +63,7 @@ public class Step {
     @Override
     public String toString() {
         return "Step{" +
-                "loop=" + loop +
+                "stepLoop=" + loop +
                 ", name='" + name + '\'' +
                 ", operation='" + operation + '\'' +
                 ", url='" + url + '\'' +

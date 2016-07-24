@@ -1,19 +1,26 @@
 package org.jsmart.zerocode.core.logbuilder;
 
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
+import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportStepBuilder;
 import org.slf4j.Logger;
 
 import java.time.Duration;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_FAIL;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
 
 public class LogCorelationshipPrinter {
     private static final String DISPLAY_DEMARCATION_ = "\n--------- RELATIONSHIP-ID: %s ---------";
 
     Logger logger;
+    static String correlationId;
     RequestLogBuilder requestLogBuilder = new RequestLogBuilder();
     ResponseLogBuilder responseLogBuilder = new ResponseLogBuilder();
     ScenarioLogBuilder scenarioLogBuilder = new ScenarioLogBuilder();
+    Integer stepLoop;
+    private Boolean result;
 
     public LogCorelationshipPrinter(Logger logger) {
         this.logger = logger;
@@ -30,6 +37,29 @@ public class LogCorelationshipPrinter {
     public LogCorelationshipPrinter assertion(String assertionJson){
         responseLogBuilder.assertionSection(assertionJson);
         return this;
+    }
+
+    public LogCorelationshipPrinter stepLoop(Integer stepLoop) {
+        this.stepLoop = stepLoop;
+        return this;
+    }
+
+    public LogCorelationshipPrinter result(Boolean passed) {
+        this.result = passed;
+        return this;
+    }
+
+    public ZeroCodeReportStep buildReportSingleStep() {
+
+        ZeroCodeReportStep zeroCodeReportStep = ZeroCodeReportStepBuilder.newInstance()
+                .loop(stepLoop)
+                .name(requestLogBuilder.stepName)
+                .correlationId(correlationId)
+                .result(result == true? RESULT_PASS : RESULT_FAIL)
+                //.requestTimeStamp(requestLogBuilder.requestTimeStamp)
+                .build();
+
+        return zeroCodeReportStep;
     }
 
     public ResponseLogBuilder aResponseBuilder() {
@@ -62,6 +92,18 @@ public class LogCorelationshipPrinter {
     }
 
     public static String createRelationshipId() {
-        return format(DISPLAY_DEMARCATION_, UUID.randomUUID().toString());
+        correlationId = getRelationshipUniqueId();
+        return format(DISPLAY_DEMARCATION_, correlationId);
     }
+
+    public static String getRelationshipUniqueId() {
+        return UUID.randomUUID().toString();
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+
+
 }

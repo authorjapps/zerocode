@@ -19,14 +19,10 @@ public class SmartJUnitNavigatorVerification {
     public void testASmartTestCase_PASSIfNoConnectionError() throws Exception {
     }
 
-    @JsonTestCase("01_verification_test_cases/02_java_service_single_step.json")
-    @Test
-    public void testASmartTestCase_Another() throws Exception {
-    }
-
     @JsonTestCase("01_verification_test_cases/999_file_not_there_.json")
     @Test
-    public void testASmartTestCase_WrongFile() throws Exception {
+    public void testASmartTestCase_FileNotPresent() throws Exception {
+
     }
 
     @JsonTestCase("01_verification_test_cases/01_get_more_bathroom_multi_steps.json")
@@ -41,4 +37,9 @@ public class SmartJUnitNavigatorVerification {
 
     }
 
+    @JsonTestCase("01_verification_test_cases/02_java_service_single_step.json")
+    @Test
+    public void testJava_service_single_step() throws Exception {
+
+    }
 }

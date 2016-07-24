@@ -16,7 +16,7 @@ public class ScenarioSpec {
 
     @JsonCreator
     public ScenarioSpec(
-            @JsonProperty("loop") Integer loop,
+            @JsonProperty("stepLoop") Integer loop,
             @JsonProperty("scenarioName") String scenarioName,
             @JsonProperty("steps") List<Step> steps) {
         this.loop = loop;
@@ -39,7 +39,7 @@ public class ScenarioSpec {
     @Override
     public String toString() {
         return "ScenarioSpec{" +
-                "loop=" + loop +
+                "stepLoop=" + loop +
                 ", scenarioName='" + scenarioName + '\'' +
                 ", steps=" + steps +
                 '}';

@@ -13,6 +13,7 @@ import java.io.File;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
 
 public class SmartJUnitNavigatorReportGenTest {
 
@@ -23,7 +24,7 @@ public class SmartJUnitNavigatorReportGenTest {
 
         JSONAssert.assertEquals(
                 SmartUtils.readJsonAsString("11_reports/03_multi_scenario_expected_report.json"),
-                mapper.readValue(new File("target/test-reports/Will Get A bath Room Multi Multi.json"), JsonNode.class).toString(),
+                mapper.readValue(new File(TARGET_REPORT_DIR + "Will Get A bath Room Multi Multi.json"), JsonNode.class).toString(),
                 false);
 
         assertThat(result.wasSuccessful(), is(true));

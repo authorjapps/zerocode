@@ -7,13 +7,15 @@ public class ZeroCodeCsvReportBuilder {
     private Integer scenarioLoop;
     private String stepName;
     private Integer stepLoop;
+    private String correlationId;
+    private String result;
 
     public static ZeroCodeCsvReportBuilder newInstance() {
         return new ZeroCodeCsvReportBuilder();
     }
 
     public ZeroCodeCsvReport build() {
-        ZeroCodeCsvReport built = new ZeroCodeCsvReport(scenarioName,scenarioLoop,stepName, stepLoop);
+        ZeroCodeCsvReport built = new ZeroCodeCsvReport(scenarioName,scenarioLoop,stepName, stepLoop, correlationId, result);
         return built;
     }
 
@@ -37,5 +39,13 @@ public class ZeroCodeCsvReportBuilder {
         return this;
     }
 
+    public ZeroCodeCsvReportBuilder correlationId(String correlationId) {
+        this.correlationId = correlationId;
+        return this;
+    }
 
+    public ZeroCodeCsvReportBuilder result(String result) {
+        this.result = result;
+        return this;
+    }
 }

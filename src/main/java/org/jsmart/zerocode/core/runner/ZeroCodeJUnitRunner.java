@@ -68,7 +68,7 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier){
-        notifier.addListener(new ZeroCodeTestListener(smartUtils));
+        notifier.addListener(new ZeroCodeTestListener(smartUtils.getMapper()));
         super.run(notifier);
     }
 
