@@ -46,5 +46,147 @@ Execute your complex business scenario steps with simple jsons which defines you
 ### examples:
 
 #### 1:
+Download this help and usage project to try it yourself.
+Link: https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help
+Baby steps: https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/README.md
+Git Clone: https://github.com/authorjapps/helpme.git
 
 #### 2:
+A scenario might consists of one or more steps. Let's start with single step Test Case:
+```
+{
+  "scenarioName": "Vanilla - Will Get Google Web Bath Room", 
+  "steps": [
+    {
+      "name": "step1_get_google_web_bath_room",
+      "url": "http://localhost:9999/google-bath-services/home/bathroom/999",
+      "operation": "GET",
+      "request": {
+      },
+      "assertions": {
+        "status": 200
+      }
+    }
+  ]
+}
+```
+Note:
+The above JSON block is a test case where you have asked the BDD framework to hit the 
+> REST end point : http://localhost:9999/google-bath-services/home/bathroom/999
+> with method: GET
+> and asserting the REST response with an 
+> expected status: 200
+> where, step "name" is a meaningful step name, which is significant when multiple steps are run. See a multi-step example.
+
+Note:
+> scenarioname : is free text
+> step name: text without any space
+
+
+The above Test Case will PASS as the end point actually available is as below. Look at the response the end point returns.
+```
+    {
+      "operation": "GET",
+      "url": "/google-bath-services/home/bathroom/999",
+      "response": {
+        "status": 200,
+        "body": {
+          "id": 999,
+          "name": "Shower-Basics",
+          "availability": true,
+          "rooms":[
+            {
+              "name": "Bed Room"
+            },
+            {
+              "name": "Guest Room"
+            }
+          ]
+        }
+      }
+    }
+```
+
+The following Test Case will fail. Why? 
+Because you are asserting with an expected status as 500, but the end point actually returns 200.
+
+```
+{
+  "scenarioName": "Vanilla - Will Get Google Web Bath Room",
+  "steps": [
+    {
+      "name": "step1_get_google_web_bath_room",
+      "url": "http://localhost:9999/google-bath-services/home/bathroom/999",
+      "operation": "GET",
+      "request": {
+      },
+      "assertions": {
+        "status": 500
+      }
+    }
+  ]
+}
+```
+
+
+#### 3:
+Single step with more assertions
+
+```
+{
+    "scenarioName": "Vanilla - Will Get Google Web Bath Room",
+    "steps": [
+        {
+            "name": "step1_get_google_web_bath_room",
+            "url": "http://localhost:9999/google-bath-services/home/bathroom/999",
+            "operation": "GET",
+            "request": {},
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": 999,
+                    "name": "Shower-Basics",
+                    "availability": true,
+                    "rooms.SIZE": 2
+                }
+            }
+        }
+    ]
+}
+```
+
+The above Test Case will PASS as the assertions section has all expected values matching the end point's response.
+
+#### 4:
+Step with more assertions place holders
+
+#### 5:
+Step with more general place holders
+
+#### 5:
+Step dealing with arrays
+
+#### 6:
+Multi Step running with earlier response output
+
+#### 6:
+Generating static and random IDs with available place holders
+
+#### 7:
+Asserting with $CONTAINS.STRING
+
+#### 7:
+Asserting with $GT.99
+
+#### 7:
+Asserting with $LT.99
+
+
+
+
+
+
+
+
+
+
