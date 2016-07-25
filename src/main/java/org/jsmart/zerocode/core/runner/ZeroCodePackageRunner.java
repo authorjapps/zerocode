@@ -7,6 +7,7 @@ import org.jsmart.zerocode.core.di.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.TestPackageRoot;
+import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestListener;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -92,6 +93,12 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
         //Description testDescription = Description.createTestDescription(testClass, child.getScenarioName(), annotation);
         */
+    }
+
+    @Override
+    public void run(RunNotifier notifier){
+        notifier.addListener(new ZeroCodeTestListener(smartUtils.getMapper()));
+        super.run(notifier);
     }
 
     /**
