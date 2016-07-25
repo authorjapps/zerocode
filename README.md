@@ -198,6 +198,17 @@ Asserting with $GT.99
 #### 9:
 Asserting empty array with $[]
 
+#### 10:
+Running with Step _loop_
+
+#### 11:
+Running with Scenario _loop_
+
+
+#### 12:
+Running with Scenario and step _loop_
+
+
 
 
 
