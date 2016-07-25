@@ -81,13 +81,13 @@ public class SmartUtilsTest {
 
     @Test(expected = RuntimeException.class)
     public void willReadAllfiles_find_DuplicatesScenarioNamenames_old_style() throws Exception {
-        smartUtils.checkDuplicateNames("04_test_flow_cases");
+        smartUtils.checkDuplicateScenarios("04_test_flow_cases");
     }
 
     @Test
     public void willReadAllfiles_find_DuplicateScenarioNames() throws Exception {
         expectedException.expect(RuntimeException.class);
         expectedException.expectMessage("Oops! Can not run with multiple Scenarios with same name.");
-        smartUtils.checkDuplicateNames("04_test_flow_cases");
+        smartUtils.checkDuplicateScenarios("04_test_flow_cases");
     }
 }

@@ -64,6 +64,11 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
                     "\ne.g. Annotate your Test class now, e.g. @TestPackageRoot(\"resource_folder_for_test_cases\")");
         }
 
+        /*
+         * Different scenarios with same name -or- Same scenarios with same name more than once is prevented
+         */
+        smartUtils.checkDuplicateScenarios(rootPackageAnnotation.value());
+
         return smartUtils.getScenarioSpecListByPackage(rootPackageAnnotation.value());
     }
 

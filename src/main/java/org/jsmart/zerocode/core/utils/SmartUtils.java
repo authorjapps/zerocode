@@ -82,7 +82,7 @@ public class SmartUtils {
         return scenarioSpecList;
     }
 
-    public void checkDuplicateNames(String testPackageName) {
+    public void checkDuplicateScenarios(String testPackageName) {
         Set<String> oops = new HashSet<>();
 
         getScenarioSpecListByPackage(testPackageName).stream()

@@ -1,5 +1,5 @@
 {
-  "scenarioName": "Given_When_Then-Flow name which involves multiple REST calls eg CREATE then UPDATE",
+  "scenarioName": "Given_When_Then-Flow name which involves multiple REST calls Two STeps",
   "loop": 5, //comments -- Allowed
   "steps": [
     {
