@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+
+    <title>$highChartColumnHtml.pageTitle</title>
+
+    <style>
+        body{
+            margin-top: 30px;
+            margin-left:40px;
+        }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+##            var processed_test_result = [
+##                ['Test Case -> Step1',1],
+##                ['Test Case -> Step2',10],
+##                ['Test Case -> Step3', 5]
+##            ];
+
+            var processed_test_result = $highChartColumnHtml.testResult;
+            $(function () {
+
+                // draw chart
+                $('#container').highcharts({
+                    chart: {
+                        type: "column"
+                    },
+                    title: {
+                        text: "$highChartColumnHtml.chartTitleTop"
+                    },
+                    xAxis: {
+                        type: 'category',
+                        allowDecimals: false,
+                        title: {
+                            text: ""
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            ##text: "Reponse Delay"
+                            text: "$highChartColumnHtml.textYaxis"
+                        }
+                    },
+                    series: [{
+                        ##name: 'Delay in Milli Sec',
+                        name: '$highChartColumnHtml.chartSeriesName',
+                        data: processed_test_result
+                    }]
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<div style="width: 200px; margin: 2em auto; padding: 2em; border: 1px solid #ff2740; border-radius: 1em">
+
+  $highChartColumnHtml.chartTitleTopInABox
+
+</div>
+<div id="container" style="height: 400px"></div>
+
+</body>
+</html>

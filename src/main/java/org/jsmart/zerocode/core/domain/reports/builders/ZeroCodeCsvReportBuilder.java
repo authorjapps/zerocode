@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.core.domain.reports.builders;
 
-import org.jsmart.zerocode.core.domain.reports.ZeroCodeCsvReport;
+import org.jsmart.zerocode.core.domain.reports.csv.ZeroCodeCsvReport;
 
 public class ZeroCodeCsvReportBuilder {
     private String scenarioName;

@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.domain.reports;
+package org.jsmart.zerocode.core.domain.reports.csv;
 
 public class ZeroCodeCsvReport {
     private String scenarioName;

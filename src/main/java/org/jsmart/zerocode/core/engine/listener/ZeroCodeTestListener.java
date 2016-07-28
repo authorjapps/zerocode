@@ -6,9 +6,15 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.inject.Inject;
-import org.jsmart.zerocode.core.domain.reports.ZeroCodeCsvReport;
+import org.jsmart.zerocode.core.domain.reports.builders.HighChartColumnHtmlBuilder;
+import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeChartKeyValueArrayBuilder;
+import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeChartKeyValueBuilder;
+import org.jsmart.zerocode.core.domain.reports.chart.HighChartColumnHtml;
+import org.jsmart.zerocode.core.domain.reports.chart.ZeroCodeChartKeyValue;
+import org.jsmart.zerocode.core.domain.reports.csv.ZeroCodeCsvReport;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
 import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeCsvReportBuilder;
+import org.jsmart.zerocode.core.report.HighChartColumnHtmlWriter;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunnerImpl;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
@@ -33,9 +39,13 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Siddha on 24-jul-2016
  */
 public class ZeroCodeTestListener extends RunListener {
-    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeMultiStepsScenarioRunnerImpl.class);
+    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeTestListener.class);
 
     private final ObjectMapper mapper;
+
+    private List<ZeroCodeReport> individualReports;
+
+    List<ZeroCodeCsvReport> csvRows = new ArrayList<>();
 
     @Inject
     public ZeroCodeTestListener(ObjectMapper mapper) {
@@ -55,48 +65,66 @@ public class ZeroCodeTestListener extends RunListener {
         /*
          * Called when all tests have finished
          */
-        LOGGER.info("### ZeroCode: all testRunFinished");
+        LOGGER.info("### ZeroCode: all testRunFinished. Generating test reports and charts");
 
-        generateCsvReport();
-
+        generateCharts();
 
     }
 
-    public void generateCsvReport() {
-        /*
-         * Read target files all into a report
-         */
-        final List<ZeroCodeReport> allReports = readZeroCodeReportsByPath(TARGET_REPORT_DIR);
+    private void generateCharts() {
+        //TODO: use CoR pattern.
 
         /*
-         * Map the java list to CsvPojo
+         * Read individual reports for aggregation
          */
-        List<ZeroCodeCsvReport> csvRows = new ArrayList<>();
-        ZeroCodeCsvReportBuilder csvFileBuilder = ZeroCodeCsvReportBuilder.newInstance();
+        individualReports = readZeroCodeReportsByPath(TARGET_REPORT_DIR);
 
-        allReports.forEach(thisReport ->
-            thisReport.getResults().forEach(thisResult -> {
+        /*
+         * Generate: CSV report
+         */
+        final List<ZeroCodeCsvReport> zeroCodeCsvReportRows = buildCsvRows();
+        generateCsvReport(zeroCodeCsvReportRows);
 
-                csvFileBuilder.scenarioLoop(thisResult.getLoop());
-                csvFileBuilder.scenarioName(thisResult.getScenarioName());
+        /*
+         * Generate: Chart using HighChart
+         */
+        HighChartColumnHtml highChartColumnHtml = convertCsvRowsToHighChartData(zeroCodeCsvReportRows);
+        generateHighChartReport(highChartColumnHtml);
 
-                thisResult.getSteps().forEach(thisStep -> {
-                    csvFileBuilder.stepLoop(thisStep.getLoop());
-                    csvFileBuilder.stepName(thisStep.getName());
-                    csvFileBuilder.correlationId(thisStep.getCorrelationId()); //<-- to search in the log
-                    csvFileBuilder.result(thisStep.getResult()); //<-- passed or failed
-                    csvFileBuilder.requestTimeStamp(thisStep.getRequestTimeStamp().toString());
-                    csvFileBuilder.responseTimeStamp(thisStep.getResponseTimeStamp().toString());
-                    csvFileBuilder.responseDelayMilliSec(thisStep.getResponseDelay());
+    }
 
-                    /*
-                     * Add one by one row
-                     */
-                    csvRows.add(csvFileBuilder.build());
+    private HighChartColumnHtml convertCsvRowsToHighChartData(List<ZeroCodeCsvReport> zeroCodeCsvReportRows) {
 
-                });
-            })
+        //TODO: read from the property file. Inject as fields.
+        HighChartColumnHtmlBuilder highChartColumnHtmlBuilder = HighChartColumnHtmlBuilder.newInstance()
+                .chartSeriesName("Test Results")
+                .chartTitleTop("Request Vs Response Delay Chart")
+                .textYaxis("Response Delay in Milli Sec")
+                .chartTitleTopInABox("Spike Chart");
+
+        ZeroCodeChartKeyValueArrayBuilder dataArrayBuilder = ZeroCodeChartKeyValueArrayBuilder.newInstance();
+
+        zeroCodeCsvReportRows.forEach(thisRow ->
+            dataArrayBuilder.kv(ZeroCodeChartKeyValueBuilder.newInstance()
+                    .key(thisRow.getScenarioName() + "->" + thisRow.getStepName())
+                    .value(thisRow.getResponseDelayMilliSec())
+                    .build())
         );
+
+        highChartColumnHtmlBuilder.testResult(dataArrayBuilder.build());
+
+        return highChartColumnHtmlBuilder.build();
+
+    }
+
+    public void generateHighChartReport(HighChartColumnHtml highChartColumnHtml) {
+
+        HighChartColumnHtmlWriter highChartColumnHtmlWriter = new HighChartColumnHtmlWriter();
+
+        highChartColumnHtmlWriter.generateHighChart(highChartColumnHtml);
+    }
+
+    public void generateCsvReport(List<ZeroCodeCsvReport> zeroCodeCsvReportRows) {
 
         /*
          * Write to a CSV file
@@ -121,13 +149,48 @@ public class ZeroCodeTestListener extends RunListener {
         try {
             writer.writeValue(
                     new File(TARGET_FULL_REPORT_DIR +
-                    TARGET_FULL_REPORT_CSV_FILE_NAME +
-                    "_" +
-                    LocalDateTime.now().toString().replace(":", "-") +
-                    ".csv"), csvRows);
+                            TARGET_FULL_REPORT_CSV_FILE_NAME +
+                            "_" +
+                            LocalDateTime.now().toString().replace(":", "-") +
+                            ".csv"),
+                    zeroCodeCsvReportRows);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<ZeroCodeCsvReport> buildCsvRows() {
+        /*
+         * Map the java list to CsvPojo
+         */
+        ZeroCodeCsvReportBuilder csvFileBuilder = ZeroCodeCsvReportBuilder.newInstance();
+
+        individualReports.forEach(thisReport ->
+                thisReport.getResults().forEach(thisResult -> {
+
+                    csvFileBuilder.scenarioLoop(thisResult.getLoop());
+                    csvFileBuilder.scenarioName(thisResult.getScenarioName());
+
+                    thisResult.getSteps().forEach(thisStep -> {
+                        csvFileBuilder.stepLoop(thisStep.getLoop());
+                        csvFileBuilder.stepName(thisStep.getName());
+                        csvFileBuilder.correlationId(thisStep.getCorrelationId()); //<-- in case of searching in the log file
+                        csvFileBuilder.result(thisStep.getResult()); //<-- passed or failed
+                        csvFileBuilder.requestTimeStamp(thisStep.getRequestTimeStamp().toString());
+                        csvFileBuilder.responseTimeStamp(thisStep.getResponseTimeStamp().toString());
+                        csvFileBuilder.responseDelayMilliSec(thisStep.getResponseDelay());
+
+                        /*
+                         * Add one by one row
+                         */
+                        csvRows.add(csvFileBuilder.build());
+
+                    });
+                })
+        );
+
+        return csvRows;
     }
 
     public List<ZeroCodeReport> readZeroCodeReportsByPath(String reportsFolder) {
