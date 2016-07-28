@@ -7,41 +7,6 @@ Execute your complex business scenario steps with simple jsons which defines you
 
 #### Define a Scenario with [Given, When, Then] Steps, Then Run. See examples next to the table
 
-#### Place holders for End Point Mocking
-
-| Place Holder  | Output        | More  |
-| ------------- |:-------------| -----|
-| /$MOCK       | Signifies that this step will be used for mocking end points | Start with a front slash |
-| $USE.WIREMOCK      | Framework will use wiremock APIs to mock the end points defined in "mocks" section | Can use other mechanisms e.g. local simulators |
-
-#### General place holders
-
-| Place Holder  | Output        | More  |
-| ------------- |:-------------| -----|
-| ${RANDOM.NUMBER}       | Replaces with a random number | Random number is generated using current timestamp in milli-sec |
-| ${RANDOM.STRING:10}       | Replaces a random string consists of ten english alpphabets | The length can be dynamic |
-| ${RANDOM.STRING:4}       | Replaces with a random string consists of four english alpphabets | The length can be dynamic |
-| ${STATIC.ALPHABET:5}       | Replaces with abcde ie Static string of length 5| String starts from "a" and continues, repeats after "z"|
-| ${STATIC.ALPHABET:7}       | Replaces with abcdefg ie Static string of length 7| String starts from a"" and continues, repeats after "z"|
-
-#### Assertion place holders
-
-| Place Holder  | Output        | More  |
-| ------------- |:-------------| -----|
-| $NOT.NULL       | Assertion passes if a not null value was present in the response | Otherwise fails |
-| $NULL      | Assertion passes if a null value was present in the response | Otherwise fails |
-| $[]       | Assertion passes if an empty array was present in the response | Otherwise fails |
-| $GT.99       | Assertion passes if a value greater than 99 was present in the response | Can be any int, long, float etc |
-| $LT.99       | Assertion passes if a value lesser than 99 was present in the response | Can be any int, long, float etc |
-| $CONTAINS.STRING:can not create       | Assertion passes if the node value conatins string "can not create" in the response | Otherwise fails |
-
-#### Assertion Path holders
-
-| Place Holder  | Output        | More  |
-| ------------- |:-------------| -----|
-| $<path.to.array>.SIZE       | Assertion passes if the array size matches with value | See usage in the test json |
-
-
 
 ### examples:
 
@@ -74,7 +39,7 @@ A scenario might consists of one or more steps. Let's start with single step Tes
 }
 ```
 Note:
-The above JSON block is a test case where you have asked the BDD framework to hit the 
+The above JSON block is a test case where we asked the BDD framework to hit the 
 > REST end point : http://localhost:9999/google-bath-services/home/bathroom/999
 
 > with method: GET
@@ -168,6 +133,84 @@ Single step with more assertions
 The above Test Case will PASS as the assertions section has all expected values matching the end point's response.
 
 #### 4:
+Running with step _loop_
+Usage: See here: [Step loop](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/02_using_step_loop.json)
+
+```
+{
+  "scenarioName": "Vanilla - Execute multiple times - Step",
+  "steps": [
+    {
+      "loop": 2,
+      "name": "get_room_details",
+      "url": "http://localhost:9999/google-bath-services/home/bathroom/101",
+      "operation": "GET",
+      "request": {
+      },
+      "assertions": {
+        "status": 200,
+        "body": {
+          "id": 101
+        }
+      }
+    }
+  ]
+}
+```
+
+
+#### 5:
+Running with scenario _loop_
+Usage: See here: [Scenario loop](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/03_using_scenario_loop.json)
+Runs the entire scenario two times i.e. executing both the steps once for each time.
+
+```
+{
+  "scenarioName": "Vanilla - Execute multiple times - Scenario",
+  "loop": 2,
+  "steps": [
+    {
+      "name": "get_room_details",
+      "url": "http://localhost:9999/google-bath-services/home/bathroom/101",
+      "operation": "GET",
+      "request": {
+      },
+      "assertions": {
+        "status": 200,
+        "body": {
+          "id": 101
+        }
+      }
+    },
+    {
+      "name": "get_another_room_details",
+      "url": "http://localhost:9999/google-bath-services/home/bathroom/102",
+      "operation": "GET",
+      "request": {
+      },
+      "assertions": {
+        "status": 200,
+        "body": {
+          "id": 102
+        }
+      }
+    }
+  ]
+}
+```
+
+
+#### 6:
+Generated test statistics reports
+
+Spike Chart: See here e.g. 
+[1. All results Delay Spike - Chart](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_results_chart_2016-07-30T09-55-53.056.html)
+[2. More Test Case results Delay Spike - Chart](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_results_chart_more_2016-07-30T09-57-53.0567.html)
+
+CSV Report: See here : [Full coverage CSV report](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_full_report_2016-07-30T11-44-14.512.csv)
+
+
+#### 4:
 Step with more assertions place holders
 
 
@@ -198,15 +241,42 @@ Asserting with $GT.99
 #### 9:
 Asserting empty array with $[]
 
-#### 10:
-Running with Step _loop_
 
-#### 11:
-Running with Scenario _loop_
+#### Place holders for End Point Mocking
+
+| Place Holder  | Output        | More  |
+| ------------- |:-------------| -----|
+| /$MOCK       | Signifies that this step will be used for mocking end points | Start with a front slash |
+| $USE.WIREMOCK      | Framework will use wiremock APIs to mock the end points defined in "mocks" section | Can use other mechanisms e.g. local simulators |
+
+#### General place holders
+
+| Place Holder  | Output        | More  |
+| ------------- |:-------------| -----|
+| ${RANDOM.NUMBER}       | Replaces with a random number | Random number is generated using current timestamp in milli-sec |
+| ${RANDOM.STRING:10}       | Replaces a random string consists of ten english alpphabets | The length can be dynamic |
+| ${RANDOM.STRING:4}       | Replaces with a random string consists of four english alpphabets | The length can be dynamic |
+| ${STATIC.ALPHABET:5}       | Replaces with abcde ie Static string of length 5| String starts from "a" and continues, repeats after "z"|
+| ${STATIC.ALPHABET:7}       | Replaces with abcdefg ie Static string of length 7| String starts from a"" and continues, repeats after "z"|
+
+#### Assertion place holders
+
+| Place Holder  | Output        | More  |
+| ------------- |:-------------| -----|
+| $NOT.NULL       | Assertion passes if a not null value was present in the response | Otherwise fails |
+| $NULL      | Assertion passes if a null value was present in the response | Otherwise fails |
+| $[]       | Assertion passes if an empty array was present in the response | Otherwise fails |
+| $GT.99       | Assertion passes if a value greater than 99 was present in the response | Can be any int, long, float etc |
+| $LT.99       | Assertion passes if a value lesser than 99 was present in the response | Can be any int, long, float etc |
+| $CONTAINS.STRING:can not create       | Assertion passes if the node value conatins string "can not create" in the response | Otherwise fails |
+
+#### Assertion Path holders
+
+| Place Holder  | Output        | More  |
+| ------------- |:-------------| -----|
+| $<path.to.array>.SIZE       | Assertion passes if the array size matches with value | See usage in the test json |
 
 
-#### 12:
-Running with Scenario and step _loop_
 
 
 
