@@ -212,36 +212,51 @@ Spike Chart: See here e.g.
 CSV Report: See here : [Full coverage CSV report](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_full_report_2016-07-30T11-44-14.512.csv)
 
 
-#### 4:
+#### 7:
 Step with more assertions place holders
 
-
-#### 5:
-Step with more general place holders
-
-
-#### 5:
-Step dealing with arrays
-
-
-#### 6:
-Multi Step running with earlier response output
-
-
-#### 6:
-Generating static and random IDs with available place holders
-
-
-#### 7:
-Asserting with $CONTAINS.STRING
-
+Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
 #### 8:
-Asserting with $GT.99
+Step with more general place holders
+
+Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
 
 #### 9:
+Step dealing with arrays
+
+Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+
+
+#### 10:
+Multi Step running with earlier response output
+
+Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+
+
+#### 11:
+Generating static and random IDs with available place holders
+
+Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+
+
+#### 12:
+Asserting with $CONTAINS.STRING
+
+Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+
+
+#### 13:
+Asserting with $GT.99
+
+Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+
+
+#### 14:
 Asserting empty array with $[]
+
+Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
 
 #### Place holders for End Point Mocking
