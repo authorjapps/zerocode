@@ -100,7 +100,7 @@ public class ZeroCodeTestListener extends RunListener {
                 .chartSeriesName("Test Results")
                 .chartTitleTop("Request Vs Response Delay Chart")
                 .textYaxis("Response Delay in Milli Sec")
-                .chartTitleTopInABox("Spike Chart");
+                .chartTitleTopInABox("Spike Chart ( Milli Seconds )");
 
         ZeroCodeChartKeyValueArrayBuilder dataArrayBuilder = ZeroCodeChartKeyValueArrayBuilder.newInstance();
 

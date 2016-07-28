@@ -3,6 +3,8 @@ package org.jsmart.zerocode.core.report;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.jsmart.zerocode.core.domain.reports.chart.HighChartColumnHtml;
 
 import java.io.FileWriter;
@@ -17,7 +19,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class HighChartColumnHtmlWriter {
     private static final org.slf4j.Logger LOGGER = getLogger(HighChartColumnHtmlWriter.class);
 
-    public static final String VELOCITY_HIGH_CHART_DEFAULT_FILE = "src/main/resources/reports/01_high_chart_column.vm";
+    public static final String VELOCITY_HIGH_CHART_DEFAULT_FILE = "reports/01_high_chart_column.vm";
 
     private VelocityEngine vEngine = new VelocityEngine();
 
@@ -31,6 +33,9 @@ public class HighChartColumnHtmlWriter {
     }
 
     public String generateHighChart(HighChartColumnHtml highChartColumnHtml){
+        vEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+        vEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+
         vEngine.init();
 
         VelocityContext context = new VelocityContext();
@@ -56,10 +61,11 @@ public class HighChartColumnHtmlWriter {
         } catch (IOException chartEx) {
             chartEx.printStackTrace();
             LOGGER.error("Problem occurred during generating test chart. Detail: " + chartEx);
+
             /*
              * Do not throw exception as this exception is not part of a test execution.
              */
-            //throw new RuntimeException(chartEx);
+             // throw new RuntimeException(chartEx);
         }
 
         /* Write to a string - Unit test purpose */
