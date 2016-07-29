@@ -129,6 +129,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator{
 
         } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("Exception while Writing full CSV report. Details: " + e);
         }
     }
 
@@ -176,6 +177,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator{
                         return mapper.readValue(new File(reportJsonFile), ZeroCodeReport.class);
 
                     } catch (IOException e) {
+                        e.printStackTrace();
 
                         throw new RuntimeException("Exception while deserializing to ZeroCodeReport. Details: " + e);
 
