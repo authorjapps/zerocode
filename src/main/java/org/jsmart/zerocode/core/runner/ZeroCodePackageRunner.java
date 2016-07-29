@@ -8,6 +8,7 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.TestPackageRoot;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestListener;
+import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -102,7 +103,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
     @Override
     public void run(RunNotifier notifier){
-        notifier.addListener(new ZeroCodeTestListener(smartUtils.getMapper()));
+        notifier.addListener(new ZeroCodeTestListener(smartUtils.getMapper(), getInjectedReportGenerator()));
         super.run(notifier);
     }
 
@@ -136,6 +137,10 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     private ZeroCodeMultiStepsScenarioRunner getInjectedMultiStepsRunner() {
         zeroCodeMultiStepsScenarioRunner = getInjector().getInstance(ZeroCodeMultiStepsScenarioRunner.class);
         return zeroCodeMultiStepsScenarioRunner;
+    }
+
+    private ZeroCodeReportGenerator getInjectedReportGenerator() {
+        return getInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
     public Injector getInjector() {

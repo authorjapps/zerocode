@@ -7,6 +7,7 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestListener;
+import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -68,7 +69,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier){
-        notifier.addListener(new ZeroCodeTestListener(smartUtils.getMapper()));
+        notifier.addListener(new ZeroCodeTestListener(smartUtils.getMapper(), getInjectedReportGenerator()));
         super.run(notifier);
     }
 
@@ -134,10 +135,16 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
         injector = Guice.createInjector(new ApplicationMainModule(serverEnv));
+
         return injector;
     }
 
     protected SmartUtils getInjectedSmartUtilsClass() {
         return getMainModuleInjector().getInstance(SmartUtils.class);
     }
+
+    protected ZeroCodeReportGenerator getInjectedReportGenerator() {
+        return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
+    }
+
 }
