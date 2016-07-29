@@ -1,4 +1,4 @@
-package org.trick;
+package org.jsmart.zerocode.core.zzquicker.trick;
 
 import java.io.File;
 import java.io.IOException;
