@@ -23,11 +23,11 @@ Git Clone: https://github.com/authorjapps/helpme.git
 A scenario might consists of one or more steps. Let's start with single step Test Case:
 ```
 {
-  "scenarioName": "Vanilla - Will Get Google Web Bath Room", 
+  "scenarioName": "Vanilla - Will Get Google Employee Details",
   "steps": [
     {
-      "name": "step1_get_google_web_bath_room",
-      "url": "http://localhost:9999/google-bath-services/home/bathroom/999",
+      "name": "step1_get_google_emp_details",
+      "url": "http://localhost:9999/google-emp-services/home/employees/999",
       "operation": "GET",
       "request": {
       },
@@ -40,7 +40,7 @@ A scenario might consists of one or more steps. Let's start with single step Tes
 ```
 Note:
 The above JSON block is a test case where we asked the BDD framework to hit the 
-> REST end point : http://localhost:9999/google-bath-services/home/bathroom/999
+> REST end point : http://localhost:9999/google-emp-services/home/employees/999
 
 > with method: GET
 
@@ -59,26 +59,27 @@ Note:
 
 The above Test Case will PASS as the end point actually available is as below. Look at the response the end point returns.
 ```
-    {
-      "operation": "GET",
-      "url": "/google-bath-services/home/bathroom/999",
-      "response": {
-        "status": 200,
-        "body": {
-          "id": 999,
-          "name": "Shower-Basics",
-          "availability": true,
-          "rooms":[
-            {
-              "name": "Bed Room"
-            },
-            {
-              "name": "Guest Room"
+        {
+          "name": "Sample_Get_Employee_by_Id",
+          "operation": "GET",
+          "url": "/google-emp-services/home/employees/999",
+          "response": {
+            "status": 200,
+            "body": {
+              "id": 999,
+              "name": "Larry P",
+              "availability": true,
+              "addresses":[
+                {
+                  "gpsLocation": "x3000-y5000z-70000"
+                },
+                {
+                  "gpsLocation": "x3000-y5000z-70000S"
+                }
+              ]
             }
-          ]
+          }
         }
-      }
-    }
 ```
 
 The following Test Case will fail. Why? 
@@ -87,11 +88,11 @@ Because you are asserting with an expected status as 500, but the end point actu
 
 ```
 {
-  "scenarioName": "Vanilla - Will Get Google Web Bath Room",
+  "scenarioName": "Vanilla - Will Get Google Employee Details",
   "steps": [
     {
-      "name": "step1_get_google_web_bath_room",
-      "url": "http://localhost:9999/google-bath-services/home/bathroom/999",
+      "name": "step1_get_google_emp_details",
+      "url": "http://localhost:9999/google-emp-services/home/employees/999",
       "operation": "GET",
       "request": {
       },
@@ -109,24 +110,32 @@ Single step with more assertions
 
 ```
 {
-    "scenarioName": "Vanilla - Will Get Google Web Bath Room",
-    "steps": [
-        {
-            "name": "step1_get_google_web_bath_room",
-            "url": "http://localhost:9999/google-bath-services/home/bathroom/999",
-            "operation": "GET",
-            "request": {},
-            "assertions": {
-                "status": 200,
-                "body": {
-                    "id": 999,
-                    "name": "Shower-Basics",
-                    "availability": true,
-                    "rooms.SIZE": 2
-                }
+  "scenarioName": "Vanilla - Will Get Google Employee Details",
+  "steps": [
+    {
+      "name": "step1_get_google_emp_details",
+      "url": "http://localhost:9999/google-emp-services/home/employees/999",
+      "operation": "GET",
+      "request": {
+      },
+      "assertions": {
+        "status": 200,
+        "body": {
+          "id": 999,
+          "name": "Larry P",
+          "availability": true,
+          "addresses":[
+            {
+              "gpsLocation": "x3000-y5000z-70000"
+            },
+            {
+              "gpsLocation": "x3000-y5000z-70000S"
             }
+          ]
         }
-    ]
+      }
+    }
+  ]
 }
 ```
 
@@ -143,7 +152,7 @@ Usage: See here: [Step loop](https://github.com/authorjapps/helpme/blob/master/z
     {
       "loop": 2,
       "name": "get_room_details",
-      "url": "http://localhost:9999/google-bath-services/home/bathroom/101",
+      "url": "http://localhost:9999/google-emp-services/home/employees/101",
       "operation": "GET",
       "request": {
       },
@@ -152,6 +161,7 @@ Usage: See here: [Step loop](https://github.com/authorjapps/helpme/blob/master/z
         "body": {
           "id": 101
         }
+
       }
     }
   ]
@@ -171,7 +181,7 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
   "steps": [
     {
       "name": "get_room_details",
-      "url": "http://localhost:9999/google-bath-services/home/bathroom/101",
+      "url": "http://localhost:9999/google-emp-services/home/employees/101",
       "operation": "GET",
       "request": {
       },
@@ -184,7 +194,7 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
     },
     {
       "name": "get_another_room_details",
-      "url": "http://localhost:9999/google-bath-services/home/bathroom/102",
+      "url": "http://localhost:9999/google-emp-services/home/employees/102",
       "operation": "GET",
       "request": {
       },
