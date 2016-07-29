@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.zzquicker.trick;
+package org.jsmart.zerocode.core.zzignored.trick;
 
 import org.jsmart.zerocode.core.runner.Notifier;
 

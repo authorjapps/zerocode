@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.zzquicker.trick;
+package org.jsmart.zerocode.core.zzignored.trick;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

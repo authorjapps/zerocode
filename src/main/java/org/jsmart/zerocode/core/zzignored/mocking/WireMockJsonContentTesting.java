@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.mocking;
+package org.jsmart.zerocode.core.zzignored.mocking;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;

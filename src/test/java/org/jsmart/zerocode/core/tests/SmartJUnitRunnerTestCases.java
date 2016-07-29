@@ -2,12 +2,12 @@ package org.jsmart.zerocode.core.tests;
 
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.TargetEnv;
-import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodeJUnitRunner;
+import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodeUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @TargetEnv("dev_test.properties")
-@RunWith(TestOnlyZeroCodeJUnitRunner.class)
+@RunWith(TestOnlyZeroCodeUnitRunner.class)
 public class SmartJUnitRunnerTestCases {
 
     @JsonTestCase("07_some_test_cases/01_REST_end_point_GET_PASS.json")

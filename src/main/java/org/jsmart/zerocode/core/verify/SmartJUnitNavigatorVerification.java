@@ -2,12 +2,12 @@ package org.jsmart.zerocode.core.verify;
 
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.TargetEnv;
-import org.jsmart.zerocode.core.runner.ZeroCodeJUnitRunner;
+import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @TargetEnv("config_hosts.properties")
-@RunWith(ZeroCodeJUnitRunner.class)
+@RunWith(ZeroCodeUnitRunner.class)
 public class SmartJUnitNavigatorVerification {
 
     @JsonTestCase("01_verification_test_cases/01_REST_end_point_GET_PASS.json")

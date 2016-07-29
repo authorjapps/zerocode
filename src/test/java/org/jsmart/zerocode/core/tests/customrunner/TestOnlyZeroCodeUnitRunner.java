@@ -1,14 +1,14 @@
 package org.jsmart.zerocode.core.tests.customrunner;
 
 import org.jsmart.simulator.main.SimpleRestJsonSimulatorsMain;
-import org.jsmart.zerocode.core.runner.ZeroCodeJUnitRunner;
+import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.runners.model.InitializationError;
 
-public class TestOnlyZeroCodeJUnitRunner extends ZeroCodeJUnitRunner {
+public class TestOnlyZeroCodeUnitRunner extends ZeroCodeUnitRunner {
     SimpleRestJsonSimulatorsMain simulator ;
     public static final int PORT = 9999;
 
-    public TestOnlyZeroCodeJUnitRunner(Class<?> klass) throws InitializationError {
+    public TestOnlyZeroCodeUnitRunner(Class<?> klass) throws InitializationError {
         super(klass);
         simulator = new SimpleRestJsonSimulatorsMain(PORT);
         simulator.start();

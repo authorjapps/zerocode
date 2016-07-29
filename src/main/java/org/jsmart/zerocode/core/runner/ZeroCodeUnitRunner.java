@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
-    private static final Logger logger = LoggerFactory.getLogger(ZeroCodeJUnitRunner.class);
+public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
+    private static final Logger logger = LoggerFactory.getLogger(ZeroCodeUnitRunner.class);
 
     static int i = 1;
     protected boolean passed;
@@ -41,7 +41,7 @@ public class ZeroCodeJUnitRunner extends BlockJUnit4ClassRunner {
     List<String> smartTestCaseNames = new ArrayList<>();
     String currentTestCase;
 
-    public ZeroCodeJUnitRunner(Class<?> klass) throws InitializationError {
+    public ZeroCodeUnitRunner(Class<?> klass) throws InitializationError {
         super(klass);
 
         this.testClass = klass;
