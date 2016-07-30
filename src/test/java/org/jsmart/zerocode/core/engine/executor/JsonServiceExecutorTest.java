@@ -37,12 +37,9 @@ public class JsonServiceExecutorTest {
         simulator = new SimpleRestJsonSimulatorsMain(PORT);
         simulator.start();
 
-        jsonServiceExecutor = new JsonServiceExecutorImpl();
-        jsonServiceExecutor.setHttpClientExecutor(new ApacheHttpClientExecutor());
-        jsonServiceExecutor.setObjectMapper(new ObjectMapperProvider().get());
-
         injector = Guice.createInjector(new ApplicationMainModule("config_hosts_test.properties"));
         smartUtils = injector.getInstance(SmartUtils.class);
+        jsonServiceExecutor = injector.getInstance(JsonServiceExecutorImpl.class);
     }
 
     @After

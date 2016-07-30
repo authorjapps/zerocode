@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.domain.reports.builders;
+package org.jsmart.zerocode.core.domain.builders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

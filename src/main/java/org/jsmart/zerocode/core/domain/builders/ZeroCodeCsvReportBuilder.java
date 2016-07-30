@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.domain.reports.builders;
+package org.jsmart.zerocode.core.domain.builders;
 
 import org.jsmart.zerocode.core.domain.reports.csv.ZeroCodeCsvReport;
 

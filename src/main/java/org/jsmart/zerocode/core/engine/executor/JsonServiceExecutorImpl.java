@@ -12,6 +12,7 @@ import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.Response;
+import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClient;
 import org.jsmart.zerocode.core.utils.HelperJsonUtils;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.slf4j.Logger;
@@ -42,6 +43,8 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     private ObjectMapper objectMapper;
     @Inject
     SmartUtils smartUtils;
+    @Inject
+    HelloGuiceHttpClient httpClient;
     //guice
 
     private Object COOKIE_JSESSIONID_VALUE;
@@ -50,6 +53,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     }
 
     public String executeJavaService(String serviceName, String methodName, String requestJson) throws JsonProcessingException {
+
         if( javaExecutor == null) {
             throw new RuntimeException("Can not proceed as the framework could not load the executors. ");
         }
@@ -87,10 +91,9 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         }
     }
 
-//    @Rule
-//    public WireMockRule rule = new WireMockRule(8888);
-
     private String executeRESTInternal(String httpUrl, String methodName, String requestJson) throws Exception {
+
+        System.out.println("###Printing: " + httpClient.printHello());
 
         Object queryParams = readJsonPathOrElseNull(requestJson, "$.queryParams");
         Object headers = readJsonPathOrElseNull(requestJson, "$.headers");

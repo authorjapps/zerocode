@@ -9,6 +9,7 @@ public class TestOnlyZeroCodeUnitRunner extends ZeroCodeUnitRunner {
     public static final int PORT = 9999;
 
     public TestOnlyZeroCodeUnitRunner(Class<?> klass) throws InitializationError {
+
         super(klass);
         simulator = new SimpleRestJsonSimulatorsMain(PORT);
         simulator.start();

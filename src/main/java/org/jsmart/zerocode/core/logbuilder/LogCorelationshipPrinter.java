@@ -1,7 +1,7 @@
 package org.jsmart.zerocode.core.logbuilder;
 
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportStepBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportStepBuilder;
 import org.slf4j.Logger;
 
 import java.time.Duration;

@@ -2,8 +2,8 @@ package org.jsmart.zerocode.core.domain.reports.chart;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.ObjectMapperProvider;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeChartKeyValueArrayBuilder;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeChartKeyValueBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueArrayBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueBuilder;
 import org.junit.Test;
 
 import java.util.Arrays;

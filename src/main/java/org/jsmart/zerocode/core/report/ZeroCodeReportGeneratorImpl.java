@@ -7,10 +7,10 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.inject.Inject;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
-import org.jsmart.zerocode.core.domain.reports.builders.HighChartColumnHtmlBuilder;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeChartKeyValueArrayBuilder;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeChartKeyValueBuilder;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeCsvReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.HighChartColumnHtmlBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueArrayBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeCsvReportBuilder;
 import org.jsmart.zerocode.core.domain.reports.chart.HighChartColumnHtml;
 import org.jsmart.zerocode.core.domain.reports.csv.ZeroCodeCsvReport;
 

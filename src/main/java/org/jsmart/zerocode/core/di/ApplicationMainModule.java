@@ -3,6 +3,8 @@ package org.jsmart.zerocode.core.di;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClient;
+import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClientDefaultImpl;
 import org.jsmart.zerocode.core.engine.executor.JavaExecutorImpl;
 import org.jsmart.zerocode.core.engine.executor.JavaExecutor;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
@@ -33,6 +35,7 @@ public class ApplicationMainModule extends AbstractModule {
          * Install other guice modules
          */
         install(new ObjectMapperModule());
+        install(new HttpClientModule());
 
         /*
          * Bind Direct classes, classes to interfaces etc
@@ -42,6 +45,7 @@ public class ApplicationMainModule extends AbstractModule {
         bind(JavaExecutor.class).to(JavaExecutorImpl.class);
         bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
+        //bind(HelloGuiceHttpClient.class).to(HelloGuiceHttpClientDefaultImpl.class);
         //bind(SmartUtils.class);
 
         /*

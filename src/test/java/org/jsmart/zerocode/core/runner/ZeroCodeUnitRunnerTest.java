@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.core.runner;
 
-import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.annotation.JsonTestCase;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

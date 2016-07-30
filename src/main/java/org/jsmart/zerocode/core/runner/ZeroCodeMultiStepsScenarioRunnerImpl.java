@@ -6,8 +6,8 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeExecResultBuilder;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportBuilder;
 import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeExecResultBuilder.newInstance;
+import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
 

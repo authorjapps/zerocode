@@ -3,9 +3,9 @@ package org.jsmart.zerocode.core.domain.reports;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.ObjectMapperProvider;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportBuilder;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeReportStepBuilder;
-import org.jsmart.zerocode.core.domain.reports.builders.ZeroCodeExecResultBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportStepBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Test;
 

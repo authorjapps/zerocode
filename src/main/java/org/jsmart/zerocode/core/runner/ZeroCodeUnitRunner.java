@@ -2,11 +2,16 @@ package org.jsmart.zerocode.core.runner;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Modules;
 import org.jsmart.zerocode.core.di.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
-import org.jsmart.zerocode.core.domain.JsonTestCase;
-import org.jsmart.zerocode.core.domain.TargetEnv;
+import org.jsmart.zerocode.core.domain.annotation.JsonTestCase;
+import org.jsmart.zerocode.core.domain.annotation.TargetEnv;
+import org.jsmart.zerocode.core.domain.annotation.HttpClient;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestListener;
+import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClient;
+import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClientDefaultImpl;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
@@ -131,10 +136,20 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     public Injector getMainModuleInjector() {
-        // TODO: Synchronise this if needed with e.g. synchronized (IptSmartRunner.class) {}
+        // TODO: Synchronise this with an object lock e.g. synchronized (IptSmartRunner.class) {}
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
         injector = Guice.createInjector(new ApplicationMainModule(serverEnv));
+
+        //
+        final HttpClient runtimeClientAnnotated = testClass.getAnnotation(HttpClient.class);
+        Class<? extends HelloGuiceHttpClient> runtimeHttpClient = runtimeClientAnnotated != null ? runtimeClientAnnotated.value() : HelloGuiceHttpClientDefaultImpl.class;
+
+        if(runtimeHttpClient != null){
+            injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
+                    .with(new RuntimeHttpClientModule(runtimeHttpClient)));
+        }
+        //
 
         return injector;
     }
