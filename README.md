@@ -7,10 +7,21 @@ Execute your complex business scenario steps with simple jsons which defines you
 
 #### Define a Scenario with Steps [Given, When, Then], Then Run. See examples below
 
-# Table of Contents
+## Table of Contents
 1. [Help and usage](#id_help_and_usage)
 2. [Single Scenario with single step](#id_single_step)
 3. [Step with more assertions](#id_single_step_more)
+4. [Running with step loop](#4)
+5. [Running with scenario loop](#5)
+6. [Generated reports and charts](#6)
+7. [More assertion with handy place holders](#7)
+8. [General Place holders](#8)
+9. [Dealing with arrays](#9)
+10. [Chaining multiple steps for a scenario](#10)
+11. [Generating random strings, random numbers and static strings](#11)
+12. [Asserting general and exception messages](#12)
+13. [Asserting with LT(lesser than) and GT(greater than)](#13)
+14. [Asserting an empty array)](#14)
 
 
 ### examples:
@@ -24,6 +35,7 @@ Download this help and usage project to try it yourself.
 - Baby steps: https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/README.md
 
 - Git Clone: https://github.com/authorjapps/helpme.git
+
 
 <div id='id_single_step'/>
 #### 2:
@@ -45,6 +57,7 @@ A scenario might consists of one or more steps. Let's start with single step Tes
   ]
 }
 ```
+
 Note:
 The above JSON block is a test case where we asked the test framework to hit the 
 > REST end point : http://localhost:9999/google-emp-services/home/employees/999
