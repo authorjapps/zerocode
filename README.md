@@ -22,6 +22,7 @@ Execute your complex business scenario steps with simple jsons which defines you
 12. [Asserting general and exception messages](#12)
 13. [Asserting with LT(lesser than) and GT(greater than)](#13)
 14. [Asserting an empty array)](#14)
+15. [Calling java methods(apis) for specific tasks)](#15)
 
 
 ### examples:
@@ -35,6 +36,8 @@ Download this help and usage project to try it yourself.
 - Baby steps: https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/README.md
 
 - Git Clone: https://github.com/authorjapps/helpme.git
+
+- Download the zip file(contains a maven project): https://github.com/authorjapps/helpme/archive/master.zip
 
 
 <div id='id_single_step'/>
@@ -276,21 +279,82 @@ Generating static and random IDs with available place holders
 
 
 #### 12:
-Asserting with $CONTAINS.STRING
+Asserting with $CONTAINS.STRING:
+
+```
+{
+      ...
+      ...
+      "assertions": {
+        "status": 200,
+        "body": {
+          "name": "$CONTAINS.STRING:Larry"   //<-- PASS: If the "name" field in the response contains "Larry".
+        }
+      }
+}
+```
+
+- Similar way exception messages can be asserted for part or full message.
 
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
 
 #### 13:
-Asserting with $GT.99
+Asserting with $GT or $LT
 
-- Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+$GT.<any_number>
+
+```
+{
+  ...
+  ...
+  "assertions": {
+    "status": "$GT.198"   //<--- PASS: 200 is greater than 198
+  }
+}
+
+```
+
+$LT.<any_number>
+```
+{
+  ...
+  ...
+  "assertions": {
+      "status": "$LT.500"   //<--- PASS: 200 is lesser than 500
+  }
+}
+
+```
+
+- Link: [See full examples](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
 
 #### 14:
 Asserting empty array with $[]
 
+```
+    {
+      ...
+      ...
+      "assertions": {
+        "status": 200,
+        "body": {
+          "id": "$NOT.NULL",
+          "vehicles": "$[]"         //<--- PASS: if the response has empty "vehicles"
+        }
+      }
+    }
+```
+
+- Link: [See full examples](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+
+
+#### 15:
+Calling java methods(apis) for doing specific tasks
+
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+
 
 
 #### Place holders for End Point Mocking
@@ -298,7 +362,7 @@ Asserting empty array with $[]
 | Place Holder  | Output        | More  |
 | ------------- |:-------------| -----|
 | /$MOCK       | Signifies that this step will be used for mocking end points | Start with a front slash |
-| $USE.WIREMOCK      | Framework will use wiremock APIs to mock the end points defined in "mocks" section | Can use other mechanisms e.g. local simulators |
+| $USE.WIREMOCK      | Framework will use wiremock APIs to mock the end points defined in "mocks" section | Can use other mechanisms e.g. local REST api simulators |
 
 #### General place holders
 
