@@ -5,11 +5,17 @@ Execute your complex business scenario steps with simple jsons which defines you
 
 ### Easy! Simple! Readable! JSON Based!
 
-#### Define a Scenario with [Given, When, Then] Steps, Then Run. See examples next to the table
+#### Define a Scenario with Steps [Given, When, Then], Then Run. See examples below
+
+# Table of Contents
+1. [Help and usage](#id_help_and_usage)
+2. [Single Scenario with single step](#id_single_step)
+3. [Step with more assertions](#id_single_step_more)
 
 
 ### examples:
 
+<div id='id_help_and_usage'/>
 #### 1:
 Download this help and usage project to try it yourself.
 
@@ -19,6 +25,7 @@ Download this help and usage project to try it yourself.
 
 - Git Clone: https://github.com/authorjapps/helpme.git
 
+<div id='id_single_step'/>
 #### 2:
 A scenario might consists of one or more steps. Let's start with single step Test Case:
 ```
@@ -39,7 +46,7 @@ A scenario might consists of one or more steps. Let's start with single step Tes
 }
 ```
 Note:
-The above JSON block is a test case where we asked the BDD framework to hit the 
+The above JSON block is a test case where we asked the test framework to hit the 
 > REST end point : http://localhost:9999/google-emp-services/home/employees/999
 
 > with method: GET
@@ -54,10 +61,10 @@ The above JSON block is a test case where we asked the BDD framework to hit the
 Note:
 > scenarioname : is free text
 
-> step name: text without any space
+> step name: free text without any space
 
 
-The above Test Case will PASS as the end point actually available is as below. Look at the response the end point returns.
+The above Test Case will PASS as the end point actually available is as below. Look at the "response" section below.
 ```
         {
           "name": "Sample_Get_Employee_by_Id",
@@ -105,6 +112,7 @@ Because you are asserting with an expected status as 500, but the end point actu
 ```
 
 
+<div id='id_single_step_more'/>
 #### 3:
 Single step with more assertions
 
@@ -145,6 +153,8 @@ The above Test Case will PASS as the assertions section has all expected values 
 Running with step _loop_
 - Usage: See here: [Step loop](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/02_using_step_loop.json)
 
+- _loop_ field in a step will execute the step that many number of time.
+
 ```
 {
   "scenarioName": "Vanilla - Execute multiple times - Step",
@@ -161,7 +171,6 @@ Running with step _loop_
         "body": {
           "id": 101
         }
-
       }
     }
   ]
@@ -211,9 +220,9 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
 
 
 #### 6:
-Generated test statistics reports
+Generated test statistics reports. See target folder after every run. See sample reports below
 
-Spike Chart: See here e.g. 
+Spike Chart:
 
 - [1. All results Delay Spike - Chart](http://htmlpreview.github.io/?https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_results_chart_2016-07-30T09-55-53.056.html)
 
