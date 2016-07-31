@@ -10,12 +10,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-public class CustomRuntimeTestHttpClient implements HelloGuiceHttpClient {
-
-    @Override
-    public String printHello() {
-        return "Custom http client----> SUCCESS";
-    }
+public class CustomRuntimeTestHttpClient implements BasicHttpClient {
 
     @Override
     public ClientResponse execute(String httpUrl, String methodName, Map<String, Object> headers, Map<String, Object> queryParams, Object body) throws Exception {

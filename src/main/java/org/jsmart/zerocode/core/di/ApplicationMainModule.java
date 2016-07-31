@@ -3,8 +3,6 @@ package org.jsmart.zerocode.core.di;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
-import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClient;
-import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClientDefaultImpl;
 import org.jsmart.zerocode.core.engine.executor.JavaExecutorImpl;
 import org.jsmart.zerocode.core.engine.executor.JavaExecutor;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;

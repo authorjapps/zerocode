@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.Response;
-import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClient;
+import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     @Inject
     SmartUtils smartUtils;
     @Inject
-    HelloGuiceHttpClient httpClient;
+    BasicHttpClient httpClient;
     //guice
 
     public JsonServiceExecutorImpl() {
@@ -81,8 +81,6 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     }
 
     private String executeRESTInternal(String httpUrl, String methodName, String requestJson) throws Exception {
-
-        System.out.println("###Printing: " + httpClient.printHello());
 
         HashMap queryParams = (HashMap) readJsonPathOrElseNull(requestJson, "$.queryParams");
         HashMap headers = (HashMap) readJsonPathOrElseNull(requestJson, "$.headers");

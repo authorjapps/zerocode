@@ -9,10 +9,10 @@ import org.jsmart.zerocode.core.di.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.TestPackageRoot;
-import org.jsmart.zerocode.core.domain.HttpClient;
+import org.jsmart.zerocode.core.domain.UseHttpClient;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestListener;
-import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClient;
-import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClientDefaultImpl;
+import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
+import org.jsmart.zerocode.core.httpclient.RestEasyDefaultHttpClient;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
@@ -155,8 +155,8 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         injector = Guice.createInjector(new ApplicationMainModule(serverEnv));
 
         //
-        final HttpClient runtimeClientAnnotated = testClass.getAnnotation(HttpClient.class);
-        Class<? extends HelloGuiceHttpClient> runtimeHttpClient = runtimeClientAnnotated != null ? runtimeClientAnnotated.value() : HelloGuiceHttpClientDefaultImpl.class;
+        final UseHttpClient runtimeClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
+        Class<? extends BasicHttpClient> runtimeHttpClient = runtimeClientAnnotated != null ? runtimeClientAnnotated.value() : RestEasyDefaultHttpClient.class;
 
         if(runtimeHttpClient != null){
             injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))

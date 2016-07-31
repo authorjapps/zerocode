@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.core.domain;
 
-import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClient;
+import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited
-public @interface HttpClient {
+public @interface UseHttpClient {
     /**
      * @return a Http Client implementation class which will override the default implementation of RestEasy client
      */
-    Class<? extends HelloGuiceHttpClient> value();
+    Class<? extends BasicHttpClient> value();
 }

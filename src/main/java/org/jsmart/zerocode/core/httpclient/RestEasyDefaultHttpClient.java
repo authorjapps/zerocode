@@ -14,8 +14,8 @@ import java.util.Set;
 import static java.lang.String.format;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
 
-public class HelloGuiceHttpClientDefaultImpl implements HelloGuiceHttpClient {
-    private static final Logger logger = LoggerFactory.getLogger(HelloGuiceHttpClientDefaultImpl.class);
+public class RestEasyDefaultHttpClient implements BasicHttpClient {
+    private static final Logger logger = LoggerFactory.getLogger(RestEasyDefaultHttpClient.class);
 
     private static ApacheHttpClientExecutor httpClientExecutor = new ApacheHttpClientExecutor();
 
@@ -24,13 +24,8 @@ public class HelloGuiceHttpClientDefaultImpl implements HelloGuiceHttpClient {
     private Object COOKIE_JSESSIONID_VALUE;
 
     @Override
-    public String printHello() {
-        return "Default Hello";
-    }
-
-    @Override
     public ClientResponse execute(String httpUrl, String methodName, Map<String, Object> headers, Map<String, Object> queryParams, Object body) throws Exception {
-        logger.info("Used RestEasy http client");
+        logger.info("###Used RestEasyDefaultHttpClient");
         /*
          * Get the request body content
          */

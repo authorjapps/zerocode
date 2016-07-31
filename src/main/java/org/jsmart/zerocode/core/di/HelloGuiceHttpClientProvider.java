@@ -1,16 +1,16 @@
 package org.jsmart.zerocode.core.di;
 
-import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClient;
-import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClientDefaultImpl;
+import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
+import org.jsmart.zerocode.core.httpclient.RestEasyDefaultHttpClient;
 
 import javax.inject.Provider;
 
-public class HelloGuiceHttpClientProvider implements Provider<HelloGuiceHttpClient> {
+public class HelloGuiceHttpClientProvider implements Provider<BasicHttpClient> {
 
     @Override
-    public HelloGuiceHttpClient get() {
+    public BasicHttpClient get() {
 
-        HelloGuiceHttpClient client = new HelloGuiceHttpClientDefaultImpl();
+        BasicHttpClient client = new RestEasyDefaultHttpClient();
 
         return client;
     }
