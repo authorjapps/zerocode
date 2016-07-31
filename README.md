@@ -8,21 +8,22 @@ Execute your complex business scenario steps with simple jsons which defines you
 #### Define a Scenario with Steps [Given, When, Then], Then Run. See examples below
 
 ## Table of Contents
-1. [Help and usage](#id_help_and_usage)
-2. [Single Scenario with single step](#id_single_step)
-3. [Step with more assertions](#id_single_step_more)
-4. [Running with step loop](#4)
-5. [Running with scenario loop](#5)
-6. [Generated reports and charts](#6)
-7. [More assertion with handy place holders](#7)
-8. [General Place holders](#8)
-9. [Dealing with arrays](#9)
-10. [Chaining multiple steps for a scenario](#10)
-11. [Generating random strings, random numbers and static strings](#11)
-12. [Asserting general and exception messages](#12)
-13. [Asserting with LT(lesser than) and GT(greater than)](#13)
-14. [Asserting an empty array)](#14)
-15. [Calling java methods(apis) for specific tasks)](#15)
+- [Help and usage](#id_help_and_usage)
+- [Overriding HttpClient with Project specific](#16)
+- [Single Scenario with single step](#id_single_step)
+- [Step with more assertions](#id_single_step_more)
+- [Running with step loop](#4)
+- [Running with scenario loop](#5)
+- [Generated reports and charts](#6)
+- [More assertion with handy place holders](#7)
+- [General Place holders](#8)
+- [Dealing with arrays](#9)
+- [Chaining multiple steps for a scenario](#10)
+- [Generating random strings, random numbers and static strings](#11)
+- [Asserting general and exception messages](#12)
+- [Asserting with LT(lesser than) and GT(greater than)](#13)
+- [Asserting an empty array)](#14)
+- [Calling java methods(apis) for specific tasks)](#15)
 
 
 ### examples:
@@ -354,6 +355,10 @@ Asserting empty array with $[]
 Calling java methods(apis) for doing specific tasks
 
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+
+
+#### 16:
+See here : [@UseHttpClient](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore)
 
 
 
