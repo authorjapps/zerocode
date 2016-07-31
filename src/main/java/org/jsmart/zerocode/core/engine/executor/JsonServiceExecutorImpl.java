@@ -7,28 +7,21 @@ import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.Response;
 import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClient;
-import org.jsmart.zerocode.core.utils.HelperJsonUtils;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MultivaluedMap;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import static java.lang.String.format;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithLocalMock;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithVirtuosoMock;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithWireMock;
-import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 public class JsonServiceExecutorImpl implements JsonServiceExecutor {
@@ -38,16 +31,12 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     @Inject
     private JavaExecutor javaExecutor;
     @Inject
-    private ApacheHttpClientExecutor httpClientExecutor;
-    @Inject
     private ObjectMapper objectMapper;
     @Inject
     SmartUtils smartUtils;
     @Inject
     HelloGuiceHttpClient httpClient;
     //guice
-
-    private Object COOKIE_JSESSIONID_VALUE;
 
     public JsonServiceExecutorImpl() {
     }
@@ -95,60 +84,15 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
         System.out.println("###Printing: " + httpClient.printHello());
 
-        Object queryParams = readJsonPathOrElseNull(requestJson, "$.queryParams");
-        Object headers = readJsonPathOrElseNull(requestJson, "$.headers");
-        Object bodyContent = readJsonPathOrElseNull(requestJson, "$.body");
+        final ClientResponse serverResponse = httpClient.execute(httpUrl, methodName, requestJson);
 
         /*
-         * Create mock endpoints supplied for this scenario
+         * $MOCK: Create mock endpoints supplied for this scenario
          */
+        final Object bodyContent = readJsonPathOrElseNull(requestJson, "$.body");
         if (completedMockingEndPoints(httpUrl, requestJson, methodName, bodyContent)) {
             return "{\"status\": 200}";
         }
-
-        /*
-         * Get the request body content
-         */
-        String reqBodyAsString = getContentAsItIsJson(bodyContent);
-
-        /*
-         * set the query parameters
-         */
-        if(queryParams != null){
-            String qualifiedQueryParams = createQualifiedQueryParams(queryParams);
-            httpUrl = httpUrl + qualifiedQueryParams;
-        }
-        ClientRequest clientExecutor = httpClientExecutor.createRequest(httpUrl);
-
-        /*
-         * set the headers
-         */
-        if(headers != null){
-            setRequestHeaders(headers, clientExecutor);
-        }
-
-        /*
-         * Highly discouraged to use sessions, but in case any server uses session,
-         * then it's taken care here.
-         */
-        if(COOKIE_JSESSIONID_VALUE != null) {
-            clientExecutor.header("Cookie", COOKIE_JSESSIONID_VALUE);
-        }
-
-        /*
-         * set the request body
-         */
-        if(reqBodyAsString != null){
-            clientExecutor.body("application/json", reqBodyAsString);
-        }
-
-        // TODO: if none of the [GET POST PUT DELETE] then throw exception
-        clientExecutor.setHttpMethod(methodName);
-
-        /*
-         * now execute the request
-         */
-        ClientResponse serverResponse = clientExecutor.execute();
 
         /*
          * now read the response for :
@@ -168,18 +112,8 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
             bodyAsNode = objectMapper.readValue(respBodyAsString, JsonNode.class);
         }
 
-        // location is already part of header, but in an array
-        // final String locationHref = serverResponse.getLocation() != null? serverResponse.getLocation().getHref(): null;
-
         Response response = new Response(responseStatus, responseHeaders, bodyAsNode, null);
         final String relevantResponse = objectMapper.writeValueAsString(response);
-
-        Set headerKeySet = serverResponse.getHeaders().keySet();
-        for(Object key: headerKeySet){
-            if("Set-Cookie".equals(key) ) {
-                COOKIE_JSESSIONID_VALUE = serverResponse.getHeaders().get(key);
-            }
-        }
 
         return prettyPrintJson(relevantResponse);
     }
@@ -228,34 +162,4 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         }
     }
 
-    private String createQualifiedQueryParams(Object queryParams) {
-        String qualifiedQueryParam = "?";
-        Map queryParamsMap = HelperJsonUtils.readHeadersAsMap(queryParams);
-        for(Object key: queryParamsMap.keySet()){
-            if("?".equals(qualifiedQueryParam)){
-                qualifiedQueryParam = qualifiedQueryParam + format("%s=%s", (String)key, (String)queryParamsMap.get(key));
-            }
-            else{
-                qualifiedQueryParam = qualifiedQueryParam + format("&%s=%s", (String)key, (String)queryParamsMap.get(key));
-            }
-        }
-        return qualifiedQueryParam;
-    }
-
-    private ClientRequest setRequestHeaders(Object headers, ClientRequest clientExecutor) {
-        Map headersMap = (HashMap)headers;
-        for(Object key: headersMap.keySet()){
-            clientExecutor.header((String)key, headersMap.get(key));
-        }
-
-        return clientExecutor;
-    }
-
-    public void setHttpClientExecutor(ApacheHttpClientExecutor httpClientExecutor) {
-        this.httpClientExecutor = httpClientExecutor;
-    }
-
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 }

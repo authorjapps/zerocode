@@ -45,7 +45,6 @@ public class ApplicationMainModule extends AbstractModule {
         bind(JavaExecutor.class).to(JavaExecutorImpl.class);
         bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
-        //bind(HelloGuiceHttpClient.class).to(HelloGuiceHttpClientDefaultImpl.class);
         //bind(SmartUtils.class);
 
         /*

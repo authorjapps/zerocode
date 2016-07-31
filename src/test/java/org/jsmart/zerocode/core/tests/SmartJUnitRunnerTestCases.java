@@ -1,7 +1,7 @@
 package org.jsmart.zerocode.core.tests;
 
-import org.jsmart.zerocode.core.domain.annotation.JsonTestCase;
-import org.jsmart.zerocode.core.domain.annotation.TargetEnv;
+import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodeUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;

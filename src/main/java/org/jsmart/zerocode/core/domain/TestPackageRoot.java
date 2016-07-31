@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.domain.annotation;
+package org.jsmart.zerocode.core.domain;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface TargetEnv {
+public @interface TestPackageRoot {
     String value();
 }

@@ -1,7 +1,7 @@
 package org.jsmart.zerocode.core.runner;
 
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
-import org.jsmart.zerocode.core.domain.annotation.TestPackageRoot;
+import org.jsmart.zerocode.core.domain.TestPackageRoot;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;

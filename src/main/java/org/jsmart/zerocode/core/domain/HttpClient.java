@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.domain.annotation;
+package org.jsmart.zerocode.core.domain;
 
 import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClient;
 
