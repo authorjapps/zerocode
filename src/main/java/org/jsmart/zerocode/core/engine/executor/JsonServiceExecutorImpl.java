@@ -8,7 +8,6 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.Response;
 import org.jsmart.zerocode.core.httpclient.HelloGuiceHttpClient;
@@ -17,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MultivaluedMap;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithLocalMock;
@@ -84,13 +84,19 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
         System.out.println("###Printing: " + httpClient.printHello());
 
-        final ClientResponse serverResponse = httpClient.execute(httpUrl, methodName, requestJson);
+        HashMap queryParams = (HashMap) readJsonPathOrElseNull(requestJson, "$.queryParams");
+        HashMap headers = (HashMap) readJsonPathOrElseNull(requestJson, "$.headers");
+        Object bodyContent = readJsonPathOrElseNull(requestJson, "$.body");
+
+        final ClientResponse serverResponse = httpClient.execute(httpUrl, methodName, headers, queryParams, bodyContent);
 
         /*
          * $MOCK: Create mock endpoints supplied for this scenario
          */
-        final Object bodyContent = readJsonPathOrElseNull(requestJson, "$.body");
         if (completedMockingEndPoints(httpUrl, requestJson, methodName, bodyContent)) {
+            /*
+             * All mocks done? Then return a success message
+             */
             return "{\"status\": 200}";
         }
 

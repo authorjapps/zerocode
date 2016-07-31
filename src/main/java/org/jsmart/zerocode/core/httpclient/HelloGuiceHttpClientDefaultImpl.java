@@ -1,7 +1,5 @@
 package org.jsmart.zerocode.core.httpclient;
 
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.PathNotFoundException;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
@@ -31,16 +29,12 @@ public class HelloGuiceHttpClientDefaultImpl implements HelloGuiceHttpClient {
     }
 
     @Override
-    public ClientResponse execute(String httpUrl, String methodName, String requestJson) throws Exception {
-
-        Object queryParams = readJsonPathOrElseNull(requestJson, "$.queryParams");
-        Object headers = readJsonPathOrElseNull(requestJson, "$.headers");
-        Object bodyContent = readJsonPathOrElseNull(requestJson, "$.body");
-
+    public ClientResponse execute(String httpUrl, String methodName, Map<String, Object> headers, Map<String, Object> queryParams, Object body) throws Exception {
+        logger.info("Used RestEasy http client");
         /*
          * Get the request body content
          */
-        String reqBodyAsString = getContentAsItIsJson(bodyContent);
+        String reqBodyAsString = getContentAsItIsJson(body);
 
         /*
          * set the query parameters
@@ -50,6 +44,9 @@ public class HelloGuiceHttpClientDefaultImpl implements HelloGuiceHttpClient {
             httpUrl = httpUrl + qualifiedQueryParams;
         }
 
+        /*
+         * set the end point with query params
+         */
         clientExecutor = httpClientExecutor.createRequest(httpUrl);
 
         /*
@@ -60,6 +57,8 @@ public class HelloGuiceHttpClientDefaultImpl implements HelloGuiceHttpClient {
         }
 
         /*
+         * Setting cookies:
+         *
          * Highly discouraged to use sessions, but in case of any server dependent upon session,
          * then it's taken care here.
          */
@@ -74,7 +73,7 @@ public class HelloGuiceHttpClientDefaultImpl implements HelloGuiceHttpClient {
             clientExecutor.body("application/json", reqBodyAsString);
         }
 
-        // TODO: if none of the [GET POST PUT DELETE] then throw exception
+        // TODO: if none of the [GET POST PUT DELETE] then throw exception. Raise an issue.
         clientExecutor.setHttpMethod(methodName);
 
         /*
@@ -90,15 +89,6 @@ public class HelloGuiceHttpClientDefaultImpl implements HelloGuiceHttpClient {
         }
 
         return serverResponse;
-    }
-
-    private Object readJsonPathOrElseNull(String requestJson, String jsonPath) {
-        try{
-            return JsonPath.read(requestJson, jsonPath);
-        } catch(PathNotFoundException pEx){
-            logger.debug("No " + jsonPath + " was present in the request. returned null.");
-            return  null;
-        }
     }
 
     private String createQualifiedQueryParams(Object queryParams) {
@@ -124,7 +114,4 @@ public class HelloGuiceHttpClientDefaultImpl implements HelloGuiceHttpClient {
         return clientExecutor;
     }
 
-    public ClientRequest getClientExecutor() {
-        return clientExecutor;
-    }
 }
