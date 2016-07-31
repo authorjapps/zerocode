@@ -14,11 +14,13 @@
         }
       },
       "assertions": {
-        "status": 200,
-        "body": {
-          "result": "via custom http client"
+        "status" : 200,
+        "headers" : {
+          "key1" : [ "value1" ]
+        },
+        "body" : {
+          "result" : "via custom http client"
         }
-      }
-    }
+      }    }
   ]
 }

@@ -2,6 +2,7 @@ package org.jsmart.zerocode.core.httpclient;
 
 import org.jboss.resteasy.client.ClientResponse;
 
+import javax.ws.rs.core.Response;
 import java.util.Map;
 
 public interface BasicHttpClient {
@@ -15,5 +16,5 @@ public interface BasicHttpClient {
      * @return : RestEasy http response consists of status code, entity, headers etc
      * @throws Exception
      */
-    ClientResponse execute(String httpUrl, String methodName, Map<String, Object> headers, Map<String, Object> queryParams, Object body) throws Exception;
+    Response execute(String httpUrl, String methodName, Map<String, Object> headers, Map<String, Object> queryParams, Object body) throws Exception;
 }

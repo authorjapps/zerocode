@@ -63,8 +63,6 @@ public class JsonServiceExecutorTest {
         assertThat(aPathValue, nullValue());
     }
 
-    //
-
     @Test
     public void willExecuteARESTCallForA_Scenario() throws Exception {
         /*
@@ -97,12 +95,29 @@ public class JsonServiceExecutorTest {
         final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
         assertThat(responseString, containsString("Shower"));
         JSONAssert.assertEquals("{\n" +
-                "  \"status\": 200,\n" +
-                "  \"body\": {\n" +
-                "    \"id\": 1,\n" +
-                "    \"name\": \"Shower\",\n" +
-                "    \"availability\": true\n" +
-                "  }\n" +
+                "    \"status\": 200,\n" +
+                "    \"headers\": {\n" +
+                "        \"Transfer-Encoding\": [\n" +
+                "            [\n" +
+                "                \"chunked\"\n" +
+                "            ]\n" +
+                "        ],\n" +
+                "        \"Content-Type\": [\n" +
+                "            [\n" +
+                "                \"application/json\"\n" +
+                "            ]\n" +
+                "        ],\n" +
+                "        \"Connection\": [\n" +
+                "            [\n" +
+                "                \"keep-alive\"\n" +
+                "            ]\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"body\": {\n" +
+                "        \"id\": 1,\n" +
+                "        \"name\": \"Shower\",\n" +
+                "        \"availability\": true\n" +
+                "    }\n" +
                 "}", responseString, false);
     }
 

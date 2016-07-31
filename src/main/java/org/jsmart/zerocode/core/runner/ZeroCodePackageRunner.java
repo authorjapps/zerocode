@@ -1,6 +1,5 @@
 package org.jsmart.zerocode.core.runner;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
@@ -22,6 +21,8 @@ import org.junit.runners.model.InitializationError;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+
+import static com.google.inject.Guice.createInjector;
 
 public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ZeroCodePackageRunner.class);
@@ -149,22 +150,14 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     }
 
     public Injector getInjector() {
-        //TODO: Synchronise this with e.g. synchronized (IptSmartRunner.class) {}
+        //TODO: Synchronise this with e.g. synchronized (ZeroCodePackageRunner.class) {}
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null? envAnnotation.value() : "config_hosts.properties";
-        injector = Guice.createInjector(new ApplicationMainModule(serverEnv));
 
-        //
         final UseHttpClient runtimeClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
         Class<? extends BasicHttpClient> runtimeHttpClient = runtimeClientAnnotated != null ? runtimeClientAnnotated.value() : RestEasyDefaultHttpClient.class;
 
-        if(runtimeHttpClient != null){
-            injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
-                    .with(new RuntimeHttpClientModule(runtimeHttpClient)));
-        }
-        //
-
-        return injector;
+        return createInjector(Modules.override(new ApplicationMainModule(serverEnv)).with(new RuntimeHttpClientModule(runtimeHttpClient)));
     }
 
     public void setSmartUtils(SmartUtils smartUtils) {

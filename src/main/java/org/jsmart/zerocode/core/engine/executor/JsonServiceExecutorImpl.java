@@ -7,7 +7,6 @@ import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.resteasy.client.ClientResponse;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.Response;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
@@ -86,7 +85,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         HashMap headers = (HashMap) readJsonPathOrElseNull(requestJson, "$.headers");
         Object bodyContent = readJsonPathOrElseNull(requestJson, "$.body");
 
-        final ClientResponse serverResponse = httpClient.execute(httpUrl, methodName, headers, queryParams, bodyContent);
+        final javax.ws.rs.core.Response serverResponse = httpClient.execute(httpUrl, methodName, headers, queryParams, bodyContent);
 
         /*
          * $MOCK: Create mock endpoints supplied for this scenario
@@ -104,11 +103,11 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
          * - body
          * - status
          */
-        final int responseStatus = serverResponse.getResponseStatus().getStatusCode();
+        final int responseStatus = serverResponse.getStatus();
 
-        final MultivaluedMap responseHeaders = serverResponse.getHeaders();
+        final MultivaluedMap responseHeaders = serverResponse.getMetadata();
 
-        final String respBodyAsString = (String)serverResponse.getEntity(String.class);
+        final String respBodyAsString = (String)serverResponse.getEntity();
         final JsonNode bodyAsNode;
         if(StringUtils.isEmpty(respBodyAsString)){
             bodyAsNode = null;

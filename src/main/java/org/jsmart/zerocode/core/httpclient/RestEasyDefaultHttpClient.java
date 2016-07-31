@@ -7,7 +7,10 @@ import org.jsmart.zerocode.core.utils.HelperJsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +27,7 @@ public class RestEasyDefaultHttpClient implements BasicHttpClient {
     private Object COOKIE_JSESSIONID_VALUE;
 
     @Override
-    public ClientResponse execute(String httpUrl, String methodName, Map<String, Object> headers, Map<String, Object> queryParams, Object body) throws Exception {
+    public Response execute(String httpUrl, String methodName, Map<String, Object> headers, Map<String, Object> queryParams, Object body) throws Exception {
         logger.info("###Used RestEasyDefaultHttpClient");
         /*
          * Get the request body content
@@ -74,12 +77,28 @@ public class RestEasyDefaultHttpClient implements BasicHttpClient {
         /*
          * now execute the request
          */
-        ClientResponse serverResponse = clientExecutor.execute();
+        ClientResponse serverResponsePre = clientExecutor.execute();
 
-        Set headerKeySet = serverResponse.getHeaders().keySet();
+        Response serverResponse = Response
+                .status(serverResponsePre.getStatus())
+                .entity(serverResponsePre.getEntity(String.class))
+                .build();
+
+
+        final MultivaluedMap headersMap = serverResponsePre.getHeaders();
+        final Iterator iterator = headersMap.keySet().iterator();
+        while(iterator.hasNext()){
+
+            Object key = iterator.next();
+            serverResponse = Response.fromResponse(serverResponse).header((String)key, headersMap.get(key)).build();
+
+        }
+
+        Set headerKeySet = serverResponse.getMetadata().keySet();
+
         for(Object key: headerKeySet){
             if("Set-Cookie".equals(key) ) {
-                COOKIE_JSESSIONID_VALUE = serverResponse.getHeaders().get(key);
+                COOKIE_JSESSIONID_VALUE = serverResponse.getMetadata().get(key);
             }
         }
 

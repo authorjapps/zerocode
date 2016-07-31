@@ -139,17 +139,12 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         // TODO: Synchronise this with an object lock e.g. synchronized (IptSmartRunner.class) {}
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
-        injector = Guice.createInjector(new ApplicationMainModule(serverEnv));
 
-        //
-        final UseHttpClient runtimeClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
-        Class<? extends BasicHttpClient> runtimeHttpClient = runtimeClientAnnotated != null ? runtimeClientAnnotated.value() : RestEasyDefaultHttpClient.class;
+        final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
+        Class<? extends BasicHttpClient> runtimeHttpClient = httpClientAnnotated != null ? httpClientAnnotated.value() : RestEasyDefaultHttpClient.class;
 
-        if(runtimeHttpClient != null){
-            injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
-                    .with(new RuntimeHttpClientModule(runtimeHttpClient)));
-        }
-        //
+        injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
+                .with(new RuntimeHttpClientModule(runtimeHttpClient)));
 
         return injector;
     }
