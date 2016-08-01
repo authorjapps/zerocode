@@ -25,6 +25,8 @@ Execute your complex business scenario steps with simple jsons which defines you
 - [Asserting with LT(lesser than) and GT(greater than)](#13)
 - [Asserting an empty array)](#14)
 - [Calling java methods(apis) for specific tasks)](#15)
+- [Generating IDs and sharing across steps](#18)
+- [General place holders and assertion place holder table](#99)
 
 
 ### examples:
@@ -33,13 +35,13 @@ Execute your complex business scenario steps with simple jsons which defines you
 #### 1:
 Download this help and usage project to try it yourself.
 
-- Link: https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help
+- Usage project: https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help
 
-- Baby steps: https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/README.md
+- Simple steps to run: https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/README.md
 
-- Git Clone: https://github.com/authorjapps/helpme.git
+- Git Clone to run locally: https://github.com/authorjapps/helpme.git
 
-- Download the zip file(contains a maven project): https://github.com/authorjapps/helpme/archive/master.zip
+- Download the zip file(contains a maven project) to run locally: https://github.com/authorjapps/helpme/archive/master.zip
 
 
 <div id='id_single_step'/>
@@ -257,7 +259,8 @@ Step with more assertions place holders
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
 #### 8:
-Step with more general place holders
+REST endpoint calls with general place holders
+
 
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
@@ -269,7 +272,7 @@ Step dealing with arrays
 
 
 #### 10:
-Chaining steps: Multi-Step running with earlier response output as input to next step
+Chaining steps: Multi-Step REST calls with earlier response(IDs etc) as input to next step
 
 ```
 {
@@ -318,6 +321,130 @@ Chaining steps: Multi-Step running with earlier response output as input to next
 
 #### 11:
 Generating static and random IDs with available place holders
+
+```
+{
+  "scenarioName": "13_random_and_static_string_number_place_holders",
+  "steps": [
+    {
+      "name": "create_new_employee",
+      "url": "http://localhost:9999/google-emp-services/home/employees",
+      "operation": "POST",
+      "request": {
+        "body": {
+          "id": 1000,
+          "name": "Larry ${RANDOM.STRING:5}",   //<-- Random number of length 5 chars
+          "password": "${RANDOM.STRING:10}"     //<-- Random number of length 10 chars
+        }
+      },
+      "assertions": {
+        "status": 201
+      }
+    },
+    {
+      "name": "again_try_to_create_employee_with_same_name_n_password",
+      "url": "http://localhost:9999/google-emp-services/home/employees",
+      "operation": "POST",
+      "request": {
+        "body": {
+          "id": 1000,
+          "name": "${$.create_new_employee.request.body.name}",
+          "password": "${$.create_new_employee.request.body.password}"
+        }
+      },
+      "assertions": {
+        "status": 201
+      }
+    }
+  ]
+}
+```
+
+resolves to the below POST request to the end point:
+
+```
+step:create_new_employee
+url:http://localhost:9999/google-emp-services/home/employees
+method:POST
+request:
+{
+  "body" : {
+    "id" : 1000,
+    "name" : "Larry tzezq",
+    "password" : "czljtmzotu"
+  }
+} 
+step:again_try_to_create_employee_with_same_name_n_password
+url:http://localhost:9999/google-emp-services/home/employees
+method:POST
+request:
+{
+  "body" : {
+    "id" : 1000,
+    "name" : "Larry tzezq",
+    "password" : "czljtmzotu"
+  }
+} 
+```
+
+See full log in the log file, looks like this:
+```
+--------- RELATIONSHIP-ID: 9e0c5c8b-e72a-4720-b07f-11e439b3f1c6 ---------
+requestTimeStamp:2016-08-01T15:37:20.555
+step:create_new_employee
+url:http://localhost:9999/google-emp-services/home/employees
+method:POST
+request:
+{
+  "body" : {
+    "id" : 1000,
+    "name" : "Larry tzezq",
+    "password" : "czljtmzotu"
+  }
+} 
+--------- RELATIONSHIP-ID: 9e0c5c8b-e72a-4720-b07f-11e439b3f1c6 ---------
+Response:
+{
+  "status" : 201,
+  ...
+}
+*responseTimeStamp:2016-08-01T15:37:20.707 
+*Response delay:152.0 milli-secs 
+---------> Assertion: <----------
+{
+  "status" : 201
+} 
+-done-
+ 
+--------- RELATIONSHIP-ID: 4cfd3bfb-a537-49a2-84a2-0457c4e65803 ---------
+requestTimeStamp:2016-08-01T15:37:20.714
+step:again_try_to_create_employee_with_same_name_n_password
+url:http://localhost:9999/google-emp-services/home/employees
+method:POST
+request:
+{
+  "body" : {
+    "id" : 1000,
+    "name" : "Larry tzezq",
+    "password" : "czljtmzotu"
+  }
+} 
+--------- RELATIONSHIP-ID: 4cfd3bfb-a537-49a2-84a2-0457c4e65803 ---------
+Response:
+{
+  "status" : 201,
+  ...
+}
+*responseTimeStamp:2016-08-01T15:37:20.721 
+*Response delay:7.0 milli-secs 
+---------> Assertion: <----------
+{
+  "status" : 201
+} 
+-done-
+
+```
+
 
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
@@ -462,6 +589,19 @@ public class ZeroCodeSampleUnitRunner{
 - See example here : [See a test scenario](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/10_externalizing_host_port_into_properties_file.json)
 - See runner here: [See ZeroCodeSampleUnitRunner.java](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/ZeroCodeSampleUnitRunner.java)
 - See runner here: [See ZeroCodeSampleBulkRunner.java](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/ZeroCodeSampleBulkRunner.java)
+
+
+#### 18:
+Generating IDs and sharing across steps
+
+- [See a running example](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/01_vanila_placeholders)
+
+
+#### 19:
+
+
+
+#### 99:
 
 #### Place holders for End Point Mocking
 
