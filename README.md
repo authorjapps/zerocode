@@ -10,6 +10,7 @@ Execute your complex business scenario steps with simple jsons which defines you
 ## Table of Contents
 - [Help and usage](#id_help_and_usage)
 - [Overriding HttpClient with Project specific](#16)
+- [Externalize host and port to properties files](#17)
 - [Single Scenario with single step](#id_single_step)
 - [Step with more assertions](#id_single_step_more)
 - [Running with step loop](#4)
@@ -352,15 +353,71 @@ Asserting empty array with $[]
 
 
 #### 15:
-Calling java methods(apis) for doing specific tasks
+Calling java methods(apis) for doing specific tasks:
+
+```
+{
+      "name": "a_pre_step",
+      "url": "org.jsmart.zerocode.testhelp.utils.DbCleanUp",        //<--- class name
+      "operation": "executeSql",                                    //<-- method name
+      "request": "/scripts/sql/01_clean_up_db_and_sequences.sql",   //<--- parameter to the "executeSql" method
+      "assertions": {}
+}
+```
+
+In case a return from a java API needed assertion:
+```
+    {
+      "name": "another_pre_step",
+      "url": "org.jsmart.zerocode.testhelp.utils.DbCleanUp",            //<--- class name
+      "operation": "executeSqlReturnStatus",                            //<-- method name
+      "request": "/scripts/sql/02_clean_up_db_and_return_status.sql",   //<--- parameter to the "executeSqlReturnStatus" method
+      "assertions": {
+        "result" : "SUCCESS"  //<--- returned result from java API
+      }
+    }
+
+```
 
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
 
 #### 16:
-See here : [@UseHttpClient](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore)
+See here : [See usage of @UseHttpClient](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore/ZeroCodeUnitRunnerWithCustomHttpClient.java)
 
 
+#### 17:
+Externalizing RESTful host and port into properties file(s).
+
+Note:
+Each runner is capable of running with a properties file which can have host and port for specific to this runner.
+- So one can have a single properties file per runner which means you can run the tests against multiple environments
+-OR-
+- can have a single properties file shared across all the runners means all tests run against the same environment.
+
+e.g.
+
+"config_hosts_sample.properties"
+
+```
+restful.application.endpoint.host=http://{host-name-or-ip}
+
+restful.application.endpoint.port=9999
+
+restful.application.endpoint.context=/google-emp-services
+```
+
+The runner looks like this:
+```
+@TargetEnv("config_hosts_sample.properties")
+@RunWith(ZeroCodeUnitRunner.class)
+public class ZeroCodeSampleUnitRunner{
+}
+```
+
+- See example here : [See a test scenario](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/10_externalizing_host_port_into_properties_file.json)
+- See runner here: [See ZeroCodeSampleUnitRunner.java](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/ZeroCodeSampleUnitRunner.java)
+- See runner here: [See ZeroCodeSampleBulkRunner.java](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/ZeroCodeSampleBulkRunner.java)
 
 #### Place holders for End Point Mocking
 
