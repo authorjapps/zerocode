@@ -57,7 +57,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_VALUE_EMPTY_ARRAY = "$[]";
     public static final String ASSERT_PATH_SIZE = ".SIZE";
     public static final String ASSERT_VALUE_CONTAINS_STRING = "$CONTAINS.STRING:";
-    public static final String ASSERT_VALUE_EQUAL_TO_NUMBER = "$NUMBER.EQ.";
+    public static final String ASSERT_VALUE_EQUAL_TO_NUMBER = "$EQ.";
     public static final String ASSERT_VALUE_GREATER_THAN = "$GT.";
     public static final String ASSERT_VALUE_LESSER_THAN = "$LT.";
     public static final String ASSERT_PATH_VALUE_NODE = "$";

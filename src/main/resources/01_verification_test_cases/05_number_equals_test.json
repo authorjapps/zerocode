@@ -23,7 +23,7 @@
           ]
         },
         "body": {
-          "id": "$NUMBER.EQ.1",
+          "id": "$EQ.1",
           "name": "Shower",
           "availability": true
         }
@@ -37,7 +37,7 @@
       "assertions": {
         "status": 200,
         "body": {
-          "id": "$NUMBER.EQ.${$.another_get_call.response.body.id}",
+          "id": "$EQ.${$.another_get_call.response.body.id}",
           "name": "Shower",
           "availability": true
         }

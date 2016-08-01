@@ -627,6 +627,7 @@ Generating IDs and sharing across steps
 | $NOT.NULL       | Assertion passes if a not null value was present in the response | Otherwise fails |
 | $NULL      | Assertion passes if a null value was present in the response | Otherwise fails |
 | $[]       | Assertion passes if an empty array was present in the response | Otherwise fails |
+| $EQ.99       | Assertion passes if a numeric value equals to 99 was present in the response | Can be any int, long, float etc |
 | $GT.99       | Assertion passes if a value greater than 99 was present in the response | Can be any int, long, float etc |
 | $LT.99       | Assertion passes if a value lesser than 99 was present in the response | Can be any int, long, float etc |
 | $CONTAINS.STRING:can not create       | Assertion passes if the node value conatins string "can not create" in the response | Otherwise fails |
