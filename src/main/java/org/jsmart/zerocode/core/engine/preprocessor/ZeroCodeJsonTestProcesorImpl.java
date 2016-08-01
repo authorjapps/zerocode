@@ -12,6 +12,7 @@ import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasEqualNumberValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasExactValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasGreaterThanValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasInEqualNumberValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasLesserThanValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasSubStringValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldIsNotNullAsserter;
@@ -58,6 +59,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_PATH_SIZE = ".SIZE";
     public static final String ASSERT_VALUE_CONTAINS_STRING = "$CONTAINS.STRING:";
     public static final String ASSERT_VALUE_EQUAL_TO_NUMBER = "$EQ.";
+    public static final String ASSERT_VALUE_NOT_EQUAL_TO_NUMBER = "$NOT.EQ.";
     public static final String ASSERT_VALUE_GREATER_THAN = "$GT.";
     public static final String ASSERT_VALUE_LESSER_THAN = "$LT.";
     public static final String ASSERT_PATH_VALUE_NODE = "$";
@@ -179,6 +181,10 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_EQUAL_TO_NUMBER)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_EQUAL_TO_NUMBER.length());
                     asserter = new FieldHasEqualNumberValueAsserter(path, new BigDecimal(expected));
+                }
+                else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_NOT_EQUAL_TO_NUMBER)) {
+                    String expected = ((String) value).substring(ASSERT_VALUE_NOT_EQUAL_TO_NUMBER.length());
+                    asserter = new FieldHasInEqualNumberValueAsserter(path, new BigDecimal(expected));
                 }
                 else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_GREATER_THAN)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_GREATER_THAN.length());
