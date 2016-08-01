@@ -269,8 +269,9 @@ Step dealing with arrays
 
 
 #### 10:
-Multi Step running with earlier response output
+Chaining steps: Multi-Step running with earlier response output as input to next step
 
+- Example : [Scenario with two steps - 1st create and then get](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/12_chaining_multiple_steps_with_prev_response.json)
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
 
