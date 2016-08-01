@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 
 public class JsonServiceExecutorTest {
 
-    public static final int PORT = 9998;
+    public static final int PORT = 9999;
     public static final String HOST_WITH_CONTEXT = "http://localhost:" + PORT;
 
     JsonServiceExecutorImpl jsonServiceExecutor;
