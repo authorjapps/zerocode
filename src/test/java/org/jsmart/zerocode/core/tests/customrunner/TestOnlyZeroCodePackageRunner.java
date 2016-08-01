@@ -7,7 +7,7 @@ import org.junit.runners.model.InitializationError;
 
 public class TestOnlyZeroCodePackageRunner extends ZeroCodePackageRunner {
     SimpleRestJsonSimulatorsMain simulator ;
-    public static final int PORT = 9999;
+    public static final int PORT = 9998;
 
     public TestOnlyZeroCodePackageRunner(Class<?> testClass) throws InitializationError {
         super(testClass);

@@ -3,7 +3,7 @@
   "steps": [
     {
       "name": "getbathroom1",
-      "url": "http://localhost:9999/home/bathroom/1",
+      "url": "http://localhost:9998/home/bathroom/1",
       "operation": "GET",
       "request": {
         "headers": {

@@ -4,7 +4,7 @@
   "steps": [
     {
       "name": "getbathroom1", //<-- with comments
-      "url": "http://localhost:9999/home/bathroom/1",
+      "url": "http://localhost:9998/home/bathroom/1",
       "operation": "GET",
       "request": {
         "headers": {
@@ -25,7 +25,7 @@
     },
     {
       "name": "getbathroom21", //<-- with comments
-      "url": "http://localhost:9999/home/bathroom/2${$.getbathroom1.response.body.id}",
+      "url": "http://localhost:9998/home/bathroom/2${$.getbathroom1.response.body.id}",
       "operation": "GET",
       "request": {
         "headers": {
@@ -46,7 +46,7 @@
     },
     {
       "name": "getbathroom3", //<-- with comments
-      "url": "http://localhost:9999/home/bathroom/2${$.getbathroom1.response.body.id}",
+      "url": "http://localhost:9998/home/bathroom/2${$.getbathroom1.response.body.id}",
       "operation": "GET",
       "request": {
         "headers": {

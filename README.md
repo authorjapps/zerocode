@@ -53,7 +53,7 @@ A scenario might consists of one or more steps. Let's start with single step Tes
   "steps": [
     {
       "name": "step1_get_google_emp_details",
-      "url": "http://localhost:9999/google-emp-services/home/employees/999",
+      "url": "http://localhost:9998/google-emp-services/home/employees/999",
       "operation": "GET",
       "request": {
       },
@@ -67,7 +67,7 @@ A scenario might consists of one or more steps. Let's start with single step Tes
 
 Note:
 The above JSON block is a test case where we asked the test framework to hit the 
-> REST end point : http://localhost:9999/google-emp-services/home/employees/999
+> REST end point : http://localhost:9998/google-emp-services/home/employees/999
 
 > with method: GET
 
@@ -119,7 +119,7 @@ Because you are asserting with an expected status as 500, but the end point actu
   "steps": [
     {
       "name": "step1_get_google_emp_details",
-      "url": "http://localhost:9999/google-emp-services/home/employees/999",
+      "url": "http://localhost:9998/google-emp-services/home/employees/999",
       "operation": "GET",
       "request": {
       },
@@ -142,7 +142,7 @@ Single step with more assertions
   "steps": [
     {
       "name": "step1_get_google_emp_details",
-      "url": "http://localhost:9999/google-emp-services/home/employees/999",
+      "url": "http://localhost:9998/google-emp-services/home/employees/999",
       "operation": "GET",
       "request": {
       },
@@ -182,7 +182,7 @@ Running with step _loop_
     {
       "loop": 2,
       "name": "get_room_details",
-      "url": "http://localhost:9999/google-emp-services/home/employees/101",
+      "url": "http://localhost:9998/google-emp-services/home/employees/101",
       "operation": "GET",
       "request": {
       },
@@ -210,7 +210,7 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
   "steps": [
     {
       "name": "get_room_details",
-      "url": "http://localhost:9999/google-emp-services/home/employees/101",
+      "url": "http://localhost:9998/google-emp-services/home/employees/101",
       "operation": "GET",
       "request": {
       },
@@ -223,7 +223,7 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
     },
     {
       "name": "get_another_room_details",
-      "url": "http://localhost:9999/google-emp-services/home/employees/102",
+      "url": "http://localhost:9998/google-emp-services/home/employees/102",
       "operation": "GET",
       "request": {
       },
@@ -280,7 +280,7 @@ Chaining steps: Multi-Step REST calls with earlier response(IDs etc) as input to
     "steps": [
         {
             "name": "create_new_employee",
-            "url": "http://localhost:9999/google-emp-services/home/employees",
+            "url": "http://localhost:9998/google-emp-services/home/employees",
             "operation": "POST",
             "request": {},
             "assertions": {
@@ -292,7 +292,7 @@ Chaining steps: Multi-Step REST calls with earlier response(IDs etc) as input to
         },
         {
             "name": "get_and_verify_created_employee",
-            "url": "http://localhost:9999/google-emp-services/home/employees/${$.create_new_employee.response.body.id}", //<--- ID from previous response //
+            "url": "http://localhost:9998/google-emp-services/home/employees/${$.create_new_employee.response.body.id}", //<--- ID from previous response //
             "operation": "GET",
             "request": {},
             "assertions": {
@@ -328,7 +328,7 @@ Generating static and random IDs with available place holders
   "steps": [
     {
       "name": "create_new_employee",
-      "url": "http://localhost:9999/google-emp-services/home/employees",
+      "url": "http://localhost:9998/google-emp-services/home/employees",
       "operation": "POST",
       "request": {
         "body": {
@@ -343,7 +343,7 @@ Generating static and random IDs with available place holders
     },
     {
       "name": "again_try_to_create_employee_with_same_name_n_password",
-      "url": "http://localhost:9999/google-emp-services/home/employees",
+      "url": "http://localhost:9998/google-emp-services/home/employees",
       "operation": "POST",
       "request": {
         "body": {
@@ -364,7 +364,7 @@ resolves to the below POST request to the end point:
 
 ```
 step:create_new_employee
-url:http://localhost:9999/google-emp-services/home/employees
+url:http://localhost:9998/google-emp-services/home/employees
 method:POST
 request:
 {
@@ -375,7 +375,7 @@ request:
   }
 } 
 step:again_try_to_create_employee_with_same_name_n_password
-url:http://localhost:9999/google-emp-services/home/employees
+url:http://localhost:9998/google-emp-services/home/employees
 method:POST
 request:
 {
@@ -392,7 +392,7 @@ See full log in the log file, looks like this:
 --------- RELATIONSHIP-ID: 9e0c5c8b-e72a-4720-b07f-11e439b3f1c6 ---------
 requestTimeStamp:2016-08-01T15:37:20.555
 step:create_new_employee
-url:http://localhost:9999/google-emp-services/home/employees
+url:http://localhost:9998/google-emp-services/home/employees
 method:POST
 request:
 {
@@ -419,7 +419,7 @@ Response:
 --------- RELATIONSHIP-ID: 4cfd3bfb-a537-49a2-84a2-0457c4e65803 ---------
 requestTimeStamp:2016-08-01T15:37:20.714
 step:again_try_to_create_employee_with_same_name_n_password
-url:http://localhost:9999/google-emp-services/home/employees
+url:http://localhost:9998/google-emp-services/home/employees
 method:POST
 request:
 {
@@ -573,7 +573,7 @@ e.g.
 ```
 restful.application.endpoint.host=http://{host-name-or-ip}
 
-restful.application.endpoint.port=9999
+restful.application.endpoint.port=9998
 
 restful.application.endpoint.context=/google-emp-services
 ```

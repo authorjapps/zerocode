@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 
 public class JsonServiceExecutorTest {
 
-    public static final int PORT = 9999;
+    public static final int PORT = 9998;
     public static final String HOST_WITH_CONTEXT = "http://localhost:" + PORT;
 
     JsonServiceExecutorImpl jsonServiceExecutor;
@@ -66,7 +66,7 @@ public class JsonServiceExecutorTest {
     @Test
     public void willExecuteARESTCallForA_Scenario() throws Exception {
         /*
-         * End-point available: http://localhost:9999/home/bathroom/1
+         * End-point available: http://localhost:9998/home/bathroom/1
          */
         String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + "/home/bathroom/1", "GET", "{}");
         assertThat(responseString, containsString("Shower"));
@@ -83,7 +83,7 @@ public class JsonServiceExecutorTest {
     @Test
     public void willExecuteARESTCallForA_GET_smart_json() throws Exception {
         /*
-         * End-point available: http://localhost:9999/home/bathroom/1
+         * End-point available: http://localhost:9998/home/bathroom/1
          */
         String scenariosJsonAsString = SmartUtils.readJsonAsString("06_test_with_place_holders/02_REST_end_point_GET.json");
         final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);

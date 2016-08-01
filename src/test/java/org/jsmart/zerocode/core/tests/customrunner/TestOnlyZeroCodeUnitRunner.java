@@ -6,7 +6,7 @@ import org.junit.runners.model.InitializationError;
 
 public class TestOnlyZeroCodeUnitRunner extends ZeroCodeUnitRunner {
     private static SimpleRestJsonSimulatorsMain simulator;
-    public static final int PORT = 9999;
+    public static final int PORT = 9998;
 
     static {
         simulator = new SimpleRestJsonSimulatorsMain(PORT);

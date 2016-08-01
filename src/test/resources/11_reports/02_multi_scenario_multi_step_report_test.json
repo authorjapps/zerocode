@@ -4,7 +4,7 @@
   "steps": [
     {
       "name": "get_shower_room", //<-- with comments
-      "url": "http://localhost:9999/home/bathroom/1",
+      "url": "http://localhost:9998/home/bathroom/1",
       "operation": "GET",
       "request": {
         "headers": {
@@ -25,7 +25,7 @@
     },
     {
       "name": "get_another_shower_room", //<-- with comments
-      "url": "http://localhost:9999/home/bathroom/2${$.get_shower_room.response.body.id}",
+      "url": "http://localhost:9998/home/bathroom/2${$.get_shower_room.response.body.id}",
       "operation": "GET",
       "loop": 3,
       "request": {
