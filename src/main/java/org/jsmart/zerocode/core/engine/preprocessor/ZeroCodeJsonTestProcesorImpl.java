@@ -9,6 +9,7 @@ import org.apache.commons.lang.text.StrSubstitutor;
 import org.jsmart.zerocode.core.engine.assertion.ArrayIsEmptyAsserter;
 import org.jsmart.zerocode.core.engine.assertion.ArraySizeAsserter;
 import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasEqualNumberValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasExactValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasGreaterThanValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasLesserThanValueAsserter;
@@ -56,6 +57,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_VALUE_EMPTY_ARRAY = "$[]";
     public static final String ASSERT_PATH_SIZE = ".SIZE";
     public static final String ASSERT_VALUE_CONTAINS_STRING = "$CONTAINS.STRING:";
+    public static final String ASSERT_VALUE_EQUAL_TO_NUMBER = "$NUMBER.EQ.";
     public static final String ASSERT_VALUE_GREATER_THAN = "$GT.";
     public static final String ASSERT_VALUE_LESSER_THAN = "$LT.";
     public static final String ASSERT_PATH_VALUE_NODE = "$";
@@ -173,6 +175,10 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_CONTAINS_STRING)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_CONTAINS_STRING.length());
                     asserter = new FieldHasSubStringValueAsserter(path, expected);
+                }
+                else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_EQUAL_TO_NUMBER)) {
+                    String expected = ((String) value).substring(ASSERT_VALUE_EQUAL_TO_NUMBER.length());
+                    asserter = new FieldHasEqualNumberValueAsserter(path, new BigDecimal(expected));
                 }
                 else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_GREATER_THAN)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_GREATER_THAN.length());
