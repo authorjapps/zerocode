@@ -33,6 +33,8 @@ Execute your complex business scenario steps with simple jsons which defines you
 
 <div id='id_help_and_usage'/>
 #### 1:
+#### Help and usage
+
 Download this help and usage project to try it yourself.
 
 - Usage project: https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help
@@ -46,6 +48,8 @@ Download this help and usage project to try it yourself.
 
 <div id='id_single_step'/>
 #### 2:
+#### Single Scenario with single step
+
 A scenario might consists of one or more steps. Let's start with single step Test Case:
 ```
 {
@@ -134,7 +138,7 @@ Because you are asserting with an expected status as 500, but the end point actu
 
 <div id='id_single_step_more'/>
 #### 3:
-Single step with more assertions
+#### Single step with more assertions
 
 ```
 {
@@ -170,7 +174,8 @@ Single step with more assertions
 The above Test Case will PASS as the assertions section has all expected values matching the end point's response.
 
 #### 4:
-Running with step _loop_
+#### Running with step _loop_
+
 - Usage: See here: [Step loop](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/02_using_step_loop.json)
 
 - _loop_ field in a step will execute the step that many number of time.
@@ -199,7 +204,8 @@ Running with step _loop_
 
 
 #### 5:
-Running with scenario _loop_
+#### Running with scenario _loop_
+
 - Usage: See here: [Scenario loop](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/03_using_scenario_loop.json)
 Runs the entire scenario two times i.e. executing both the steps once for each time.
 
@@ -240,38 +246,43 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
 
 
 #### 6:
-Generated test statistics reports. See target folder after every run. See sample reports below
+#### Generated reports and charts
 
-Spike Chart:
+Generated test statistics reports. See the target folder after every run. See sample reports below
+
+##### Spike Chart:
 
 - [1. All results Delay Spike - Chart](http://htmlpreview.github.io/?https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_results_chart_2016-07-30T09-55-53.056.html)
 
 - [2. More Test Case results Delay Spike - Chart](http://htmlpreview.github.io/?https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_results_chart_more_2016-07-30T09-57-53.0567.html)
 
-CSV Report:
+##### CSV Report:
 
 - See here : [Full coverage CSV report](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_full_report_2016-07-30T11-44-14.512.csv)
 
 
 #### 7:
-Step with more assertions place holders
+#### More assertion with handy place holders
 
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
+
 #### 8:
-REST endpoint calls with general place holders
+#### REST endpoint calls with General Place holders
 
 
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
 
 #### 9:
-Step dealing with arrays
+#### Step dealing with arrays
 
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
 
 #### 10:
+#### Chaining multiple steps for a scenario
+
 Chaining steps: Multi-Step REST calls with earlier response(IDs etc) as input to next step
 
 ```
@@ -320,7 +331,7 @@ Chaining steps: Multi-Step REST calls with earlier response(IDs etc) as input to
 
 
 #### 11:
-Generating static and random IDs with available place holders
+#### Generating static and random IDs with available place holders
 
 ```
 {
@@ -450,6 +461,8 @@ Response:
 
 
 #### 12:
+#### Asserting general and exception messages
+
 Asserting with $CONTAINS.STRING:
 
 ```
@@ -471,7 +484,7 @@ Asserting with $CONTAINS.STRING:
 
 
 #### 13:
-Asserting with $GT or $LT
+#### Asserting with $GT or $LT
 
 $GT.<any_number>
 
@@ -502,7 +515,7 @@ $LT.<any_number>
 
 
 #### 14:
-Asserting empty array with $[]
+#### Asserting empty array with $[]
 
 ```
     {
@@ -522,7 +535,7 @@ Asserting empty array with $[]
 
 
 #### 15:
-Calling java methods(apis) for doing specific tasks:
+#### Calling java methods(apis) for doing specific tasks:
 
 ```
 {
@@ -554,11 +567,13 @@ In case a return from a java API needed assertion:
 
 
 #### 16:
+#### Overriding HttpClient with Project specific
+
 See here : [See usage of @UseHttpClient](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore/ZeroCodeUnitRunnerWithCustomHttpClient.java)
 
 
 #### 17:
-Externalizing RESTful host and port into properties file(s).
+#### Externalizing RESTful host and port into properties file(s).
 
 Note:
 Each runner is capable of running with a properties file which can have host and port for specific to this runner.
@@ -592,7 +607,7 @@ public class ZeroCodeSampleUnitRunner{
 
 
 #### 18:
-Generating IDs and sharing across steps
+#### Generating IDs and sharing across steps
 
 - [See a running example](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/01_vanila_placeholders)
 
