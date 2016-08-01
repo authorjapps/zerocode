@@ -271,6 +271,47 @@ Step dealing with arrays
 #### 10:
 Chaining steps: Multi-Step running with earlier response output as input to next step
 
+```
+{
+    "scenarioName": "12_chaining_multiple_steps_using_previous_response",
+    "steps": [
+        {
+            "name": "create_new_employee",
+            "url": "http://localhost:9999/google-emp-services/home/employees",
+            "operation": "POST",
+            "request": {},
+            "assertions": {
+                "status": 201,
+                "body": {
+                    "id": 1000
+                }
+            }
+        },
+        {
+            "name": "get_and_verify_created_employee",
+            "url": "http://localhost:9999/google-emp-services/home/employees/${$.create_new_employee.response.body.id}", //<--- ID from previous response //
+            "operation": "GET",
+            "request": {},
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": 1000,
+                    "name": "${$.create_new_employee.response.body.name}",
+                    "addresses": [
+                        {
+                            "gpsLocation": "${$.create_new_employee.response.body.addresses[0].gpsLocation}"
+                        },
+                        {
+                            "gpsLocation": "${$.create_new_employee.response.body.addresses[1].gpsLocation}"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
+```
+
 - Example : [Scenario with two steps - 1st create and then get](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/12_chaining_multiple_steps_with_prev_response.json)
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
