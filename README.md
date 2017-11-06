@@ -26,6 +26,7 @@ Execute your complex business scenario steps with simple jsons which defines you
 - [Asserting an empty array)](#14)
 - [Calling java methods(apis) for specific tasks)](#15)
 - [Generating IDs and sharing across steps](#18)
+- [Bare JSON String without curly braces, still a valid JSON](#19)
 - [General place holders and assertion place holder table](#99)
 
 
@@ -613,7 +614,12 @@ public class ZeroCodeSampleUnitRunner{
 
 
 #### 19:
+#### Bare JSON String, still a valid JSON
 
+- [See a running example](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/14_bare_string_json.json)
+
+
+#### 20:
 
 
 #### 99:
