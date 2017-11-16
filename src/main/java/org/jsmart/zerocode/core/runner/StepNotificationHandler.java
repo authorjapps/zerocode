@@ -1,5 +1,9 @@
 package org.jsmart.zerocode.core.runner;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
 import org.junit.runner.Description;
@@ -8,56 +12,86 @@ import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import static java.util.Optional.ofNullable;
 
 public class StepNotificationHandler {
     private static final Logger logger = LoggerFactory.getLogger(StepNotificationHandler.class);
-
+    private final int MAX_LINE_LENGTH = 130;
+    
     Boolean handleAssertionFailed(RunNotifier notifier,
-                                  Description description,
-                                  String scenarioName,
-                                  String stepName,
-                                  List<AssertionReport> failureReportList){
-        // Generate error report and display stating which expectation(s) did not match
-        logger.info(String.format("Failed assertion during Scenario:%s, --> Step:%s, Details: %s",
-                scenarioName, stepName, StringUtils.join(failureReportList, "\n")));
+                    Description description,
+                    String scenarioName,
+                    String stepName,
+                    List<AssertionReport> failureReportList) {
+        /**
+         * Generate error report and display clearly which expectation(s) did not match
+         */
+        logger.info(String.format("Failed assertion during Scenario:%s, --> Step:%s, Details: %s\n",
+                        scenarioName, stepName, StringUtils.join(failureReportList, "\n")));
         notifier.fireTestFailure(new Failure(description, new RuntimeException(
-                String.format( "Assertion failed for [%s]: step--> [%s], details:%n%s%n", scenarioName, stepName, StringUtils.join(failureReportList, "\n"))
+                        String.format("Assertion failed for :- \n\n[%s] \n\t|\n\t|\n\t+---Step --> [%s] \n\nFailures:\n--------- %n%s%n",
+                                        scenarioName,
+                                        stepName,
+                                        StringUtils.join(failureReportList, "\n" + deckedUpLine(maxEntryLengthOf(failureReportList)) + "\n"))
         )));
-
+        
         return false;
     }
+    
     Boolean handleStepException(RunNotifier notifier,
-                                Description description,
-                                String scenarioName,
-                                String stepName,
-                                Exception stepException){
+                    Description description,
+                    String scenarioName,
+                    String stepName,
+                    Exception stepException) {
         logger.info(String.format("Exception occurred while executing Scenario:[%s], --> Step:[%s], Details: %s",
-                scenarioName, stepName, stepException));
+                        scenarioName, stepName, stepException));
         notifier.fireTestFailure(new Failure(description, stepException));
-
+        
         return false;
     }
+    
     Boolean handleAssertionPassed(RunNotifier notifier,
-                                  Description description,
-                                  String scenarioName,
-                                  String stepName,
-                                  List<AssertionReport> failureReportList){
+                    Description description,
+                    String scenarioName,
+                    String stepName,
+                    List<AssertionReport> failureReportList) {
         logger.info(String.format("\n***Step PASSED:%s->%s", scenarioName, stepName));
-
+        
         return true;
     }
-
+    
     public <A, B, C, D, E, R> R handleAssertion(A var1,
-                                             B var2,
-                                             C var3,
-                                             D var4,
-                                             E var5,
-                                             Notifier<A, B, C, D, E, R> notifyFunc){
-
+                    B var2,
+                    C var3,
+                    D var4,
+                    E var5,
+                    Notifier<A, B, C, D, E, R> notifyFunc) {
+        
         R result = notifyFunc.apply(var1, var2, var3, var4, var5);
-
+        
         return result;
     }
-
+    
+    /**
+     * all private functions below
+     */
+    
+    private int maxEntryLengthOf(List<AssertionReport> failureReportList) {
+        final Integer maxLength = ofNullable(failureReportList).orElse(Collections.emptyList()).stream()
+                        .map(report -> report.toString().length())
+                        .max(Comparator.naturalOrder())
+                        //.min(Comparator.naturalOrder())
+                        .get();
+        return maxLength > MAX_LINE_LENGTH ? MAX_LINE_LENGTH : maxLength;
+    }
+    
+    private String deckedUpLine(int stringLength) {
+        final String DECKED_CHAR = "-";
+        String dottedlLine = "";
+        for (int i = 0; i < stringLength; i++) {
+            dottedlLine = dottedlLine + DECKED_CHAR;
+        }
+        
+        return dottedlLine;
+    }
 }

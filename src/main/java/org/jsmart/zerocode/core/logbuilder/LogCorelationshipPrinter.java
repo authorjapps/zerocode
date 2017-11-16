@@ -13,7 +13,7 @@ import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.R
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
 
 public class LogCorelationshipPrinter {
-    private static final String DISPLAY_DEMARCATION_ = "\n--------- RELATIONSHIP-ID: %s ---------";
+    private static final String DISPLAY_DEMARCATION_ = "\n--------- CORRELATION-ID: %s ---------";
 
     Logger logger;
     static String correlationId;

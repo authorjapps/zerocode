@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+
+import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
@@ -15,6 +17,7 @@ import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
 import org.jsmart.zerocode.core.logbuilder.LogCorelationshipPrinter;
+import org.jsmart.zerocode.core.utils.ServiceType;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
@@ -22,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -62,7 +66,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private ZeroCodeExecResultBuilder reportResultBuilder;
 
-    private Boolean testPassed;
+    private Boolean stepOutcome;
 
     @Override
     public boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
@@ -115,50 +119,61 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     String executionResult = "-response not decided-";
 
                     final String logPrefixRelationshipId = logCorelationshipPrinter.createRelationshipId();
-
+    
                     try {
                         String serviceName = thisStep.getUrl();
                         String operationName = thisStep.getOperation();
-
+        
                         // Resolve the URL patterns if any
                         serviceName = zeroCodeJsonTestProcesor.resolveStringJson(
-                                serviceName,
-                                scenarioExecutionState.getResolvedScenarioState()
-                        );
-
-                        // REST call execution
-                        Boolean isRESTCall = false;
-                        if (serviceName != null && serviceName.contains("/")) {
-                            isRESTCall = true;
-                        }
-                        if (isRESTCall) {
-                            serviceName = getFullyQualifiedRestUrl(serviceName);
-
-                            // logging REST request
-                            final LocalDateTime requestTimeStamp = LocalDateTime.now();
-                            logCorelationshipPrinter.aRequestBuilder()
-                                    .stepLoop(i)
-                                    .relationshipId(logPrefixRelationshipId)
-                                    .requestTimeStamp(requestTimeStamp)
-                                    .step(thisStepName)
-                                    .url(serviceName)
-                                    .method(operationName)
-                                    .request(prettyPrintJson(resolvedRequestJson));
-
-                            executionResult = serviceExecutor.executeRESTService(serviceName, operationName, resolvedRequestJson);
-                        } else {
-                            // logging Java request
-                            final LocalDateTime requestTimeStamp = LocalDateTime.now();
-                            logCorelationshipPrinter.aRequestBuilder()
-                                    .stepLoop(i)
-                                    .relationshipId(logPrefixRelationshipId)
-                                    .requestTimeStamp(requestTimeStamp)
-                                    .step(thisStepName)
-                                    .url(serviceName)
-                                    .method(operationName)
-                                    .request(prettyPrintJson(resolvedRequestJson));
-
-                            executionResult = serviceExecutor.executeJavaService(serviceName, operationName, resolvedRequestJson);
+                                        serviceName,
+                                        scenarioExecutionState.getResolvedScenarioState()
+                                                                                );
+        
+                        final LocalDateTime requestTimeStamp = LocalDateTime.now();
+                        switch (serviceType(serviceName, operationName)) {
+                            case REST_CALL:
+                                serviceName = getFullyQualifiedRestUrl(serviceName);
+                                logCorelationshipPrinter.aRequestBuilder()
+                                                .stepLoop(i)
+                                                .relationshipId(logPrefixRelationshipId)
+                                                .requestTimeStamp(requestTimeStamp)
+                                                .step(thisStepName)
+                                                .url(serviceName)
+                                                .method(operationName)
+                                                .request(prettyPrintJson(resolvedRequestJson));
+                
+                                executionResult = serviceExecutor.executeRESTService(serviceName, operationName, resolvedRequestJson);
+                                break;
+            
+                            case JAVA_CALL:
+                                logCorelationshipPrinter.aRequestBuilder()
+                                                .stepLoop(i)
+                                                .relationshipId(logPrefixRelationshipId)
+                                                .requestTimeStamp(requestTimeStamp)
+                                                .step(thisStepName)
+                                                .url(serviceName)
+                                                .method(operationName)
+                                                .request(prettyPrintJson(resolvedRequestJson));
+                
+                                executionResult = serviceExecutor.executeJavaService(serviceName, operationName, resolvedRequestJson);
+                                break;
+            
+                            case NONE:
+                                logCorelationshipPrinter.aRequestBuilder()
+                                                .stepLoop(i)
+                                                .relationshipId(logPrefixRelationshipId)
+                                                .requestTimeStamp(requestTimeStamp)
+                                                .step(thisStepName)
+                                                .url(serviceName)
+                                                .method(operationName)
+                                                .request(prettyPrintJson(resolvedRequestJson));
+                
+                                executionResult = prettyPrintJson(resolvedRequestJson);
+                                break;
+            
+                            default:
+                                throw new RuntimeException("Opps! Service Undecided. If it is intentional, then leave it blank for same response as request");
                         }
 
                         // logging response
@@ -171,7 +186,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         stepExecutionState.addResponse(executionResult);
                         scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
 
-                        // Handle assertion section
+                        /** ******************************
+                         * Handle assertion section -START
+                         * *******************************
+                         */
                         String resolvedAssertionJson = zeroCodeJsonTestProcesor.resolveStringJson(
                                 thisStep.getAssertions().toString(),
                                 scenarioExecutionState.getResolvedScenarioState()
@@ -187,7 +205,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             /*
                              * Step failed
                              */
-                            testPassed = notificationHandler.handleAssertion(
+                            stepOutcome = notificationHandler.handleAssertion(
                                     notifier,
                                     description,
                                     scenario.getScenarioName(),
@@ -195,15 +213,15 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                     failureResults,
                                     notificationHandler::handleAssertionFailed);
 
-                            logCorelationshipPrinter.result(testPassed);
+                            logCorelationshipPrinter.result(stepOutcome);
 
-                            return testPassed;
+                            return stepOutcome;
                         }
 
                         /*
-                         * Test step testPassed
+                         * Test step stepOutcome
                          */
-                        testPassed = notificationHandler.handleAssertion(
+                        stepOutcome = notificationHandler.handleAssertion(
                                 notifier,
                                 description,
                                 scenario.getScenarioName(),
@@ -211,11 +229,17 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 failureResults,
                                 notificationHandler::handleAssertionPassed);
 
-                        logCorelationshipPrinter.result(testPassed);
+                        /** ******************************
+                         * Handle assertion section   -END
+                         * *******************************
+                         */
+
+                        logCorelationshipPrinter.result(stepOutcome);
 
                     } catch (Exception ex) {
 
                         ex.printStackTrace();
+                        LOGGER.info("###Exception while executing a step in the zerocode dsl.");
 
                         // logging exception message
                         final LocalDateTime responseTimeStampEx = LocalDateTime.now();
@@ -228,7 +252,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         /*
                          * Step threw an exception
                          */
-                        testPassed = notificationHandler.handleAssertion(
+                        stepOutcome = notificationHandler.handleAssertion(
                                 notifier,
                                 description,
                                 scenario.getScenarioName(),
@@ -236,9 +260,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 (new RuntimeException("ZeroCode Step execution failed. Details:" + ex)),
                                 notificationHandler::handleStepException);
 
-                        logCorelationshipPrinter.result(testPassed);
+                        logCorelationshipPrinter.result(stepOutcome);
 
-                        return testPassed;
+                        return stepOutcome;
 
                     } finally {
                         logCorelationshipPrinter.print();
@@ -252,7 +276,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         /*
                          * failed and exception reports are generated here
                          */
-                        if(!testPassed){
+                        if(!stepOutcome) {
                             reportBuilder.result(reportResultBuilder.build());
                             reportBuilder.printToFile(scenario.getScenarioName() + ".json");
                         }
@@ -307,5 +331,19 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     
     public void overrideApplicationContext(String applicationContext) {
         this.applicationContext = applicationContext;
+    }
+    
+    private ServiceType serviceType(String serviceName, String methodName) {
+        ServiceType serviceType;
+        
+        if (StringUtils.isEmpty(serviceName) || isEmpty(methodName)) {
+            serviceType = ServiceType.NONE;
+        } else if (serviceName != null && serviceName.contains("/")) {
+            serviceType = ServiceType.REST_CALL;
+        } else {
+            serviceType = ServiceType.JAVA_CALL;
+        }
+        
+        return serviceType;
     }
 }

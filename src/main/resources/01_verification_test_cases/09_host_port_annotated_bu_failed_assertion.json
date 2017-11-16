@@ -1,0 +1,20 @@
+{
+  "scenarioName": "09_host_port_annotated_bu_failed_assertion.json",
+  "steps": [
+    {
+      "name": "get_hotel_resource", //A hotel resource
+      "url": "/home/bathroom/google_id_01",
+      "operation": "GET",
+      "request": {
+      },
+      "assertions": {
+        "status": 200,
+        "body": {
+          "id": 2,
+          "name": "No Shower",
+          "availability": false
+        }
+      }
+    }
+  ]
+}

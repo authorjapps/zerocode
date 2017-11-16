@@ -7,7 +7,7 @@ public class ResponseLogBuilder {
     LocalDateTime responseTimeStamp;
     String response;
     String exceptionMsg;
-    String assertion = "{Oops! Not decided. Possibly due to non JSON content. See log for details}";
+    String assertion = "{Oops! Not decided. Possibly due to non JSON content was encountered. See log for details}";
 
 
     public ResponseLogBuilder relationshipId(String relationshipId) {
