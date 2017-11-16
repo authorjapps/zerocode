@@ -9,7 +9,7 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.TestPackageRoot;
 import org.jsmart.zerocode.core.domain.UseHttpClient;
-import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestListener;
+import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.RestEasyDefaultHttpClient;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
@@ -109,7 +109,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
     @Override
     public void run(RunNotifier notifier){
-        notifier.addListener(new ZeroCodeTestListener(smartUtils.getMapper(), getInjectedReportGenerator()));
+        notifier.addListener(new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator()));
         super.run(notifier);
     }
 

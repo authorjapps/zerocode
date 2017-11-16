@@ -296,5 +296,16 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         return true;
     }
-
+    
+    public void overridePort(int port) {
+        this.port = port + "";
+    }
+    
+    public void overrideHost(String host) {
+        this.host = host;
+    }
+    
+    public void overrideApplicationContext(String applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 }

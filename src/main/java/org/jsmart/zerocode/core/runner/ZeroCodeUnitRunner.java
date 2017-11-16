@@ -3,17 +3,8 @@ package org.jsmart.zerocode.core.runner;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
-import org.jsmart.zerocode.core.di.ApplicationMainModule;
-import org.jsmart.zerocode.core.di.RuntimeHttpClientModule;
-import org.jsmart.zerocode.core.domain.ScenarioSpec;
-import org.jsmart.zerocode.core.domain.JsonTestCase;
-import org.jsmart.zerocode.core.domain.TargetEnv;
-import org.jsmart.zerocode.core.domain.UseHttpClient;
-import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestListener;
-import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.httpclient.RestEasyDefaultHttpClient;
-import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
-import org.jsmart.zerocode.core.utils.SmartUtils;
+
+import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -22,6 +13,17 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.jsmart.zerocode.core.di.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.RuntimeHttpClientModule;
+import org.jsmart.zerocode.core.domain.HostProperties;
+import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.TargetEnv;
+import org.jsmart.zerocode.core.domain.UseHttpClient;
+import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
+import org.jsmart.zerocode.core.httpclient.RestEasyDefaultHttpClient;
+import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
+import org.jsmart.zerocode.core.utils.SmartUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,10 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     Injector injector;
     SmartUtils smartUtils;
 
+    private HostProperties hostProperties;
+    private String host;
+    private String context;
+    private int port;
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
@@ -54,6 +60,17 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         this.smartUtils = getInjectedSmartUtilsClass();
 
         smartTestCaseNames = getSmartChildrenList();
+
+        /*
+         * Read the host, port, context etc from the inline annotation instead of a properties file
+         */
+        hostProperties = testClass.getAnnotation(HostProperties.class);
+
+        if(hostProperties != null){
+            host = hostProperties.host();
+            port = hostProperties.port();
+            context = hostProperties.context();
+        }
     }
 
     private List<String> getSmartChildrenList() {
@@ -74,7 +91,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier){
-        notifier.addListener(new ZeroCodeTestListener(smartUtils.getMapper(), getInjectedReportGenerator()));
+        notifier.addListener(new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator()));
         super.run(notifier);
     }
 
@@ -104,7 +121,18 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             logger.debug("### Found currentTestCase : -" + child);
 
-            passed = getInjectedMultiStepsRunner().runScenario(child, notifier, description);
+            final ZeroCodeMultiStepsScenarioRunner multiStepsRunner = getInjectedMultiStepsRunner();
+
+            /*
+             * Override the properties file containing hosts and ports with HostProperties
+             * only if the annotation is present on the runner.
+             */
+            if(hostProperties != null){
+                ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideHost(host);
+                ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overridePort(port);
+                ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideApplicationContext(context);
+            }
+            passed = multiStepsRunner.runScenario(child, notifier, description);
 
         } catch (Exception ioEx) {
             ioEx.printStackTrace();

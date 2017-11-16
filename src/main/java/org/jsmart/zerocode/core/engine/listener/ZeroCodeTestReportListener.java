@@ -12,15 +12,15 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * @author Siddha on 24-jul-2016
  */
-public class ZeroCodeTestListener extends RunListener {
-    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeTestListener.class);
+public class ZeroCodeTestReportListener extends RunListener {
+    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeTestReportListener.class);
 
     private final ObjectMapper mapper;
 
     private final ZeroCodeReportGenerator reportGenerator;
 
     @Inject
-    public ZeroCodeTestListener(ObjectMapper mapper, ZeroCodeReportGenerator injectedReportGenerator) {
+    public ZeroCodeTestReportListener(ObjectMapper mapper, ZeroCodeReportGenerator injectedReportGenerator) {
         this.mapper = mapper;
         this.reportGenerator = injectedReportGenerator;
     }

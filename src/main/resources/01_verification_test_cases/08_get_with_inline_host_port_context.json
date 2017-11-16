@@ -1,0 +1,20 @@
+{
+  "scenarioName": "08_get_with_inline_host_port_context.json",
+  "steps": [
+    {
+      "name": "get_hotel_resource", //A hotel resource
+      "url": "/home/bathroom/google_id_01",
+      "operation": "GET",
+      "request": {
+      },
+      "assertions": {
+        "status": 200,
+        "body": {
+          "id": 1,
+          "name": "G Hotel Shower",
+          "availability": true
+        }
+      }
+    }
+  ]
+}

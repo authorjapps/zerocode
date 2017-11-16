@@ -39,7 +39,21 @@
           "availability": true
         }
       }
+    },
+    {
+      "name": "Get Hotel Resource",
+      "operation": "GET",
+      "url": "/google-map-services/home/bathroom/google_id_01",
+      "response": {
+        "status": 200,
+        "body": {
+          "id": 1,
+          "name": "G Hotel Shower",
+          "availability": true
+        }
+      }
     }
+
 
   ]
 }
