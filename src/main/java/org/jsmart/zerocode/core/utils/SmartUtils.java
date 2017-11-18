@@ -119,7 +119,7 @@ public class SmartUtils {
             /*
              *  Pretty-print logic threw an exception, not a big deal, print the original json then.
              */
-            LOGGER.warn("Non-JSON content was encountered. So pretty print did not format it and returned the raw text");
+            LOGGER.error("Non-JSON content was encountered. So pretty print did not format it and returned the raw text");
             return jsonString;
         }
 

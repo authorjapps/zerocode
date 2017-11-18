@@ -193,8 +193,12 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
             objectMapper.readTree(potentialJsonString);
             return true;
         } catch (IOException e) {
-            LOGGER.warn("This was not a valid JSON. It was treated as a simple string."
-                        + "If it was intentional, you can ignore this warning");
+            LOGGER.warn("\n---------------------------------------------\n\n"
+                         + "\t\t\t\t\t\t * Warning *  \n\nOutput was not a valid JSON. It was treated as a simple stringBody."
+                        + " If it was intentional, you can ignore this warning. "
+                         + "\n -OR- Update your assertions block with \"stringBody\" instead of \"body\" "
+                         + "\n e.g. \"stringBody\" : \"an expected string output here\""
+                         + "\n\n---------------------------------------------");
             return false;
         }
     }
