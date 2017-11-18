@@ -52,8 +52,25 @@
           "availability": true
         }
       }
+    },
+    {
+      "name": "Get text node json content",
+      "operation": "GET",
+      "url": "/api/textnodejson",
+      "response": {
+        "status": 200,
+        "body": "valid-text-node-json"
+      }
+    },
+    {
+      "name": "Get non-json content",
+      "operation": "GET",
+      "url": "/api/nonjson",
+      "response": {
+        "status": 200,
+        "stringBody": "non-json"
+      }
     }
-
 
   ]
 }

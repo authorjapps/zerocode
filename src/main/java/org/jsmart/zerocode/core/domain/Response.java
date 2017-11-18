@@ -12,17 +12,20 @@ public class Response {
     private final int status;
     private final Map headers;
     private final JsonNode body;
+    private final String stringBody;
     private final String location;
 
     @JsonCreator
     public Response(
-            @JsonProperty("status") int status,
-            @JsonProperty("headers") Map headers,
-            @JsonProperty("body") JsonNode body,
-            @JsonProperty("location")String location) {
+                    @JsonProperty("status") int status,
+                    @JsonProperty("headers") Map headers,
+                    @JsonProperty("body") JsonNode body,
+                    @JsonProperty("stringBody") String stringBody,
+                    @JsonProperty("location") String location) {
         this.headers = headers;
         this.body = body;
         this.status = status;
+        this.stringBody = stringBody;
         this.location = location;
     }
 
@@ -37,18 +40,23 @@ public class Response {
     public int getStatus() {
         return status;
     }
-
+    
+    public String getStringBody() {
+        return stringBody;
+    }
+    
     public String getLocation() {
         return location;
     }
-
+    
     @Override
     public String toString() {
         return "Response{" +
-                "headers=" + headers +
-                ", body=" + body +
-                ", status=" + status +
-                ", location='" + location + '\'' +
-                '}';
+               "status=" + status +
+               ", headers=" + headers +
+               ", body=" + body +
+               ", stringBody='" + stringBody + '\'' +
+               ", location='" + location + '\'' +
+               '}';
     }
 }

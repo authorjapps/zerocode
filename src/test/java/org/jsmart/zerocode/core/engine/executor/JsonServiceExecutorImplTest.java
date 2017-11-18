@@ -3,10 +3,9 @@ package org.jsmart.zerocode.core.engine.executor;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.jayway.jsonpath.JsonPath;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
+
 import org.jsmart.simulator.main.SimpleRestJsonSimulatorsMain;
 import org.jsmart.zerocode.core.di.ApplicationMainModule;
-import org.jsmart.zerocode.core.di.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.After;
@@ -19,7 +18,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class JsonServiceExecutorTest {
+public class JsonServiceExecutorImplTest {
 
     public static final int PORT = 9999;
     public static final String HOST_WITH_CONTEXT = "http://localhost:" + PORT;
@@ -132,5 +131,37 @@ public class JsonServiceExecutorTest {
 
         final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
         assertThat(responseString, containsString("201"));
+    }
+    
+    @Test
+    public void willReturnRESTResult_textNodeJson() throws Exception {
+        String scenariosJsonAsString = SmartUtils.readJsonAsString("06_test_with_place_holders/04_REST_end_point_textNodeJson_response.json");
+        final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
+        
+        String serviceName = scenarioSpec.getSteps().get(0).getUrl();
+        String methodName = scenarioSpec.getSteps().get(0).getOperation();
+        String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
+        String assertions = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        
+        final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
+        assertThat(responseString, containsString("\"valid-text-node-json\"")); //<-- Mark: This is a JSON node, so held by double quotes.
+        
+        assertThat(assertions, is("{\"status\":201,\"body\":\"valid-text-node-json\"}"));
+    }
+    
+    @Test
+    public void willReturnRESTResult_nonJsonString() throws Exception {
+        String scenariosJsonAsString = SmartUtils.readJsonAsString("06_test_with_place_holders/05_REST_end_point_nonJson_response.json");
+        final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
+    
+        String serviceName = scenarioSpec.getSteps().get(0).getUrl();
+        String methodName = scenarioSpec.getSteps().get(0).getOperation();
+        String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
+        String assertions = scenarioSpec.getSteps().get(0).getAssertions().toString();
+    
+        final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
+        assertThat(responseString, containsString("non-json")); //<-- Mark: This is a non-JSON content which is simple String, hence not held by double quotes.
+    
+        assertThat(assertions, is("{\"status\":201,\"stringBody\":\"non-jsonX\"}"));
     }
 }

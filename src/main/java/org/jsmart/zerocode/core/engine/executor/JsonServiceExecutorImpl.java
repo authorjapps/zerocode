@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
-import org.apache.commons.lang.StringUtils;
+
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.Response;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
@@ -15,16 +15,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MultivaluedMap;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithLocalMock;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithVirtuosoMock;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithWireMock;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 public class JsonServiceExecutorImpl implements JsonServiceExecutor {
-    private static final Logger logger = LoggerFactory.getLogger(JsonServiceExecutorImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceExecutorImpl.class);
 
     //guice
     @Inject
@@ -107,20 +110,40 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
         final MultivaluedMap responseHeaders = serverResponse.getMetadata();
 
-        final String respBodyAsString = (String)serverResponse.getEntity();
-        final JsonNode bodyAsNode;
-        if(StringUtils.isEmpty(respBodyAsString)){
-            bodyAsNode = null;
-        } else {
-            bodyAsNode = objectMapper.readValue(respBodyAsString, JsonNode.class);
-        }
+        final String responseBodyAsString = (String)serverResponse.getEntity();
+    
+        Response zeroCodeResponse = deriveZeroCodeResponseFrom(responseStatus, responseHeaders, responseBodyAsString);
+        
+        final String zeroCodeResponseString = objectMapper.writeValueAsString(zeroCodeResponse);
 
-        Response response = new Response(responseStatus, responseHeaders, bodyAsNode, null);
-        final String relevantResponse = objectMapper.writeValueAsString(response);
-
-        return prettyPrintJson(relevantResponse);
+        return prettyPrintJson(zeroCodeResponseString);
     }
-
+    
+    private Response deriveZeroCodeResponseFrom(int responseStatus,
+                    MultivaluedMap responseHeaders,
+                    String responseBodyAsString)
+                    throws IOException {
+        
+        final JsonNode jsonBody;
+        final String stringBody;
+        
+        if(isEmpty(responseBodyAsString)){
+            jsonBody = null;
+            stringBody = null;
+    
+        } else if(isParsableJson(responseBodyAsString)){
+            jsonBody = objectMapper.readValue(responseBodyAsString, JsonNode.class);
+            stringBody = null;
+            
+        } else {
+            jsonBody = null;
+            stringBody = responseBodyAsString;
+        
+        }
+        
+        return new Response(responseStatus, responseHeaders, jsonBody, stringBody, null);
+    }
+    
     private boolean completedMockingEndPoints(String httpUrl, String requestJson, String methodName, Object bodyContent) throws java.io.IOException {
         if(httpUrl.contains("/$MOCK") && methodName.equals("$USE.WIREMOCK")){
 
@@ -128,28 +151,28 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
             createWithWireMock(mockSteps);
 
-            logger.info("#SUCCESS: End points simulated via wiremock.");
+            LOGGER.info("#SUCCESS: End points simulated via wiremock.");
 
             return true;
         }
 
         else if(httpUrl.contains("/$MOCK") && methodName.equals("$USE.VIRTUOSO")){
-            logger.info("\n#body:\n" + bodyContent);
+            LOGGER.info("\n#body:\n" + bodyContent);
 
             //read the content of the "request". This contains the complete rest API.
             createWithVirtuosoMock(bodyContent != null ? bodyContent.toString() : null);
 
-            logger.info("#SUCCESS: End point simulated via virtuoso.");
+            LOGGER.info("#SUCCESS: End point simulated via virtuoso.");
             return true;
         }
 
         else if(httpUrl.contains("/$MOCK") && methodName.equals("$USE.SIMULATOR")){
-            logger.info("\n#body:\n" + bodyContent);
+            LOGGER.info("\n#body:\n" + bodyContent);
 
             //read the content of the "request". This contains the complete rest API.
             createWithLocalMock(bodyContent != null ? bodyContent.toString() : null);
 
-            logger.info("#SUCCESS: End point simulated via local simulator.");
+            LOGGER.info("#SUCCESS: End point simulated via local simulator.");
 
             return true;
         }
@@ -160,9 +183,19 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         try{
             return JsonPath.read(requestJson, jsonPath);
         } catch(PathNotFoundException pEx){
-            logger.debug("No " + jsonPath + " was present in the request. returned null.");
+            LOGGER.debug("No " + jsonPath + " was present in the request. returned null.");
             return  null;
         }
     }
-
+    
+    private boolean isParsableJson(String potentialJsonString) {
+        try {
+            objectMapper.readTree(potentialJsonString);
+            return true;
+        } catch (IOException e) {
+            LOGGER.warn("This was not a valid JSON. It was treated as a simple string."
+                        + "If it was intentional, you can ignore this warning");
+            return false;
+        }
+    }
 }

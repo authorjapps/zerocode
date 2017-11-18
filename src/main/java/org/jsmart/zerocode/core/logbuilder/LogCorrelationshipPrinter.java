@@ -12,7 +12,7 @@ import static java.lang.String.format;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_FAIL;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
 
-public class LogCorelationshipPrinter {
+public class LogCorrelationshipPrinter {
     private static final String DISPLAY_DEMARCATION_ = "\n--------- CORRELATION-ID: %s ---------";
 
     Logger logger;
@@ -24,29 +24,29 @@ public class LogCorelationshipPrinter {
     private Boolean result;
     private Double responseDelay;
 
-    public LogCorelationshipPrinter(Logger logger) {
+    public LogCorrelationshipPrinter(Logger logger) {
         this.logger = logger;
     }
 
-    public static LogCorelationshipPrinter newInstance(Logger logger) {
-        return new LogCorelationshipPrinter(logger);
+    public static LogCorrelationshipPrinter newInstance(Logger logger) {
+        return new LogCorrelationshipPrinter(logger);
     }
 
     public RequestLogBuilder aRequestBuilder() {
         return requestLogBuilder;
     }
 
-    public LogCorelationshipPrinter assertion(String assertionJson){
+    public LogCorrelationshipPrinter assertion(String assertionJson){
         responseLogBuilder.assertionSection(assertionJson);
         return this;
     }
 
-    public LogCorelationshipPrinter stepLoop(Integer stepLoop) {
+    public LogCorrelationshipPrinter stepLoop(Integer stepLoop) {
         this.stepLoop = stepLoop;
         return this;
     }
 
-    public LogCorelationshipPrinter result(Boolean passed) {
+    public LogCorrelationshipPrinter result(Boolean passed) {
         this.result = passed;
         return this;
     }

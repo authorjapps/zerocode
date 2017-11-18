@@ -11,6 +11,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.jsmart.zerocode.core.di.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +29,8 @@ import static java.nio.charset.Charset.defaultCharset;
 
 @Singleton
 public class SmartUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SmartUtils.class);
+    
     @Inject
     private ObjectMapper mapper; //<--- remember the static methods can not use this objectMapper. So make the methods non-static if you want to use this objectMapper.
 
@@ -114,6 +119,7 @@ public class SmartUtils {
             /*
              *  Pretty-print logic threw an exception, not a big deal, print the original json then.
              */
+            LOGGER.warn("Non-JSON content was encountered. So pretty print did not format it and returned the raw text");
             return jsonString;
         }
 

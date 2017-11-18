@@ -149,7 +149,10 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
     @Override
     public List<JsonAsserter> createAssertersFrom(String resolvedAssertionJson) {
-        List<JsonAsserter> asserters = new ArrayList<JsonAsserter>();
+        List<JsonAsserter> asserters = new ArrayList<>();
+//        if(parsable resolvedAssertionJson){
+//
+//        }
         try {
             JsonNode jsonNode = mapper.readTree(resolvedAssertionJson);
 
