@@ -25,6 +25,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImplVerifyTest {
         
     }
     
+    @Test
+    @JsonTestCase("01_verification_test_cases/20_non_json_assert_part_string.json")
+    public void willAssertNonJson_usingPlaceHolder() throws Exception {
+        
+    }
     
 }
 
