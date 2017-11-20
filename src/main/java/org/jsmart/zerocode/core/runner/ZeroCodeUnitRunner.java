@@ -146,6 +146,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
                     child.getScenarioName(),
                     child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
             notifier.fireTestFinished(description);
+        } else {
+            notifier.fireTestFinished(description);
         }
 
     }
