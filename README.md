@@ -1,7 +1,17 @@
 ## REST BDD - ZeroCode Testing Framework
 [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode)
 
-Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour
+Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
+
+Latest maven release:
+
+```
+<dependency>
+    <groupId>org.jsmart</groupId>
+    <artifactId>zerocode-rest-bdd</artifactId>
+    <version>1.1.17</version>
+</dependency>
+```
 
 ### Easy! Simple! Readable! JSON Based!
 
