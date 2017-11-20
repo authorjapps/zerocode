@@ -3,6 +3,7 @@ package org.jsmart.zerocode.core.runner;
 import org.jsmart.zerocode.core.domain.HostProperties;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodeUnitRunner;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,6 +32,12 @@ public class ZeroCodeMultiStepsScenarioRunnerImplVerifyTest {
         
     }
     
+    @Ignore
+    @Test
+    @JsonTestCase("01_verification_test_cases/20_ignored.json")
+    public void willNotRunIf_ignored() throws Exception {
+        
+    }
 }
 
 
