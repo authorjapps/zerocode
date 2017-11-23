@@ -145,10 +145,10 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
                 logger.info(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
                                 child.getScenarioName(),
                                 child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
-                notifier.fireTestFinished(description);
-            } else {
-                notifier.fireTestFinished(description);
             }
+            
+            notifier.fireTestFinished(description);
+    
         }
         
     }

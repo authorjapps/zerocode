@@ -1,5 +1,5 @@
 {
-  "scenarioName": "Will Execute GET And Pass",
+  "scenarioName": "Will Execute GET And Pass 1 step",
   "loop": 5, //comments -- Allowed
   "steps": [
     {
