@@ -1,7 +1,7 @@
 ## REST BDD - ZeroCode Testing Framework
 [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode)
 
-Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour
+Execute your complex business scenario steps by writing them in simple jsons which defines your RESTful service behaviour
 
 ### Easy! Simple! Readable! JSON Based!
 
