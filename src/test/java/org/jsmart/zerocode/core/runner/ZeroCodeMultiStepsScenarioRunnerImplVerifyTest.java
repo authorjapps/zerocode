@@ -14,6 +14,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImplVerifyTest {
     /**
      * Mock end points are in test/resources: simulators/test_purpose_end_points.json
      */
+
+    @Test
+    @JsonTestCase("13_headers/10_response_with_headers.json")
+    public void willGetResponse_headers() throws Exception {
+    
+    }
+    
     @Test
     @JsonTestCase("01_verification_test_cases/10_text_node_json_test.json")
     public void willPassIfFound_textJsonNode() throws Exception {
