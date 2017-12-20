@@ -17,9 +17,9 @@ Latest maven release:
 
 #### Define a Scenario with Steps [Given, When, Then], Then Run. See examples below
 
-## Table of Contents
+## Table of Contents - 
 - [Help and usage](#id_help_and_usage)
-- [Overriding HttpClient with Project specific](#16)
+- [Overriding with Custom HttpClient with Project demand](#16)
 - [Externalize host and port to properties files](#17)
 - [Single Scenario with single step](#id_single_step)
 - [Step with more assertions](#id_single_step_more)
@@ -28,13 +28,14 @@ Latest maven release:
 - [Generated reports and charts](#6)
 - [More assertion with handy place holders](#7)
 - [General Place holders](#8)
-- [Dealing with arrays](#9)
+- [Dealing with arrays](#9) 
 - [Chaining multiple steps for a scenario](#10)
 - [Generating random strings, random numbers and static strings](#11)
 - [Asserting general and exception messages](#12)
 - [Asserting with LT(lesser than) and GT(greater than)](#13)
 - [Asserting an empty array)](#14)
 - [Calling java methods(apis) for specific tasks)](#15)
+- [Passing Headers to the REST API](#20) 
 - [Generating IDs and sharing across steps](#18)
 - [Bare JSON String without curly braces, still a valid JSON](#19)
 - [General place holders and assertion place holder table](#99)
@@ -84,9 +85,9 @@ Note:
 The above JSON block is a test case where we asked the test framework to hit the 
 > REST end point : http://localhost:9998/google-emp-services/home/employees/999
 
-> with method: GET
+> with method: GET 
 
-> and asserting the REST response with an 
+> and asserting the REST response with an  
 
 > expected status: 200
 
@@ -578,7 +579,7 @@ In case a return from a java API needed assertion:
 
 
 #### 16:
-#### Overriding HttpClient with Project specific
+#### Overriding with Custom HttpClient with Project demand
 
 See here : [See usage of @UseHttpClient](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore/ZeroCodeUnitRunnerWithCustomHttpClient.java)
 
@@ -630,6 +631,12 @@ public class ZeroCodeSampleUnitRunner{
 
 
 #### 20:
+#### Passing Headers to the REST API
+
+- [See a running example](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/16_passing_headers_to_rest_apis.json)
+
+
+#### 21:
 
 
 #### 99:
@@ -671,9 +678,37 @@ public class ZeroCodeSampleUnitRunner{
 | $<path.to.array>.SIZE       | Assertion passes if the array size matches with value | See usage in the test json |
 
 
-
-
-
-
-
+Search
+zero code rest bdd blog
+zero code behaviour driven development
+zero code testing
+zero code JSON based testing test cases
+zero code Hello World
+zero code sample
+zero code api testing
+zero code RESTful API testing
+zero code end to end testing
+zero code API contract testing
+zero code contract based testing (CBT)
+zero code CBT
+zero code contract driven development (CDD)
+zero code CDD
+zero code CCT
+zero code Consumer Contract Testing
+zerocode rest bdd blog
+zerocode behaviour driven development
+zerocode testing
+zerocode JSON based testing test cases
+zerocode Hello World
+zerocode sample
+zerocode api testing
+zerocode RESTful API testing
+zerocode end to end testing
+zerocode API contract testing
+zerocode contract based testing (CBT)
+zerocode CBT
+zerocode contract driven development (CDD)
+zerocode CDD
+zerocode CCT
+zerocode Consumer Contract Testing
 
