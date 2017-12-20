@@ -1,5 +1,5 @@
 {
-  "scenarioName": "Will Execute GET And Pass",
+  "scenarioName": "Rest Req Resp path",
   "loop": 5, //comments -- Allowed
   "steps": [
     {

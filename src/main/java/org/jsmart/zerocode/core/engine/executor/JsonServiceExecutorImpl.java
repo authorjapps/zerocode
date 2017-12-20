@@ -125,23 +125,23 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
                     throws IOException {
         
         final JsonNode jsonBody;
-        final String stringBody;
+        final String rawBody;
         
         if(isEmpty(responseBodyAsString)){
             jsonBody = null;
-            stringBody = null;
+            rawBody = null;
     
         } else if(isParsableJson(responseBodyAsString)){
             jsonBody = objectMapper.readValue(responseBodyAsString, JsonNode.class);
-            stringBody = null;
+            rawBody = null;
             
         } else {
             jsonBody = null;
-            stringBody = responseBodyAsString;
+            rawBody = responseBodyAsString;
         
         }
         
-        return new Response(responseStatus, responseHeaders, jsonBody, stringBody, null);
+        return new Response(responseStatus, responseHeaders, jsonBody, rawBody, null);
     }
     
     private boolean completedMockingEndPoints(String httpUrl, String requestJson, String methodName, Object bodyContent) throws java.io.IOException {
@@ -194,10 +194,10 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
             return true;
         } catch (IOException e) {
             LOGGER.warn("\n---------------------------------------------\n\n"
-                         + "\t\t\t\t\t\t * Warning *  \n\nOutput was not a valid JSON. It was treated as a simple stringBody."
+                         + "\t\t\t\t\t\t * Warning *  \n\nOutput was not a valid JSON body. It was treated as a simple rawBody."
                         + " If it was intentional, you can ignore this warning. "
-                         + "\n -OR- Update your assertions block with \"stringBody\" instead of \"body\" "
-                         + "\n e.g. \"stringBody\" : \"an expected string output here\""
+                         + "\n -OR- Update your assertions block with \"rawBody\" instead of \"body\" "
+                         + "\n e.g. \"rawBody\" : \"an expected string \""
                          + "\n\n---------------------------------------------");
             return false;
         }

@@ -11,7 +11,7 @@
       "assertions": {
         "status": 200,
         "body": "$NULL",
-        "stringBody": "$CONTAINS.STRING:non-j"
+        "rawBody": "$CONTAINS.STRING:non-j"
       }
     }
   ]

@@ -21,6 +21,7 @@ import org.junit.runners.model.InitializationError;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.google.inject.Guice.createInjector;
 
@@ -136,8 +137,13 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         testRunCompleted = true;
 
         if (passed) {
-            notifier.fireTestFinished(description);
+            logger.info(String.format("\nPackageRunner- **FINISHED executing all Steps for [%s] **.\nSteps were:%s",
+                            child.getScenarioName(),
+                            child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
         }
+        
+        notifier.fireTestFinished(description);
+    
     }
 
     private ZeroCodeMultiStepsScenarioRunner getInjectedMultiStepsRunner() {

@@ -14,7 +14,7 @@
       },
       "assertions": {
         "status": 201,
-        "stringBody": "non-jsonX"
+        "rawBody": "non-jsonX"
       }
     }
 

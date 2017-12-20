@@ -68,7 +68,22 @@
       "url": "/api/nonjson",
       "response": {
         "status": 200,
-        "stringBody": "non-json"
+        "rawBody": "non-json"
+      }
+    },
+    {
+      "name": "response with headers",
+      "operation": "GET",
+      "url": "/api/response/with/headers",
+      "response": {
+        "status": 200,
+        "headers":{
+          "client_id": "cid_00001",
+          "client_secret": "secret_00001"
+        },
+        "body": {
+          "zeroKey" : "zeroValue"
+        }
       }
     }
 

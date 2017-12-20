@@ -1,7 +1,17 @@
 ## REST BDD - ZeroCode Testing Framework
 [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode)
 
-Execute your complex business scenario steps by writing them in simple jsons which defines your RESTful service behaviour
+Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
+
+Latest maven release:
+
+```
+<dependency>
+    <groupId>org.jsmart</groupId>
+    <artifactId>zerocode-rest-bdd</artifactId>
+    <version>1.1.17</version>
+</dependency>
+```
 
 ### Easy! Simple! Readable! JSON Based!
 
@@ -9,7 +19,7 @@ Execute your complex business scenario steps by writing them in simple jsons whi
 
 ## Table of Contents
 - [Help and usage](#id_help_and_usage)
-- [Overriding with Custom HttpClient with Project demand](#16)
+- [Overriding HttpClient with Project specific](#16)
 - [Externalize host and port to properties files](#17)
 - [Single Scenario with single step](#id_single_step)
 - [Step with more assertions](#id_single_step_more)
@@ -25,7 +35,6 @@ Execute your complex business scenario steps by writing them in simple jsons whi
 - [Asserting with LT(lesser than) and GT(greater than)](#13)
 - [Asserting an empty array)](#14)
 - [Calling java methods(apis) for specific tasks)](#15)
-- [Passing Headers to the REST API](#20)
 - [Generating IDs and sharing across steps](#18)
 - [Bare JSON String without curly braces, still a valid JSON](#19)
 - [General place holders and assertion place holder table](#99)
@@ -569,7 +578,7 @@ In case a return from a java API needed assertion:
 
 
 #### 16:
-#### Overriding with Custom HttpClient with Project demand
+#### Overriding HttpClient with Project specific
 
 See here : [See usage of @UseHttpClient](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore/ZeroCodeUnitRunnerWithCustomHttpClient.java)
 
@@ -619,13 +628,8 @@ public class ZeroCodeSampleUnitRunner{
 
 - [See a running example](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/14_bare_string_json.json)
 
+
 #### 20:
-#### Passing Headers to the REST API
-
-- [See a running example](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/16_passing_headers_to_rest_apis.json)
-
-
-#### 21:
 
 
 #### 99:
@@ -666,40 +670,6 @@ public class ZeroCodeSampleUnitRunner{
 | ------------- |:-------------| -----|
 | $<path.to.array>.SIZE       | Assertion passes if the array size matches with value | See usage in the test json |
 
-
-Search
-zero code rest bdd blog
-zero code behaviour driven development
-zero code testing
-zero code JSON based testing test cases
-zero code Hello World
-zero code sample
-zero code api testing
-zero code RESTful API testing
-zero code end to end testing
-zero code API contract testing
-zero code contract based testing (CBT)
-zero code CBT
-zero code contract driven development (CDD)
-zero code CDD
-zero code CCT
-zero code Consumer Contract Testing
-zerocode rest bdd blog
-zerocode behaviour driven development
-zerocode testing
-zerocode JSON based testing test cases
-zerocode Hello World
-zerocode sample
-zerocode api testing
-zerocode RESTful API testing
-zerocode end to end testing
-zerocode API contract testing
-zerocode contract based testing (CBT)
-zerocode CBT
-zerocode contract driven development (CDD)
-zerocode CDD
-zerocode CCT
-zerocode Consumer Contract Testing
 
 
 

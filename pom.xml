@@ -9,7 +9,7 @@
 
     <artifactId>zerocode-rest-bdd</artifactId>
     <groupId>org.jsmart</groupId>
-    <version>1.1.17-SNAPSHOT</version>
+    <version>1.1.20-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <name>ZeroCode REST BDD</name>
@@ -67,7 +67,7 @@
         <velocity.version>1.7</velocity.version>
         <jackson-dataformat-csv.version>2.7.0</jackson-dataformat-csv.version>
         <commons-io.version>2.4</commons-io.version>
-        <micro-simulator.version>1.1.7</micro-simulator.version>
+        <micro-simulator.version>1.1.10</micro-simulator.version>
 
         <!-- maven plugin build related  -->
         <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
