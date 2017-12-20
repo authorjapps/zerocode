@@ -29,7 +29,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImplVerifyTest {
     
     @Test
     @JsonTestCase("01_verification_test_cases/15_non_json_string_body_test.json")
-    public void willPassIfFound_nonJsonStringBody() throws Exception {
+    public void willPassIfFound_nonJsonRawBody() throws Exception {
         
     }
     

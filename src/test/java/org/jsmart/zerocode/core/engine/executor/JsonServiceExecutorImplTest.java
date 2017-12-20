@@ -162,6 +162,6 @@ public class JsonServiceExecutorImplTest {
         final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
         assertThat(responseString, containsString("non-json")); //<-- Mark: This is a non-JSON content which is simple String, hence not held by double quotes.
     
-        assertThat(assertions, is("{\"status\":201,\"stringBody\":\"non-jsonX\"}"));
+        assertThat(assertions, is("{\"status\":201,\"rawBody\":\"non-jsonX\"}"));
     }
 }

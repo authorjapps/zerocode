@@ -12,7 +12,7 @@ public class Response {
     private final int status;
     private final Map headers;
     private final JsonNode body;
-    private final String stringBody;
+    private final String rawBody;
     private final String location;
 
     @JsonCreator
@@ -20,12 +20,12 @@ public class Response {
                     @JsonProperty("status") int status,
                     @JsonProperty("headers") Map headers,
                     @JsonProperty("body") JsonNode body,
-                    @JsonProperty("stringBody") String stringBody,
+                    @JsonProperty("rawBody") String rawBody,
                     @JsonProperty("location") String location) {
         this.headers = headers;
         this.body = body;
         this.status = status;
-        this.stringBody = stringBody;
+        this.rawBody = rawBody;
         this.location = location;
     }
 
@@ -41,8 +41,8 @@ public class Response {
         return status;
     }
     
-    public String getStringBody() {
-        return stringBody;
+    public String getRawBody() {
+        return rawBody;
     }
     
     public String getLocation() {
@@ -55,7 +55,7 @@ public class Response {
                "status=" + status +
                ", headers=" + headers +
                ", body=" + body +
-               ", stringBody='" + stringBody + '\'' +
+               ", rawBody='" + rawBody + '\'' +
                ", location='" + location + '\'' +
                '}';
     }

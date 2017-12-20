@@ -16,7 +16,7 @@
       "assertions": {
         "status": 200,
         "body": "$NULL",
-        "stringBody": "non-json"
+        "rawBody": "non-json"
       }
     }
   ]

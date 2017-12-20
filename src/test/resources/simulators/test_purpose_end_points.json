@@ -68,7 +68,7 @@
       "url": "/api/nonjson",
       "response": {
         "status": 200,
-        "stringBody": "non-json"
+        "rawBody": "non-json"
       }
     },
     {
