@@ -9,14 +9,12 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.19</version>
+    <version>1.1.19</version> <!-- See the latest in mvn central -->
 </dependency>
 ```
 
 See the [HelloWorldTest](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldTest.java)
-```
 
-```
 
 ### Easy! Simple! Readable! JSON Based!
 
