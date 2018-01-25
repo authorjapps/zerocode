@@ -30,14 +30,14 @@ import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
 
 public class SslTrustHttpClient implements BasicHttpClient {
-    private static final Logger logger = LoggerFactory.getLogger(RestEasyDefaultHttpClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestEasyDefaultHttpClient.class);
 
     private Object COOKIE_JSESSIONID_VALUE;
 
     @Override
     public Response execute(String httpUrl, String methodName, Map<String, Object> headers, Map<String, Object> queryParams, Object body) throws Exception {
 
-        logger.info("###Used SSL Enabled Http Client");
+        LOGGER.info("###Used SSL Enabled Http Client");
 
         /** ---------------------------
          * Get the request body content
@@ -45,7 +45,6 @@ public class SslTrustHttpClient implements BasicHttpClient {
          */
         String reqBodyAsString = getContentAsItIsJson(body);
 
-        /// TODO: nirmal
         CloseableHttpClient httpclient = createSslHttpClient();
 
         /** -----------------------
