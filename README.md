@@ -9,12 +9,51 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.17</version>
+    <version>1.1.19</version> <!-- See the latest in mvn central -->
 </dependency>
 ```
 
+See the [HelloWorldTest](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldTest.java)
+
+
 ### Easy! Simple! Readable! JSON Based!
 
+```
+@TargetEnv("hello_world_host.properties")
+@RunWith(ZeroCodeUnitRunner.class)
+public class HelloWorldTest {
+
+    @Test
+    @JsonTestCase("hello_world/hello_world_get.json")
+    public void testHelloWorld_onlineRestApi() throws Exception {
+
+    }
+}
+```
+
+And the "hello_world_get.json" is as below:
+```
+{
+    "scenarioName": "scenario_hello_world_get",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/posts/1",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": 1,
+                    "userId": 1,
+                    "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit"
+                }
+            }
+        }
+    ]
+}
+```
 #### Define a Scenario with Steps [Given, When, Then], Then Run. See examples below
 
 ## Table of Contents - 
