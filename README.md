@@ -9,7 +9,7 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.19</version> <!-- See the latest in mvn central -->
+    <version>1.1.20</version> <!-- But, See and use the latest from mvn central -->
 </dependency>
 ```
 
