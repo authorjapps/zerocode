@@ -68,6 +68,7 @@
         <jackson-dataformat-csv.version>2.7.0</jackson-dataformat-csv.version>
         <commons-io.version>2.4</commons-io.version>
         <micro-simulator.version>1.1.10</micro-simulator.version>
+        <httpclient.version>4.5</httpclient.version>
 
         <!-- maven plugin build related  -->
         <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
@@ -180,11 +181,17 @@
             <!--<scope>test</scope>--> <!-- added with compile scope. Do not change this -->
         </dependency>
         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jsmart</groupId>
             <artifactId>micro-simulator</artifactId>
             <version>${micro-simulator.version}</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <profiles>
