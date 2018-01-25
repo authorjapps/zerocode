@@ -58,7 +58,7 @@ And the "hello_world_get.json" is as below:
 
 ## Table of Contents - 
 - [Help and usage](#id_help_and_usage)
-- [Overriding with Custom HttpClient with Project demand](#16)
+- [Overriding with Custom HttpClient with Project demand, See also SSL Trusted Http Client](#16)
 - [Externalize host and port to properties files](#17)
 - [Single Scenario with single step](#id_single_step)
 - [Step with more assertions](#id_single_step_more)
@@ -620,7 +620,9 @@ In case a return from a java API needed assertion:
 #### 16:
 #### Overriding with Custom HttpClient with Project demand
 
-See here : [See usage of @UseHttpClient](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore/ZeroCodeUnitRunnerWithCustomHttpClient.java)
+See here how to Use SSL HttpClient : [See usage of @UseHttpClient](https://github.com/authorjapps/zerocode/blob/master/src/test/java/org/jsmart/zerocode/core/verification/SslTrustUseHttpClientTest.java)
+
+See here custom one : [See usage of @UseHttpClient](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore/ZeroCodeUnitRunnerWithCustomHttpClient.java)
 
 
 #### 17:
