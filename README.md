@@ -3,13 +3,17 @@
 
 Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
 
+Use the powerful response assertions just with copy paste of the expected JSON. 
+
+Helps to develop and test applications using TDD and BDD. Look for examples below-
+
 Latest maven release:
 
 ```
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.20</version> <!-- But, See and use the latest from mvn central -->
+    <version>1.1.20</version> <!-- Use the latest from mvn central -->
 </dependency>
 ```
 
@@ -299,7 +303,12 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
 #### 6:
 #### Generated reports and charts
 
-Generated test statistics reports. See the target folder after every run. See sample reports below
+Generated test statistics reports. See the '/target' folder after every run. 
+e.g. Look for-
+target/zerocode_results_chart2018-01-31T17-15-45.522.html -or-
+target/zerocode_full_report_2018-01-31T17-15-47.125.csv
+
+See sample reports below
 
 ##### Spike Chart:
 
@@ -311,6 +320,17 @@ Generated test statistics reports. See the target folder after every run. See sa
 
 - See here : [Full coverage CSV report](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_full_report_2016-07-30T11-44-14.512.csv)
 
+```
+If target folder has permission issue, the library alerts with-
+----------------------------------------------------------------------------------------
+Somehow the 'target/zerocode-test-reports' is not present or has no report JSON files. 
+Possible reasons- 
+   1) No tests were activated or made to run via ZeroCode runner. -or- 
+   2) You have simply used @RunWith(...) and ignored all tests -or- 
+   3) Permission issue to create/write folder/files 
+   4) Please fix it by adding/activating at least one test case or fix the file permission issue
+----------------------------------------------------------------------------------------
+```
 
 #### 7:
 #### More assertion with handy place holders
@@ -720,6 +740,7 @@ public class ZeroCodeSampleUnitRunner{
 
 
 Search
+zero code response assertions
 zero code rest bdd blog
 zero code behaviour driven development
 zero code testing
