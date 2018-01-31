@@ -6,11 +6,11 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.inject.Inject;
-import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
 import org.jsmart.zerocode.core.domain.builders.HighChartColumnHtmlBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueArrayBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeCsvReportBuilder;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
 import org.jsmart.zerocode.core.domain.reports.chart.HighChartColumnHtml;
 import org.jsmart.zerocode.core.domain.reports.csv.ZeroCodeCsvReport;
 
@@ -28,7 +28,7 @@ import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.T
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FULL_REPORT_DIR;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
 
-public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator{
+public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
     @Inject
     private ObjectMapper mapper;
@@ -168,6 +168,8 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator{
 
     public List<ZeroCodeReport> readZeroCodeReportsByPath(String reportsFolder) {
 
+        validateReportsFolderAndTheFilesExists(reportsFolder);
+
         List<String> allEndPointFiles = getAllEndPointFilesFrom(reportsFolder);
 
         List<ZeroCodeReport> scenarioReports = allEndPointFiles.stream()
@@ -201,4 +203,28 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator{
 
         return fileNames;
     }
+
+    protected void validateReportsFolderAndTheFilesExists(String reportsFolder) {
+
+        try {
+            File[] files = new File(reportsFolder).listFiles((dir, fileName) -> fileName.endsWith(".json"));
+
+            ofNullable(files).orElseThrow(() -> new RuntimeException("Somehow the '" + reportsFolder + "' has got no files."));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            final String message = "\n----------------------------------------------------------------------------------------\n" +
+                    "Somehow the '" + reportsFolder + "' is not present or has no report JSON files. \n" +
+                    "Possible reasons- \n" +
+                    "   1) No tests were activated or made to run via ZeroCode runner. -or- \n" +
+                    "   2) You have simply used @RunWith(...) and ignored all tests -or- \n" +
+                    "   3) Permission issue to create/write folder/files \n" +
+                    "   4) Please fix it by adding/activating at least one test case or fix the file permission issue\n" +
+                    "----------------------------------------------------------------------------------------\n";
+
+            throw new RuntimeException(message);
+        }
+
+    }
+
 }
