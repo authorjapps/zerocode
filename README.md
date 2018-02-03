@@ -3,9 +3,23 @@
 
 Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
 
-Use the powerful response assertions just with copy paste of the expected JSON. 
+Use the powerful response assertions mechanism with just copy and paste of the JSONs. 
 
-Helps to develop and test applications using TDD and BDD. Look for examples below-
+Develop and test applications with TDD and BDD approach. 
+
+Save yourselves from:
+<pre><code><del>
+Most BDD frameworks are too much verbose and contains many hierarchies till you reach the test code 
+to understand what exactly it does.
+</del></code></pre>
+
+Save yourselves from:
+<pre><code><del>
+Morever the tester or developer is lost when he traverses to and fro of the Given/When/Then statements. 
+Because these statements are not actually code and the lesser they appear the better it is.
+</del></code></pre>
+
+Look for examples below-
 
 Latest maven release:
 
