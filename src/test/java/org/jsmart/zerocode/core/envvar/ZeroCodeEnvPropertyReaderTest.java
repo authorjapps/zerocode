@@ -12,9 +12,9 @@ import org.junit.runner.RunWith;
 @RunWith(TestOnlyZeroCodeUnitRunner.class)
 public class ZeroCodeEnvPropertyReaderTest {
 
-    @JsonTestCase("01_verification_test_cases/09_host_port_annotated_bu_failed_assertion.json")
     @Test
-    public void hostAnsPortWith_failedAssertions() throws Exception {
+    @JsonTestCase("01_verification_test_cases/22_env_property_dynamic_runtime.json")
+    public void testRunAgainstConfigPropertySetViaJenkins() throws Exception {
         
     }
 }
