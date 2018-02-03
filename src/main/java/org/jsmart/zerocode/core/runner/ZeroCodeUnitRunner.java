@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 import static org.jsmart.zerocode.core.utils.SmartUtils.getAllTokens;
 import static org.jsmart.zerocode.core.utils.SmartUtils.getEnvPropertyValue;
 
@@ -177,7 +178,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
 
-        serverEnv = getEnvSpecificConfigFile(serverEnv);
+        serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 
         final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
         Class<? extends BasicHttpClient> runtimeHttpClient =
@@ -195,44 +196,6 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     protected ZeroCodeReportGenerator getInjectedReportGenerator() {
         return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
-    }
-
-    public String getEnvSpecificConfigFile(String serverEnv) {
-        final EnvProperty envProperty = testClass.getAnnotation(EnvProperty.class);
-
-        if(envProperty == null){
-            return serverEnv;
-        }
-
-        String envPropNameWithPrefix = envProperty != null ? envProperty.value() : "";
-        List<String> allTokens = getAllTokens(envPropNameWithPrefix);
-        if(allTokens.size() >= 1 && null != getEnvPropertyValue(allTokens.get(0))){
-
-            final String propertyKey = allTokens.get(0);
-            final String propertyValue = getEnvPropertyValue(propertyKey);
-
-            Map<String, String> paramMap = new HashMap<>();
-            paramMap.put(propertyKey, propertyValue);
-
-            final String resolvedEnvPropNameWithPrefix = SmartUtils.resolveToken(envPropNameWithPrefix, paramMap);
-
-            serverEnv = resolvedEnvPropNameWithPrefix + serverEnv;
-
-            LOGGER.info("Found env specific property: '{}={}', Hence using: '{}'", propertyKey, propertyValue, serverEnv);
-
-        } else if(allTokens.size() >= 1) {
-
-            final String propertyKey = allTokens.get(0);
-
-            LOGGER.info("Could not find env value for env property '{}', So using '{}'", propertyKey, serverEnv);
-
-        } else {
-
-            LOGGER.info("Could not find env specific property, So using '{}'", serverEnv);
-
-        }
-
-        return serverEnv;
     }
 
 }
