@@ -13,7 +13,7 @@ import static org.jsmart.zerocode.core.utils.SmartUtils.getEnvPropertyValue;
 
 /**
  * This code is used by Unit and Package runner.
- * Hence situation at a single place here.
+ * Hence coded at a single place here.
  */
 public class RunnerUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(RunnerUtils.class);
@@ -25,8 +25,10 @@ public class RunnerUtils {
             return serverEnv;
         }
 
-        String envPropNameWithPrefix = envProperty != null ? envProperty.value() : "";
+        String envPropNameWithPrefix = envProperty.value();
+
         List<String> allTokens = getAllTokens(envPropNameWithPrefix);
+
         if(allTokens.size() >= 1 && null != getEnvPropertyValue(allTokens.get(0))){
 
             final String propertyKey = allTokens.get(0);
