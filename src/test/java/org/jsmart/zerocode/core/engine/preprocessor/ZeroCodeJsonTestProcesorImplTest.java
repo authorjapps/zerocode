@@ -50,6 +50,21 @@ public class ZeroCodeJsonTestProcesorImplTest {
     }
 
     @Test
+    public void willEvaluatePlaceHolder() throws Exception {
+
+        String aString = "Hello_${WORLD}";
+        List<String> placeHolders = jsonPreProcessor.getAllTokens(aString);
+        assertThat(placeHolders.size(), is(1));
+        assertThat(placeHolders.get(0), is("WORLD"));
+
+        aString = "Hello_${$.step_name}";
+        placeHolders = jsonPreProcessor.getAllTokens(aString);
+        assertThat(placeHolders.size(), is(1));
+        assertThat(placeHolders.get(0), is("$.step_name"));
+
+    }
+    
+    @Test
     public void willResolveWithParamMap() throws Exception {
         ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava("09_test_engine/01_request_with_place_holders.json", ScenarioSpec.class);
         final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();

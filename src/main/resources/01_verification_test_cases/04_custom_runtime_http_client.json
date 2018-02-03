@@ -3,7 +3,7 @@
   "steps": [
     {
       "name": "getbathroom1",
-      "url": "http://localhost:9998/home/bathroom/1",
+      "url": "http://localhost:9998/home/bathroom/1", //<-- hard coded here to 9998, it doesnt pick from the properties file
       "operation": "GET",
       "request": {
         "headers": {

@@ -6,17 +6,21 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jukito.JukitoRunner;
 import org.jukito.TestModule;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsNull.nullValue;
 
 @RunWith(JukitoRunner.class)
 //@UseModules(ApplicationMainModule.class) //<--- Only if you dont pass any value to it's constructor
@@ -89,5 +93,54 @@ public class SmartUtilsTest {
         expectedException.expect(RuntimeException.class);
         expectedException.expectMessage("Oops! Can not run with multiple Scenarios with same name.");
         smartUtils.checkDuplicateScenarios("04_test_flow_cases");
+    }
+
+    @Test
+    public void willEvaluatePlaceHolder() throws Exception {
+
+        String aString = "Hello_${WORLD}";
+        List<String> placeHolders = SmartUtils.getAllTokens(aString);
+        Assert.assertThat(placeHolders.size(), is(1));
+        Assert.assertThat(placeHolders.get(0), is("WORLD"));
+
+        aString = "Hello_${$.step_name}";
+        placeHolders = SmartUtils.getAllTokens(aString);
+        Assert.assertThat(placeHolders.size(), is(1));
+        Assert.assertThat(placeHolders.get(0), is("$.step_name"));
+
+    }
+
+    @Test
+    public void testNullOrEmptyString_withPlaceHolders() throws Exception {
+
+        String aString = "";
+        List<String> placeHolders = SmartUtils.getAllTokens(aString);
+        Assert.assertThat(placeHolders.size(), is(0));
+
+        aString = "Hello_";
+        placeHolders = SmartUtils.getAllTokens(aString);
+        Assert.assertThat(placeHolders.size(), is(0));
+    }
+
+    @Test
+    public void testReplaceTokensOrPlaceHolders() throws Exception {
+        String aString = "_${ENV_PROPERTY_NAME}";
+
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("ENV_PROPERTY_NAME", "ci2");
+
+        final String resolvedString = SmartUtils.resolveToken(aString, paramMap);
+
+        assertThat(resolvedString, is("_ci2"));
+    }
+
+    @Test
+    public void testEnvValue() throws Exception {
+
+        final String javaHomeValue = SmartUtils.getEnvPropertyValue("JAVA_HOME");
+        assertThat(javaHomeValue, notNullValue());
+
+        assertThat(SmartUtils.getEnvPropertyValue("WRONG_XYZ_INVALID"), nullValue());
+
     }
 }
