@@ -154,7 +154,7 @@ public class SmartUtils {
 
     /**
      * This method was introduced later,
-     * But Framework uses--> ZeroCodeJsonTestProcesorImpl#getAllTokens(java.lang.String)
+     * But Framework uses- ZeroCodeJsonTestProcesorImpl#getAllTokens(java.lang.String)
      */
     public static List<String> getAllTokens(String aString) {
 
