@@ -92,9 +92,10 @@ And the "hello_world_get.json" is as below:
 - [Asserting with LT(lesser than) and GT(greater than)](#13)
 - [Asserting an empty array)](#14)
 - [Calling java methods(apis) for specific tasks)](#15)
-- [Passing Headers to the REST API](#20) 
 - [Generating IDs and sharing across steps](#18)
 - [Bare JSON String without curly braces, still a valid JSON](#19)
+- [Passing Headers to the REST API](#20) 
+- [Setting Jenkins env propperty and picking environment specific properties file](#21)
 - [General place holders and assertion place holder table](#99)
 
 
@@ -712,7 +713,52 @@ public class ZeroCodeSampleUnitRunner{
 
 
 #### 21:
+#### Passing environment param via Jenkins and dynamically picking environment specific properties file in CI
+- [See a running example of passing envronment param and value](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/EnvPropertyHelloWorldTest.java)
+```
+package org.jsmart.zerocode.testhelp.tests;
 
+import org.jsmart.zerocode.core.domain.EnvProperty;
+import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.TargetEnv;
+import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+@EnvProperty("_${ENV_NAME}")
+@TargetEnv("hello_world_host.properties")
+@RunWith(ZeroCodeUnitRunner.class)
+public class EnvPropertyHelloWorldTest {
+
+    @Test
+    @JsonTestCase("hello_world/hello_world_get.json")
+    public void testRunAgainstConfigPropertySetViaJenkins() throws Exception {
+        
+    }
+}
+
+/**
+ Set "ENV_NAME=ci" in Jenkins (or via .profile in a Unix machine, System/User properties in Windows)
+ then the runner picks "hello_world_host_ci.properties" and runs.
+ If ENV_NAME not set, then defaults to "hello_world_host.properties" mentioned via @TargetEnv
+ 
+ -or-
+ 
+ Configure the below `mvn goal` when you run via Jenkins goal in the specific environment-
+ 
+ For CI :
+ mvn clean install -DENV_NAME=ci
+ 
+ For SIT:
+ mvn clean install -DENV_NAME=sit
+ 
+ and make sure:
+ hello_world_host_ci.properties and hello_world_host_sit.properties etc are available in the resources folder or class path.
+ */
+```
+
+
+#### 22:
 
 #### 99:
 
