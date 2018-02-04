@@ -9,6 +9,9 @@ public class TestOnlyZeroCodeUnitRunner extends ZeroCodeUnitRunner {
     public static final int PORT = 9998;
 
     static {
+
+        System.setProperty("env_property_key_name", "ci"); //<--- See log n verify
+
         simulator = new SimpleRestJsonSimulatorsMain(PORT);
         simulator.start();
     }

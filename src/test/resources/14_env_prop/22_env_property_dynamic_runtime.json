@@ -1,8 +1,8 @@
 {
-  "scenarioName": "09_host_port_annotated_bu_failed_assertion.json",
+  "scenarioName": "22_env_property_dynamic_runtime",
   "steps": [
     {
-      "name": "get_hotel_resource",
+      "name": "get_hotel_resource for ci jenkins",
       "url": "/home/bathroom/google_id_01",
       "operation": "GET",
       "request": {

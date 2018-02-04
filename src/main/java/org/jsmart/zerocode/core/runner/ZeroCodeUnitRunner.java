@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 
+import org.jsmart.zerocode.core.domain.EnvProperty;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -26,12 +27,18 @@ import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
+import static org.jsmart.zerocode.core.utils.SmartUtils.getAllTokens;
+import static org.jsmart.zerocode.core.utils.SmartUtils.getEnvPropertyValue;
+
 public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
-    private static final Logger logger = LoggerFactory.getLogger(ZeroCodeUnitRunner.class);
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeUnitRunner.class);
+
     static int i = 1;
     protected boolean passed;
     protected boolean testRunCompleted;
@@ -39,7 +46,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private final Class<?> testClass;
     Injector injector;
     SmartUtils smartUtils;
-    
+
     private HostProperties hostProperties;
     private String host;
     private String context;
@@ -52,27 +59,27 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
      */
     List<String> smartTestCaseNames = new ArrayList<>();
     String currentTestCase;
-    
+
     public ZeroCodeUnitRunner(Class<?> klass) throws InitializationError {
         super(klass);
-        
+
         this.testClass = klass;
         this.smartUtils = getInjectedSmartUtilsClass();
-        
+
         smartTestCaseNames = getSmartChildrenList();
 
         /*
          * Read the host, port, context etc from the inline annotation instead of a properties file
          */
         hostProperties = testClass.getAnnotation(HostProperties.class);
-        
+
         if (hostProperties != null) {
             host = hostProperties.host();
             port = hostProperties.port();
             context = hostProperties.context();
         }
     }
-    
+
     private List<String> getSmartChildrenList() {
         List<FrameworkMethod> children = getChildren();
         children.forEach(
@@ -85,42 +92,42 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
                             }
                         }
                         );
-        
+
         return smartTestCaseNames;
     }
-    
+
     @Override
     public void run(RunNotifier notifier) {
         notifier.addListener(new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator()));
         super.run(notifier);
     }
-    
+
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        
+
         final Description description = describeChild(method);
-        
+
         if (isIgnored(method)) {
             notifier.fireTestIgnored(description);
         } else {
             JsonTestCase annotation = method.getMethod().getAnnotation(JsonTestCase.class);
-            
+
             if (annotation != null) {
                 currentTestCase = annotation.value();
             } else {
                 currentTestCase = method.getName();
             }
-            
+
             notifier.fireTestStarted(description);
-            
-            logger.debug("### Running currentTestCase : " + currentTestCase);
-            
+
+            LOGGER.debug("### Running currentTestCase : " + currentTestCase);
+
             ScenarioSpec child = null;
             try {
                 child = smartUtils.jsonFileToJava(currentTestCase, ScenarioSpec.class);
-                
-                logger.debug("### Found currentTestCase : -" + child);
-                
+
+                LOGGER.debug("### Found currentTestCase : -" + child);
+
                 final ZeroCodeMultiStepsScenarioRunner multiStepsRunner = getInjectedMultiStepsRunner();
 
             /*
@@ -133,60 +140,62 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
                     ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideApplicationContext(context);
                 }
                 passed = multiStepsRunner.runScenario(child, notifier, description);
-                
+
             } catch (Exception ioEx) {
                 ioEx.printStackTrace();
                 notifier.fireTestFailure(new Failure(description, ioEx));
             }
-            
+
             testRunCompleted = true;
-            
+
             if (passed) {
-                logger.info(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
+                LOGGER.info(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
                                 child.getScenarioName(),
                                 child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
             }
-            
+
             notifier.fireTestFinished(description);
-    
+
         }
-        
+
     }
-    
+
     public List<String> getSmartTestCaseNames() {
         return smartTestCaseNames;
     }
-    
+
     public String getCurrentTestCase() {
         return currentTestCase;
     }
-    
+
     private ZeroCodeMultiStepsScenarioRunner getInjectedMultiStepsRunner() {
         zeroCodeMultiStepsScenarioRunner = getMainModuleInjector().getInstance(ZeroCodeMultiStepsScenarioRunner.class);
         return zeroCodeMultiStepsScenarioRunner;
     }
-    
+
     public Injector getMainModuleInjector() {
         // TODO: Synchronise this with an object lock e.g. synchronized (IptSmartRunner.class) {}
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
-        
+
+        serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
+
         final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
         Class<? extends BasicHttpClient> runtimeHttpClient =
                         httpClientAnnotated != null ? httpClientAnnotated.value() : RestEasyDefaultHttpClient.class;
-        
+
         injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
                         .with(new RuntimeHttpClientModule(runtimeHttpClient)));
-        
+
         return injector;
     }
-    
+
     protected SmartUtils getInjectedSmartUtilsClass() {
         return getMainModuleInjector().getInstance(SmartUtils.class);
     }
-    
+
     protected ZeroCodeReportGenerator getInjectedReportGenerator() {
         return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
     }
-    
+
 }

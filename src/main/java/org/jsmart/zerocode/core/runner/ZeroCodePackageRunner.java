@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.inject.Guice.createInjector;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
 public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ZeroCodePackageRunner.class);
@@ -159,6 +160,8 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         //TODO: Synchronise this with e.g. synchronized (ZeroCodePackageRunner.class) {}
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null? envAnnotation.value() : "config_hosts.properties";
+
+        serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 
         final UseHttpClient runtimeClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
         Class<? extends BasicHttpClient> runtimeHttpClient = runtimeClientAnnotated != null ? runtimeClientAnnotated.value() : RestEasyDefaultHttpClient.class;
