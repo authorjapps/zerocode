@@ -3,6 +3,9 @@ package org.jsmart.zerocode.core.tests.customrunner;
 import org.jsmart.simulator.main.SimpleRestJsonSimulatorsMain;
 import org.jsmart.zerocode.core.runner.ZeroCodePackageRunner;
 import org.jsmart.zerocode.core.utils.SmartUtils;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Test;
 import org.junit.runners.model.InitializationError;
 
 public class TestOnlyZeroCodePackageRunner extends ZeroCodePackageRunner {
@@ -19,4 +22,10 @@ public class TestOnlyZeroCodePackageRunner extends ZeroCodePackageRunner {
         super(testClass, smartUtils);
     }
 
+    @AfterClass
+    public void tearDown() throws Exception {
+
+        System.out.println("################# finished 2");
+
+    }
 }

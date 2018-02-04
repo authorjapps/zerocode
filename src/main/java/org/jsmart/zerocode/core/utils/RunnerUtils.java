@@ -19,6 +19,8 @@ public class RunnerUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(RunnerUtils.class);
 
     public static String getEnvSpecificConfigFile(String serverEnv, Class<?> testClass) {
+        LOGGER.info("### testClass : " + testClass);
+
         final EnvProperty envProperty = testClass.getAnnotation(EnvProperty.class);
 
         if(envProperty == null){
@@ -39,7 +41,7 @@ public class RunnerUtils {
 
             final String resolvedEnvPropNameWithPrefix = SmartUtils.resolveToken(envPropNameWithPrefix, paramMap);
 
-            serverEnv = resolvedEnvPropNameWithPrefix + serverEnv;
+            serverEnv = suffixEnvValue(serverEnv, resolvedEnvPropNameWithPrefix);
 
             LOGGER.info("Found env specific property: '{}={}', Hence using: '{}'", propertyKey, propertyValue, serverEnv);
 
@@ -56,5 +58,10 @@ public class RunnerUtils {
         }
 
         return serverEnv;
+    }
+
+    public static String suffixEnvValue(String serverEnv, String resolvedEnvPropNameWithPrefix) {
+        final String DOT_PROPERTIES = ".properties";
+        return serverEnv.replace(DOT_PROPERTIES, resolvedEnvPropNameWithPrefix + DOT_PROPERTIES);
     }
 }

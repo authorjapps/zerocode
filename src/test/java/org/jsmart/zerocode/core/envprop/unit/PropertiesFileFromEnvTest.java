@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.envvar;
+package org.jsmart.zerocode.core.envprop.unit;
 
 import org.jsmart.zerocode.core.domain.EnvProperty;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 
 @UseHttpClient(CustomRuntimeTestHttpClient.class) //<--- This sets some header also eg "key1"
 @TargetEnv("config_hosts_test.properties")
-@EnvProperty("${env_property_key_name}_")
+@EnvProperty("_${env_property_key_name}")
 @RunWith(TestOnlyZeroCodeUnitRunner.class)
 public class PropertiesFileFromEnvTest {
 
