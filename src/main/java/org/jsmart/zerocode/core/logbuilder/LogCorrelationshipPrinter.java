@@ -1,7 +1,7 @@
 package org.jsmart.zerocode.core.logbuilder;
 
-import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportStepBuilder;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 import org.slf4j.Logger;
 
 import java.time.Duration;
@@ -96,16 +96,9 @@ public class LogCorrelationshipPrinter {
     }
 
     public static double durationMilliSecBetween(LocalDateTime requestTimeStamp, LocalDateTime responseTimeStamp) {
-        return Duration.between(
-                requestTimeStamp,
-                responseTimeStamp)
 
-                /*
-                 * 1000000D: Without D it does a integer division and the precision is lost
-                 * Note: Java does not have a get(millisec-tem[poral) as of now, only nano
-                 * or sec precision is supported
-                 */
-                .getNano()/1000000D;
+        Duration dur = Duration.between(requestTimeStamp, responseTimeStamp);
+        return dur.toMillis();
     }
 
     public static String createRelationshipId() {
