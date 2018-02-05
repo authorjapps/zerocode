@@ -3,12 +3,13 @@
 
 Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
 
-Use the powerful response assertions mechanism with just copy and paste of the JSONs. 
+Write **Consumer Contract Tests** and **End to End Application Integration Tests** at the **speed** of writing JUnit tests
+
+Use the **powerful response assertions** mechanism with just copy and paste of the JSONs. 
 
 Develop and test applications with TDD and BDD approach. 
 
 Latest maven release:
-
 ```
 <dependency>
     <groupId>org.jsmart</groupId>
