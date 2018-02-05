@@ -7,6 +7,17 @@ Use the powerful response assertions mechanism with just copy and paste of the J
 
 Develop and test applications with TDD and BDD approach. 
 
+Latest maven release:
+
+```
+<dependency>
+    <groupId>org.jsmart</groupId>
+    <artifactId>zerocode-rest-bdd</artifactId>
+    <version>1.1.23</version> <!-- But check here for latest: http://search.maven.org/#search%7Cga%7C1%7Czerocode -->
+</dependency>
+```
+
+
 Save yourselves from:
 <pre><code><del>
 Most BDD frameworks are too much verbose and contains many hierarchies till you reach the test code 
@@ -21,15 +32,6 @@ Because these statements are not actually code and the lesser they appear the be
 
 Look for examples below-
 
-Latest maven release:
-
-```
-<dependency>
-    <groupId>org.jsmart</groupId>
-    <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.20</version> <!-- Use the latest from mvn central -->
-</dependency>
-```
 
 See the [HelloWorldTest](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldTest.java)
 
