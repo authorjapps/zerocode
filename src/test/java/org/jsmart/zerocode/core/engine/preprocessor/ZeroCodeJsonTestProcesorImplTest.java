@@ -261,4 +261,21 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(failedReports.toString(), containsString("'$' with actual value '1077' did not match the expected value '1099'"));
         assertThat(failedReports.size(), is(1));
     }
+
+    @Test
+    public void testLocalDate_formatter() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "15_localdatetime/00_local_date_place_holders_unit_test.json",
+                ScenarioSpec.class
+        );
+
+        final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();
+
+        final List<String> placeHolders = jsonPreProcessor.getAllTokens(requestJsonAsString);
+        assertThat(placeHolders.size(), is(2));
+
+        final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
+        assertThat(resolvedRequestJson.indexOf("${LOCAL.DATE:yyyy-MM-dd}"), is(-1));
+        assertThat(resolvedRequestJson.indexOf("${LOCAL.DATE:yyyy}"), is(-1));
+    }
 }

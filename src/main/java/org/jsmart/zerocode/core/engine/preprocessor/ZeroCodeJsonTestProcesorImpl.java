@@ -21,6 +21,8 @@ import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,12 +44,14 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     private static final String RANDOM_NUMBER = "RANDOM.NUMBER";
     private static final String RANDOM_STRING_PREFIX = "RANDOM.STRING:";
     private static final String STATIC_ALPHABET = "STATIC.ALPHABET:";
+    private static final String LOCAL_DATE = "LOCAL.DATE:";
 
     private static final List<String> availableTokens = Arrays.asList(
             PREFIX_ASU,
             RANDOM_NUMBER,
             RANDOM_STRING_PREFIX,
-            STATIC_ALPHABET
+            STATIC_ALPHABET,
+            LOCAL_DATE
     );
 
     /*
@@ -91,6 +95,10 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                         int length = Integer.parseInt(runTimeToken.substring(STATIC_ALPHABET.length()));
                         parammap.put(runTimeToken, createStaticAlphaString(length));
 
+                    } else if (runTimeToken.startsWith(LOCAL_DATE)) {
+                        String formatPattern = runTimeToken.substring(LOCAL_DATE.length());
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
+                        parammap.put(runTimeToken, LocalDate.now().format(formatter));
                     }
                 }
             });
