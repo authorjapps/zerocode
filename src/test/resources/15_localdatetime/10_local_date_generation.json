@@ -8,8 +8,9 @@
       "request": {
         "headers": {
           "Content-Type": "application/json;charset=UTF-8",
-          "date_today": "${LOCAL.DATE:yyyy-MM-dd}",
-          "birth_day": "${LOCAL.DATE:yyyy}"
+          "date_today": "${LOCAL.DATE.TODAY:yyyy-MM-dd}",
+          "birth_year": "${LOCAL.DATE.TODAY:yyyy}",
+          "created_date_time": "${LOCAL.DATETIME.NOW:uuuu-MM-dd'T'HH:mm:ss.nnnnnnnnn}"
         },
         "body": {
         }
