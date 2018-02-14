@@ -43,6 +43,7 @@ public class LocalDateNTimeWithFormatTest {
     public void testLocalDate_format() throws Exception {
 
         LocalDate date = LocalDate.now();
+        // LocalDateTime date = LocalDateTime.now(); //<--- Also all assertions passes with LocalDateTime
         assertThat(date.toString(), notNullValue());
         System.out.println("#### date.toString(): " + date.toString()); //2018-02-11 : Default
 
@@ -89,6 +90,7 @@ public class LocalDateNTimeWithFormatTest {
      #### formattedString: 2018-02-11T21:31:21.41000000     // "uuuu-MM-dd'T'HH:mm:ss.n"
      #### formattedString: 2018-02-11T21:31:21.041000000    // "uuuu-MM-dd'T'HH:mm:ss.nnnnnnnnn"
      #### formattedString: 2018-02-11T21:31:21.77481041     // "uuuu-MM-dd'T'HH:mm:ss.A"
+     #### formattedString: 2018-02-14                       // "uuuu-MM-dd" or "yyyy-MM-dd"
 
      See here more:
      ==> https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
@@ -132,6 +134,11 @@ public class LocalDateNTimeWithFormatTest {
         System.out.println("#### formattedString: " + formattedString);
 
         formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.N"); //2018-02-11T21:25:14.055000000 <-- nine digits, extra 0
+        formattedString = localDateTime.format(formatter);
+        assertThat(formattedString, notNullValue());
+        System.out.println("#### formattedString: " + formattedString);
+
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); //2018-02-14 yyyy is same as uuuu in this example
         formattedString = localDateTime.format(formatter);
         assertThat(formattedString, notNullValue());
         System.out.println("#### formattedString: " + formattedString);

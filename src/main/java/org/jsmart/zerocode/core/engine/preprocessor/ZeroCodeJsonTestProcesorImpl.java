@@ -22,6 +22,7 @@ import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,14 +45,16 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     private static final String RANDOM_NUMBER = "RANDOM.NUMBER";
     private static final String RANDOM_STRING_PREFIX = "RANDOM.STRING:";
     private static final String STATIC_ALPHABET = "STATIC.ALPHABET:";
-    private static final String LOCAL_DATE = "LOCAL.DATE:";
+    private static final String LOCALDATE_TODAY = "LOCAL.DATE.TODAY:";
+    private static final String LOCALDATETIME_NOW = "LOCAL.DATETIME.NOW:";
 
     private static final List<String> availableTokens = Arrays.asList(
             PREFIX_ASU,
             RANDOM_NUMBER,
             RANDOM_STRING_PREFIX,
             STATIC_ALPHABET,
-            LOCAL_DATE
+            LOCALDATE_TODAY,
+            LOCALDATETIME_NOW
     );
 
     /*
@@ -95,10 +98,14 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                         int length = Integer.parseInt(runTimeToken.substring(STATIC_ALPHABET.length()));
                         parammap.put(runTimeToken, createStaticAlphaString(length));
 
-                    } else if (runTimeToken.startsWith(LOCAL_DATE)) {
-                        String formatPattern = runTimeToken.substring(LOCAL_DATE.length());
+                    } else if (runTimeToken.startsWith(LOCALDATE_TODAY)) {
+                        String formatPattern = runTimeToken.substring(LOCALDATE_TODAY.length());
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
                         parammap.put(runTimeToken, LocalDate.now().format(formatter));
+                    } else if (runTimeToken.startsWith(LOCALDATETIME_NOW)) {
+                        String formatPattern = runTimeToken.substring(LOCALDATETIME_NOW.length());
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
+                        parammap.put(runTimeToken, LocalDateTime.now().format(formatter));
                     }
                 }
             });

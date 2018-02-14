@@ -265,7 +265,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
     @Test
     public void testLocalDate_formatter() throws Exception {
         ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
-                "15_localdatetime/00_local_date_place_holders_unit_test.json",
+                "15_localdatetime/00_local_date_time_place_holders_unit_test.json",
                 ScenarioSpec.class
         );
 
@@ -275,7 +275,23 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(placeHolders.size(), is(2));
 
         final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
-        assertThat(resolvedRequestJson.indexOf("${LOCAL.DATE:yyyy-MM-dd}"), is(-1));
-        assertThat(resolvedRequestJson.indexOf("${LOCAL.DATE:yyyy}"), is(-1));
+        assertThat(resolvedRequestJson.indexOf("LOCAL.DATE.TODAY:"), is(-1));
+        assertThat(resolvedRequestJson.indexOf("${LOCAL.DATE.TODAY:yyyy}"), is(-1));
+    }
+
+    @Test
+    public void testLocalDateTime_formatter() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "15_localdatetime/00_local_date_time_place_holders_unit_test.json",
+                ScenarioSpec.class
+        );
+
+        final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();
+
+        final List<String> placeHolders = jsonPreProcessor.getAllTokens(requestJsonAsString);
+        assertThat(placeHolders.size(), is(2));
+
+        final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
+        assertThat(resolvedRequestJson.indexOf("LOCAL.DATETIME.NOW:"), is(-1));
     }
 }
