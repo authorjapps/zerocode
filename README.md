@@ -764,6 +764,7 @@ public class EnvPropertyHelloWorldTest {
 
 #### 22:
 #### LocalDate and LocalDateTime format example
+
 ```
 {
 	"id": 1000,
