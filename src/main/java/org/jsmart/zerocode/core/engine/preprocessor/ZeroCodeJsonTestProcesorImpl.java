@@ -35,8 +35,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
+
+    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeJsonTestProcesorImpl.class);
 
     /*
      * General place holders
@@ -70,6 +74,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_VALUE_GREATER_THAN = "$GT.";
     public static final String ASSERT_VALUE_LESSER_THAN = "$LT.";
     public static final String ASSERT_PATH_VALUE_NODE = "$";
+    private static final String RAW_BODY = ".rawBody";
 
     private final ObjectMapper mapper;
 
@@ -102,6 +107,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                         String formatPattern = runTimeToken.substring(LOCALDATE_TODAY.length());
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
                         parammap.put(runTimeToken, LocalDate.now().format(formatter));
+
                     } else if (runTimeToken.startsWith(LOCALDATETIME_NOW)) {
                         String formatPattern = runTimeToken.substring(LOCALDATETIME_NOW.length());
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
@@ -137,7 +143,20 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
         jsonPaths.forEach(thisPath -> {
             try {
-                paramMap.put(thisPath, JsonPath.read(scenarioState, thisPath));
+
+                if(thisPath.endsWith(RAW_BODY)){
+                    /**
+                     * In case the rawBody is used anywhere in the steps as $.step_name.response.rawBody,
+                     * then it must be escaped as the content was not a simple string convertible to json.
+                     */
+                    String escapedString = escapeJavaScript(JsonPath.read(scenarioState, thisPath));
+                    paramMap.put(thisPath, escapedString);
+
+                } else {
+                    paramMap.put(thisPath, JsonPath.read(scenarioState, thisPath));
+
+                }
+
             } catch (Exception e) {
                 throw new RuntimeException("\nJSON:" + jsonString + "\nPossibly comments in the JSON found or bad JSON path found: " + thisPath + ", Details: " + e);
             }
