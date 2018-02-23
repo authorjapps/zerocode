@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class SoapEndPointTest {
 
-//    @Ignore("This works. Ignored only to avoid build failure when the internet site is down")
+    @Ignore("This works. Ignored only to avoid build failure when the internet site is down")
     @Test
     @JsonTestCase("16_soap/soap_endpoint_soap_action_post_200.json")
     public void testSoapEndPointWith_SOAPAction() throws Exception {

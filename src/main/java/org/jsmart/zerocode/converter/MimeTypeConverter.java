@@ -1,8 +1,8 @@
 package org.jsmart.zerocode.converter;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
-import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesorImpl;
 import org.json.XML;
 
 import javax.xml.transform.OutputKeys;
@@ -34,7 +34,7 @@ public class MimeTypeConverter implements Converter {
 
         LOGGER.info("\n------------------------- XML -----------------------------\n"
                 + xmlFormated +
-                           "\n------------------------- * -----------------------------\n");
+                "\n------------------------- * -----------------------------\n");
 
         String jsonNotPretty = XML.toJSONObject(xmlContent).toString();
 
@@ -48,6 +48,30 @@ public class MimeTypeConverter implements Converter {
 
     }
 
+    /**
+     * Converts input JSON string (usually escaped e.g. "{\"a\": \"b\", \"active\": true}" ) to JSON block
+     * See also- method jsonBlockToJson for unescaped json to json block.
+     *
+     * @param jsonString
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public Object jsonToJson(String jsonString) throws IOException {
+        return mapper.readValue(jsonString, JsonNode.class);
+    }
+
+    /**
+     * Converts JSON Block({"a": "b", "active": true}) to JSON block
+     * See also- jsonNodeToJson which is identical to jsonBlockToJson.
+     *
+     * @param jsonNode
+     * @return
+     * @throws IOException
+     */
+    public Object jsonBlockToJson(JsonNode jsonNode) throws IOException {
+        return jsonNode;
+    }
 
     public static String prettyFormat(String input) {
         return prettyFormat(input, 2);

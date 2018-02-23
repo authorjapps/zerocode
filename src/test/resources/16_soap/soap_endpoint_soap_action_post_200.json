@@ -8,8 +8,8 @@
             "request": {
                 "headers": {
                     "Content-Type": "text/xml; charset=utf-8",
-                    "SOAPAction": "\"http://www.webserviceX.NET/ConversionRate\""
-                    //"SOAPAction": "http://www.webserviceX.NET/ConversionRate"
+                    //"SOAPAction": "\"http://www.webserviceX.NET/ConversionRate\""
+                    "SOAPAction": "http://www.webserviceX.NET/ConversionRate"
                 },
                 "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <ConversionRate xmlns=\"http://www.webserviceX.NET/\">\n      <FromCurrency>AFA</FromCurrency>\n      <ToCurrency>GBP</ToCurrency>\n    </ConversionRate>\n  </soap:Body>\n</soap:Envelope>"
             },
@@ -24,18 +24,19 @@
             "operation": "xmlToJson",
             "request": "${$.invoke_currency_conversion.response.rawBody}",
             "assertions": {
-                "soap:Envelope" : {
-                    "xmlns:xsd" : "http://www.w3.org/2001/XMLSchema",
-                    "xmlns:soap" : "http://schemas.xmlsoap.org/soap/envelope/",
-                    "xmlns:xsi" : "http://www.w3.org/2001/XMLSchema-instance",
-                    "soap:Body" : {
-                        "ConversionRateResponse" : {
-                            "xmlns" : "http://www.webserviceX.NET/",
-                            "ConversionRateResult" : -1
+                "soap:Envelope": {
+                    "xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+                    "xmlns:soap": "http://schemas.xmlsoap.org/soap/envelope/",
+                    "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                    "soap:Body": {
+                        "ConversionRateResponse": {
+                            "xmlns": "http://www.webserviceX.NET/",
+                            "ConversionRateResult": -1
                         }
                     }
                 }
             }
         }
+
     ]
 }

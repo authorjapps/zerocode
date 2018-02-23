@@ -19,6 +19,12 @@ public class ConverterEndToEndTest {
     
     }
 
+    @Test
+    @JsonTestCase("17_xml_to_json_converter/20_json_to_json.json")
+    public void testJsonToJson_runTime() throws Exception {
+
+    }
+
 }
 
 

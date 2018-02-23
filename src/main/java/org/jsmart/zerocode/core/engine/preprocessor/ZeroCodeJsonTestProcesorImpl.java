@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -153,7 +154,17 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     paramMap.put(thisPath, escapedString);
 
                 } else {
-                    paramMap.put(thisPath, JsonPath.read(scenarioState, thisPath));
+                    // if it is a json block/node or array, this return value is LinkedHashMap.
+                    if(JsonPath.read(scenarioState, thisPath) instanceof LinkedHashMap){
+                        final String pathValue = mapper.writeValueAsString(JsonPath.read(scenarioState, thisPath));
+                        String escapedPathValue = escapeJavaScript(pathValue);
+                        paramMap.put(thisPath, escapedPathValue);
+
+                    } else {
+                        // Usual flow
+                        paramMap.put(thisPath, JsonPath.read(scenarioState, thisPath));
+
+                    }
 
                 }
 
