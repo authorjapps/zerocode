@@ -1,19 +1,25 @@
-package org.jsmart.zerocode.core.httpclient.ssl;
+package org.jsmart.zerocode.core.httpclient.soap;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.httpclient.RestEasyDefaultHttpClient;
 import org.jsmart.zerocode.core.utils.HelperJsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +35,31 @@ import static java.lang.String.format;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
 
-public class SslTrustHttpClient implements BasicHttpClient {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SslTrustHttpClient.class);
+public class SoapCorporateProxySslHttpClient implements BasicHttpClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SoapCorporateProxySslHttpClient.class);
+
+    @Inject
+    @Named("corporate.proxy.host")
+    private String proxyHost;
+
+    @Inject
+    @Named("corporate.proxy.port")
+    private int proxyPort;
+
+    @Inject
+    @Named("corporate.proxy.username")
+    private String proxyUserName;
+
+    @Inject
+    @Named("corporate.proxy.password")
+    private String proxyPassword;
 
     private Object COOKIE_JSESSIONID_VALUE;
 
     @Override
     public Response execute(String httpUrl, String methodName, Map<String, Object> headers, Map<String, Object> queryParams, Object body) throws Exception {
 
-        LOGGER.info("###Used SSL Enabled Http Client");
+        LOGGER.info("###SOAP Http Client with Corporate Proxy enabled via SSL");
 
         /** ---------------------------
          * Get the request body content
@@ -126,12 +148,31 @@ public class SslTrustHttpClient implements BasicHttpClient {
 
         CookieStore cookieStore = new BasicCookieStore();
 
+        CredentialsProvider credsProvider = createProxyCredentialsProvider(proxyHost, proxyPort, proxyUserName, proxyPassword);
+
+        HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+
         return HttpClients.custom()
                 .setSSLContext(sslContext)
                 .setSSLHostnameVerifier(new NoopHostnameVerifier())
                 .setDefaultCookieStore(cookieStore)
+                .setDefaultCredentialsProvider(credsProvider)
+                .setProxy(proxy)
                 .build();
     }
+
+    private CredentialsProvider createProxyCredentialsProvider(String proxyHost, int proxyPort, String proxyUserName, String proxyPassword) {
+
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+
+        credsProvider.setCredentials(
+                new AuthScope(proxyHost, proxyPort),
+                new UsernamePasswordCredentials(proxyUserName, proxyPassword));
+
+        return credsProvider;
+
+    }
+
 
     private String setQueryParams(String httpUrl, Map<String, Object> queryParams) {
         String qualifiedQueryParams = createQualifiedQueryParams(queryParams);

@@ -1,5 +1,7 @@
 ## REST BDD - ZeroCode Testing Framework
-[![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode)
+[![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) 
+
+[![Github Pre-Releases](https://img.shields.io/github/downloads-pre/atom/atom/latest/total.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) [![PyPI](https://img.shields.io/pypi/status/Django.svg)]() [![GitHub issue comments](https://img.shields.io/github/issues/detail/comments/badges/shields/979.svg)](https://github.com/authorjapps/zerocode/issues) [![zero code zerocode hello world](https://img.shields.io/badge/automation-testing-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28)
 
 Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
 
@@ -14,10 +16,10 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.23</version> <!-- But check here for latest: http://search.maven.org/#search%7Cga%7C1%7Czerocode -->
+    <version>1.1.25</version> 
 </dependency>
 ```
-
+But check here for latest- https://github.com/authorjapps/zerocode/releases -or- http://search.maven.org/#search%7Cga%7C1%7Czerocode
 
 Save yourselves from:
 <pre><code><del>
@@ -100,6 +102,9 @@ And the "hello_world_get.json" is as below:
 - [Passing Headers to the REST API](#20) 
 - [Setting Jenkins env propperty and picking environment specific properties file](#21)
 - [LocalDate and LocalDateTime format example](#22)
+- [SOAP method invocation example using xml input](#23)
+- [SOAP method invocation where Corporate Proxy enabled](#24)
+- [MIME Type Converters- XML to JSON, prettyfy XML etc](#25)
 - [General place holders and assertion place holder table](#99)
 
 
@@ -663,6 +668,20 @@ See here how to Use SSL HttpClient : [See usage of @UseHttpClient](https://githu
 
 See here custom one : [See usage of @UseHttpClient](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore/ZeroCodeUnitRunnerWithCustomHttpClient.java)
 
+e.g.
+```
+@UseHttpClient(SslTrustHttpClient.class)
+@TargetEnv("hosts_ci.properties")
+@RunWith(ZeroCodeUnitRunner.class)
+public class SslTrustUseHttpClientTest {
+
+    @Test
+    @JsonTestCase("foo/bar/test_case_file.json")
+    public void testASmartTestCase_createUpdate() throws Exception {
+
+    }
+}
+```
 
 #### 17:
 #### Externalizing RESTful host and port into properties file(s).
@@ -763,6 +782,7 @@ public class EnvPropertyHelloWorldTest {
 
 
 #### 22:
+
 #### LocalDate and LocalDateTime format example
 
 ```
@@ -805,8 +825,8 @@ output: 2018-02-11T21:31:21.77481041     // "uuuu-MM-dd'T'HH:mm:ss.A"
 output: 2018-02-14                       // "uuuu-MM-dd" or "yyyy-MM-dd"
 Default: date.toString(): 2018-02-11T21:31:20.989          // .toString()
 ```
-### See here more:
-==> https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+### See here more-
+https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 
 ```
      H       hour-of-day (0-23)          number            0
@@ -829,8 +849,349 @@ All letters 'A' to 'Z' and 'a' to 'z' are reserved as pattern letters. The follo
  d       day-of-month                number            10
 ```
 
-#### 99:
+#### 23:
 
+#### SOAP method invocation example with xml input
+
+You can invoke SOAP as below which is already supported by zerocode lib, or you can write your own SOAP executor using Java(if 
+you want to, but you don't have to). 
+(If you want- Then, in the README file go to section -> "Calling java methods(apis) for specific tasks" )
+
+```
+{
+    "scenarioName": "GIVEN a SOAP end poinr WHEN I invoke a method with a request XML, THEN I will ge the SOAP response in XML",
+    "steps": [
+        {
+            "name": "invoke_currency_conversion",
+            "url": "http://<target-domain.com>/<path etc>",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "text/xml; charset=utf-8",
+                    "SOAPAction": "<get this from WSDL file, this has the port or method or action name in the url>"
+                    //"SOAPAction": "\"<or wrap it in double quotes as some SOAP servers understand it>\""
+                },
+                "body": "escaped request XML message ie the soap:Envelope message"
+                -or- // pick from- src/test/resources/soap_requests/xml_files/soap_request.xml
+                "body": "${XML.FILE:soap_requests/xml_files/soap_request.xml}" 
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+    ]
+}
+```
+
+e.g. below-
+This example invokes a free SOAP service over internet.
+Note:
+If this service is down, the invocation might fail.
+So better to test against an available SOAP service to you or a local stub service.
+
+```
+{
+    "scenarioName": "GIVEN a SOAP end poinr WHEN I invoke a method with a request XML, THEN I will ge the SOAP response in XML",
+    "steps": [
+        {
+            "name": "invoke_currency_conversion",
+            "url": "http://www.webservicex.net/CurrencyConvertor.asmx",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "text/xml; charset=utf-8",
+                    "SOAPAction": "http://www.webserviceX.NET/ConversionRate"
+                    //"SOAPAction": "\"http://www.webserviceX.NET/ConversionRate\""
+                },
+                "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <ConversionRate xmlns=\"http://www.webserviceX.NET/\">\n      <FromCurrency>AFA</FromCurrency>\n      <ToCurrency>GBP</ToCurrency>\n    </ConversionRate>\n  </soap:Body>\n</soap:Envelope>"
+                // -or- 
+                // "body": "${XML.FILE:soap_requests/xml_files/soap_request.xml}"
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+    ]
+}
+```
+
+You should received the below-
+```
+Response:
+{
+  "status" : 200,
+  "headers" : {
+    "Date" : [ "Fri, 16 Feb 2018 05:38:27 GMT" ],
+    "Server" : [ "Microsoft-IIS/7.0" ]
+  },
+  
+  "rawBody" : "<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body><ConversionRateResponse xmlns=\"http://www.webserviceX.NET/\"><ConversionRateResult>-1</ConversionRateResult></ConversionRateResponse></soap:Body></soap:Envelope>"
+}
+*responseTimeStamp:2018-02-16T05:38:35.254
+*Response delay:653.0 milli-secs
+ ```
+
+
+#### 24:
+#### SOAP method invocation where Corporate Proxy enabled
+You need to use a HttpClient ie override the BasicHttpClient and set proxies to it as below-
+```
+        Step-1)
+        CredentialsProvider credsProvider = createProxyCredentialsProvider(proxyHost, proxyPort, proxyUserName, proxyPassword);
+
+        Step-2)
+        HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+ 
+        Step-3) method Step-1
+        private CredentialsProvider createProxyCredentialsProvider(String proxyHost, int proxyPort, String proxyUserName, String proxyPassword) {
+
+                CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        
+                credsProvider.setCredentials(
+        
+                        new AuthScope(proxyHost, proxyPort),
+        
+                        new UsernamePasswordCredentials(proxyUserName, proxyPassword));
+        
+                return credsProvider;
+        }
+ 
+        Step-4) 
+        Set the values from Step-1 and Step-2
+        
+        HttpClients.custom()
+
+                .setSSLContext(sslContext)
+
+                .setSSLHostnameVerifier(new NoopHostnameVerifier())
+
+                .setDefaultCookieStore(cookieStore)
+
+                .setDefaultCredentialsProvider(credsProvider)    //<------------- From Step-1
+
+                .setProxy(proxy)                                 //<------------- From Step-2
+
+                .build();
+```
+
+You can inject the Corporate Proxy details to the custom {{HttpClient}} li below from a config file simply by annotating 
+the key names from the host config file which is used by the runner for mentioning host and port.
+e.g. below:
+See an example here-
+https://github.com/authorjapps/zerocode/blob/master/src/main/java/org/jsmart/zerocode/core/httpclient/soap/SoapCorporateProxySslHttpClient.java
+
+Usage example here:
+https://github.com/authorjapps/zerocode/blob/master/src/test/java/org/jsmart/zerocode/core/soap/SoapCorpProxySslHttpClientTest.java
+
+How to use?
+```
+@UseHttpClient(SoapCorporateProxySslHttpClient.class)
+@TargetEnv("soap_host_with_corp_proxy.properties")
+@RunWith(ZeroCodeUnitRunner.class)
+public class SoapCorpProxySslHttpClientTest {
+
+    @Ignore
+    @Test
+    @JsonTestCase("foo/bar/soap_test_case_file.json")
+    public void testSoapWithCorpProxyEnabled() throws Exception {
+
+    }
+}
+```
+
+Explanation below- 
+
+```
+@TargetEnv("hello_world_host.properties")
+@RunWith(ZeroCodeUnitRunner.class)
+public class HelloWorldTest {
+     // @Test
+     // tests here
+}
+
+soap_host_with_corp_proxy.properties
+---------------------------
+# Web Server host and port
+restful.application.endpoint.host=https://soap-server-host/ServiceName
+restful.application.endpoint.port=443
+
+# Web Service context; Leave it blank in case you do not have a common context
+restful.application.endpoint.context=
+
+#sample test purpose - if you remove this from ehre, then make sure to remove from Java file
+corporate.proxy.host=http://exam.corporate-proxy-host.co.uk
+corporate.proxy.port=80
+corporate.proxy.username=HAVYSTARUSER
+corporate.proxy.password=i#am#here#for#soap#
+
+
+Your HttpClient:
+----------------
+See-
+https://hc.apache.org/httpcomponents-client-ga/httpclient/examples/org/apache/http/examples/client/ClientProxyAuthentication.java
+
+public class YourHttpClient {
+
+    @Inject
+    @Named("corporate.proxy.host")
+    private String proxyHost;
+
+    @Inject
+    @Named("corporate.proxy.port")
+    private String proxyPort;
+
+    @Inject
+    @Named("corporate.proxy.username")
+    private String proxyUserName;
+
+    @Inject
+    @Named("corporate.proxy.password")
+    private String proxyPassword;
+
+    // Build the client using these.
+}
+```
+
+#### 25:
+#### MIME Type Converters- XML to JSON, prettyfy XML etc
+e.g.
+##### xmlToJson
+```
+{
+            "name": "xml_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "xmlToJson",
+            "request": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <ConversionRate xmlns=\"http://www.webserviceX.NET/\">\n      <FromCurrency>AFA</FromCurrency>\n      <ToCurrency>GBP</ToCurrency>\n    </ConversionRate>\n  </soap:Body>\n</soap:Envelope>",
+            "assertions": {
+                "soap:Envelope": {
+                    "xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+                    "xmlns:soap": "http://schemas.xmlsoap.org/soap/envelope/",
+                    "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                    "soap:Body": {
+                        "ConversionRate": {
+                            "xmlns": "http://www.webserviceX.NET/",
+                            "FromCurrency": "AFA",
+                            "ToCurrency": "GBP"
+                        }
+                    }
+                }
+            }
+        }
+```
+
+##### jsonToJson
+Various input and output. Depending upon the usecase, you can use that method.
+
+```
+{
+    "scenarioName": "Given a json string or json block, convert to equivalent json block",
+    "steps": [
+        {
+            "name": "json_block_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "jsonBlockToJson",
+            "request": {
+                "headers": {
+                    "hdrX": "valueX"
+                },
+                "body": {
+                    "id": 1001,
+                    "addresses": [
+                        {
+                            "postCode": "PXY"
+                        },
+                        {
+                            "postCode": "LMZ DDD"
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "headers": {
+                    "hdrX": "valueX"
+                },
+                "body": {
+                    "id": 1001,
+                    "addresses": [
+                        {
+                            "postCode": "PXY"
+                        },
+                        {
+                            "postCode": "${$.json_block_to_json.request.body.addresses[1].postCode}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "json_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "jsonToJson",
+            "request": "${$.json_block_to_json.request.headers}",
+            "assertions": {
+                "hdrX": "valueX"
+            }
+        },
+        {
+            "name": "body_json_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "jsonToJson",
+            "request": "${$.json_block_to_json.request.body}",
+            "assertions": {
+                "id": 1001,
+                "addresses": [
+                    {
+                        "postCode": "PXY"
+                    },
+                    {
+                        "postCode": "LMZ DDD"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "json_node_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "jsonBlockToJson",
+            "request": {
+                "headers": {
+                    "hdrX": "valueX"
+                },
+                "body": {
+                    "id": 1001,
+                    "addresses": [
+                        {
+                            "postCode": "PXY"
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "headers": {
+                    "hdrX": "valueX"
+                },
+                "body": {
+                    "id": 1001,
+                    "addresses": [
+                        {
+                            "postCode": "${$.json_block_to_json.request.body.addresses[0].postCode}"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
+```
+Available methods are- 
+* xmlToJson
+* jsonToJson
+* jsonBlockToJson
+* jsonNodeToJson
+* prettyXml
+
+
+#### 99:
 #### Place holders for End Point Mocking
 
 | Place Holder  | Output        | More  |
