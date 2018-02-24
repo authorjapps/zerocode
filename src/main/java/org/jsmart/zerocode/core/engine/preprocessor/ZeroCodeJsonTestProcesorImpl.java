@@ -18,6 +18,7 @@ import org.jsmart.zerocode.core.engine.assertion.FieldHasSubStringValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldIsNotNullAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldIsNullAsserter;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
+import org.jsmart.zerocode.core.utils.SmartUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -52,6 +53,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     private static final String STATIC_ALPHABET = "STATIC.ALPHABET:";
     private static final String LOCALDATE_TODAY = "LOCAL.DATE.TODAY:";
     private static final String LOCALDATETIME_NOW = "LOCAL.DATETIME.NOW:";
+    private static final String XML_FILE = "XML.FILE:";
 
     private static final List<String> availableTokens = Arrays.asList(
             PREFIX_ASU,
@@ -59,7 +61,8 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
             RANDOM_STRING_PREFIX,
             STATIC_ALPHABET,
             LOCALDATE_TODAY,
-            LOCALDATETIME_NOW
+            LOCALDATETIME_NOW,
+            XML_FILE
     );
 
     /*
@@ -113,6 +116,12 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                         String formatPattern = runTimeToken.substring(LOCALDATETIME_NOW.length());
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
                         parammap.put(runTimeToken, LocalDateTime.now().format(formatter));
+                    } else if (runTimeToken.startsWith(XML_FILE)) {
+                        String xmlFileResource = runTimeToken.substring(XML_FILE.length());
+                        final String xmlString = getXmlContent(xmlFileResource);
+                        // Used escapeJavaScript, do not use escapeXml as it replaces
+                        // with GT LT etc ie what exactly you don't want
+                        parammap.put(runTimeToken, escapeJavaScript(xmlString));
                     }
                 }
             });
@@ -148,7 +157,8 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 if(thisPath.endsWith(RAW_BODY)){
                     /**
                      * In case the rawBody is used anywhere in the steps as $.step_name.response.rawBody,
-                     * then it must be escaped as the content was not a simple string convertible to json.
+                     * then it must be escaped as the content was not a simple JSON string to be able
+                     * to convert to json. Hence without throwing exception, treat as string content.
                      */
                     String escapedString = escapeJavaScript(JsonPath.read(scenarioState, thisPath));
                     paramMap.put(thisPath, escapedString);
@@ -385,6 +395,16 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
     public static List<String> getAvailableTokens() {
         return availableTokens;
+    }
+
+    public String getXmlContent(String xmlFileResource){
+        try {
+            return SmartUtils.readJsonAsString(xmlFileResource);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Oops! Problem occurred while reading the XML file '" + xmlFileResource
+                    + "', details:" + e);
+        }
     }
 
 }

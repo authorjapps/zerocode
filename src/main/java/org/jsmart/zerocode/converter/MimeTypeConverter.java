@@ -30,11 +30,10 @@ public class MimeTypeConverter implements Converter {
 
     @Override
     public Object xmlToJson(String xmlContent) {
-        final String xmlFormated = prettyFormat(xmlContent);
 
-        LOGGER.info("\n------------------------- XML -----------------------------\n"
-                + xmlFormated +
-                "\n------------------------- * -----------------------------\n");
+        // Just print it so that anyone can pick the
+        // formatted xml for their usage from the console.
+        prettyXml(xmlContent);
 
         String jsonNotPretty = XML.toJSONObject(xmlContent).toString();
 
@@ -50,7 +49,9 @@ public class MimeTypeConverter implements Converter {
 
     /**
      * Converts input JSON string (usually escaped e.g. "{\"a\": \"b\", \"active\": true}" ) to JSON block
-     * See also- method jsonBlockToJson for unescaped json to json block.
+     * See also-
+     * - method jsonBlockToJson for unescaped json to json block.
+     * - method jsonNodeToJson for unescaped json to json block.
      *
      * @param jsonString
      * @return
@@ -73,11 +74,18 @@ public class MimeTypeConverter implements Converter {
         return jsonNode;
     }
 
-    public static String prettyFormat(String input) {
-        return prettyFormat(input, 2);
+    public static String prettyXml(String input) {
+
+        final String formattedXml = prettyXmlWithIndentType(input, 2);
+
+        LOGGER.info("\n--------------------- Pretty XML -------------------------\n"
+                + formattedXml +
+                "\n------------------------- * -----------------------------\n");
+
+        return formattedXml;
     }
 
-    public static String prettyFormat(String originalXml, int indentType) {
+    public static String prettyXmlWithIndentType(String originalXml, int indentType) {
         try {
             Source xmlInput = new StreamSource(new StringReader(originalXml));
             StringWriter stringWriter = new StringWriter();
