@@ -1,5 +1,7 @@
 ## REST BDD - ZeroCode Testing Framework
-[![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode)
+[![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) 
+
+[![Github Pre-Releases](https://img.shields.io/github/downloads-pre/atom/atom/latest/total.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) [![PyPI](https://img.shields.io/pypi/status/Django.svg)]() [![GitHub issue comments](https://img.shields.io/github/issues/detail/comments/badges/shields/979.svg)](https://github.com/authorjapps/zerocode/issues) [![zero code zerocode hello world](https://img.shields.io/badge/automation-testing-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28)
 
 Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
 
