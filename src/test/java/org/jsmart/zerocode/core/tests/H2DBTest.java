@@ -20,7 +20,7 @@ public class H2DBTest {
         String createTableSql=  "CREATE TABLE IF NOT EXISTS CUSTOMER (id number, name varchar(20))";
         statement.executeUpdate(createTableSql);
 
-        String insertSql= "INSERT into CUSTOMER values (1, 'Nirmal')";
+        String insertSql= "INSERT into CUSTOMER values (1, 'Jeff Bejo')";
         statement.executeUpdate(insertSql);
 
         statement.close();
