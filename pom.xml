@@ -69,6 +69,7 @@
         <commons-io.version>2.4</commons-io.version>
         <micro-simulator.version>1.1.10</micro-simulator.version>
         <httpclient.version>4.5</httpclient.version>
+        <h2.db.version>1.4.191</h2.db.version>
 
         <!-- maven plugin build related  -->
         <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
@@ -191,7 +192,12 @@
             <version>${micro-simulator.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.db.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
