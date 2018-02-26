@@ -1,7 +1,36 @@
-## REST BDD - ZeroCode Testing Framework
-[![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) 
+Zerocode
+====
+
+**Latest release: [1.1.26](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
+
+**Description:** Zerocode makes test scenario automation an effortless job. See [HelloWorldTest](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldTest.java) code. <br/>
+**Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br
+/>
+**Documentation and Usage:** [Topics and Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
+**License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
+**Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
+**Motivation:** [Motivation](https://github.com/authorjapps/zerocode/wiki/Motivation)
+
+Keep things simple, Zerocode alleviates the need for writing code for test assertions and boiler plate wrappers. It empowers automation testers to build up BDD scenario steps effortlessly. The repititive tasks of everyday automation job have been taken care inside framework smartly allowing the testers to focus on business scenarios, acceptance criterias. 
 
 [![Github Pre-Releases](https://img.shields.io/github/downloads-pre/atom/atom/latest/total.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) [![PyPI](https://img.shields.io/pypi/status/Django.svg)]() [![GitHub issue comments](https://img.shields.io/github/issues/detail/comments/badges/shields/979.svg)](https://github.com/authorjapps/zerocode/issues) [![zero code zerocode hello world](https://img.shields.io/badge/automation-testing-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28)
+
+Zerocode makes the tests easy to understand, easy to change and easy to share and migrate between environments. Your tests will not be dependent on a perticular tester or coding style anymore. Tests become standarised and easily maintainable by the team or the new comers.
+
+Zerocode at its core uses powerful libs like `Google Jackson` for JSON assertions, `Apache HttpClient` for invoking REST and SOAP APIs, and Spring style place holders `${JSON Path}` for result assertions. It does not limit you to use Apache HttpClient, it enables you to easily override the framework behaviour with `@UseHttpClient` to use e.g. UniRest HttpClient, RestEasy HttpClient or any of your custom HttpClient where you might have configured for retry-mechanism that your project needs. 
+
+Zerocode gives you out of the box SSL enabled Http Client and SOAP Client along with the optional MIME type converters e.g. XML to JSON if needed to increase test readability. It provides you with the options to configure Corporate Proxy at runtime to authenticate API invocations, simply by putting `proxy-host, port, username, password` etc into the config file. 
+
+Zerocode has built general functionality which enables you to extend and enrich the framework behaviour by simply executing external Java methods to achieve busines goals rather than putting every feature into the core framework.
+
+Zerocode helps you to design better Test Cases for your business feature, maintain and update easily to avoid sleepless nights. It is built on extending the Junit core runners. You simply annotate your test method with JUnit `@Test` and run like unit tests as well as it provides `Suite` Runner to run the the entire test package.
+
+Zerocode makes the tests independent, complete and structured. It prints the request, response into the console as well as to the log file in the `/target` folder in a human readable format along with producing report in terms of CSV and Spike Graphical Chat for each scenario steps. In that point every stake holder can understand the life cycle of a test case.
+
+Zerocode aims to make development and testing easier and faster, not harder and slower. Allows both Dev team and Test team to contribute towards better test cases which finally makes a product better quality. Even the managers and BAs can read and understand the tests. Zerocode goes the extra mile to generate helpful success and failure messages to trace the exact tests.
+
+
+## REST BDD Testing Framework
 
 Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
 
@@ -16,27 +45,19 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.25</version> 
+    <version>1.1.26</version> 
 </dependency>
 ```
-But check here for latest- https://github.com/authorjapps/zerocode/releases -or- http://search.maven.org/#search%7Cga%7C1%7Czerocode
+But check here for the latest- 
+https://github.com/authorjapps/zerocode/releases -or- [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Czerocode)
 
-Save yourselves from:
 <pre><code><del>
-Most BDD frameworks are too much verbose and contains many hierarchies till you reach the test code 
-to understand what exactly it does.
-</del></code></pre>
-
-Save yourselves from:
-<pre><code><del>
-Morever the tester or developer is lost when he traverses to and fro of the Given/When/Then statements. 
-Because these statements are not actually code and the lesser they appear the better it is.
+Testing no more a harder, slower and sleepless task
 </del></code></pre>
 
 Look for examples below-
 
-
-See the [HelloWorldTest](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldTest.java)
+See the [HelloWorldTest](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldTest.java) and [more](https://github.com/authorjapps/zerocode-hello-world/tree/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldmore)
 
 
 ### Easy! Simple! Readable! JSON Based!
