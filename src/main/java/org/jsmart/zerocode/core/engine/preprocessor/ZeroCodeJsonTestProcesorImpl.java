@@ -37,7 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
+import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
@@ -119,9 +119,9 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     } else if (runTimeToken.startsWith(XML_FILE)) {
                         String xmlFileResource = runTimeToken.substring(XML_FILE.length());
                         final String xmlString = getXmlContent(xmlFileResource);
-                        // Used escapeJavaScript, do not use escapeXml as it replaces
+                        // Used escapeJava, do not use escapeXml as it replaces
                         // with GT LT etc ie what exactly you don't want
-                        parammap.put(runTimeToken, escapeJavaScript(xmlString));
+                        parammap.put(runTimeToken, escapeJava(xmlString));
                     }
                 }
             });
@@ -159,15 +159,18 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                      * In case the rawBody is used anywhere in the steps as $.step_name.response.rawBody,
                      * then it must be escaped as the content was not a simple JSON string to be able
                      * to convert to json. Hence without throwing exception, treat as string content.
+                     *
+                     * Use escapeJava, do not use escapeJavaScript, as escapeJavaScript also escapes single quotes
+                     * which in turn throws Jackson Exception
                      */
-                    String escapedString = escapeJavaScript(JsonPath.read(scenarioState, thisPath));
+                    String escapedString = escapeJava(JsonPath.read(scenarioState, thisPath));
                     paramMap.put(thisPath, escapedString);
 
                 } else {
                     // if it is a json block/node or array, this return value is LinkedHashMap.
                     if(JsonPath.read(scenarioState, thisPath) instanceof LinkedHashMap){
                         final String pathValue = mapper.writeValueAsString(JsonPath.read(scenarioState, thisPath));
-                        String escapedPathValue = escapeJavaScript(pathValue);
+                        String escapedPathValue = escapeJava(pathValue);
                         paramMap.put(thisPath, escapedPathValue);
 
                     } else {

@@ -1,0 +1,23 @@
+{
+    "scenarioName": "Given xml input Give me json output without escaping single quotes",
+    "steps": [
+        {
+            "name": "xml_to_json",
+            "url": "org.jsmart.zerocode.converter.SoapMocker",
+            "operation": "soapResponseXml",
+            "request": "anything",
+            "assertions": {
+                "rawBody" : "<?xml version='1.0' encoding=\"UTF-8\"?><address>Street 123</address>"
+            }
+        },
+        {
+            "name": "xml_to_json_now",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "xmlToJson",
+            "request": "${$.xml_to_json.response.rawBody}",
+            "assertions": {
+                "address" : "Street 123"
+            }
+        }
+    ]
+}

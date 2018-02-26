@@ -7,6 +7,8 @@ import org.jsmart.zerocode.core.di.ObjectMapperProvider;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
+import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -19,6 +21,20 @@ public class MimeTypeConverterTest {
     @Before
     public void setUpStuffs() throws Exception {
         xmlToJsonConverter = new MimeTypeConverter(mapper);
+    }
+
+    @Test
+    public void testXmlToJsonWithSingleQuote_willNotFail() throws Exception {
+
+        String xml = "<?xml version='1.0' encoding=\"UTF-8\"?><address>Street 123</address>";
+        String escapedOut = escapeJavaScript(xml);
+        assertThat(escapedOut, containsString("<?xml version=\\'1.0\\' encoding=\\\"UTF-8\\\"?><address>Street 123<\\/address>"));
+
+        escapedOut = escapeJava(xml);
+        assertThat(escapedOut, containsString("<?xml version='1.0' encoding=\\\"UTF-8\\\"?><address>Street 123</address>"));
+
+        System.out.println("escapedOut: " + escapedOut);
+
     }
 
     @Test
