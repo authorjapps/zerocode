@@ -38,7 +38,6 @@ import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
-import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
@@ -120,9 +119,9 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     } else if (runTimeToken.startsWith(XML_FILE)) {
                         String xmlFileResource = runTimeToken.substring(XML_FILE.length());
                         final String xmlString = getXmlContent(xmlFileResource);
-                        // Used escapeJavaScript, do not use escapeXml as it replaces
+                        // Used escapeJava, do not use escapeXml as it replaces
                         // with GT LT etc ie what exactly you don't want
-                        parammap.put(runTimeToken, escapeJavaScript(xmlString));
+                        parammap.put(runTimeToken, escapeJava(xmlString));
                     }
                 }
             });
@@ -171,7 +170,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     // if it is a json block/node or array, this return value is LinkedHashMap.
                     if(JsonPath.read(scenarioState, thisPath) instanceof LinkedHashMap){
                         final String pathValue = mapper.writeValueAsString(JsonPath.read(scenarioState, thisPath));
-                        String escapedPathValue = escapeJavaScript(pathValue);
+                        String escapedPathValue = escapeJava(pathValue);
                         paramMap.put(thisPath, escapedPathValue);
 
                     } else {
