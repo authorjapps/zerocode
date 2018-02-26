@@ -14,6 +14,12 @@ public class ConverterEndToEndTest {
      */
 
     @Test
+    @JsonTestCase("17_xml_to_json_converter/30_xml_to_json_single_quote_happy.json")
+    public void testConvertXmlWith_singleQuoteuote() throws Exception {
+
+    }
+
+    @Test
     @JsonTestCase("17_xml_to_json_converter/10_xml_to_json_format_happy.json")
     public void testConverterAt_runTime() throws Exception {
     
