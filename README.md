@@ -9,7 +9,7 @@ Zerocode
 **Documentation and Usage:** [Topics and Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
-**Motivation:** [Motivation](https://github.com/authorjapps/zerocode/wiki/Motivation)
+**Motivation:** [Motivation](https://github.com/authorjapps/zerocode/wiki/About-Motivation)
 
 Keep things simple, Zerocode alleviates the need for writing code for test assertions and boiler plate wrappers. It empowers automation testers to build up BDD scenario steps effortlessly. The repititive tasks of everyday automation job have been taken care inside framework smartly allowing the testers to focus on business scenarios, acceptance criterias. 
 
