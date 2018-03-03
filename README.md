@@ -1,7 +1,7 @@
 Zerocode
 ====
 
-**Latest release: [1.1.26](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
+**Latest release: [1.1.27](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
 **Description:** Zerocode makes test scenario automation an effortless job. See [HelloWorldTest](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldTest.java) code. <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br
@@ -11,7 +11,7 @@ Zerocode
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **Motivation:** [Motivation](https://github.com/authorjapps/zerocode/wiki/Motivation)
 
-Keep things simple, Zerocode alleviates the need for writing code for test assertions and boiler plate wrappers. It enables you to assert the result as JSON, `as it is`. It empowers automation testers  as well as developers to build up BDD or TDD steps effortlessly. The repititive tasks of everyday automation job have been taken care inside framework smartly allowing the testers to focus on business scenarios, acceptance criterias. 
+Keep things simple, Zerocode alleviates the need for writing code for test assertions and boiler plate wrappers. It enables you to assert the result as JSON, `as it is`. It empowers automation testers  as well as developers to build up BDD or TDD steps effortlessly. The repititive tasks of everyday automation job have been taken care smartly in the framework level, allowing the testers to focus on business scenarios, acceptance criterias. 
 
 [![Github Pre-Releases](https://img.shields.io/github/downloads-pre/atom/atom/latest/total.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) [![PyPI](https://img.shields.io/pypi/status/Django.svg)]() [![GitHub issue comments](https://img.shields.io/github/issues/detail/comments/badges/shields/979.svg)](https://github.com/authorjapps/zerocode/issues) [![zero code zerocode hello world](https://img.shields.io/badge/automation-testing-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28)
 
@@ -45,7 +45,7 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.26</version> 
+    <version>1.1.27</version> 
 </dependency>
 ```
 But check here for the latest- 
