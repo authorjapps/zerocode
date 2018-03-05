@@ -1,11 +1,16 @@
 package org.jsmart.zerocode.core.report;
 
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory;
 import org.jsmart.zerocode.core.domain.builders.HighChartColumnHtmlBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueArrayBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueBuilder;
@@ -13,33 +18,101 @@ import org.jsmart.zerocode.core.domain.builders.ZeroCodeCsvReportBuilder;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
 import org.jsmart.zerocode.core.domain.reports.chart.HighChartColumnHtml;
 import org.jsmart.zerocode.core.domain.reports.csv.ZeroCodeCsvReport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang.StringUtils.substringBetween;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.AUTHOR_MARKER;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FILE_NAME;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FULL_REPORT_CSV_FILE_NAME;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FULL_REPORT_DIR;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
 
 public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeReportGeneratorImpl.class);
+
+    /**
+     * Spike chat is disabled by default
+     */
+    @Inject(optional = true)
+    @Named("report.spike.chart.enabled")
+    private boolean spikeChartReportEnabled;
 
     @Inject
     private ObjectMapper mapper;
 
-    private List<ZeroCodeReport> individualReports;
+    private List<ZeroCodeReport> treeReports;
+
+    private List<ZeroCodeCsvReport> zeroCodeCsvFlattenedRows;
 
     private List<ZeroCodeCsvReport> csvRows = new ArrayList<>();
 
-    private List<ZeroCodeCsvReport> zeroCodeCsvReportRows;
-
     public ZeroCodeReportGeneratorImpl() {
+    }
+
+    @Override
+    public void generateExtentReport() {
+
+        ExtentReports extentReports = ExtentReportsFactory.createReportTheme(TARGET_FILE_NAME);
+
+        treeReports.forEach(thisReport -> {
+
+            thisReport.getResults().forEach(thisScenario -> {
+                ExtentTest test = extentReports.createTest(thisScenario.getScenarioName());
+                test.assignCategory("Regression"); //Read this from POM file //TODO
+
+                test.assignAuthor(optionalAuthor(thisScenario.getScenarioName()));
+
+                thisScenario.getSteps().forEach(thisStep -> {
+                    test.getModel().setStartTime(utilDateOf(thisStep.getRequestTimeStamp()));
+                    test.getModel().setEndTime(utilDateOf(thisStep.getResponseTimeStamp()));
+
+                    final Status testStatus = thisStep.getResult().equals(RESULT_PASS) ? Status.PASS : Status.FAIL;
+                    test.createNode(thisStep.getName(), "CORRELATION-ID: "
+                            + thisStep.getCorrelationId()).log(testStatus, thisStep.getName()
+                            + " has " + thisStep.getResult()
+                            + ". \n Search in the log file for-  CORRELATION-ID:  \n"
+                            + thisStep.getCorrelationId() + "\n"
+                            + ", url:" + thisStep.getUrl() + "\n"
+                    );
+
+                    extentReports.flush();
+                });
+
+            });
+
+        });
+    }
+
+    protected String optionalAuthor(String scenarioName) {
+        String authorName = substringBetween(scenarioName, AUTHOR_MARKER, AUTHOR_MARKER);
+
+        if(authorName == null){
+            authorName = substringBetween(scenarioName, AUTHOR_MARKER, " ");
+        }
+
+        if(authorName == null){
+            authorName = scenarioName.substring(scenarioName.lastIndexOf(AUTHOR_MARKER) + 1);
+        }
+
+        if(scenarioName.lastIndexOf(AUTHOR_MARKER) == -1 || authorName == null){
+            authorName = "Unknown-Author";
+        }
+
+        return authorName;
     }
 
     @Override
@@ -47,23 +120,28 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         /*
          * Read individual reports for aggregation
          */
-        individualReports = readZeroCodeReportsByPath(TARGET_REPORT_DIR);
+        treeReports = readZeroCodeReportsByPath(TARGET_REPORT_DIR);
 
         /*
          * Generate: CSV report
          */
-        zeroCodeCsvReportRows = buildCsvRows();
-        generateCsvReport(zeroCodeCsvReportRows);
+        zeroCodeCsvFlattenedRows = buildCsvRows();
+        generateCsvReport(zeroCodeCsvFlattenedRows);
     }
 
     @Override
     public void generateHighChartReport() {
+        LOGGER.info("####spikeChartReportEnabled: " + spikeChartReportEnabled);
+
         /*
          * Generate: Chart using HighChart
          */
-        HighChartColumnHtml highChartColumnHtml = convertCsvRowsToHighChartData(zeroCodeCsvReportRows);
-        generateHighChartReport(highChartColumnHtml);
+        if(spikeChartReportEnabled){
+            HighChartColumnHtml highChartColumnHtml = convertCsvRowsToHighChartData(zeroCodeCsvFlattenedRows);
+            generateHighChartReport(highChartColumnHtml);
+        }
     }
+
 
     private HighChartColumnHtml convertCsvRowsToHighChartData(List<ZeroCodeCsvReport> zeroCodeCsvReportRows) {
 
@@ -80,6 +158,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                 dataArrayBuilder.kv(ZeroCodeChartKeyValueBuilder.newInstance()
                         .key(thisRow.getScenarioName() + "->" + thisRow.getStepName())
                         .value(thisRow.getResponseDelayMilliSec())
+                        .result(thisRow.getResult())
                         .build())
         );
 
@@ -139,7 +218,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
          */
         ZeroCodeCsvReportBuilder csvFileBuilder = ZeroCodeCsvReportBuilder.newInstance();
 
-        individualReports.forEach(thisReport ->
+        treeReports.forEach(thisReport ->
                 thisReport.getResults().forEach(thisResult -> {
 
                     csvFileBuilder.scenarioLoop(thisResult.getLoop());
@@ -227,4 +306,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
     }
 
+    private static Date utilDateOf(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
 }

@@ -16,11 +16,25 @@
     <script type="text/javascript">
         $(function () {
 
+## OLD - Only 1 color-
 ##            var processed_test_result = [
 ##                ['Test Case -> Step1',1],
 ##                ['Test Case -> Step2',10],
 ##                ['Test Case -> Step3', 5]
 ##            ];
+
+## NEW - Red color for failed tests-
+## See example: https://www.highcharts.com/docs/chart-concepts/series
+## and test in JSFiddle: http://jsfiddle.net/awsLL5sx/1/
+##
+##           var processed_test_result = [{
+##               name: 'Will Mock an End Point and Test the end point using Zerocode->setup_mocks',
+##               y: 429.0
+##           }, {
+##               name: 'Will Mock an End Point and Test the end point using Zerocode->actual_test_verify_get_customer',
+##               color: '#FF0000',
+##               y: 92.0
+##           }];
 
             var processed_test_result = $highChartColumnHtml.testResult;
             $(function () {

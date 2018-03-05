@@ -40,15 +40,16 @@ public class ZeroCodeTestReportListener extends RunListener {
          */
         LOGGER.info("### ZeroCode: all testRunFinished. Generating test reports and charts");
 
-        generateCharts();
+        generateChartsAndReports();
 
     }
 
-    private void generateCharts() {
+    private void generateChartsAndReports() {
 
         reportGenerator.generateCsvReport();
 
-        reportGenerator.generateHighChartReport();
+        reportGenerator.generateExtentReport();
 
+        reportGenerator.generateHighChartReport();
     }
 }

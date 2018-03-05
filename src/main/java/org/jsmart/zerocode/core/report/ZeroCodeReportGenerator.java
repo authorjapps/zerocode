@@ -1,7 +1,13 @@
 package org.jsmart.zerocode.core.report;
 
 public interface ZeroCodeReportGenerator {
-    public void generateCsvReport();
+    void generateCsvReport();
 
-    public void generateHighChartReport();
+    /**
+     * Spike chat is disabled by default
+     *
+     */
+    void generateHighChartReport();
+
+    void generateExtentReport();
 }
