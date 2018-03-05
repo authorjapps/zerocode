@@ -46,8 +46,8 @@ public class LogCorrelationshipPrinter {
         return this;
     }
 
-    public LogCorrelationshipPrinter result(Boolean passed) {
-        this.result = passed;
+    public LogCorrelationshipPrinter result(Boolean result) {
+        this.result = result;
         return this;
     }
 
@@ -56,6 +56,7 @@ public class LogCorrelationshipPrinter {
         ZeroCodeReportStep zeroCodeReportStep = ZeroCodeReportStepBuilder.newInstance()
                 //.request(requestLogBuilder.request) //TODO
                 //.response(responseLogBuilder.response) //TODO
+                //.assertions()
                 .loop(stepLoop)
                 .name(requestLogBuilder.stepName)
                 .correlationId(correlationId)

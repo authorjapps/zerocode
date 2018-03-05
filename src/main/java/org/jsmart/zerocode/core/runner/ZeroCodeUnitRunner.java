@@ -3,9 +3,18 @@ package org.jsmart.zerocode.core.runner;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
-
-import org.jsmart.zerocode.core.domain.EnvProperty;
+import org.jsmart.zerocode.core.di.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.RuntimeHttpClientModule;
+import org.jsmart.zerocode.core.domain.HostProperties;
+import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.TargetEnv;
+import org.jsmart.zerocode.core.domain.UseHttpClient;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
+import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
+import org.jsmart.zerocode.core.httpclient.RestEasyDefaultHttpClient;
+import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
+import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -14,27 +23,12 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jsmart.zerocode.core.di.ApplicationMainModule;
-import org.jsmart.zerocode.core.di.RuntimeHttpClientModule;
-import org.jsmart.zerocode.core.domain.HostProperties;
-import org.jsmart.zerocode.core.domain.JsonTestCase;
-import org.jsmart.zerocode.core.domain.ScenarioSpec;
-import org.jsmart.zerocode.core.domain.TargetEnv;
-import org.jsmart.zerocode.core.domain.UseHttpClient;
-import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.httpclient.RestEasyDefaultHttpClient;
-import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
-import org.jsmart.zerocode.core.utils.SmartUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
-import static org.jsmart.zerocode.core.utils.SmartUtils.getAllTokens;
-import static org.jsmart.zerocode.core.utils.SmartUtils.getEnvPropertyValue;
 
 public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeUnitRunner.class);
@@ -174,7 +168,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     public Injector getMainModuleInjector() {
-        // TODO: Synchronise this with an object lock e.g. synchronized (IptSmartRunner.class) {}
+        // TODO: Synchronise this with an object lock e.g. synchronized (ZeroCodeUnitRunner.class) {}
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
 

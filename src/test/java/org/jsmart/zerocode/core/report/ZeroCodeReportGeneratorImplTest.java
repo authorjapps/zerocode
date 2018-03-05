@@ -6,6 +6,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+
 public class ZeroCodeReportGeneratorImplTest {
 
     @Rule
@@ -42,4 +45,28 @@ public class ZeroCodeReportGeneratorImplTest {
         zeroCodeReportGenerator.validateReportsFolderAndTheFilesExists(reportsFolder);
 
     }
+
+    @Test
+    public void testAuthorJiraStyle() throws Exception {
+        String author;
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter@");
+        assertThat(author, is("Peter"));
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch @payment @Peter@");
+        assertThat(author, is("payment "));
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter Gibson@");
+        assertThat(author, is("Peter Gibson"));
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter Gibson");
+        assertThat(author, is("Peter"));
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter");
+        assertThat(author, is("Peter"));
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment");
+        assertThat(author, is("Unknown-Author"));
+
+    }
+
 }
