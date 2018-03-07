@@ -49,23 +49,27 @@ public class ZeroCodeReportGeneratorImplTest {
     @Test
     public void testAuthorJiraStyle() throws Exception {
         String author;
-        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter@");
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter@@");
         assertThat(author, is("Peter"));
 
-        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch @payment @Peter@");
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch @@payment @@Peter@@");
         assertThat(author, is("payment "));
 
-        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter Gibson@");
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter Gibson@@");
         assertThat(author, is("Peter Gibson"));
 
-        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter Gibson");
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter Gibson");
         assertThat(author, is("Peter"));
 
-        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter");
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter");
+        assertThat(author, is("Peter"));
+
+        author = zeroCodeReportGenerator.optionalAuthor("@@Peter, PayPal One touch payment ");
         assertThat(author, is("Peter"));
 
         author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment");
-        assertThat(author, is("Unknown-Author"));
+        assertThat(author, is("Anonymous"));
 
     }
 

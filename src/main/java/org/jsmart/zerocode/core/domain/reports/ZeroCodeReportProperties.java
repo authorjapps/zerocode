@@ -8,6 +8,9 @@ public interface ZeroCodeReportProperties {
     String RESULT_PASS = "PASSED";
     String RESULT_FAIL = "FAILED";
     String HIGH_CHART_HTML_FILE_NAME = "zerocode_results_chart";
-    String AUTHOR_MARKER = "@";
+    String AUTHOR_MARKER = "@@";
+    String REPORT_TITLE_DEFAULT = "Zerocode Test Report";
+    String REPORT_DISPLAY_NAME_DEFAULT = "Zerocode Interactive Report";
+    String DEFAULT_REGRESSION_CATEGORY = "Regression";
 
 }

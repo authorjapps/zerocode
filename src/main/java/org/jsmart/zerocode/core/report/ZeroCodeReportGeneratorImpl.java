@@ -10,6 +10,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory;
 import org.jsmart.zerocode.core.domain.builders.HighChartColumnHtmlBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueArrayBuilder;
@@ -35,6 +36,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang.StringUtils.substringBetween;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.AUTHOR_MARKER;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.DEFAULT_REGRESSION_CATEGORY;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FILE_NAME;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FULL_REPORT_CSV_FILE_NAME;
@@ -72,7 +74,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
             thisReport.getResults().forEach(thisScenario -> {
                 ExtentTest test = extentReports.createTest(thisScenario.getScenarioName());
-                test.assignCategory("Regression"); //Read this from POM file //TODO
+                test.assignCategory(DEFAULT_REGRESSION_CATEGORY);
 
                 test.assignAuthor(optionalAuthor(thisScenario.getScenarioName()));
 
@@ -101,15 +103,19 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         String authorName = substringBetween(scenarioName, AUTHOR_MARKER, AUTHOR_MARKER);
 
         if(authorName == null){
+            authorName = substringBetween(scenarioName, AUTHOR_MARKER, ",");
+        }
+
+        if(authorName == null){
             authorName = substringBetween(scenarioName, AUTHOR_MARKER, " ");
         }
 
         if(authorName == null){
-            authorName = scenarioName.substring(scenarioName.lastIndexOf(AUTHOR_MARKER) + 1);
+            authorName = scenarioName.substring(scenarioName.lastIndexOf(AUTHOR_MARKER) + AUTHOR_MARKER.length());
         }
 
-        if(scenarioName.lastIndexOf(AUTHOR_MARKER) == -1 || authorName == null){
-            authorName = "Unknown-Author";
+        if(scenarioName.lastIndexOf(AUTHOR_MARKER) == -1 || StringUtils.isEmpty(authorName)){
+            authorName = "Anonymous";
         }
 
         return authorName;

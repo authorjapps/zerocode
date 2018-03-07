@@ -14,8 +14,17 @@
 		</encoder>
 	</appender>
 
+	<appender name="colorAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%d %blue([%thread]) %highlight(%level) %logger{50} - %cyan([%msg %n])</pattern>
+		</layout>
+	</appender>
+
 	<root level="INFO">
 		<appender-ref ref="fileAppender" />
+<!--
 		<appender-ref ref="consoleAppender" />
+-->
+		<appender-ref ref="colorAppender" />
 	</root>
 </configuration>

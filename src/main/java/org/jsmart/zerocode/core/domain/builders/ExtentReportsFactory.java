@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.REPORT_DISPLAY_NAME_DEFAULT;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.REPORT_TITLE_DEFAULT;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ExtentReportsFactory {
@@ -52,8 +54,8 @@ public class ExtentReportsFactory {
         extentHtmlReporter.config().setChartVisibilityOnOpen(false);
         extentHtmlReporter.config().setTheme(Theme.STANDARD);
 
-        extentHtmlReporter.config().setDocumentTitle("Zerocode Test Report");
-        extentHtmlReporter.config().setReportName("Zerocode Interactive Report");
+        extentHtmlReporter.config().setDocumentTitle(REPORT_TITLE_DEFAULT);
+        extentHtmlReporter.config().setReportName(REPORT_DISPLAY_NAME_DEFAULT);
         extentHtmlReporter.config().setTestViewChartLocation(ChartLocation.TOP);
 
         return extentHtmlReporter;
