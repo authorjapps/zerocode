@@ -30,10 +30,6 @@ ISSUE-14 # SSL enabled http client
      project has already good amount of unit an dintegration test coverage, so please 
      refer at some of the existing tests if you are unsure how to go about it.
 
-  1. All contributions must be licensed Apache 2.0 and all files must have
-     a copy of the boilerplate licence comment (can be copied from an existing
-     file.  Files should be formatted according to Google's [java style guide][].
-
   1. Please maintain well-formed-ness and consistency for each commit. 
      Avoid including any special chars in the commit message. Do not make it too verbose
 
