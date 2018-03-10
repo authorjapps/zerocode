@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang.StringUtils.substringBetween;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.ANONYMOUS_AUTHOR;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.AUTHOR_MARKER;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.DEFAULT_REGRESSION_CATEGORY;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
@@ -115,7 +116,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         }
 
         if(scenarioName.lastIndexOf(AUTHOR_MARKER) == -1 || StringUtils.isEmpty(authorName)){
-            authorName = "Anonymous";
+            authorName = ANONYMOUS_AUTHOR;
         }
 
         return authorName;
