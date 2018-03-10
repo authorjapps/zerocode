@@ -12,8 +12,8 @@ The issue clearly explains about the new or enhanced feature, or a bug fix.
 
  
 The below commit message start with an issue number e.g. `ISSUE-14`, Then a `space`, 
-    then `#`, then a `space`, then a `short` commit message `max of 70` chars.
-    A good and simple sample below.
+then `#`, then a `space`, then a `short` commit message `max of 70` chars.
+e.g.
     
 ```    
 ISSUE-14 # SSL enabled http client 
@@ -24,14 +24,14 @@ ISSUE-14 # SSL enabled http client
      
   1. Follow the usual process of [forking][] the repo, and create a new
      branch to work in.  Make sure you dont add any other feture or code which are
-     not related to this issue. This makes things clear and great time saver.
+     not related to this issue. This makes things clear for reviewer and great time saver.
 
   1. Cover your feature or bug fix code by good tests which are easy to understand. The
-     project has already good amount of unit an dintegration test coverage, so please 
-     refer at some of the existing tests if you are unsure how to go about it.
+     project has already good amount of unit and integration test coverage, so please 
+     refer some of the existing tests if you are unsure how to go about it.
 
   1. Please maintain well-formed-ness and consistency for each commit. 
-     Avoid including any special chars in the commit message. Do not make it too verbose
+     Avoid including any special chars in the commit messages. Do not make it verbose.
 
   1. Finally, push the commits to your fork and submit a [pull request][].
 
