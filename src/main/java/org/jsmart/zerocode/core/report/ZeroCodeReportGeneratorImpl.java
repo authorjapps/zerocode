@@ -35,17 +35,23 @@ import java.util.stream.Collectors;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang.StringUtils.substringBetween;
+import static org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory.getReportName;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.ANONYMOUS_AUTHOR;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.AUTHOR_MARKER;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.DEFAULT_REGRESSION_CATEGORY;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.HIGH_CHART_HTML_FILE_NAME;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.LINK_LABEL_NAME;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FILE_NAME;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FULL_REPORT_CSV_FILE_NAME;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FULL_REPORT_DIR;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TEST_STEP_CORRELATION_ID;
 
 public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeReportGeneratorImpl.class);
+
+    private String spikeChartFileName;
 
     /**
      * Spike chat is disabled by default
@@ -71,6 +77,8 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
         ExtentReports extentReports = ExtentReportsFactory.createReportTheme(TARGET_FILE_NAME);
 
+        linkToSpikeChartIfEnabled();
+
         treeReports.forEach(thisReport -> {
 
             thisReport.getResults().forEach(thisScenario -> {
@@ -84,10 +92,10 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     test.getModel().setEndTime(utilDateOf(thisStep.getResponseTimeStamp()));
 
                     final Status testStatus = thisStep.getResult().equals(RESULT_PASS) ? Status.PASS : Status.FAIL;
-                    test.createNode(thisStep.getName(), "CORRELATION-ID: "
+                    test.createNode(thisStep.getName(), TEST_STEP_CORRELATION_ID + " "
                             + thisStep.getCorrelationId()).log(testStatus, thisStep.getName()
                             + " has " + thisStep.getResult()
-                            + ". \n Search in the log file for-  CORRELATION-ID:  \n"
+                            + ". \n Search in the log file for-  " + TEST_STEP_CORRELATION_ID + "  \n"
                             + thisStep.getCorrelationId() + "\n"
                             + ", url:" + thisStep.getUrl() + "\n"
                     );
@@ -98,6 +106,19 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
             });
 
         });
+    }
+
+    public void linkToSpikeChartIfEnabled() {
+        if(spikeChartReportEnabled){
+            final String reportName = getReportName();
+
+            String linkCodeToTargetSpikeChartHtml =
+                    String.format("<code>&nbsp;&nbsp;<a href='%s' style=\"color: #006; background: #ff6;\"> %s </a></code>",
+                    spikeChartFileName,
+                    LINK_LABEL_NAME);;
+
+            ExtentReportsFactory.reportName(reportName + linkCodeToTargetSpikeChartHtml);
+        }
     }
 
     protected String optionalAuthor(String scenarioName) {
@@ -141,7 +162,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         LOGGER.info("####spikeChartReportEnabled: " + spikeChartReportEnabled);
 
         /*
-         * Generate: Chart using HighChart
+         * Generate: Spike Chart using HighChart
          */
         if(spikeChartReportEnabled){
             HighChartColumnHtml highChartColumnHtml = convertCsvRowsToHighChartData(zeroCodeCsvFlattenedRows);
@@ -152,7 +173,6 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
     private HighChartColumnHtml convertCsvRowsToHighChartData(List<ZeroCodeCsvReport> zeroCodeCsvReportRows) {
 
-        //TODO: read from the property file. Inject as fields.
         HighChartColumnHtmlBuilder highChartColumnHtmlBuilder = HighChartColumnHtmlBuilder.newInstance()
                 .chartSeriesName("Test Results")
                 .chartTitleTop("Request Vs Response Delay Chart")
@@ -179,7 +199,9 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
         HighChartColumnHtmlWriter highChartColumnHtmlWriter = new HighChartColumnHtmlWriter();
 
-        highChartColumnHtmlWriter.generateHighChart(highChartColumnHtml);
+        spikeChartFileName = createTimeStampedFileName();
+
+        highChartColumnHtmlWriter.generateHighChart(highChartColumnHtml, spikeChartFileName);
     }
 
     public void generateCsvReport(List<ZeroCodeCsvReport> zeroCodeCsvReportRows) {
@@ -316,4 +338,11 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     private static Date utilDateOf(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
+
+    private String createTimeStampedFileName() {
+        return HIGH_CHART_HTML_FILE_NAME +
+                LocalDateTime.now().toString().replace(":", "-") +
+                ".html";
+    }
+
 }

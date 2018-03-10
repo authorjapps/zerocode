@@ -1,6 +1,7 @@
 package org.jsmart.zerocode.core.domain.reports;
 
 public interface ZeroCodeReportProperties {
+    String TEST_STEP_CORRELATION_ID = "TEST-STEP-CORRELATION-ID:";
     String TARGET_FILE_NAME = "target/zerocode-interactive.html";
     String TARGET_REPORT_DIR = "target/zerocode-test-reports/";
     String TARGET_FULL_REPORT_DIR = "target/";
@@ -13,5 +14,6 @@ public interface ZeroCodeReportProperties {
     String REPORT_TITLE_DEFAULT = "Zerocode Test Report";
     String REPORT_DISPLAY_NAME_DEFAULT = "Zerocode Interactive Report";
     String DEFAULT_REGRESSION_CATEGORY = "Regression";
+    String LINK_LABEL_NAME = "Spike Chart(Click here)";
 
 }

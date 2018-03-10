@@ -24,7 +24,7 @@ public class HighChartColumnHtmlWriterTest {
                 "chart Series Name",
                 "Chart title Top in a Box");
 
-        final String htmlOut = highChartColumnHtmlWriter.generateHighChart(highChartColumnHtml);
+        final String htmlOut = highChartColumnHtmlWriter.generateHighChart(highChartColumnHtml, "someFileName.html");
 
         /* assert resolved strings */
         assertThat(htmlOut, containsString("[['apple', 50], ['windows', 25]]"));

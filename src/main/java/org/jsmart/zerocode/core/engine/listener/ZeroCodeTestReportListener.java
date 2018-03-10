@@ -48,8 +48,8 @@ public class ZeroCodeTestReportListener extends RunListener {
 
         reportGenerator.generateCsvReport();
 
-        reportGenerator.generateExtentReport();
-
         reportGenerator.generateHighChartReport();
+
+        reportGenerator.generateExtentReport();
     }
 }

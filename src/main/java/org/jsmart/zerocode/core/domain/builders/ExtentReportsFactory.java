@@ -17,6 +17,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ExtentReportsFactory {
     private static final org.slf4j.Logger LOGGER = getLogger(ExtentReportsFactory.class);
 
+    private static ExtentHtmlReporter extentHtmlReporter;
+
     private static ExtentReports extentReports;
 
     private static Map<Object, String> systemProperties = new HashMap<>();
@@ -49,7 +51,7 @@ public class ExtentReportsFactory {
     }
 
     public static ExtentHtmlReporter createExtentHtmlReporter(String reportFileName) {
-        ExtentHtmlReporter extentHtmlReporter = new ExtentHtmlReporter(reportFileName);
+        extentHtmlReporter = new ExtentHtmlReporter(reportFileName);
 
         extentHtmlReporter.config().setChartVisibilityOnOpen(false);
         extentHtmlReporter.config().setTheme(Theme.STANDARD);
@@ -84,5 +86,21 @@ public class ExtentReportsFactory {
         }
 
         return map;
+    }
+
+    public static void reportName(String reportName) {
+        extentHtmlReporter.config().setReportName(reportName);
+    }
+
+    public static String getReportName() {
+        return extentHtmlReporter.config().getReportName();
+    }
+
+    public static void chartVisibilityOnOpen(boolean chartVisibilityOnOpen) {
+        extentHtmlReporter.config().setChartVisibilityOnOpen(chartVisibilityOnOpen);
+    }
+
+    public static void getChartVisibilityOnOpen(boolean chartVisibilityOnOpen) {
+        extentHtmlReporter.config().getChartVisibilityOnOpen();
     }
 }
