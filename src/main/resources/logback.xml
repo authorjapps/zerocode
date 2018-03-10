@@ -9,12 +9,9 @@
 	</appender>
 
 	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
+		<!--<encoder>
 			<pattern>%d [%thread] %-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
-		</encoder>
-	</appender>
-
-	<appender name="colorAppender" class="ch.qos.logback.core.ConsoleAppender">
+		</encoder>-->
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<pattern>%d %green([%thread]) %highlight(%level) %logger{50} - %blue(%msg%n)</pattern>
 		</layout>
@@ -22,9 +19,6 @@
 
 	<root level="INFO">
 		<appender-ref ref="fileAppender" />
-<!--
 		<appender-ref ref="consoleAppender" />
--->
-		<appender-ref ref="colorAppender" />
 	</root>
 </configuration>
