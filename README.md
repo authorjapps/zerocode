@@ -1,7 +1,7 @@
 Zerocode
 ====
 
-**Latest release: [1.1.26](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
+**Latest release: [1.1.31](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
 **Description:** Zerocode makes test scenario automation an effortless job. See [HelloWorldTest](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldTest.java) code. <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br
@@ -46,7 +46,7 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.26</version> 
+    <version>1.1.31</version> 
 </dependency>
 ```
 But check here for the latest- 
