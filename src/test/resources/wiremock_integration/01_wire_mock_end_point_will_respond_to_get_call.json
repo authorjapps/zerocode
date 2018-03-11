@@ -1,0 +1,56 @@
+{
+    "scenarioName": "create_mocks",
+    "steps": [
+        {
+            "name": "GetBathRoomDetails",
+            "url": "/$MOCK",
+            "operation": "$USE.WIREMOCK",
+            "request": {
+                "mocks": [
+                    {
+                        "name": "Mock the Get Person",
+                        "operation": "GET",
+                        "url": "/google-guys/persons/p001",
+                        "request": {
+                            "headers": {
+                                "key": "key-007",
+                                "secret": "secret-007"
+                            }
+                        },
+                        "response": {
+                            "status": 200,
+                            "body": {
+                                "id": "p001",
+                                "source": {
+                                    "code": "GOOGLE.UK"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "Mock the POST Person",
+                        "operation": "POST",
+                        "url": "/google-guys/persons/p002",
+                        "request": {
+                            "body":{
+                                "id": "p002"
+                            }
+                        },
+                        "response": {
+                            "status": 201,
+                            "body": {
+                                "id": "p002",
+                                "source": {
+                                    "code": "GOOGLE.IN"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+    ]
+}

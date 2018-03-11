@@ -27,6 +27,7 @@ import java.util.function.BiConsumer;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
+import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -290,6 +291,12 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         } //<-- Scenario Loop
 
+        /*
+         * Completed executing all steps?
+         * Then stop the wiremock server, so that its ready for next scenario.
+         */
+        stopWireMockServer();
+
         reportBuilder.printToFile(scenario.getScenarioName() + ".json");
 
         /*
@@ -345,5 +352,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         }
         
         return serviceType;
+    }
+
+    private void stopWireMockServer() {
+        if (null != wireMockServer) {
+            wireMockServer.stop();
+            wireMockServer = null;
+            LOGGER.info("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
+        }
     }
 }
