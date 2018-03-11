@@ -358,7 +358,7 @@ See sample reports below
 
 - [2. More Test Case results Delay Spike - Chart](http://htmlpreview.github.io/?https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_results_chart_more_2016-07-30T09-57-53.0567.html)
 
-- [3. Interactive - Chart(Filter by Author, Test name, status etc)](http://htmlpreview.github.io/?https://github.com/authorjapps/helpme/blob/513207af72153b5ff030be0e80cca97c238c6694/zerocode-rest-help/src/test/resources/zz_reports/zerocode-interactive.html)
+- [3. Interactive - Chart(Filter by Author, Test name, status etc)](http://htmlpreview.github.io/?https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode-interactive.html)
 
 ##### CSV Report:
 
