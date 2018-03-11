@@ -51,7 +51,7 @@ import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.T
 public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeReportGeneratorImpl.class);
 
-    private String spikeChartFileName;
+    private static String spikeChartFileName;
 
     /**
      * Spike chat is disabled by default
@@ -109,7 +109,14 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     }
 
     public void linkToSpikeChartIfEnabled() {
-        if(spikeChartReportEnabled){
+
+        // ------------------------------------------------
+        // If spikeChartFileName is not null,
+        // that means it was enabled by one of the runner.
+        // (might be disabled by current runner)
+        // Then it's good to link it to that spike report.
+        // ------------------------------------------------
+        if(spikeChartReportEnabled || spikeChartFileName != null){
             final String reportName = getReportName();
 
             String linkCodeToTargetSpikeChartHtml =
