@@ -102,11 +102,11 @@ And the "hello_world_get.json" is as below:
 #### Define a Scenario with Steps [Given, When, Then], Then Run. See examples below
 
 ## Table of Contents - 
-- [Help and usage](#id_help_and_usage)
+- [Help and usage](#1)
 - [Overriding with Custom HttpClient with Project demand, See also SSL Trusted Http Client](#16)
 - [Externalize host and port to properties files](#17)
-- [Single Scenario with single step](#id_single_step)
-- [Step with more assertions](#id_single_step_more)
+- [Single Scenario with single step](#2)
+- [Step with more assertions](#3)
 - [Running with step loop](#4)
 - [Running with scenario loop](#5)
 - [Generated reports and charts](#6)
@@ -127,12 +127,12 @@ And the "hello_world_get.json" is as below:
 - [SOAP method invocation example using xml input](#23)
 - [SOAP method invocation where Corporate Proxy enabled](#24)
 - [MIME Type Converters- XML to JSON, prettyfy XML etc](#25)
+- [Using WireMock for mocking dependent end points](#26)
 - [General place holders and assertion place holder table](#99)
 
 
 ### examples:
 
-<div id='id_help_and_usage'/>
 #### 1:
 #### Help and usage
 
@@ -147,7 +147,6 @@ Download this help and usage project to try it yourself.
 - Download the zip file(contains a maven project) to run locally: https://github.com/authorjapps/helpme/archive/master.zip
 
 
-<div id='id_single_step'/>
 #### 2:
 #### Single Scenario with single step
 
@@ -181,7 +180,6 @@ The above JSON block is a test case where we asked the test framework to hit the
 > expected status: 200
 
 > where, step "name" is a meaningful step name, which is significant when multiple steps are run. See a multi-step example.
-
 
 Note:
 > scenarioname : is free text
@@ -236,8 +234,6 @@ Because you are asserting with an expected status as 500, but the end point actu
 }
 ```
 
-
-<div id='id_single_step_more'/>
 #### 3:
 #### Single step with more assertions
 
@@ -1213,6 +1209,67 @@ Available methods are-
 * jsonBlockToJson
 * jsonNodeToJson
 * prettyXml
+
+#### 26:
+#### Using WireMock for mocking dependent end points
+See Issue #47 for the scenarios when WireMock becomes handy. 
+See examples here- 
+https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/wiremock_tests/mock_via_wiremock_then_test_the_end_point.json
+
+
+The below JSON block step will mock two end points using WireMock.
+1. GET: /api/v1/amazon/customers/UK001   (no headers)
+2. GET: /api/v1/amazon/customers/cust-007  (with headers)
+
+```
+        {
+            "name": "setup_mocks",
+            "url": "/$MOCK",
+            "operation": "$USE.WIREMOCK",
+            "request": {
+                "mocks": [
+                    {
+                        "name": "mocking_a_GET_endpoint",
+                        "operation": "GET",
+                        "url": "/api/v1/amazon/customers/UK001",
+                        "response": {
+                            "status": 200,
+                            "headers": {
+                                "Accept": "application/json"
+                            },
+                            "body": {
+                                "id": "UK001",
+                                "name": "Adam Smith",
+                                "Age": "33"
+                            }
+                        }
+                    },
+                    {
+                        "name": "mocking_a_GET_endpoint_with_headers",
+                        "operation": "GET",
+                        "url": "/api/v1/amazon/customers/cust-007",
+                        "request": {
+                            "headers": {
+                                "api_key": "key-01-01",
+                                "api_secret": "secret-01-01"
+                            }
+                        },
+                        "response": {
+                            "status": 200,
+                            "body": {
+                                "id": "cust-007",
+                                "type": "Premium"
+                            }
+                        }
+                    }
+                ]
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+
+```
 
 
 #### 99:
