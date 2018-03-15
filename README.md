@@ -3,7 +3,7 @@ Zerocode
 
 **Latest release: [1.1.31](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
-**Description:** Zerocode makes test scenario automation an effortless job. See [HelloWorldTest](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldTest.java) code. <br/>
+**Description:** Zerocode makes test scenario automation an effortless job. See [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br
 />
 **Documentation and Usage:** [Topics and Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
@@ -11,12 +11,12 @@ Zerocode
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **Motivation:** [Motivation](https://github.com/authorjapps/zerocode/wiki/About-Motivation)
 
-Keep things simple, Zerocode alleviates the need for writing code for test assertions and boiler plate wrappers. It empowers automation testers to build up BDD scenario steps effortlessly. The repititive tasks of everyday automation job have been taken care inside framework smartly allowing the testers to focus on business scenarios, acceptance criterias. 
+Keep things simple, Zerocode alleviates the need for writing code for test assertions and boiler plate wrappers. It empowers automation testers to build up test scenario steps effortlessly. The repititive tasks of everyday automation job have been taken care inside the framework smartly allowing the testers/developers to focus on business scenarios, acceptance criterias. 
 
 [![Github Pre-Releases](https://img.shields.io/github/downloads-pre/atom/atom/latest/total.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) [![PyPI](https://img.shields.io/pypi/status/Django.svg)]() [![GitHub issue comments](https://img.shields.io/github/issues/detail/comments/badges/shields/979.svg)](https://github.com/authorjapps/zerocode/issues) [![zero code zerocode hello world](https://img.shields.io/badge/automation-testing-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 
 
-Zerocode makes the tests easy to understand, easy to change and easy to share and migrate between environments. Your tests will not be dependent on a perticular tester or coding style anymore. Tests become standarised and easily maintainable by the team or the new comers.
+Zerocode makes the tests easy to understand, easy to change and easy to share and migrate between environments. Your tests will not be cumbersome and complex anymore. Tests become standarised and easily maintainable by the team or the new comers. You will write your `Consumer Contract Tests` and `End to End Integration Tests` at the **speed** of writing JUnit tests
 
 Zerocode at its core uses powerful libs like `Google Jackson` for JSON assertions, `Apache HttpClient` for invoking REST and SOAP APIs, and Spring style place holders `${JSON Path}` for result assertions. It does not limit you to use Apache HttpClient, it enables you to easily override the framework behaviour with `@UseHttpClient` to use e.g. UniRest HttpClient, RestEasy HttpClient or any of your custom HttpClient where you might have configured for retry-mechanism that your project needs. 
 
@@ -34,8 +34,6 @@ Zerocode aims to make development and testing easier and faster, not harder and 
 ## REST BDD Testing Framework
 
 Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
-
-Write **Consumer Contract Tests** and **End to End Application Integration Tests** at the **speed** of writing JUnit tests
 
 Use the **powerful response assertions** mechanism with just copy and paste of the JSONs. 
 
@@ -58,7 +56,7 @@ Testing no more a harder, slower and sleepless task
 
 Look for examples below-
 
-See the [HelloWorldTest](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldTest.java) and [more](https://github.com/authorjapps/zerocode-hello-world/tree/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldmore)
+See the [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) and [more](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldmore/JustHelloWorldMoreTest.java)
 
 
 ### Easy! Simple! Readable! JSON Based!
@@ -97,9 +95,9 @@ And the "hello_world_get.json" is as below:
             }
         }
     ]
-}
+[}
 ```
-#### Define a Scenario with Steps [Given, When, Then], Then Run. See examples below
+#### Define a Scenario with Steps, Then Run as JUnit([example](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java)) or run as Suite/Package([example](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldGitHubSuite.java)). See examples below-
 
 ## Table of Contents - 
 - [Help and usage](#1)
@@ -138,13 +136,11 @@ And the "hello_world_get.json" is as below:
 
 Download this help and usage project to try it yourself.
 
-- Usage project: https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help
+- HelloWorld project: https://github.com/authorjapps/zerocode-hello-world
 
-- Simple steps to run: https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/README.md
+- Simple steps to run: https://github.com/authorjapps/zerocode-hello-world#zerocode-hello-world
 
-- Git Clone to run locally: https://github.com/authorjapps/helpme.git
-
-- Download the zip file(contains a maven project) to run locally: https://github.com/authorjapps/helpme/archive/master.zip
+- Git [Clone](https://github.com/authorjapps/zerocode-hello-world) or [Download](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) the zip file(contains a maven project) to run locally 
 
 
 #### 2:
