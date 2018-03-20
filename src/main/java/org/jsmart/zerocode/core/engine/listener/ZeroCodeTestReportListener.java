@@ -48,7 +48,15 @@ public class ZeroCodeTestReportListener extends RunListener {
 
         reportGenerator.generateCsvReport();
 
-        reportGenerator.generateHighChartReport();
+        /**
+         * Not compatible with open source license i.e. why not activated But if it has to be used inside intranet,
+         * then a single Developer's license should do. But visit www.highcharts.com for details.
+
+         * https://shop.highsoft.com/faq
+         * If I am using the Software on a commercial company´s intranet, does it require a license?
+           Yes. The Developer License allows you to install and use the software on a commercial company's intranet.
+         */
+        //reportGenerator.generateHighChartReport();
 
         reportGenerator.generateExtentReport();
     }
