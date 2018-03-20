@@ -1,7 +1,7 @@
 Zerocode
 ====
 
-**Latest release: [1.1.31](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
+**Latest release: [1.1.32](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
 **Description:** Zerocode makes test scenario automation an effortless job. See [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br
@@ -13,12 +13,18 @@ Zerocode
 
 Keep things simple, Zerocode alleviates the need for writing code for test assertions and boiler plate wrappers. It empowers automation testers to build up test scenario steps effortlessly. The repititive tasks of everyday automation job have been taken care inside the framework smartly allowing the testers/developers to focus on business scenarios, acceptance criterias. 
 
-[![Github Pre-Releases](https://img.shields.io/github/downloads-pre/atom/atom/latest/total.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) [![PyPI](https://img.shields.io/pypi/status/Django.svg)]() [![GitHub issue comments](https://img.shields.io/github/issues/detail/comments/badges/shields/979.svg)](https://github.com/authorjapps/zerocode/issues) [![zero code zerocode hello world](https://img.shields.io/badge/automation-testing-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
+[![Download HelloWorld](https://img.shields.io/badge/download-examples-blue.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) 
+[![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
+[![Status Stable](https://img.shields.io/pypi/status/Django.svg)](https://travis-ci.org/authorjapps/zerocode) 
+[![GitHub issue comments](https://img.shields.io/github/issues/detail/comments/badges/shields/979.svg)](https://github.com/authorjapps/zerocode/issues) 
+[![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
+[![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
+[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![stackoverflow](https://img.shields.io/badge/stackoverflow-zerocode-green.svg)](https://stackoverflow.com/search?q=zerocode)
 
 
 
-Zerocode makes the tests easy to understand, easy to change and easy to share and migrate between environments. Your tests will not be cumbersome and complex anymore. Tests become standarised and easily maintainable by the team or the new comers. You will write your `Consumer Contract Tests` and `End to End Integration Tests` at the **speed** of writing JUnit tests
+Zerocode makes the tests easy to understand, easy to change and easy to share and migrate between environments. Your tests will not be cumbersome and complex anymore. Tests become standarised and easily maintainable by the team or the new comers. You will write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests`,  at the **speed** of writing **JUnit** tests
 
 Zerocode at its core uses powerful libs like `Google Jackson` for JSON assertions, `Apache HttpClient` for invoking REST and SOAP APIs, and Spring style place holders `${JSON Path}` for result assertions. It does not limit you to use Apache HttpClient, it enables you to easily override the framework behaviour with `@UseHttpClient` to use e.g. UniRest HttpClient, RestEasy HttpClient or any of your custom HttpClient where you might have configured for retry-mechanism that your project needs. 
 
@@ -26,9 +32,9 @@ Zerocode gives you out of the box SSL enabled Http Client and SOAP Client along 
 
 Zerocode has built general functionality which enables you to extend and enrich the framework behaviour by simply executing external Java methods to achieve busines goals rather than putting every feature into the core framework.
 
-Zerocode helps you to design better Test Cases for your business feature, maintain and update easily to avoid sleepless nights. It is built on extending the Junit core runners. You simply annotate your test method with JUnit `@Test` and run like unit tests as well as it provides `Suite` Runner to run the the entire test package.
+Zerocode helps you to design better Test Cases for your business feature, maintain and update easily to avoid sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests as well as it provides `Suite` Runner to run the the entire tests as suite.
 
-Zerocode makes the tests independent, complete and structured. It prints the request, response into the console as well as to the log file in the `/target` folder in a human readable format along with producing report in terms of CSV and Spike Graphical Chat for each scenario steps. In that point every stake holder can understand the life cycle of a test case.
+Zerocode makes the tests independent, complete and structured. It prints the request, response into the console as well as to the log file in the `/target` folder in a **human readable** format along with producing report in terms of CSV and Spike Graphical Chat for each scenario steps. In that point every stake holder can understand the life cycle of a test case.
 
 Zerocode aims to make development and testing easier and faster, not harder and slower. Allows both Dev team and Test team to contribute towards better test cases which finally makes a product better quality. Even the managers and BAs can read and understand the tests. Zerocode goes the extra mile to generate helpful success and failure messages to trace the exact tests.
 
@@ -46,7 +52,7 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.31</version> 
+    <version>1.1.32</version> 
 </dependency>
 ```
 But check here for the latest- 
