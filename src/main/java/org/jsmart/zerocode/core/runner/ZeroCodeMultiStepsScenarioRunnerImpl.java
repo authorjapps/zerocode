@@ -279,7 +279,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                          */
                         if(!stepOutcome) {
                             reportBuilder.result(reportResultBuilder.build());
-                            reportBuilder.printToFile(scenario.getScenarioName() + ".json");
+                            reportBuilder.printToFile(scenario.getScenarioName() + LocalDateTime.now() + ".json");
                         }
                     }
 
@@ -297,7 +297,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
          */
         stopWireMockServer();
 
-        reportBuilder.printToFile(scenario.getScenarioName() + ".json");
+        reportBuilder.printToFile(scenario.getScenarioName() + LocalDateTime.now() + ".json");
 
         /*
          *  There were no steps to execute and the framework will display the test status as Green than Red.
