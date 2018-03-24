@@ -13,6 +13,7 @@ import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -293,5 +294,68 @@ public class ZeroCodeJsonTestProcesorImplTest {
 
         final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
         assertThat(resolvedRequestJson.indexOf("LOCAL.DATETIME.NOW:"), is(-1));
+    }
+
+    @Test
+    public void testRandom_UUID() throws Exception {
+
+        final String requestJsonAsString = "{\n" +
+                "\t\"onlineOrderId\": \"${RANDOM.UUID}\"\n" +
+                "}";
+
+        final List<String> placeHolders = jsonPreProcessor.getAllTokens(requestJsonAsString);
+        assertThat(placeHolders.size(), is(1));
+
+        final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
+        assertThat(resolvedRequestJson.indexOf("RANDOM.UUID"), is(-1));
+
+        final HashMap<String, String> hashMap = smartUtils.getMapper().readValue(resolvedRequestJson, HashMap.class);
+
+        assertThat(hashMap.get("onlineOrderId").length(), is(36)); //"onlineOrderId": "48c3b4ff-5078-40bb-8d62-11abcbdef5b3"
+    }
+
+    @Test
+    public void testIgnoreCaseWith_containsNoMatch() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava("18_ignore_case/test_string_match_withIgnoring_case.json", ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("{\"name\":\"$CONTAINS.STRING.IGNORECASE:CREASY\"}}"));
+
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse =
+                smartUtils.getJsonDocumentAsString("18_ignore_case/test_execution_response_FAIL.json");
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
+        assertThat(failedReports.toString(), containsString("did not match the expected value 'containing sub-string with ignoring case:"));
+    }
+
+    @Test
+    public void testIgnoreCaseWith_containsMatch() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava("18_ignore_case/test_string_match_withIgnoring_case.json", ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("{\"name\":\"$CONTAINS.STRING.IGNORECASE:CReASY\"}}"));
+
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "  \"status\": 201,\n" +
+                "  \"body\": {\n" +
+                "    \"name\": \"Hello Creasy\"\n" +
+                "  }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(0));
     }
 }
