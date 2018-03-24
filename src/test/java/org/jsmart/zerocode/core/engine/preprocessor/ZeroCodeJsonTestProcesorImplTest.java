@@ -322,13 +322,17 @@ public class ZeroCodeJsonTestProcesorImplTest {
         String mockScenarioState = "{}";
 
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
-        assertThat(resolvedAssertions, containsString("{\"name\":\"$CONTAINS.STRING.IGNORECASE:CREASY\"}}"));
+        assertThat(resolvedAssertions, containsString("{\"name\":\"$CONTAINS.STRING.IGNORECASE:CReASY\"}}"));
 
         List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
-        String mockTestResponse =
-                smartUtils.getJsonDocumentAsString("18_ignore_case/test_execution_response_FAIL.json");
+        String mockTestResponse = "{\n" +
+                "  \"status\": 201,\n" +
+                "  \"body\": {\n" +
+                "    \"name\": \"Hello CreXasy\"\n" +
+                "  }\n" +
+                "}";
         List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
