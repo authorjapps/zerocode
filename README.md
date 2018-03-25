@@ -1,9 +1,9 @@
-Zerocode
-====
 | ![Prepare Scenario](img/01_prepare_scenario_70_65.png) <br/> **Prepare scenario** | ![Write steps](img/02_write_steps_70_65.png) <br> **Write step assertions** | ![Execute steps pass](img/03_execute_70_65.png) &nbsp; &nbsp; ![Execute steps fail](img/04_execute_fail_70_65.png)<br> **Execute** |
 |:-------------:|:-------------:|:-------------:|
-| Pick a "business scenario" or "an acceptance criteria", then convert it into easy and clean JSON steps. | Assert the step(s) with expected response "as it is" and optionaly weave the next step from earlier step, using JSON path e.g. "created customerId", "customerType" etc. E.g. "$.step1.response.body.customerId" | Run the scenario using "@Test" annotation as a "JUnit" test or as "Suite" of tests as part of CI build.|
+| Pick a "business scenario" or an "acceptance criteria", then convert it into easy and clean "JSON steps". | Assert the step(s) outcome with expected response "as it is" and optionaly weave the next step from the earlier step inputs, using simple "JSON path" e.g. "created customerId", "customerType" etc. i.e. "$.step1.response.body.customerId" | Run the scenario using "@Test" annotation as a "JUnit" test or as "Suite" of tests as part of CI build.|
 
+Zerocode
+====
 **Latest release: [1.1.26](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
 **Description:** Zerocode makes test scenario automation an effortless job. See [HelloWorldTest](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldTest.java) code. <br/>
