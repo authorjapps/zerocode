@@ -1,5 +1,7 @@
 Zerocode
 ====
+| ![Write steps](img/write_your_steps_small.jpg) <br> Think scenario | ![Write steps](img/write_your_steps_small.jpg) <br> Write Steps|
+| ------------- |-------------|
 
 **Latest release: [1.1.26](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
