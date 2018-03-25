@@ -6,12 +6,15 @@ public class ZeroCodeChartKeyValue {
 
     String key;
     Double value;
+    private String result;
 
     public ZeroCodeChartKeyValue(
             @JsonProperty("key")String key,
-            @JsonProperty("value")Double value) {
+            @JsonProperty("value")Double value,
+            @JsonProperty("result")String result) {
         this.key = key;
         this.value = value;
+        this.result = result;
     }
 
 
@@ -29,5 +32,9 @@ public class ZeroCodeChartKeyValue {
                 "key='" + key + '\'' +
                 ", value=" + value +
                 '}';
+    }
+
+    public String getResult() {
+        return result;
     }
 }

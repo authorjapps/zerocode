@@ -3,7 +3,13 @@ package org.jsmart.zerocode.core.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.jsmart.zerocode.core.di.ObjectMapperProvider;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 /**
@@ -19,7 +25,14 @@ public class MockStep {
     private final JsonNode response;
     private final JsonNode assertions; //<-- In case the wiremock or simulator mock throws a status code etc
 
+    // derived value i.e. body as JSON string
+    private String body;
 
+    // derived value i.e. headers as JSON string
+    private String headers;
+
+    // derived value ie headers as Map
+    private Map<String, Object> headersMap;
 
     public String getName() {
         return name;
@@ -43,6 +56,31 @@ public class MockStep {
 
     public JsonNode getAssertions() {
         return assertions;
+    }
+
+    public String getBody() {
+        final JsonNode bodyNode = request.get("body");
+        return bodyNode != null ? request.get("body").toString() : null;
+    }
+
+    public String getHeaders() {
+        return request.get("headers").toString();
+    }
+
+    public Map<String, Object> getHeadersMap() {
+        ObjectMapper objectMapper = new ObjectMapperProvider().get();
+        HashMap<String, Object> headersMap = new HashMap<>();
+        try {
+            final JsonNode headersNode = request.get("headers");
+            if (null != headersNode) {
+                headersMap = (HashMap<String, Object>) objectMapper.readValue(headersNode.toString(), HashMap.class);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        return headersMap;
     }
 
     @JsonCreator

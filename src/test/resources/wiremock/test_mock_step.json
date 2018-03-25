@@ -1,0 +1,14 @@
+{
+    "name": "Mock the Get Person",
+    "operation": "GET",
+    "url": "/google-guys/persons/p001",
+    "response": {
+        "status": 200,
+        "body": {
+            "id": "p001",
+            "source": {
+                "code": "GOOGLE.UK"
+            }
+        }
+    }
+}

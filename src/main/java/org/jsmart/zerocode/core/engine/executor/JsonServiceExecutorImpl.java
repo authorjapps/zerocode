@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 
@@ -32,12 +33,20 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     //guice
     @Inject
     private JavaExecutor javaExecutor;
+
     @Inject
     private ObjectMapper objectMapper;
+
     @Inject
     SmartUtils smartUtils;
+
     @Inject
     BasicHttpClient httpClient;
+
+    @Inject(optional = true)
+    @Named("mock.api.port")
+    private int mockPort;
+
     //guice
 
     public JsonServiceExecutorImpl() {
@@ -90,8 +99,6 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         HashMap headers = (HashMap) readJsonPathOrElseNull(requestJson, "$.headers");
         Object bodyContent = readJsonPathOrElseNull(requestJson, "$.body");
 
-        final javax.ws.rs.core.Response serverResponse = httpClient.execute(httpUrl, methodName, headers, queryParams, bodyContent);
-
         /*
          * $MOCK: Create mock endpoints supplied for this scenario
          */
@@ -101,6 +108,8 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
              */
             return "{\"status\": 200}";
         }
+
+        final javax.ws.rs.core.Response serverResponse = httpClient.execute(httpUrl, methodName, headers, queryParams, bodyContent);
 
         /*
          * now read the response for :
@@ -151,11 +160,18 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
             MockSteps mockSteps = smartUtils.getMapper().readValue(requestJson, MockSteps.class);
 
-            createWithWireMock(mockSteps);
+            if(mockPort > 0){
+                createWithWireMock(mockSteps, mockPort);
 
-            LOGGER.info("#SUCCESS: End points simulated via wiremock.");
+                LOGGER.info("#SUCCESS: End points simulated via wiremock.");
 
-            return true;
+                return true;
+            }
+
+            LOGGER.error("\n\n#DISABLED: Mocking was not activated as there was no port configured in the properties file. \n\n " +
+                    "Usage: e.g. in your <env host config .properties> file provide- \n " +
+                    "mock.api.port=8888\n\n");
+            return false;
         }
 
         else if(httpUrl.contains("/$MOCK") && methodName.equals("$USE.VIRTUOSO")){

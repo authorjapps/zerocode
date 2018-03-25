@@ -2,8 +2,16 @@ package org.jsmart.zerocode.core.engine.mocker;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
@@ -22,8 +30,15 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.inject.Inject;
 
+import java.util.Map;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -33,6 +48,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(JukitoRunner.class)
 public class RestEndPointMockerTest {
+
     public static class JukitoModule extends TestModule {
         @Override
         protected void configureTest() {
@@ -47,7 +63,7 @@ public class RestEndPointMockerTest {
     SmartUtils smartUtils;
 
     @Inject
-    private ObjectMapper mapper;
+    private ObjectMapper objectMapper;
 
     RestEndPointMocker restEndPointMocker;
 
@@ -60,8 +76,8 @@ public class RestEndPointMockerTest {
 
     @Test
     public void willDeserializeA_VanilaFlow() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("10_mocking_endpoints/01_wire_mock_end_point_will_respond_to_get_call.json");
-        ScenarioSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/01_wire_mock_end_point_will_respond_to_get_call.json");
+        ScenarioSpec flowDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         assertThat(flowDeserialized, notNullValue());
         assertThat(flowDeserialized.getSteps().size(), is(1));
@@ -96,15 +112,15 @@ public class RestEndPointMockerTest {
         // WireMock wireMock = new WireMock(9073);
         // WireMock.configureFor(9073);
 
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("10_mocking_endpoints/01_wire_mock_end_point_will_respond_to_get_call.json");
-        ScenarioSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/01_wire_mock_end_point_will_respond_to_get_call.json");
+        ScenarioSpec flowDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
         MockSteps mockSteps = smartUtils.getMapper().readValue(flowDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
 
         final MockStep mockStep = mockSteps.getMocks().get(0);
         String jsonBodyRequest = mockStep.getResponse().get("body").toString();
 
         WireMock.configureFor(9073);
-        givenThat(WireMock.get(urlEqualTo(mockStep.getUrl()))
+        givenThat(get(urlEqualTo(mockStep.getUrl()))
                 .willReturn(aResponse()
                         .withStatus(mockStep.getResponse().get("status").asInt())
                         .withHeader("Content-Type", APPLICATION_JSON)
@@ -119,6 +135,84 @@ public class RestEndPointMockerTest {
         JSONAssert.assertEquals(jsonBodyRequest, respBodyAsString, true);
 
         System.out.println("### zerocode: \n" + respBodyAsString);
+
     }
 
+    @Test
+    public void willMockAPostRequest() throws Exception{
+
+        WireMock.configureFor(9073);
+
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/01_wire_mock_end_point_will_respond_to_get_call.json");
+        ScenarioSpec flowDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+        MockSteps mockSteps = smartUtils.getMapper().readValue(flowDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
+
+        final MockStep mockPost = mockSteps.getMocks().get(1);
+        String jsonBodyResponse = mockPost.getResponse().get("body").toString();
+
+        final String bodyJson = mockPost.getRequest().get("body").toString(); //"{ \"id\" : \"p002\" }";
+        stubFor(post(urlEqualTo(mockPost.getUrl()))
+                .withRequestBody(equalToJson(bodyJson))
+                .willReturn(aResponse()
+                        .withStatus(mockPost.getResponse().get("status").asInt())
+                        .withHeader("Content-Type", APPLICATION_JSON)
+                        .withBody(jsonBodyResponse)));
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost request = new HttpPost("http://localhost:9073" + mockPost.getUrl());
+        request.addHeader("Content-Type", "application/json");
+        StringEntity entity = new StringEntity(bodyJson);
+        request.setEntity(entity);
+        HttpResponse response = httpClient.execute(request);
+
+        final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        System.out.println("### response: \n" + responseBodyActual);
+
+        assertThat(response.getStatusLine().getStatusCode(), is(201));
+        JSONAssert.assertEquals(jsonBodyResponse, responseBodyActual, true);
+
+    }
+
+    @Test
+    public void willMockAGetRequestWith_headers() throws Exception{
+
+        WireMock.configureFor(9073);
+
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/01_wire_mock_end_point_will_respond_to_get_call.json");
+        ScenarioSpec flowDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+        MockSteps mockSteps = smartUtils.getMapper().readValue(flowDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
+
+        final MockStep mockGetStep = mockSteps.getMocks().get(0);
+        final Map<String, Object> headersMap = mockGetStep.getHeadersMap();
+
+        final MappingBuilder requestBuilder = get(urlEqualTo(mockGetStep.getUrl()));
+
+        // read request headers and set to request builder
+        if (headersMap.size() > 0) {
+            for (Object key : headersMap.keySet()) {
+                requestBuilder.withHeader((String) key, equalTo((String) headersMap.get(key)));
+            }
+        }
+
+        String jsonBodyResponse = mockGetStep.getResponse().get("body").toString();
+
+        stubFor(requestBuilder
+                .willReturn(aResponse()
+                        .withStatus(mockGetStep.getResponse().get("status").asInt())
+                        //.withHeader("Content-Type", APPLICATION_JSON)
+                        .withBody(jsonBodyResponse)));
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet request = new HttpGet("http://localhost:9073" + mockGetStep.getUrl());
+        request.addHeader("key", "key-007");
+        request.addHeader("secret", "secret-007");
+
+        HttpResponse response = httpClient.execute(request);
+        final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        System.out.println("### response: \n" + responseBodyActual);
+
+        assertThat(response.getStatusLine().getStatusCode(), is(200));
+        JSONAssert.assertEquals(jsonBodyResponse, responseBodyActual, true);
+
+    }
 }

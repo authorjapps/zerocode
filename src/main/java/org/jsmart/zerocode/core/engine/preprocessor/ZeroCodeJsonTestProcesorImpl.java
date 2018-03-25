@@ -14,6 +14,7 @@ import org.jsmart.zerocode.core.engine.assertion.FieldHasExactValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasGreaterThanValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasInEqualNumberValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasLesserThanValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasSubStringIgnoreCaseValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldHasSubStringValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldIsNotNullAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldIsNullAsserter;
@@ -33,10 +34,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
+import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -54,6 +57,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     private static final String LOCALDATE_TODAY = "LOCAL.DATE.TODAY:";
     private static final String LOCALDATETIME_NOW = "LOCAL.DATETIME.NOW:";
     private static final String XML_FILE = "XML.FILE:";
+    private static final String RANDOM_UU_ID = "RANDOM.UUID";
 
     private static final List<String> availableTokens = Arrays.asList(
             PREFIX_ASU,
@@ -62,7 +66,8 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
             STATIC_ALPHABET,
             LOCALDATE_TODAY,
             LOCALDATETIME_NOW,
-            XML_FILE
+            XML_FILE,
+            RANDOM_UU_ID
     );
 
     /*
@@ -73,6 +78,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_VALUE_EMPTY_ARRAY = "$[]";
     public static final String ASSERT_PATH_SIZE = ".SIZE";
     public static final String ASSERT_VALUE_CONTAINS_STRING = "$CONTAINS.STRING:";
+    public static final String ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE = "$CONTAINS.STRING.IGNORECASE:";
     public static final String ASSERT_VALUE_EQUAL_TO_NUMBER = "$EQ.";
     public static final String ASSERT_VALUE_NOT_EQUAL_TO_NUMBER = "$NOT.EQ.";
     public static final String ASSERT_VALUE_GREATER_THAN = "$GT.";
@@ -122,6 +128,9 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                         // Used escapeJava, do not use escapeXml as it replaces
                         // with GT LT etc ie what exactly you don't want
                         parammap.put(runTimeToken, escapeJava(xmlString));
+
+                    } else if (runTimeToken.startsWith(RANDOM_UU_ID)) {
+                        parammap.put(runTimeToken, randomUUID().toString());
                     }
                 }
             });
@@ -238,6 +247,10 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_CONTAINS_STRING)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_CONTAINS_STRING.length());
                     asserter = new FieldHasSubStringValueAsserter(path, expected);
+                }
+                else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE)) {
+                    String expected = ((String) value).substring(ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE.length());
+                    asserter = new FieldHasSubStringIgnoreCaseValueAsserter(path, expected);
                 }
                 else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_EQUAL_TO_NUMBER)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_EQUAL_TO_NUMBER.length());

@@ -10,9 +10,7 @@ import org.jsmart.zerocode.core.domain.reports.chart.HighChartColumnHtml;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.time.LocalDateTime;
 
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.HIGH_CHART_HTML_FILE_NAME;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FULL_REPORT_DIR;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -32,7 +30,7 @@ public class HighChartColumnHtmlWriter {
         this.templateFile = templateFile;
     }
 
-    public String generateHighChart(HighChartColumnHtml highChartColumnHtml){
+    public String generateHighChart(HighChartColumnHtml highChartColumnHtml, String spikeChartFileName){
         vEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         vEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 
@@ -49,12 +47,7 @@ public class HighChartColumnHtmlWriter {
         /*  now render the template into a Writer  */
         FileWriter fileWriter = null;
         try {
-            fileWriter = new FileWriter(
-                    TARGET_FULL_REPORT_DIR +
-                    HIGH_CHART_HTML_FILE_NAME +
-                    LocalDateTime.now().toString().replace(":", "-") +
-                    ".html"
-            );
+            fileWriter = new FileWriter(TARGET_FULL_REPORT_DIR + spikeChartFileName);
 
             t.merge(context, fileWriter);
             fileWriter.close();

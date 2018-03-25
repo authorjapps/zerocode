@@ -11,9 +11,10 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_FAIL;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TEST_STEP_CORRELATION_ID;
 
 public class LogCorrelationshipPrinter {
-    private static final String DISPLAY_DEMARCATION_ = "\n--------- CORRELATION-ID: %s ---------";
+    private static final String DISPLAY_DEMARCATION_ = "\n--------- " + TEST_STEP_CORRELATION_ID + " %s ---------";
 
     Logger logger;
     static String correlationId;
@@ -46,8 +47,8 @@ public class LogCorrelationshipPrinter {
         return this;
     }
 
-    public LogCorrelationshipPrinter result(Boolean passed) {
-        this.result = passed;
+    public LogCorrelationshipPrinter result(Boolean result) {
+        this.result = result;
         return this;
     }
 
@@ -56,6 +57,7 @@ public class LogCorrelationshipPrinter {
         ZeroCodeReportStep zeroCodeReportStep = ZeroCodeReportStepBuilder.newInstance()
                 //.request(requestLogBuilder.request) //TODO
                 //.response(responseLogBuilder.response) //TODO
+                //.assertions()
                 .loop(stepLoop)
                 .name(requestLogBuilder.stepName)
                 .correlationId(correlationId)

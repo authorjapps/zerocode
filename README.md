@@ -1,15 +1,17 @@
+| ![Prepare Scenario](img/01_prepare_scenario_70_65.png) <br/> **Prepare scenario** | ![Write steps](img/02_write_steps_70_65.png) <br/> **Build up step(s)** | ![Execute steps pass](img/03_execute_70_65.png) &nbsp; &nbsp; ![Execute steps fail](img/04_execute_fail_70_65.png)<br/> **Execute** |
+|:-------------:|:-------------:|:-------------:|
+| Pick a "business scenario" or an "acceptance criteria", then convert it into easy and clean "JSON steps". | Assert the step(s) outcome with expected response "as it is" and optionally weave the next step to the earlier step input(s), using simple "JSON path" e.g. "created customerId", "customerType" etc. i.e. "$.step1.response.body.customerId" | Run the scenario using "@Test" annotation as a "JUnit" test or as "Suite" of tests as part of CI build.|
+
 Zerocode
 ====
 
 **Latest release: [1.1.32](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
-**Description:** Zerocode makes test scenario automation an effortless job. See [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
-**Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br
-/>
+**Description:** Zerocode makes test scenario automation an effortless job. See a [HelloWorld step - GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) and [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
+**Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
 **Documentation and Usage:** [Topics and Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
-**Motivation:** [Motivation](https://github.com/authorjapps/zerocode/wiki/About-Motivation)
 
 Keep things simple, Zerocode alleviates the need for writing code for test assertions and boiler plate wrappers. It empowers automation testers to build up test scenario steps effortlessly. The repititive tasks of everyday automation job have been taken care inside the framework smartly allowing the testers/developers to focus on business scenarios, acceptance criterias. 
 
@@ -32,7 +34,7 @@ Zerocode gives you out of the box SSL enabled Http Client and SOAP Client along 
 
 Zerocode has built general functionality which enables you to extend and enrich the framework behaviour by simply executing external Java methods to achieve busines goals rather than putting every feature into the core framework.
 
-Zerocode helps you to design better Test Cases for your business feature, maintain and update easily to avoid sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests as well as it provides `Suite` Runner to run the the entire tests as suite.
+Zerocode helps you to design better Test Cases for your business feature, maintain and update easily to avoid sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests as well optionally you can use`Suite` Runner for CI builds.
 
 Zerocode makes the tests independent, complete and structured. It prints the request, response into the console as well as to the log file in the `/target` folder in a **human readable** format along with producing report in terms of CSV and Spike Graphical Chat for each scenario steps. In that point every stake holder can understand the life cycle of a test case.
 
@@ -351,18 +353,17 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
 
 Generated test statistics reports. See the '/target' folder after every run. 
 e.g. Look for-
-target/zerocode_results_chart2018-01-31T17-15-45.522.html -or-
-target/zerocode_full_report_2018-01-31T17-15-47.125.csv
+- target/zerocode_full_report_2018-01-31T17-15-47.125.csv
+- target/zerocode-interactive.html
 
 See sample reports below
 
 ##### Spike Chart:
 
-- [1. All results Delay Spike - Chart(one FAILED test)](http://htmlpreview.github.io/?https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_results_chart_2016-07-30T09-55-53.056.html)
+1. [Full coverage CSV report](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_full_report_2016-07-30T11-44-14.512.csv)
 
-- [2. More Test Case results Delay Spike - Chart](http://htmlpreview.github.io/?https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode_results_chart_more_2016-07-30T09-57-53.0567.html)
+1. [Interactive - Chart(Filter by Author, Test name, status etc)](http://htmlpreview.github.io/?https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode-interactive.html)
 
-- [3. Interactive - Chart(Filter by Author, Test name, status etc)](http://htmlpreview.github.io/?https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/zz_reports/zerocode-interactive.html)
 
 ##### CSV Report:
 
@@ -1289,6 +1290,7 @@ The below JSON block step will mock two end points using WireMock.
 | Place Holder  | Output        | More  |
 | ------------- |:-------------| -----|
 | ${RANDOM.NUMBER}       | Replaces with a random number | Random number is generated using current timestamp in milli-sec |
+| ${RANDOM.UUID}       | Replaces with a random UUID | Random number is generated using java.util.UUID e.g. 077e6162-3b6f-4ae2-a371-2470b63dgg00 |
 | ${RANDOM.STRING:10}       | Replaces a random string consists of ten english alpphabets | The length can be dynamic |
 | ${RANDOM.STRING:4}       | Replaces with a random string consists of four english alpphabets | The length can be dynamic |
 | ${STATIC.ALPHABET:5}       | Replaces with abcde ie Static string of length 5| String starts from "a" and continues, repeats after "z"|
@@ -1307,7 +1309,8 @@ The below JSON block step will mock two end points using WireMock.
 | $NOT.EQ.99       | Assertion passes if a numeric value is not equals to 99 was present in the response | Can be any int, long, float etc |
 | $GT.99       | Assertion passes if a value greater than 99 was present in the response | Can be any int, long, float etc |
 | $LT.99       | Assertion passes if a value lesser than 99 was present in the response | Can be any int, long, float etc |
-| $CONTAINS.STRING:can not create       | Assertion passes if the node value conatins string "can not create" in the response | Otherwise fails |
+| $CONTAINS.STRING:id was cust-001       | Assertion passes if the node response contains string "id was cust-001" | Otherwise fails |
+| $CONTAINS.STRING.IGNORECASE:id WaS CuSt-001       | Assertion passes if the response value contains string "id was cust-001" with case insensitive | Otherwise fails |
 
 #### Assertion Path holders
 
@@ -1317,37 +1320,27 @@ The below JSON block step will mock two end points using WireMock.
 
 
 Search
-zero code response assertions
-zero code rest bdd blog
-zero code behaviour driven development
-zero code testing
-zero code JSON based testing test cases
-zero code Hello World
-zero code sample
-zero code api testing
-zero code RESTful API testing
-zero code end to end testing
-zero code API contract testing
-zero code contract based testing (CBT)
-zero code CBT
-zero code contract driven development (CDD)
-zero code CDD
-zero code CCT
-zero code Consumer Contract Testing
-zerocode rest bdd blog
-zerocode behaviour driven development
-zerocode testing
-zerocode JSON based testing test cases
-zerocode Hello World
-zerocode sample
-zerocode api testing
-zerocode RESTful API testing
-zerocode end to end testing
-zerocode API contract testing
-zerocode contract based testing (CBT)
-zerocode CBT
-zerocode contract driven development (CDD)
-zerocode CDD
-zerocode CCT
-zerocode Consumer Contract Testing
+zero code response assertions as JSON
+
+[Zerocode UUID or Zerocode uuid random UUID]: https://github.com/authorjapps/zerocode#zerocode
+
+[Zerocode zero code rest bdd blog]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code behaviour driven development]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code testing]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code JSON based testing test cases]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code Hello World]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code example]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code REST api and SOAP testing]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code RESTful API testing]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code end to end testing]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code contract based testing (CBT)]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code contract driven development (CDD)]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code Consumer Contract Testing]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code Mule System API, Experience API TDD BDD]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code JSON based testing test cases]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code api testing]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code API contract testing]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code contract based testing (CBT)]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code CCT]: https://github.com/authorjapps/zerocode#zerocode
+[Zerocode zero code End to End E2E Integration Point Testing]: https://github.com/authorjapps/zerocode#zerocode
 
