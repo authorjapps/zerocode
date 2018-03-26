@@ -452,8 +452,53 @@ Chaining steps: Multi-Step REST calls with earlier response(IDs etc) as input to
 
 
 #### 11:
-#### Generating static and random IDs with available place holders
+#### Generating random strings, random numbers and static strings
 
+Random UUID-
+```
+{
+  "scenarioName": "random_UUID",
+  "steps": [
+    {
+      "name": "create_new_employee",
+      "url": "http://localhost:9998/google-emp-services/home/employees",
+      "operation": "POST",
+      "request": {
+        "body": {
+          "id": "${RANDON.UUID}", //<-- Everytime it creates unique uuid. See below example.
+          "name": "Elen M"   
+        }
+      },
+      "assertions": {
+        "status": 201
+      }
+    }
+  ]
+}
+
+Resolves to-
+{
+  "scenarioName": "random_UUID",
+  "steps": [
+    {
+      "name": "create_new_employee",
+      "url": "http://localhost:9998/google-emp-services/home/employees",
+      "operation": "POST",
+      "request": {
+        "body": {
+          "id": "94397df8-0e9e-4479-a2f9-9af509fb5998", //<-- Every time it runs, it creates an unique uuid
+          "name": "Elen M"   
+        }
+      },
+      "assertions": {
+        "status": 201
+      }
+    }
+  ]
+}
+```
+
+Random String of specific length-
 ```
 {
   "scenarioName": "13_random_and_static_string_number_place_holders",
@@ -472,28 +517,12 @@ Chaining steps: Multi-Step REST calls with earlier response(IDs etc) as input to
       "assertions": {
         "status": 201
       }
-    },
-    {
-      "name": "again_try_to_create_employee_with_same_name_n_password",
-      "url": "http://localhost:9998/google-emp-services/home/employees",
-      "operation": "POST",
-      "request": {
-        "body": {
-          "id": 1000,
-          "name": "${$.create_new_employee.request.body.name}",
-          "password": "${$.create_new_employee.request.body.password}"
-        }
-      },
-      "assertions": {
-        "status": 201
-      }
     }
   ]
 }
 ```
 
 resolves to the below POST request to the end point:
-
 ```
 step:create_new_employee
 url:http://localhost:9998/google-emp-services/home/employees
@@ -506,22 +535,11 @@ request:
     "password" : "czljtmzotu"
   }
 } 
-step:again_try_to_create_employee_with_same_name_n_password
-url:http://localhost:9998/google-emp-services/home/employees
-method:POST
-request:
-{
-  "body" : {
-    "id" : 1000,
-    "name" : "Larry tzezq",
-    "password" : "czljtmzotu"
-  }
-} 
+
 ```
 
 See full log in the log file, looks like this:
 ```
---------- RELATIONSHIP-ID: 9e0c5c8b-e72a-4720-b07f-11e439b3f1c6 ---------
 requestTimeStamp:2016-08-01T15:37:20.555
 step:create_new_employee
 url:http://localhost:9998/google-emp-services/home/employees
@@ -534,7 +552,7 @@ request:
     "password" : "czljtmzotu"
   }
 } 
---------- RELATIONSHIP-ID: 9e0c5c8b-e72a-4720-b07f-11e439b3f1c6 ---------
+
 Response:
 {
   "status" : 201,
@@ -576,7 +594,6 @@ Response:
 -done-
 
 ```
-
 
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
