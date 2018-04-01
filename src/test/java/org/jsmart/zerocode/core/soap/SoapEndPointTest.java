@@ -14,14 +14,14 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class SoapEndPointTest {
 
-    //@Ignore("This works fine. Ignored only to avoid build failure if the internet site is down")
+    @Ignore("This works fine. Ignored only to avoid build failure if the internet site is down")
     @Test
     @JsonTestCase("16_soap/soap_endpoint_soap_action_post_200.json")
     public void testSoapEndPointWith_SOAPAction() throws Exception {
 
     }
 
-    //@Ignore("This works fine. Ignored only to avoid build failure if the internet site is down")
+    @Ignore("This works fine. Ignored only to avoid build failure if the internet site is down")
     @Test
     @JsonTestCase("16_soap/soap_request_xml_from_external_xml_file.json")
     public void testSoapRequestFromExternal_xmlFile() throws Exception {
