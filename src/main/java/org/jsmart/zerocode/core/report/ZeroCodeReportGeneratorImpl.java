@@ -312,11 +312,18 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
             return name.endsWith(".json");
         });
 
-        final List<String> fileNames = ofNullable(Arrays.asList(files)).orElse(emptyList()).stream()
-                .map(thisFile -> thisFile.getAbsolutePath())
-                .collect(Collectors.toList());
+        if(files == null || files.length == 0){
 
-        return fileNames;
+            LOGGER.error("\n\t\t\t************\nNow files were found in folder:{}, hence could not proceed. " +
+                    "\n(If this was intentional, then you can safely ignore this error)" +
+                    " \n\t\t\t************** \n\n", folderName);
+            return emptyList();
+
+        } else {
+            return ofNullable(Arrays.asList(files)).orElse(emptyList()).stream()
+                    .map(thisFile -> thisFile.getAbsolutePath())
+                    .collect(Collectors.toList());
+        }
     }
 
     protected void validateReportsFolderAndTheFilesExists(String reportsFolder) {
@@ -335,8 +342,10 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     "   2) You have simply used @RunWith(...) and ignored all tests -or- \n" +
                     "   3) Permission issue to create/write folder/files \n" +
                     "   4) Please fix it by adding/activating at least one test case or fix the file permission issue\n" +
+                    "   5) If you are not concerned about reports, you can safely ignore this\n" +
                     "----------------------------------------------------------------------------------------\n";
 
+            // TODO- Can Suppress as this error as this is only related to report. It doesn't hurt or affect the tests at all.
             throw new RuntimeException(message);
         }
 

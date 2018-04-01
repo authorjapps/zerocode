@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_FAIL;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TEST_STEP_CORRELATION_ID;
@@ -53,6 +54,8 @@ public class LogCorrelationshipPrinter {
     }
 
     public ZeroCodeReportStep buildReportSingleStep() {
+
+        result = result != null ? result : false;
 
         ZeroCodeReportStep zeroCodeReportStep = ZeroCodeReportStepBuilder.newInstance()
                 //.request(requestLogBuilder.request) //TODO
@@ -99,7 +102,7 @@ public class LogCorrelationshipPrinter {
 
     public static double durationMilliSecBetween(LocalDateTime requestTimeStamp, LocalDateTime responseTimeStamp) {
 
-        Duration dur = Duration.between(requestTimeStamp, responseTimeStamp);
+        Duration dur = Duration.between(requestTimeStamp, responseTimeStamp != null ? responseTimeStamp : now());
         return dur.toMillis();
     }
 
