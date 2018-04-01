@@ -1,6 +1,3 @@
-| ![Prepare Scenario](img/01_prepare_scenario_70_65.png) <br/> **Prepare scenario** | ![Write steps](img/02_write_steps_70_65.png) <br/> **Build up step(s)** | ![Execute steps pass](img/03_execute_70_65.png) &nbsp; &nbsp; ![Execute steps fail](img/04_execute_fail_70_65.png)<br/> **Execute** |
-|:-------------:|:-------------:|:-------------:|
-| Pick a "business scenario" or an "acceptance criteria", then convert it into easy and clean "JSON steps". | Assert the step(s) outcome with expected response "as it is" and optionally weave the next step to the earlier step input(s), using simple "JSON path" e.g. "created customerId", "customerType" etc. i.e. "$.step1.response.body.customerId" | Run the scenario using "@Test" annotation as a "JUnit" test or as "Suite" of tests as part of CI build.|
 
 Zerocode
 ====
@@ -8,23 +5,23 @@ Zerocode
 **Latest release: [1.1.32](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
 **Description:** Zerocode makes test scenario automation an effortless job. <br/>
-**HelloWorld example:** See a [HelloWorld step - GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) and [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
-**Documentation and Usage:** [Topics and Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
+**Documentation and Usage:** [Topics and Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
+**HelloWorld example:** See a [HelloWorld step - GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) and [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
 
 Keep things simple, Zerocode alleviates the need for writing code for test assertions and boiler plate wrappers. It empowers automation testers to build up test scenario steps effortlessly. The repititive tasks of everyday automation job have been taken care inside the framework smartly allowing the testers/developers to focus on business scenarios, acceptance criterias. 
 
 [![Download HelloWorld](https://img.shields.io/badge/download-examples-blue.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) 
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
+[![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://github.com/authorjapps/zerocode/blob/master/img/code_coverage/code_coverage_granular.png)
 [![Status Stable](https://img.shields.io/pypi/status/Django.svg)](https://travis-ci.org/authorjapps/zerocode) 
 [![GitHub issue comments](https://img.shields.io/github/issues/detail/comments/badges/shields/979.svg)](https://github.com/authorjapps/zerocode/issues) 
 [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
 [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![stackoverflow](https://img.shields.io/badge/stackoverflow-zerocode-green.svg)](https://stackoverflow.com/search?q=zerocode)
-
 
 
 Zerocode makes the tests easy to understand, easy to change and easy to share and migrate between environments. Your tests will not be cumbersome and complex anymore. Tests become standarised and easily maintainable by the team or the new comers. You will write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests`,  at the **speed** of writing **JUnit** tests
@@ -40,7 +37,6 @@ Zerocode helps you to design better Test Cases for your business feature, mainta
 Zerocode makes the tests independent, complete and structured. It prints the request, response into the console as well as to the log file in the `/target` folder in a **human readable** format along with producing report in terms of CSV and Spike Graphical Chat for each scenario steps. In that point every stake holder can understand the life cycle of a test case.
 
 Zerocode aims to make development and testing easier and faster, not harder and slower. Allows both Dev team and Test team to contribute towards better test cases which finally makes a product better quality. Even the managers and BAs can read and understand the tests. Zerocode goes the extra mile to generate helpful success and failure messages to trace the exact tests.
-
 
 ## REST BDD Testing Framework
 
@@ -64,6 +60,10 @@ https://github.com/authorjapps/zerocode/releases -or- [Maven Central](http://sea
 <pre><code><del>
 Testing no more a harder, slower and sleepless task
 </del></code></pre>
+
+| ![Prepare Scenario](img/01_prepare_scenario_70_65.png) <br/> **Prepare scenario** | ![Write steps](img/02_write_steps_70_65.png) <br/> **Build up step(s)** | ![Execute steps pass](img/03_execute_70_65.png) &nbsp; &nbsp; ![Execute steps fail](img/04_execute_fail_70_65.png)<br/> **Execute** |
+|:-------------:|:-------------:|:-------------:|
+| Pick a "business scenario" or an "acceptance criteria", then convert it into easy and clean "JSON steps". | Assert the step(s) outcome with expected response "as it is" and optionally weave the next step to the earlier step input(s), using simple "JSON path" e.g. "created customerId", "customerType" etc. i.e. "$.step1.response.body.customerId" | Run the scenario using "@Test" annotation as a "JUnit" test or as "Suite" of tests as part of CI build.|
 
 Look for examples below-
 
