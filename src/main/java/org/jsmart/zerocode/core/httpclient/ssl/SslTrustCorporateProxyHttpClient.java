@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.httpclient.soap;
+package org.jsmart.zerocode.core.httpclient.ssl;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -35,8 +35,8 @@ import static java.lang.String.format;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
 
-public class SoapCorporateProxySslHttpClient implements BasicHttpClient {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SoapCorporateProxySslHttpClient.class);
+public class SslTrustCorporateProxyHttpClient implements BasicHttpClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SslTrustCorporateProxyHttpClient.class);
 
     @Inject
     @Named("corporate.proxy.host")
