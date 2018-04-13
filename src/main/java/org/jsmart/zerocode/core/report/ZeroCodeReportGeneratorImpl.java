@@ -238,7 +238,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     new File(TARGET_FULL_REPORT_DIR +
                             TARGET_FULL_REPORT_CSV_FILE_NAME +
                             "_" +
-                            LocalDateTime.now().toString().replace(":", "-") +
+                            //LocalDateTime.now().toString().replace(":", "-") +
                             ".csv"),
                     zeroCodeCsvReportRows);
 
