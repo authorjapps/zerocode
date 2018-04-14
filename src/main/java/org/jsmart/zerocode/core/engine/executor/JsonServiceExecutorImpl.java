@@ -7,7 +7,6 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
-
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.Response;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
@@ -16,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MultivaluedMap;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -84,11 +82,15 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
             return responseJson;
 
-        } catch (Exception exc) {
+        } catch (Throwable severError) {
 
-            exc.printStackTrace();
+            LOGGER.error("Ooooooooooops! There something unexpected happen at port: {}, " +
+                    "\n1) Check if any other service is running at this port." +
+                    "\n2) Stop the other service at this port. -or- " +
+                    "\n3) Configure WireMock to another port which might fix this problem.\n" +
+                    "See complete error below-", mockPort, severError);
 
-            throw new RuntimeException(exc);
+            throw new RuntimeException(severError);
 
         }
     }

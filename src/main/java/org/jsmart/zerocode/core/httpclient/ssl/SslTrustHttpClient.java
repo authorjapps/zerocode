@@ -74,6 +74,7 @@ public class SslTrustHttpClient implements BasicHttpClient {
         if (headers != null) {
             Map headersMap = headers;
             for (Object key : headersMap.keySet()) {
+                removeDuplicateHeaders(requestBuilder, (String) key);
                 requestBuilder.addHeader((String) key, (String) headersMap.get(key));
             }
         }
@@ -118,6 +119,12 @@ public class SslTrustHttpClient implements BasicHttpClient {
         serverResponse = responseBuilder.build();
 
         return serverResponse;
+    }
+
+    private void removeDuplicateHeaders(RequestBuilder requestBuilder, String key) {
+        if(requestBuilder.getFirstHeader(key) != null) {
+            requestBuilder.removeHeaders(key);
+        }
     }
 
     private CloseableHttpClient createSslHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {

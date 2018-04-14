@@ -4,7 +4,7 @@
 		<file>target/logs/zerocode_rest_bdd_logs.log</file>
 		<append>true</append>
 		<encoder>
-			<pattern>%d [%thread] %-5level %logger{35} - %msg%n</pattern>
+			<pattern>%d [%thread] %-5level %logger{100} - %msg%n</pattern>
 		</encoder>
 	</appender>
 
@@ -13,7 +13,7 @@
 			<pattern>%d [%thread] %-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
 		</encoder>-->
 		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>%d %green([%thread]) %highlight(%level) %logger{50} - %blue(%msg%n)</pattern>
+			<pattern>%d %green([%thread]) %highlight(%level) %logger{100} - %blue(%msg%n)</pattern>
 		</layout>
 	</appender>
 
