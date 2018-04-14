@@ -2,7 +2,7 @@
 Zerocode
 ====
 
-**Latest release: [1.1.32](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
+**Latest release: [1.1.34](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
 **Description:** Zerocode makes test scenario automation an effortless job. <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
@@ -11,7 +11,7 @@ Zerocode
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **HelloWorld example:** See a [HelloWorld step - GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) and [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
 
-Keep things simple, Zerocode alleviates the need for writing code for test assertions and boiler plate wrappers. It empowers automation testers to build up test scenario steps effortlessly. The repititive tasks of everyday automation job have been taken care inside the framework smartly allowing the testers/developers to focus on business scenarios, acceptance criterias. 
+Keep things simple, Zerocode alleviates the need of writing `code` for test assertions and boiler plate wrappers. It empowers the automation testers as well as developers to build up test scenario steps effortlessly, with asserting the entire or partial result as JSON `as it is`. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enables you to focus on `business scenarios`, `user journeys` and `acceptance criterias` efficiently. 
 
 [![Download HelloWorld](https://img.shields.io/badge/download-examples-blue.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) 
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
@@ -23,20 +23,19 @@ Keep things simple, Zerocode alleviates the need for writing code for test asser
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![stackoverflow](https://img.shields.io/badge/stackoverflow-zerocode-green.svg)](https://stackoverflow.com/search?q=zerocode)
 
+Zerocode makes the tests **easy** to **understand**, easy to **change** and easy to **share** and easy to **migrate**. Your tests will not be cumbersome and complex anymore. Tests become standarised and easily maintainable by the team or the new comers. It enables you to write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests` etc, at the **speed** of writing **JUnit** tests.
 
-Zerocode makes the tests easy to understand, easy to change and easy to share and migrate between environments. Your tests will not be cumbersome and complex anymore. Tests become standarised and easily maintainable by the team or the new comers. You will write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests`,  at the **speed** of writing **JUnit** tests
+Zerocode at its core uses simple and powerful libs like `Google Jackson` for JSON assertions, `Apache HttpClient` for invoking REST and SOAP APIs, and Spring style place holders `${JSON Path}` for result assertions. It does not limit you to use Apache HttpClient, it enables you to easily override the framework behaviour with `@UseHttpClient` to use e.g. UniRest HttpClient, RestEasy HttpClient or any of your custom HttpClient where you might have configured for retry-mechanism that suits your project needs. 
 
-Zerocode at its core uses powerful libs like `Google Jackson` for JSON assertions, `Apache HttpClient` for invoking REST and SOAP APIs, and Spring style place holders `${JSON Path}` for result assertions. It does not limit you to use Apache HttpClient, it enables you to easily override the framework behaviour with `@UseHttpClient` to use e.g. UniRest HttpClient, RestEasy HttpClient or any of your custom HttpClient where you might have configured for retry-mechanism that your project needs. 
+Zerocode gives you out of the box **SSL** enabled Http Client and **SOAP** Client along with the optional MIME type converters e.g. XML to JSON if needed to increase test readability. It provides you with the options to configure **Corporate Proxy** at runtime to authenticate API invocations, simply by putting `proxy-host, port, username, password` etc into the config file. 
 
-Zerocode gives you out of the box SSL enabled Http Client and SOAP Client along with the optional MIME type converters e.g. XML to JSON if needed to increase test readability. It provides you with the options to configure Corporate Proxy at runtime to authenticate API invocations, simply by putting `proxy-host, port, username, password` etc into the config file. 
-
-Zerocode has built general functionality which enables you to extend and enrich the framework behaviour by simply executing external Java methods to achieve busines goals rather than putting every feature into the core framework.
+Zerocode has built general functionality which enables you to **extend** and enrich the **framework** behaviour by simply executing external Java methods to achieve busines goals rather than putting every feature into the core framework. Manipulating the the `request/response` as `JSON`, the testing becomes an easy and effortless job due to the **simplicity and intuitive** nature of JSON and the native support by IDEs(`Eclipse/IntelliJ/NetBeans etc`); needs no extra plugin.
 
 Zerocode helps you to design better Test Cases for your business feature, maintain and update easily to avoid sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests as well optionally you can use`Suite` Runner for CI builds.
 
-Zerocode makes the tests independent, complete and structured. It prints the request, response into the console as well as to the log file in the `/target` folder in a **human readable** format along with producing report in terms of CSV and Spike Graphical Chat for each scenario steps. In that point every stake holder can understand the life cycle of a test case.
+Zerocode makes the tests independent, complete and structured. It prints the request, response into the console as well as to the log file in the `/target` folder in a **human readable** format, along with producing `granular report` in the `CSV format` and `Interactive Fuzzy Search Enabled Chart report` for each scenario steps. In that point every stake holder can understand the life cycle of a test case. You can `search and filter` the junit report by `author` or `test scenario` or `test-step` or any relevant matching text. 
 
-Zerocode aims to make development and testing easier and faster, not harder and slower. Allows both Dev team and Test team to contribute towards better test cases which finally makes a product better quality. Even the managers and BAs can read and understand the tests. Zerocode goes the extra mile to generate helpful success and failure messages to trace the exact tests.
+Zerocode aims to make development and testing **easier and faster**, not harder and slower. Allows both Dev team and Test team to contribute towards better test cases which finally makes a product better **quality**. Even the managers and BAs can read and understand the tests. Zerocode goes the extra mile to generate helpful success and failure messages to trace the exact tests.
 
 ## REST BDD Testing Framework
 
@@ -51,11 +50,11 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.32</version> 
+    <version>1.1.34</version> 
 </dependency>
 ```
 But check here for the latest- 
-https://github.com/authorjapps/zerocode/releases -or- [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Czerocode)
+https://github.com/authorjapps/zerocode/releases -or- [Maven Central](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
 
 <pre><code><del>
 Testing no more a harder, slower and sleepless task
@@ -73,41 +72,50 @@ See the [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blo
 ### Easy! Simple! Readable! JSON Based!
 
 ```
-@TargetEnv("hello_world_host.properties")
+@TargetEnv("github_host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
-public class HelloWorldTest {
+public class JustHelloWorldTest {
 
     @Test
-    @JsonTestCase("hello_world/hello_world_get.json")
-    public void testHelloWorld_onlineRestApi() throws Exception {
+    @JsonTestCase("helloworld/hello_world_status_ok_assertions.json")
+    public void testGet() throws Exception {
 
     }
 }
 ```
 
-And the "hello_world_get.json" is as below:
+the `hello_world_status_ok_assertions.json` looks as below:
 ```
 {
-    "scenarioName": "scenario_hello_world_get",
+    "scenarioName": "GIVEN-the GitHub REST end point, WHEN-I invoke GET, THEN-I will receive the 200 status with body",
     "steps": [
         {
             "name": "get_user_details",
-            "url": "/posts/1",
+            "url": "/users/siddhagalaxy",
             "operation": "GET",
             "request": {
             },
             "assertions": {
                 "status": 200,
                 "body": {
-                    "id": 1,
-                    "userId": 1,
-                    "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit"
+                    "login" : "siddhagalaxy",
+                    "id" : 33847730,
+                    "type" : "User",
+                    "followers_url" : "https://api.github.com/users/siddhagalaxy/followers"
                 }
             }
         }
     ]
-[}
+}
 ```
+
+the `github_host.properties` looks as below:
+```
+restful.application.endpoint.host=https://api.github.com
+restful.application.endpoint.port=443
+restful.application.endpoint.context=
+```
+
 #### Define a Scenario with Steps, Then Run as JUnit([example](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java)) or run as Suite/Package([example](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldGitHubSuite.java)). See examples below-
 
 ## Table of Contents - 
