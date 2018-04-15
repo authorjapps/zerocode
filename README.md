@@ -4,7 +4,7 @@ Zerocode
 
 **Latest release: [1.1.34](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
-**Description:** Zerocode makes test scenario automation an effortless job. <br/>
+**Description:** Write more tests in less code. Zerocode makes API scenario automation an effortless job. <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
 **Documentation and Usage:** [Topics and Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
@@ -23,6 +23,10 @@ Keep things simple, Zerocode alleviates the need of writing `code` for test asse
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![stackoverflow](https://img.shields.io/badge/stackoverflow-zerocode-green.svg)](https://stackoverflow.com/search?q=zerocode)
 
+
+Supported testing frameworks:
+ * [JUnit](http://junit.org)
+ 
 Zerocode makes the tests **easy** to **understand**, easy to **change** and easy to **share** and easy to **migrate**. Your tests will not be cumbersome and complex anymore. Tests become standarised and easily maintainable by the team or the new comers. It enables you to write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests` etc, at the **speed** of writing **JUnit** tests.
 
 Zerocode at its core uses simple and powerful libs like `Google Jackson` for JSON assertions, `Apache HttpClient` for invoking REST and SOAP APIs, and Spring style place holders `${JSON Path}` for result assertions. It does not limit you to use Apache HttpClient, it enables you to easily override the framework behaviour with `@UseHttpClient` to use e.g. UniRest HttpClient, RestEasy HttpClient or any of your custom HttpClient where you might have configured for retry-mechanism that suits your project needs. 
