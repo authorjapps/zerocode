@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <soap:Body>
+        <GetXmlDataResponse xmlns="http://smartbear.com">
+            <GetXmlDataResult>
+                <x:books xmlns:x="urn:books">
+                    <book id="bk001" xmlns="">
+                        <author>Writer</author>
+                        <title>The First Book</title>
+                        <genre>Fiction</genre>
+                        <price>44.95</price>
+                        <pub_date>2000-10-01</pub_date>
+                        <review>An amazing story of nothing.</review>
+                    </book>
+                    <book id="bk002" xmlns="">
+                        <author>Poet</author>
+                        <title>The Poet's First Poem</title>
+                        <genre>Poem</genre>
+                        <price>24.95</price>
+                        <review>Least poetic poems.</review>
+                    </book>
+                </x:books>
+            </GetXmlDataResult>
+        </GetXmlDataResponse>
+    </soap:Body>
+</soap:Envelope>

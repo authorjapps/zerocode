@@ -35,6 +35,7 @@ import java.util.Map;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToXml;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -213,6 +214,38 @@ public class RestEndPointMockerTest {
 
         assertThat(response.getStatusLine().getStatusCode(), is(200));
         JSONAssert.assertEquals(jsonBodyResponse, responseBodyActual, true);
+
+    }
+
+
+    @Test
+    public void willMockASoapEndPoint() throws Exception{
+
+        WireMock.configureFor(9073);
+
+        String soapRequest = smartUtils.getJsonDocumentAsString("soap_stub/soap_request.xml");
+
+        final MappingBuilder requestBuilder = post(urlEqualTo("/samples/testcomplete12/webservices/Service.asmx"));
+        requestBuilder.withRequestBody(equalToXml(soapRequest));
+        requestBuilder.withHeader("Content-Type", equalTo("application/soap+xml; charset=utf-8"));
+
+        String soapResponseExpected = smartUtils.getJsonDocumentAsString("soap_stub/soap_response.xml");
+        stubFor(requestBuilder
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        //.withHeader("Content-Type", APPLICATION_JSON)
+                        .withBody(soapResponseExpected)));
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost request = new HttpPost("http://localhost:9073" + "/samples/testcomplete12/webservices/Service.asmx");
+        request.addHeader("Content-Type", "application/soap+xml; charset=utf-8");
+        StringEntity entity = new StringEntity(soapRequest);
+        request.setEntity(entity);
+        HttpResponse response = httpClient.execute(request);
+
+        final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+
+        assertThat(responseBodyActual, is(soapResponseExpected));
 
     }
 }
