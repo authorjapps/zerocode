@@ -16,12 +16,11 @@ Keep things simple, Zerocode alleviates the need of writing `code` for test asse
 [![Download HelloWorld](https://img.shields.io/badge/download-examples-blue.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) 
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
 [![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://github.com/authorjapps/zerocode/blob/master/img/code_coverage/code_coverage_granular.png)
-[![Status Stable](https://img.shields.io/pypi/status/Django.svg)](https://travis-ci.org/authorjapps/zerocode) 
 [![GitHub issue comments](https://img.shields.io/github/issues/detail/comments/badges/shields/979.svg)](https://github.com/authorjapps/zerocode/issues) 
 [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
 [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
-[![stackoverflow](https://img.shields.io/badge/stackoverflow-zerocode-green.svg)](https://stackoverflow.com/search?q=zerocode)
+[![codeproject](https://img.shields.io/badge/codeproject-zerocode-blue.svg)](https://www.codeproject.com/search.aspx?q=zerocode&x=0&y=0&sbo=kw)
 
 
 Supported testing frameworks:
@@ -150,6 +149,7 @@ restful.application.endpoint.context=
 - [MIME Type Converters- XML to JSON, prettyfy XML etc](#25)
 - [Using WireMock for mocking dependent end points](#26)
 - [General place holders and assertion place holder table](#99)
+- [References and Dicussions](#100)
 
 
 ### examples:
@@ -1308,7 +1308,6 @@ The below JSON block step will mock two end points using WireMock.
 
 ```
 
-
 #### 99:
 #### Place holders for End Point Mocking
 
@@ -1351,8 +1350,14 @@ The below JSON block step will mock two end points using WireMock.
 | $<path.to.array>.SIZE       | Assertion passes if the array size matches with value | See usage in the test json |
 
 
-Search
-zero code response assertions as JSON
+#### 100:
+#### References, Dicussions and articles
+* [REST API or SOAP End Point Testing](https://www.codeproject.com/Articles/1242569/REST-API-or-SOAP-End-Point-Testing-with-ZeroCode-J) - Codeproject
+* [DZone- MuleSoft API Testing With Zerocode Test Framework](https://dzone.com/articles/zerocode-test-framework-for-restsoap-api-tddbdd-ap) - DZone
+* [Testing need not be harder or slower, it should be easier and faster](https://dzone.com/articles/rest-api-testing-using-the-zerocode-json-based-bdd) - DZone
+
+
+
 
 [Zerocode UUID or Zerocode uuid random UUID]: https://github.com/authorjapps/zerocode#zerocode
 
