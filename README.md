@@ -2,6 +2,10 @@
 Zerocode
 ====
 
+> Zerocode makes your API tests easy to **understand**, easy to **change**, easy to **share** and easy to **maintain**.
+
+> Hence your test-driven API development becomes accurate, efficient, fast and fun.
+
 **Latest release: [1.1.34](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
 **Description:** Write more tests in less code. Zerocode makes API scenario automation an effortless job. <br/>
@@ -26,7 +30,7 @@ Keep things simple, Zerocode alleviates the need of writing `code` for test asse
 Supported testing frameworks:
  * [JUnit](http://junit.org)
  
-Zerocode makes the tests **easy** to **understand**, easy to **change** and easy to **share** and easy to **migrate**. Your tests will not be cumbersome and complex anymore. Tests become standarised and easily maintainable by the team or the new comers. It enables you to write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests` etc, at the **speed** of writing **JUnit** tests.
+Your tests will not be cumbersome and complex anymore. Tests become standarised and easily maintainable by the team or the new comers. It enables you to write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests` etc, at the **speed** of writing **JUnit** tests.
 
 Zerocode at its core uses simple and powerful libs like `Google Jackson` for JSON assertions, `Apache HttpClient` for invoking REST and SOAP APIs, and Spring style place holders `${JSON Path}` for result assertions. It does not limit you to use Apache HttpClient, it enables you to easily override the framework behaviour with `@UseHttpClient` to use e.g. UniRest HttpClient, RestEasy HttpClient or any of your custom HttpClient where you might have configured for retry-mechanism that suits your project needs. 
 
