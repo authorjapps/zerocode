@@ -16,7 +16,7 @@ Hence your test-driven API development becomes efficient, accurate, fast and fun
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **HelloWorld example:** See a [HelloWorld step - GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) and [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
 
-Keep things simple, Zerocode alleviates the need of writing `code` for test assertions and boiler plate wrappers. It empowers the automation testers as well as developers to build up test scenario steps effortlessly, with asserting the entire or partial result as JSON `as it is`. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enables you to focus on `business scenarios`, `user journeys` and `acceptance criterias` efficiently. 
+Keep things simple, Zerocode alleviates the need of writing `code` for test assertions and boiler plate wrappers. It empowers the automation testers as well as developers to build up test scenario steps effortlessly, with asserting the entire or partial result as JSON `as it is`. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enables you to focus on business bcenarios, user journeys and acceptance criterias efficiently. 
 
 [![Download HelloWorld](https://img.shields.io/badge/download-examples-blue.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) 
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
@@ -30,28 +30,6 @@ Keep things simple, Zerocode alleviates the need of writing `code` for test asse
 
 Supported testing frameworks:
  * [JUnit](http://junit.org)
- 
-Your tests will not be cumbersome and complex anymore. Tests become standarised and easily maintainable by the team or the new comers. It enables you to write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests` etc, at the **speed** of writing **JUnit** tests.
-
-Zerocode at its core uses simple and powerful libs like `Google Jackson` for JSON assertions, `Apache HttpClient` for invoking REST and SOAP APIs, and Spring style place holders `${JSON Path}` for result assertions. It does not limit you to use Apache HttpClient, it enables you to easily override the framework behaviour with `@UseHttpClient` to use e.g. UniRest HttpClient, RestEasy HttpClient or any of your custom HttpClient where you might have configured for retry-mechanism that suits your project needs. 
-
-Zerocode gives you out of the box **SSL** enabled Http Client and **SOAP** Client along with the optional MIME type converters e.g. XML to JSON if needed to increase test readability. It provides you with the options to configure **Corporate Proxy** at runtime to authenticate API invocations, simply by putting `proxy-host, port, username, password` etc into the config file. 
-
-Zerocode has built general functionality which enables you to **extend** and enrich the **framework** behaviour by simply executing external Java methods to achieve busines goals rather than putting every feature into the core framework. Manipulating the the `request/response` as `JSON`, the testing becomes an easy and effortless job due to the **simplicity and intuitive** nature of JSON and the native support by IDEs(`Eclipse/IntelliJ/NetBeans etc`); needs no extra plugin.
-
-Zerocode helps you to design better Test Cases for your business feature, maintain and update easily to avoid sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests as well optionally you can use`Suite` Runner for CI builds.
-
-Zerocode makes the tests independent, complete and structured. It prints the request, response into the console as well as to the log file in the `/target` folder in a **human readable** format, along with producing `granular report` in the `CSV format` and `Interactive Fuzzy Search Enabled Chart report` for each scenario steps. In that point every stake holder can understand the life cycle of a test case. You can `search and filter` the junit report by `author` or `test scenario` or `test-step` or any relevant matching text. 
-
-Zerocode aims to make development and testing **easier and faster**, not harder and slower. Allows both Dev team and Test team to contribute towards better test cases which finally makes a product better **quality**. Even the managers and BAs can read and understand the tests. Zerocode goes the extra mile to generate helpful success and failure messages to trace the exact tests.
-
-## REST BDD Testing Framework
-
-Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
-
-Use the **powerful response assertions** mechanism with just copy and paste of the JSONs. 
-
-Develop and test applications with TDD and BDD approach. 
 
 Latest maven release:
 ```
@@ -63,6 +41,28 @@ Latest maven release:
 ```
 But check here for the latest- 
 https://github.com/authorjapps/zerocode/releases -or- [Maven Central](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
+
+Your tests will not be cumbersome and complex anymore. Zerocode makes your tests independent, complete and structured and easily maintainable by the team or the new comers. It enables you to write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests` etc, at the **speed** of writing **JUnit** tests.
+
+Zerocode at its core uses simple and powerful libs like `Google Jackson` for JSON assertions, `Apache HttpClient` for invoking REST and SOAP APIs, and Spring style place holders `${JSON Path}` for result assertions. It does not limit you to use Apache HttpClient, it enables you to easily override the framework behaviour with `@UseHttpClient` to use e.g. UniRest HttpClient, RestEasy HttpClient or any of your custom HttpClient where you might have configured for retry-mechanism or any other features that suits your project needs. 
+
+Zerocode helps you to design better Test Cases for your business features, maintain and update easily to avoid sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests, as well optionally you can use`Suite` Runner for CI builds. Testing becomes an easy and effortless job due to the **simplicity** nature of JSON and the native support by popular IDEs(`Eclipse/IntelliJ/NetBeans etc`); needs no extra plugin.
+
+Zerocode gives you out of the box **SSL** enabled Http Client and **SOAP** Client along with the optional MIME type converters e.g. XML to JSON if needed to increase test readability. It provides you with the options to configure **Corporate Proxy** at runtime to authenticate API invocations.
+
+Zerocode has built general functionality which enables you to **extend** and enrich the **framework** behaviour by simply executing external Java methods to achieve busines goals rather than putting every feature into the core framework. 
+
+Zerocode prints the request, response into the console as well as to the log file in the `/target` folder in a **human readable** format, along with producing `granular report` in the `CSV format` and `Interactive Fuzzy Search Enabled Chart report`. In that point every stake holder can understand the life cycle of a test case. You can `search and filter` the junit report by `author` or `test scenario` or `test-step` or any relevant matching text making it easy to trace the step in the context of a scenario or user journey.
+
+Zerocode aims to make development and testing **easier and faster**, not harder and slower. Allows both Dev team and Test team to contribute towards better test cases which finally makes a product better **quality**. Even the managers and BAs can read and understand the tests as the tests don't involve programming.
+
+## REST BDD Testing Framework
+
+Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
+
+Use the **powerful response assertions** mechanism with just copy and paste of the JSONs. 
+
+Develop and test applications with TDD and BDD approach. 
 
 <pre><code><del>
 Testing no more a harder, slower and sleepless task
