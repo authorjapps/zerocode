@@ -1,10 +1,11 @@
 
 Zerocode
 ====
+A simple and light weight testing tool for api contract and end-to-end tests.
 
-> The purpose of Zerocode testing lib is to make your API tests easy to **understand**, easy to **change**, easy to **share** and easy to **maintain**.
+> The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
 
-> Hence your test-driven API development becomes efficient, accurate, fast and fun.
+Hence your test-driven API development becomes efficient, accurate, fast and fun.
 
 **Latest release: [1.1.34](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
