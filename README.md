@@ -5,16 +5,15 @@ A simple and light weight testing tool for api contract and end-to-end tests.
 
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
 
-Hence your test-driven API development becomes efficient, accurate, fast and fun.
-
 **Latest release: [1.1.34](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
-**Description:** Write more tests in less code. Zerocode makes API scenario automation an effortless job. <br/>
+**HelloWorld:** [Calling - GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) and [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
+**Documentation and Usage:** [Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
-**Documentation and Usage:** [Topics and Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
-**License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
-**HelloWorld example:** See a [HelloWorld step - GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) and [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
+**License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
+
+> Make your test-driven API development efficient, accurate, fast and fun.
 
 Keep things simple, Zerocode alleviates the need of writing `code` for test assertions and boiler plate wrappers. It empowers the automation testers as well as developers to build up test scenario steps effortlessly, with asserting the entire or partial result as JSON `as it is`. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enables you to focus on business bcenarios, user journeys and acceptance criterias efficiently. 
 
