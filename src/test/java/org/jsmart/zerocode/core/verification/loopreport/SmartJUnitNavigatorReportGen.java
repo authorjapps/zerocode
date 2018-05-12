@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.verification;
+package org.jsmart.zerocode.core.verification.loopreport;
 
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.TargetEnv;
@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 public class SmartJUnitNavigatorReportGen {
 
     @Test
-    @JsonTestCase("11_reports/02_multi_scenario_multi_step_report_test.json")
+    @JsonTestCase("11_reports/02.1_loop_scenario_only.json")
     public void willGeneratReport_multiSceneMultiSteps() throws Exception {
 
     }

@@ -275,7 +275,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         reportResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
 
                         /*
-                         * failed and exception reports are generated here
+                         * FAILED and Exception reports are generated here
                          */
                         if(!stepOutcome) {
                             reportBuilder.result(reportResultBuilder.build());
@@ -297,6 +297,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
          */
         stopWireMockServer();
 
+        /*
+         * PASSED reports are generated here
+         */
         reportBuilder.printToFile(scenario.getScenarioName() + LocalDateTime.now() + ".json");
 
         /*
@@ -304,19 +307,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
          *  Red symbolises failure, but nothing has failed here.
          */
         return true;
-    }
-
-    private String getFullyQualifiedRestUrl(String serviceEndPoint) {
-        if (serviceEndPoint.startsWith("http://") || serviceEndPoint.startsWith("https://")) {
-            return serviceEndPoint;
-        } else {
-            /*
-             * Make sure your property file contains context-path with a front slash like "/google-map".
-             * -OR-
-             * Empty context path is also ok if it requires. In this case dont put front slash.
-             */
-            return String.format("%s:%s%s%s", host, port, applicationContext, serviceEndPoint);
-        }
     }
 
     @Override
@@ -352,6 +342,19 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         }
         
         return serviceType;
+    }
+
+    private String getFullyQualifiedRestUrl(String serviceEndPoint) {
+        if (serviceEndPoint.startsWith("http://") || serviceEndPoint.startsWith("https://")) {
+            return serviceEndPoint;
+        } else {
+            /*
+             * Make sure your property file contains context-path with a front slash like "/google-map".
+             * -OR-
+             * Empty context path is also ok if it requires. In this case dont put front slash.
+             */
+            return String.format("%s:%s%s%s", host, port, applicationContext, serviceEndPoint);
+        }
     }
 
     private void stopWireMockServer() {
