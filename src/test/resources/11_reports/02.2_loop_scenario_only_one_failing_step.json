@@ -1,5 +1,5 @@
 {
-    "scenarioName": "Will Get A bath Room Multi Multi",
+    "scenarioName": "Loop Scenario - Will Get A bath Room with_a_failing_step",
     "loop": 2,
     "steps": [
         {
@@ -27,7 +27,6 @@
             "name": "get_another_shower_room",
             "url": "http://localhost:9998/home/bathroom/2${$.get_shower_room.response.body.id}",
             "operation": "GET",
-            "loop": 3,
             "request": {
                 "headers": {
                     "Content-Type": "application/json;charset=UTF-8",
@@ -40,7 +39,7 @@
                 "status": 200,
                 "body": {
                     "id": 21,
-                    "name": "Shower-21",
+                    "name": "Shower-00-Failing",
                     "availability": true
                 }
             }

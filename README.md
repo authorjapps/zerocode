@@ -1,15 +1,15 @@
 
 Zerocode
 ====
-A simple and light weight testing lib for api contract and end-to-end tests.
+A simple and light weight automation testing lib for api end point tests.
 
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
 
 **Latest release: [1.1.34](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
-**HelloWorld:** [Calling - GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) and [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
-**Documentation and Usage:** [Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
+**HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
+**Help and Usage:** [Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 
