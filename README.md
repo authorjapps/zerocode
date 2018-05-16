@@ -47,6 +47,11 @@ Testing becomes an easy and effortless job due to the **simplicity** nature of J
 
 [More >>](https://github.com/authorjapps/zerocode/wiki)
 
+Who uses Zerocode?
+--------------------
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services Contract Tests
+ + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft APIs Consumer Contract Tests and E2E Integration Tests
+ 
 ## REST BDD Testing Framework
 
 Develop and test applications with TDD and BDD approach while easily building up your regression suites. 
