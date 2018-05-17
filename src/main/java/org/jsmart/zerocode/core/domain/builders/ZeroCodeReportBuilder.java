@@ -103,6 +103,6 @@ public class ZeroCodeReportBuilder {
             // wait for all tasks to finish executing
             // LOGGER.info("Still waiting for all threads to complete execution...");
         }
-        LOGGER.info("Pass-Fail report written. Finished all threads");
+        LOGGER.info("Pass-Fail JSON report written target -done. Finished all threads");
     }
 }

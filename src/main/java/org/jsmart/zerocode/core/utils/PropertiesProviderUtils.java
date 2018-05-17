@@ -1,11 +1,11 @@
-package org.jsmart.zerocode.parallel;
+package org.jsmart.zerocode.core.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 
-public class PropertiesProvider {
+public class PropertiesProviderUtils {
 
 
     private static Properties properties = new Properties();
@@ -15,7 +15,7 @@ public class PropertiesProvider {
     }
 
     public static Properties getProperties(String propertyResourceFile) {
-        InputStream inputStream = PropertiesProvider.class
+        InputStream inputStream = PropertiesProviderUtils.class
                 .getClassLoader()
                 .getResourceAsStream(propertyResourceFile);
 

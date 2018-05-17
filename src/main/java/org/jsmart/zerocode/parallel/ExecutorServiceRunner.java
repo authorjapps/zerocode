@@ -3,6 +3,7 @@ package org.jsmart.zerocode.parallel;
 
 import org.jboss.resteasy.spi.InternalServerErrorException;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
+import org.jsmart.zerocode.core.utils.PropertiesProviderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ public class ExecutorServiceRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeUnitRunner.class);
 
     private List<Runnable> runnables = new ArrayList<>();
+    private List<Callable<Object>> callables = new ArrayList<>();
 
     private int numberOfThreads;
     private int rampUpPeriod;
@@ -34,9 +36,9 @@ public class ExecutorServiceRunner {
     }
 
     public ExecutorServiceRunner(String loadPropertiesFile) {
-        Properties properties = PropertiesProvider.getProperties(loadPropertiesFile);
+        Properties properties = PropertiesProviderUtils.getProperties(loadPropertiesFile);
         numberOfThreads = parseInt(properties.getProperty("number.of.threads"));
-        rampUpPeriod = parseInt(properties.getProperty("ramp.up.period"));
+        rampUpPeriod = parseInt(properties.getProperty("ramp.up.period.in.seconds"));
         loopCount = parseInt(properties.getProperty("loop.count"));
 
         calculateAndSetDelayBetweenTwoThreadsInSecs(rampUpPeriod);
@@ -58,15 +60,17 @@ public class ExecutorServiceRunner {
         return this;
     }
 
-
-    public void runRunnables() {
-        if (runnables == null || runnables.size() == 0) {
-            throw new RuntimeException("No runnable were found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
-        }
-        runRunnables(runnables);
+    public ExecutorServiceRunner addCallable(Callable callable) {
+        callables.add(callable);
+        return this;
     }
 
-    public void runRunnables(List<Runnable> runnables) {
+
+    public void runRunnables() {
+
+        if (runnables == null || runnables.size() == 0) {
+            throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
+        }
 
         ExecutorService executorService = newFixedThreadPool(numberOfThreads);
 
@@ -76,7 +80,7 @@ public class ExecutorServiceRunner {
                     for (int j = 0; j < numberOfThreads; j++) {
                         LOGGER.info(Thread.currentThread().getName() + " JUnit test- Start. Time = " + LocalDateTime.now());
                         try {
-                            LOGGER.info("Waiting in the transit for next flight to adjust overall ramp up time, wait time now = " + delayBetweenTwoThreadsInMilliSecs);
+                            LOGGER.info("Waiting in the transit for next test flight to adjust overall ramp up time, wait time now = " + delayBetweenTwoThreadsInMilliSecs);
                             Thread.sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
@@ -100,8 +104,15 @@ public class ExecutorServiceRunner {
         }
     }
 
+    public void runCallables() {
+        runCallableFutures();
+    }
 
-    public void runCallables(List<Callable<Object>> callables) {
+    public void runCallableFutures() {
+
+        if (callables == null || callables.size() == 0) {
+            throw new RuntimeException("No callable(s) was found to run. You can add one or more callables using 'addCallable(Callable callable)'");
+        }
 
         ExecutorService executorService = newFixedThreadPool(numberOfThreads);
 
@@ -110,6 +121,7 @@ public class ExecutorServiceRunner {
                 for (int j = 0; j < numberOfThreads; j++) {
                     LOGGER.info(Thread.currentThread().getName() + " Future execution- Start. Time = " + LocalDateTime.now());
                     try {
+                        LOGGER.info("Waiting in the transit for next test flight to adjust overall ramp up time, wait time now = " + delayBetweenTwoThreadsInMilliSecs);
                         Thread.sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
@@ -143,7 +155,7 @@ public class ExecutorServiceRunner {
 
     private Object execute(Future<Object> future) {
         try {
-            LOGGER.info("executing Future now...");
+            LOGGER.info("executing the 'Future' now...");
             return future.get();
         } catch (Exception futureEx) {
             if (futureEx.getCause() instanceof InternalServerErrorException) {
@@ -151,14 +163,6 @@ public class ExecutorServiceRunner {
             }
             throw new RuntimeException(futureEx);
         }
-    }
-
-    public int getNumberOfThreads() {
-        return numberOfThreads;
-    }
-
-    public int getRampUpPeriod() {
-        return rampUpPeriod;
     }
 
 
@@ -176,10 +180,21 @@ public class ExecutorServiceRunner {
         return runnables;
     }
 
+    public int getNumberOfThreads() {
+        return numberOfThreads;
+    }
+
+    public int getRampUpPeriod() {
+        return rampUpPeriod;
+    }
+
+    public List<Callable<Object>> getCallables() {
+        return callables;
+    }
 
     private void logLoadingProperties() {
         LOGGER.info("### numberOfThreads : " + numberOfThreads);
-        LOGGER.info("### rampUpPeriod : " + rampUpPeriod);
+        LOGGER.info("### rampUpPeriodInSeconds : " + rampUpPeriod);
         LOGGER.info("### loopCount : " + loopCount);
     }
 }

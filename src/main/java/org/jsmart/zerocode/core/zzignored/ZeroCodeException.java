@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.parallel;
+package org.jsmart.zerocode.core.zzignored;
 
 import java.util.concurrent.Callable;
 
