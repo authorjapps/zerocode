@@ -1,91 +1,90 @@
 {
-  "name" : "Bathroom-Simulator",
-  "apis" : [
-    {
-      "name": "Get Bathroom by Id",
-      "operation": "GET",
-      "url": "/home/bathroom/1",
-      "response": {
-        "status": 200,
-        "body": {
-          "id": 1,
-          "name": "Shower",
-          "availability": true
-        }
-      }
-    },
-    {
-      "name": "POST Bathroom - Create",
-      "operation": "POST",
-      "url": "/home/bathroom",
-      "response": {
-        "status": 201,
-        "body": {
-          "id": 1,
-          "name": "Shower",
-          "availability": true
-        }
-      }
-    },
-    {
-      "name": "Get Bathroom by Id 21",
-      "operation": "GET",
-      "url": "/home/bathroom/21",
-      "response": {
-        "status": 200,
-        "body": {
-          "id": 21,
-          "name": "Shower-21",
-          "availability": true
-        }
-      }
-    },
-    {
-      "name": "Get Hotel Resource",
-      "operation": "GET",
-      "url": "/google-map-services/home/bathroom/google_id_01",
-      "response": {
-        "status": 200,
-        "body": {
-          "id": 1,
-          "name": "G Hotel Shower",
-          "availability": true
-        }
-      }
-    },
-    {
-      "name": "Get text node json content",
-      "operation": "GET",
-      "url": "/api/textnodejson",
-      "response": {
-        "status": 200,
-        "body": "valid-text-node-json"
-      }
-    },
-    {
-      "name": "Get non-json content",
-      "operation": "GET",
-      "url": "/api/nonjson",
-      "response": {
-        "status": 200,
-        "rawBody": "non-json"
-      }
-    },
-    {
-      "name": "response with headers",
-      "operation": "GET",
-      "url": "/api/response/with/headers",
-      "response": {
-        "status": 200,
-        "headers":{
-          "client_id": "cid_00001",
-          "client_secret": "secret_00001"
+    "name": "Bathroom-Simulator",
+    "apis": [
+        {
+            "name": "Get Bathroom by Id",
+            "operation": "GET",
+            "url": "/home/bathroom/1",
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": 1,
+                    "name": "Shower",
+                    "availability": true
+                }
+            }
         },
-        "body": {
-          "zeroKey" : "zeroValue"
+        {
+            "name": "POST Bathroom - Create",
+            "operation": "POST",
+            "url": "/home/bathroom",
+            "response": {
+                "status": 201,
+                "body": {
+                    "id": 1,
+                    "name": "Shower",
+                    "availability": true
+                }
+            }
+        },
+        {
+            "name": "Get Bathroom by Id 21",
+            "operation": "GET",
+            "url": "/home/bathroom/21",
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": 21,
+                    "name": "Shower-21",
+                    "availability": true
+                }
+            }
+        },
+        {
+            "name": "Get Hotel Resource",
+            "operation": "GET",
+            "url": "/google-map-services/home/bathroom/google_id_01",
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": 1,
+                    "name": "G Hotel Shower",
+                    "availability": true
+                }
+            }
+        },
+        {
+            "name": "Get text node json content",
+            "operation": "GET",
+            "url": "/api/textnodejson",
+            "response": {
+                "status": 200,
+                "body": "valid-text-node-json"
+            }
+        },
+        {
+            "name": "Get non-json content",
+            "operation": "GET",
+            "url": "/api/nonjson",
+            "response": {
+                "status": 200,
+                "rawBody": "non-json"
+            }
+        },
+        {
+            "name": "response with headers",
+            "operation": "GET",
+            "url": "/api/response/with/headers",
+            "response": {
+                "status": 200,
+                "headers": {
+                    "client_id": "cid_00001",
+                    "client_secret": "secret_00001"
+                },
+                "body": {
+                    "zeroKey": "zeroValue"
+                }
+            }
         }
-      }
-    }
-
-  ]
+    ]
 }

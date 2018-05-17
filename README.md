@@ -1,3 +1,4 @@
+![Prepare Scenario](img/landing/pass_fail.png)
 
 Zerocode
 ====
