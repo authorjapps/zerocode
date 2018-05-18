@@ -77,15 +77,15 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private List<String> getSmartChildrenList() {
         List<FrameworkMethod> children = getChildren();
         children.forEach(
-                        frameworkMethod -> {
-                            JsonTestCase annotation = frameworkMethod.getAnnotation(JsonTestCase.class);
-                            if (annotation != null) {
-                                smartTestCaseNames.add(annotation.value());
-                            } else {
-                                smartTestCaseNames.add(frameworkMethod.getName());
-                            }
-                        }
-                        );
+                frameworkMethod -> {
+                    JsonTestCase annotation = frameworkMethod.getAnnotation(JsonTestCase.class);
+                    if (annotation != null) {
+                        smartTestCaseNames.add(annotation.value());
+                    } else {
+                        smartTestCaseNames.add(frameworkMethod.getName());
+                    }
+                }
+        );
 
         return smartTestCaseNames;
     }
@@ -124,10 +124,10 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
                 final ZeroCodeMultiStepsScenarioRunner multiStepsRunner = getInjectedMultiStepsRunner();
 
-            /*
-             * Override the properties file containing hosts and ports with HostProperties
-             * only if the annotation is present on the runner.
-             */
+                /*
+                 * Override the properties file containing hosts and ports with HostProperties
+                 * only if the annotation is present on the runner.
+                 */
                 if (hostProperties != null) {
                     ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideHost(host);
                     ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overridePort(port);
@@ -144,8 +144,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             if (passed) {
                 LOGGER.info(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
-                                child.getScenarioName(),
-                                child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
+                        child.getScenarioName(),
+                        child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
             }
 
             notifier.fireTestFinished(description);
@@ -168,20 +168,22 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     public Injector getMainModuleInjector() {
-        // TODO: Synchronise this with an object lock e.g. synchronized (ZeroCodeUnitRunner.class) {}
-        final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
-        String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
+        // Synchronise this with an object lock e.g. synchronized (ZeroCodeUnitRunner.class) {}
+        synchronized (this) {
+            final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
+            String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
 
-        serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
+            serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 
-        final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
-        Class<? extends BasicHttpClient> runtimeHttpClient =
-                        httpClientAnnotated != null ? httpClientAnnotated.value() : RestEasyDefaultHttpClient.class;
+            final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
+            Class<? extends BasicHttpClient> runtimeHttpClient =
+                    httpClientAnnotated != null ? httpClientAnnotated.value() : RestEasyDefaultHttpClient.class;
 
-        injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
-                        .with(new RuntimeHttpClientModule(runtimeHttpClient)));
+            injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
+                    .with(new RuntimeHttpClientModule(runtimeHttpClient)));
 
-        return injector;
+            return injector;
+        }
     }
 
     protected SmartUtils getInjectedSmartUtilsClass() {
