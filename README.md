@@ -2,7 +2,7 @@
 
 Zerocode
 ====
-A simple and light weight automation testing lib for api end point tests.
+A simple and light weight automation testing lib for api end points with payload and assertions as JSON.
 
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
 
