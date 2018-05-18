@@ -31,9 +31,9 @@ public class ExecutorServiceRunner {
 
     private Double delayBetweenTwoThreadsInMilliSecs;
 
-    public ExecutorServiceRunner() {
-        delayBetweenTwoThreadsInMilliSecs = (Double.valueOf(rampUpPeriod) / Double.valueOf(numberOfThreads)) * 1000L;
-    }
+//    public ExecutorServiceRunner() {
+//        delayBetweenTwoThreadsInMilliSecs = (Double.valueOf(rampUpPeriod) / Double.valueOf(numberOfThreads)) * 1000L;
+//    }
 
     public ExecutorServiceRunner(String loadPropertiesFile) {
         Properties properties = PropertiesProviderUtils.getProperties(loadPropertiesFile);
@@ -51,7 +51,7 @@ public class ExecutorServiceRunner {
         this.loopCount = loopCount;
         this.rampUpPeriod = rampUpPeriod;
 
-        calculateAndSetDelayBetweenTwoThreadsInSecs(rampUpPeriod);
+        calculateAndSetDelayBetweenTwoThreadsInSecs(this.rampUpPeriod);
         logLoadingProperties();
     }
 

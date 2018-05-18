@@ -28,6 +28,10 @@ public class LoadRestEndPointTest {
 
             System.out.println(Thread.currentThread().getName() + " JunitTestSample test- *Finished Time, result = " + LocalDateTime.now() + " -" + result.wasSuccessful());
 
+            System.out.println(">> result.getRunTime()" + result.getRunTime());
+            System.out.println(">> result.getFailureCount()" + result.getFailureCount());
+            System.out.println(">> result.getFailures()" + result.getFailures());
+
             if(result.wasSuccessful()){
                 passedCounter.incrementAndGet();
             } else {

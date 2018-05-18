@@ -45,7 +45,7 @@ public class ApplicationMainModule extends AbstractModule {
         bind(JavaExecutor.class).to(JavaExecutorImpl.class);
         bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
-        bind(ExecutorServiceRunner.class).in(Singleton.class);
+        //bind(ExecutorServiceRunner.class).in(Singleton.class);
         //bind(SmartUtils.class);
 
         /*
