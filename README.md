@@ -71,7 +71,7 @@ See the [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blo
 
 ### Easy! Simple! Readable! JSON Based!
 
-```
+```java
 @TargetEnv("github_host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class JustHelloWorldTest {
@@ -85,7 +85,7 @@ public class JustHelloWorldTest {
 ```
 
 the `hello_world_status_ok_assertions.json` looks as below:
-```
+```javaScript
 {
     "scenarioName": "GIVEN-the GitHub REST end point, WHEN-I invoke GET, THEN-I will receive the 200 status with body",
     "steps": [
@@ -167,7 +167,7 @@ Download this help and usage project to try it yourself.
 #### Single Scenario with single step
 
 A scenario might consists of one or more steps. Let's start with single step Test Case:
-```
+```javaScript
 {
   "scenarioName": "Vanilla - Will Get Google Employee Details",
   "steps": [
@@ -204,7 +204,7 @@ Note:
 
 
 The above Test Case will PASS as the end point actually available is as below. Look at the "response" section below.
-```
+```javaScript
         {
           "name": "Sample_Get_Employee_by_Id",
           "operation": "GET",
@@ -232,7 +232,7 @@ The following Test Case will fail. Why?
 
 Because you are asserting with an expected status as 500, but the end point actually returns 200.
 
-```
+```javaScript
 {
   "scenarioName": "Vanilla - Will Get Google Employee Details",
   "steps": [
@@ -253,7 +253,7 @@ Because you are asserting with an expected status as 500, but the end point actu
 #### 3:
 #### Single step with more assertions
 
-```
+```javaScript
 {
   "scenarioName": "Vanilla - Will Get Google Employee Details",
   "steps": [
@@ -293,7 +293,7 @@ The above Test Case will PASS as the assertions section has all expected values 
 
 - _loop_ field in a step will execute the step that many number of time.
 
-```
+```javaScript
 {
   "scenarioName": "Vanilla - Execute multiple times - Step",
   "steps": [
@@ -322,7 +322,7 @@ The above Test Case will PASS as the assertions section has all expected values 
 - Usage: See here: [Scenario loop](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/03_using_scenario_loop.json)
 Runs the entire scenario two times i.e. executing both the steps once for each time.
 
-```
+```javaScript
 {
   "scenarioName": "Vanilla - Execute multiple times - Scenario",
   "loop": 2,
@@ -415,7 +415,7 @@ Possible reasons-
 
 Chaining steps: Multi-Step REST calls with earlier response(IDs etc) as input to next step
 
-```
+```javaScript
 {
     "scenarioName": "12_chaining_multiple_steps_using_previous_response",
     "steps": [
@@ -464,7 +464,7 @@ Chaining steps: Multi-Step REST calls with earlier response(IDs etc) as input to
 #### Generating random strings, random numbers and static strings
 
 Random UUID-
-```
+```javaScript
 {
   "scenarioName": "random_UUID",
   "steps": [
@@ -508,7 +508,7 @@ Resolves to-
 ```
 
 Random String of specific length-
-```
+```javaScript
 {
   "scenarioName": "13_random_and_static_string_number_place_holders",
   "steps": [
@@ -532,7 +532,7 @@ Random String of specific length-
 ```
 
 resolves to the below POST request to the end point:
-```
+```javaScript
 step:create_new_employee
 url:http://localhost:9998/google-emp-services/home/employees
 method:POST
@@ -548,7 +548,7 @@ request:
 ```
 
 See full log in the log file, looks like this:
-```
+```javaScript
 requestTimeStamp:2016-08-01T15:37:20.555
 step:create_new_employee
 url:http://localhost:9998/google-emp-services/home/employees
@@ -612,7 +612,7 @@ Response:
 
 Asserting with $CONTAINS.STRING:
 
-```
+```javaScript
 {
       ...
       ...
@@ -635,7 +635,7 @@ Asserting with $CONTAINS.STRING:
 
 $GT.<any_number>
 
-```
+```javaScript
 {
   ...
   ...
@@ -647,7 +647,7 @@ $GT.<any_number>
 ```
 
 $LT.<any_number>
-```
+```javaScript
 {
   ...
   ...
@@ -664,7 +664,7 @@ $LT.<any_number>
 #### 14:
 #### Asserting empty array with $[]
 
-```
+```javaScript
     {
       ...
       ...
@@ -684,7 +684,7 @@ $LT.<any_number>
 #### 15:
 #### Calling java methods(apis) for doing specific tasks:
 
-```
+```javaScript
 {
       "name": "a_pre_step",
       "url": "org.jsmart.zerocode.testhelp.utils.DbCleanUp",        //<--- class name
@@ -695,12 +695,12 @@ $LT.<any_number>
 ```
 
 In case a return from a java API needed assertion:
-```
+```javaScript
     {
       "name": "another_pre_step",
       "url": "org.jsmart.zerocode.testhelp.utils.DbCleanUp",            //<--- class name
       "operation": "executeSqlReturnStatus",                            //<-- method name
-      "request": "/scripts/sql/02_clean_up_db_and_return_status.sql",   //<--- parameter to the "executeSqlReturnStatus" method
+      "request": "/scripts/sql/02_clean_up_db_and_return_status.sql",   //<--- parameter to the "executeSqlReturnStatus"
       "assertions": {
         "result" : "SUCCESS"  //<--- returned result from java API
       }
@@ -721,7 +721,7 @@ See here how to Use SSL HttpClient : [See usage of @UseHttpClient](https://githu
 See here custom one : [See usage of @UseHttpClient](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore/ZeroCodeUnitRunnerWithCustomHttpClient.java)
 
 e.g.
-```
+```java
 @UseHttpClient(SslTrustHttpClient.class)
 @TargetEnv("hosts_ci.properties")
 @RunWith(ZeroCodeUnitRunner.class)
@@ -790,7 +790,7 @@ public class ZeroCodeSampleUnitRunner{
 #### 21:
 #### Passing environment param via Jenkins and dynamically picking environment specific properties file in CI
 - [See a running example of passing envronment param and value](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/EnvPropertyHelloWorldTest.java)
-```
+```java
 package org.jsmart.zerocode.testhelp.tests;
 
 import org.jsmart.zerocode.core.domain.EnvProperty;
@@ -839,7 +839,7 @@ If `env` not supplied, then defaults to "hello_world_host.properties" which by d
 
 #### LocalDate and LocalDateTime format example
 
-```
+```javaScript
 {
 	"id": 1000,
 	"createdDay": "${LOCAL.DATE.TODAY:yyyy-MM-dd}",
@@ -911,7 +911,7 @@ You can invoke SOAP as below which is already supported by zerocode lib, or you 
 you want to, but you don't have to). 
 (If you want- Then, in the README file go to section -> "Calling java methods(apis) for specific tasks" )
 
-```
+```javaScript
 {
     "scenarioName": "GIVEN a SOAP end poinr WHEN I invoke a method with a request XML, THEN I will ge the SOAP response in XML",
     "steps": [
@@ -943,9 +943,9 @@ Note:
 If this service is down, the invocation might fail.
 So better to test against an available SOAP service to you or a local stub service.
 
-```
+```javaScript
 {
-    "scenarioName": "GIVEN a SOAP end poinr WHEN I invoke a method with a request XML, THEN I will ge the SOAP response in XML",
+    "scenarioName": "GIVEN a SOAP end point WHEN I invoke a method with a request XML, THEN I will get response in XML",
     "steps": [
         {
             "name": "invoke_currency_conversion",
@@ -989,7 +989,7 @@ Response:
 #### 24:
 #### SOAP method invocation where Corporate Proxy enabled
 You need to use a HttpClient ie override the BasicHttpClient and set proxies to it as below-
-```
+```java
         Step-1)
         CredentialsProvider credsProvider = createProxyCredentialsProvider(proxyHost, proxyPort, proxyUserName, proxyPassword);
 
@@ -1038,7 +1038,7 @@ Usage example here:
 https://github.com/authorjapps/zerocode/blob/master/src/test/java/org/jsmart/zerocode/core/soap/SoapCorpProxySslHttpClientTest.java
 
 How to use?
-```
+```java
 @UseHttpClient(SoapCorporateProxySslHttpClient.class)
 @TargetEnv("soap_host_with_corp_proxy.properties")
 @RunWith(ZeroCodeUnitRunner.class)
@@ -1055,7 +1055,7 @@ public class SoapCorpProxySslHttpClientTest {
 
 Explanation below- 
 
-```
+```java
 @TargetEnv("hello_world_host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class HelloWorldTest {
@@ -1110,7 +1110,7 @@ public class YourHttpClient {
 #### MIME Type Converters- XML to JSON, prettyfy XML etc
 e.g.
 ##### xmlToJson
-```
+```javaScript
 {
             "name": "xml_to_json",
             "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
@@ -1136,7 +1136,7 @@ e.g.
 ##### jsonToJson
 Various input and output. Depending upon the usecase, you can use that method.
 
-```
+```javaScript
 {
     "scenarioName": "Given a json string or json block, convert to equivalent json block",
     "steps": [
@@ -1255,7 +1255,7 @@ The below JSON block step will mock two end points using WireMock.
 1. GET: /api/v1/amazon/customers/UK001   (no headers)
 2. GET: /api/v1/amazon/customers/cust-007  (with headers)
 
-```
+```javaScript
         {
             "name": "setup_mocks",
             "url": "/$MOCK",
