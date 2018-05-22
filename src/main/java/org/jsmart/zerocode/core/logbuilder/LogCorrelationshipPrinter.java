@@ -72,7 +72,6 @@ public class LogCorrelationshipPrinter {
                 .responseDelay(responseDelay)
                 .build();
 
-        System.out.println("step report ---------------->>" + zeroCodeReportStep);
         return zeroCodeReportStep;
     }
 
