@@ -17,12 +17,12 @@ import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.T
 public class LogCorrelationshipPrinter {
     private static final String DISPLAY_DEMARCATION_ = "\n--------- " + TEST_STEP_CORRELATION_ID + " %s ---------";
 
-    Logger logger;
-    static String correlationId;
-    RequestLogBuilder requestLogBuilder = new RequestLogBuilder();
-    ResponseLogBuilder responseLogBuilder = new ResponseLogBuilder();
-    ScenarioLogBuilder scenarioLogBuilder = new ScenarioLogBuilder();
-    Integer stepLoop;
+    private Logger logger;
+    private String correlationId;
+    private RequestLogBuilder requestLogBuilder = new RequestLogBuilder();
+    private ResponseLogBuilder responseLogBuilder = new ResponseLogBuilder();
+    private ScenarioLogBuilder scenarioLogBuilder = new ScenarioLogBuilder();
+    private Integer stepLoop;
     private Boolean result;
     private Double responseDelay;
 
@@ -62,16 +62,17 @@ public class LogCorrelationshipPrinter {
                 //.response(responseLogBuilder.response) //TODO
                 //.assertions()
                 .loop(stepLoop)
-                .name(requestLogBuilder.stepName)
-                .correlationId(correlationId)
+                .name(requestLogBuilder.getStepName())
+                .correlationId(getCorrelationId())
                 .result(result == true? RESULT_PASS : RESULT_FAIL)
-                .url(requestLogBuilder.url)
-                .operation(requestLogBuilder.method)
-                .requestTimeStamp(requestLogBuilder.requestTimeStamp)
+                .url(requestLogBuilder.getUrl())
+                .operation(requestLogBuilder.getMethod())
+                .requestTimeStamp(requestLogBuilder.getRequestTimeStamp())
                 .responseTimeStamp(responseLogBuilder.responseTimeStamp)
                 .responseDelay(responseDelay)
                 .build();
 
+        System.out.println("step report ---------------->>" + zeroCodeReportStep);
         return zeroCodeReportStep;
     }
 
@@ -106,7 +107,7 @@ public class LogCorrelationshipPrinter {
         return dur.toMillis();
     }
 
-    public static String createRelationshipId() {
+    public String createRelationshipId() {
         correlationId = getRelationshipUniqueId();
         return format(DISPLAY_DEMARCATION_, correlationId);
     }

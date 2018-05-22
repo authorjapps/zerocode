@@ -6,13 +6,13 @@ import java.time.LocalDateTime;
 
 public class RequestLogBuilder {
 
-    String relationshipId;
-    LocalDateTime requestTimeStamp;
-    String url;
-    String method;
-    String request;
-    String stepName;
-    Integer loop;
+    private String relationshipId;
+    private LocalDateTime requestTimeStamp;
+    private String url;
+    private String method;
+    private String request;
+    private String stepName;
+    private Integer loop;
 
     @JsonCreator
     public RequestLogBuilder() {
@@ -57,10 +57,34 @@ public class RequestLogBuilder {
         return requestTimeStamp;
     }
 
+    public String getRelationshipId() {
+        return relationshipId;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public String getRequest() {
+        return request;
+    }
+
+    public String getStepName() {
+        return stepName;
+    }
+
+    public Integer getLoop() {
+        return loop;
+    }
+
     @Override
     public String toString() {
         return relationshipId +
-                "\nrequestTimeStamp:" + requestTimeStamp +
+                "\n*requestTimeStamp:" + requestTimeStamp +
                 "\nstep:" + stepName +
                 "\nurl:" + url +
                 "\nmethod:" + method +
