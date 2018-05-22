@@ -73,7 +73,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     private Boolean stepOutcome;
 
     @Override
-    public boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
+    public synchronized boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
 
         LOGGER.info("\n-------------------------- BDD: Scenario:{} -------------------------\n", scenario.getScenarioName());
 
@@ -282,7 +282,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                          */
                         if(!stepOutcome) {
                             reportBuilder.result(reportResultBuilder.build());
-                            reportBuilder.printToFile(scenario.getScenarioName() + UUID.randomUUID() + ".json");
+                            reportBuilder.printToFile(scenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
                         }
                     }
 
@@ -303,7 +303,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         /*
          * PASSED reports are generated here
          */
-        reportBuilder.printToFile(scenario.getScenarioName() + UUID.randomUUID() + ".json");
+        reportBuilder.printToFile(scenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
 
         /*
          *  There were no steps to execute and the framework will display the test status as Green than Red.

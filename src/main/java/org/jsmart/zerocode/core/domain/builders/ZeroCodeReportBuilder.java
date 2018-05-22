@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,7 +23,7 @@ public class ZeroCodeReportBuilder {
     public static final int REPORT_WRITING_THREAD_POOL = 5;
 
     private LocalDateTime timeStamp;
-    private List<ZeroCodeExecResult> results = new ArrayList<ZeroCodeExecResult>();
+    private List<ZeroCodeExecResult> results = Collections.synchronizedList(new ArrayList());
     private ZeroCodeReport built;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(REPORT_WRITING_THREAD_POOL);
@@ -53,25 +54,31 @@ public class ZeroCodeReportBuilder {
         return this;
     }
 
-    public void printToFile(String fileName) {
-        synchronized (this) {
-            try {
-                this.build();
+    public synchronized void printToFile(String fileName) {
+        try {
+            this.build();
 
-                final ObjectMapper mapper = new ObjectMapperProvider().get();
+            final ObjectMapper mapper = new ObjectMapperProvider().get();
 
-                File file = new File(TARGET_REPORT_DIR + fileName);
-                file.getParentFile().mkdirs();
-                mapper.writeValue(file, built);
+            File file = new File(TARGET_REPORT_DIR + fileName);
+            file.getParentFile().mkdirs();
+            mapper.writeValue(file, this.built);
+            delay(100L);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            LOGGER.warn("### Report Generation Problem: There was a problem during JSON parsing. Details: " + e);
 
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                LOGGER.warn("### Report Generation Problem: There was a problem during JSON parsing. Details: " + e);
+        } catch (IOException e) {
+            e.printStackTrace();
+            LOGGER.warn("### Report Generation Problem: There was a problem during writing the report. Details: " + e);
+        }
+    }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                LOGGER.warn("### Report Generation Problem: There was a problem during writing the report. Details: " + e);
-            }
+    private void delay(long miliSec) {
+        try {
+            Thread.sleep(miliSec);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Error providing delay");
         }
     }
 
