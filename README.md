@@ -123,6 +123,7 @@ restful.application.endpoint.context=
 - [Overriding with Custom HttpClient with Project demand, See also SSL Trusted Http Client](#16)
 - [Externalize host and port to properties files](#17)
 - [Single Scenario with single step](#2)
+- [Generating Load for stress testing aka performance testing](#27)
 - [Step with more assertions](#3)
 - [Running with step loop](#4)
 - [Running with scenario loop](#5)
@@ -247,6 +248,32 @@ Because you are asserting with an expected status as 500, but the end point actu
       }
     }
   ]
+}
+```
+
+#### 27:
+#### Generating Load for stress testing aka performance testing
+Take advantage of the following class from the lib-
+```java
+org.jsmart.zerocode.parallel.ExecutorServiceRunner
+```
+
+- Example usage using your own Junit-
+See here [JUnit test for Load generation](https://github.com/authorjapps/zerocode/blob/master/src/test/java/org/jsmart/zerocode/parallel/restful/LoadRestEndPointTest.java)
+```
+org.jsmart.zerocode.parallel.restful.LoadRestEndPointTest
+```
+
+- Example with Junit extended runner-
+```java
+@LoadWithProperties("load_gen.properties")
+@TestMethods(tests={
+     @TestMapping(testClass="GitHubGetTest", testMethod="testGetOctocat"),
+     @TestMapping(testClass="GitHubPostTest", testMethod="testPostNewUser"),
+})
+@RunWith(ZerocodeLoadRunner.class)
+public class LoadTest {
+
 }
 ```
 
