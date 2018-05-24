@@ -9,21 +9,21 @@ import java.time.LocalDateTime;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ZeroCodeReportStep {
-    Integer loop;
-    String name;
-    String url;
-    String correlationId;
-    String operation;
+    private final Integer loop;
+    private final String name;
+    private final String url;
+    private final String correlationId;
+    private final String operation;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    LocalDateTime requestTimeStamp;
+    private final LocalDateTime requestTimeStamp;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    LocalDateTime responseTimeStamp;
-    Double responseDelay;
-    String result;
-    String request;
-    String response;
+    private final LocalDateTime responseTimeStamp;
+    private final Double responseDelay;
+    private final String result;
+    private final String request;
+    private final String response;
 
     @JsonCreator
     public ZeroCodeReportStep(

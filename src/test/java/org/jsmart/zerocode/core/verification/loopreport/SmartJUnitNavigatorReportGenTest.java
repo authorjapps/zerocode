@@ -2,7 +2,9 @@ package org.jsmart.zerocode.core.verification.loopreport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FilenameUtils;
 import org.jsmart.zerocode.core.di.ObjectMapperProvider;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -13,6 +15,7 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
@@ -40,8 +43,11 @@ public class SmartJUnitNavigatorReportGenTest {
 
         assertThat(junitResult.wasSuccessful(), is(true));
 
-        System.out.println("### Final result: " + (junitResult.wasSuccessful() ? "PASSED" : "FAILED"));
+        String correlationId = retrieveCorrelationIdFromFileName(reportFileUnderTest);
 
+        ZeroCodeReport stepReportContentPojo = mapper.readValue(new File(reportFileUnderTest), ZeroCodeReport.class);
+        assertThat(stepReportContentPojo.getResults().toString(),
+                containsString(correlationId));
     }
 
     @Test
@@ -77,4 +83,11 @@ public class SmartJUnitNavigatorReportGenTest {
 
     }
 
+    private String retrieveCorrelationIdFromFileName(String reportFileUnderTest) {
+        String fileNameStartWith = "Loop Scenario - Will Get A bath Room";
+        String fileNameWithXtn = (new File(reportFileUnderTest)).getName();
+        String fileNameWithOutExt = FilenameUtils.removeExtension(fileNameWithXtn);
+
+        return fileNameWithOutExt.substring(fileNameStartWith.length());
+    }
 }

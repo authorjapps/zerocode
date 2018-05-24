@@ -1,0 +1,18 @@
+{
+    "scenarioName": "Get call to home will fetch details",
+    "steps": [
+        {
+            "name": "fetch_home_details",
+            "url": "/home/bathroom/1",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": 1
+                }
+            }
+        }
+    ]
+}

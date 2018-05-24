@@ -4,12 +4,13 @@ import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeExecResult;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ZeroCodeExecResultBuilder {
     private String scenarioName;
     private Integer loop;
-    private List<ZeroCodeReportStep> steps = new ArrayList<>();
+    private List<ZeroCodeReportStep> steps = Collections.synchronizedList(new ArrayList());
 
     public static ZeroCodeExecResultBuilder newInstance() {
         return new ZeroCodeExecResultBuilder();
