@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import static java.util.Optional.ofNullable;
 
 public class StepNotificationHandler {
-    private static final Logger logger = LoggerFactory.getLogger(StepNotificationHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StepNotificationHandler.class);
     private final int MAX_LINE_LENGTH = 130;
     
     Boolean handleAssertionFailed(RunNotifier notifier,
@@ -26,14 +26,15 @@ public class StepNotificationHandler {
         /**
          * Generate error report and display clearly which expectation(s) did not match
          */
-        logger.info(String.format("Failed assertion during Scenario:%s, --> Step:%s, Details: %s\n",
+        LOGGER.error(String.format("Failed assertion during Scenario:%s, --> Step:%s, Details: %s\n",
                         scenarioName, stepName, StringUtils.join(failureReportList, "\n")));
-        notifier.fireTestFailure(new Failure(description, new RuntimeException(
-                        String.format("Assertion failed for :- \n\n[%s] \n\t|\n\t|\n\t+---Step --> [%s] \n\nFailures:\n--------- %n%s%n",
-                                        scenarioName,
-                                        stepName,
-                                        StringUtils.join(failureReportList, "\n" + deckedUpLine(maxEntryLengthOf(failureReportList)) + "\n"))
-        )));
+        String prettyFailureMessage =
+                String.format("Assertion failed for :- \n\n[%s] \n\t|\n\t|\n\t+---Step --> [%s] \n\nFailures:\n--------- %n%s%n",
+                scenarioName,
+                stepName,
+                StringUtils.join(failureReportList, "\n" + deckedUpLine(maxEntryLengthOf(failureReportList)) + "\n"));
+        LOGGER.error(prettyFailureMessage + "(See below 'Actual Vs Expected' to learn why this step failed) \n");
+        notifier.fireTestFailure(new Failure(description, new RuntimeException( prettyFailureMessage)));
         
         return false;
     }
@@ -43,7 +44,7 @@ public class StepNotificationHandler {
                     String scenarioName,
                     String stepName,
                     Exception stepException) {
-        logger.info(String.format("Exception occurred while executing Scenario:[%s], --> Step:[%s], Details: %s",
+        LOGGER.info(String.format("Exception occurred while executing Scenario:[%s], --> Step:[%s], Details: %s",
                         scenarioName, stepName, stepException));
         notifier.fireTestFailure(new Failure(description, stepException));
         
@@ -55,7 +56,7 @@ public class StepNotificationHandler {
                     String scenarioName,
                     String stepName,
                     List<AssertionReport> failureReportList) {
-        logger.info(String.format("\n***Step PASSED:%s->%s", scenarioName, stepName));
+        LOGGER.info(String.format("\n***Step PASSED:%s->%s", scenarioName, stepName));
         
         return true;
     }

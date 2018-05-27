@@ -23,6 +23,12 @@ public class JunitRestTestSample {
 
     }
 
+    @Test
+    @JsonTestCase("load/simple_load_at_localhost_fail.json")
+    public void testGetCallToHome_fail() throws Exception {
+
+    }
+
 
 }
 
