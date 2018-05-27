@@ -47,11 +47,11 @@ public class ZeroCodeLoadRunner extends ParentRunner<TestMapping> {
     protected void runChild(TestMapping child, RunNotifier notifier) {
         notifier.fireTestStarted(testDescription);
 
-        boolean failed = loadProcessor
+        boolean hasFailed = loadProcessor
                 .addTest(child.testClass(), child.testMethod())
                 .process();
 
-        if(failed){
+        if(hasFailed){
             String failureMessage = testClass.getName() + "." + child.testMethod() + " Failed";
             LOGGER.error(failureMessage + ". See target/logs -or- junit granular failure report(csv) -or- fuzzy search and filter report(html) for details");
             notifier.fireTestFailure(new Failure(testDescription, new RuntimeException(failureMessage)));
