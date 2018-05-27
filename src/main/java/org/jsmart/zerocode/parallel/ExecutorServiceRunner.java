@@ -171,9 +171,7 @@ public class ExecutorServiceRunner {
     private void calculateAndSetDelayBetweenTwoThreadsInSecs(int rampUpPeriod) {
         if (rampUpPeriod == 0) {
             delayBetweenTwoThreadsInMilliSecs = 0D;
-
         } else {
-
             delayBetweenTwoThreadsInMilliSecs = (valueOf(rampUpPeriod) / valueOf(numberOfThreads)) * 1000L;
         }
     }
