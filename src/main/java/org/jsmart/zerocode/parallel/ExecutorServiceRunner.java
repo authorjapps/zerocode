@@ -2,12 +2,10 @@ package org.jsmart.zerocode.parallel;
 
 
 import org.jboss.resteasy.spi.InternalServerErrorException;
-import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.jsmart.zerocode.core.utils.PropertiesProviderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -16,24 +14,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
+import static java.lang.Double.valueOf;
 import static java.lang.Integer.parseInt;
+import static java.lang.Thread.sleep;
+import static java.time.LocalDateTime.now;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public class ExecutorServiceRunner {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeUnitRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutorServiceRunner.class);
 
-    private List<Runnable> runnables = new ArrayList<>();
-    private List<Callable<Object>> callables = new ArrayList<>();
+    private final List<Runnable> runnables = new ArrayList<>();
+    private final List<Callable<Object>> callables = new ArrayList<>();
 
     private int numberOfThreads;
     private int rampUpPeriod;
     private int loopCount;
 
     private Double delayBetweenTwoThreadsInMilliSecs;
-
-//    public ExecutorServiceRunner() {
-//        delayBetweenTwoThreadsInMilliSecs = (Double.valueOf(rampUpPeriod) / Double.valueOf(numberOfThreads)) * 1000L;
-//    }
 
     public ExecutorServiceRunner(String loadPropertiesFile) {
         Properties properties = PropertiesProviderUtils.getProperties(loadPropertiesFile);
@@ -78,17 +75,19 @@ public class ExecutorServiceRunner {
             for (int i = 0; i < loopCount; i++) {
                 runnables.stream().forEach(thisFunction -> {
                     for (int j = 0; j < numberOfThreads; j++) {
-                        LOGGER.info(Thread.currentThread().getName() + " JUnit test- Start. Time = " + LocalDateTime.now());
                         try {
-                            LOGGER.info("Waiting in the transit for next test flight to adjust overall ramp up time, wait time now = " + delayBetweenTwoThreadsInMilliSecs);
-                            Thread.sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
+                            LOGGER.info("Waiting for the next test flight to adjust the overall ramp up time, " +
+                                    "waiting time in the transit now = " + delayBetweenTwoThreadsInMilliSecs);
+                            sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
 
+                        LOGGER.info(Thread.currentThread().getName() + " Executor - *Start... Time = " + now());
+
                         executorService.execute(thisFunction);
 
-                        LOGGER.info(Thread.currentThread().getName() + " JUnit test- *Finished Time = " + LocalDateTime.now());
+                        LOGGER.info(Thread.currentThread().getName() + " Executor - *Finished Time = " + now());
                     }
                 });
             }
@@ -97,7 +96,9 @@ public class ExecutorServiceRunner {
         } finally {
             executorService.shutdown();
             while (!executorService.isTerminated()) {
-                //wait for all tasks to finish execution
+                // --------------------------------------
+                // wait for all tasks to finish execution
+                // --------------------------------------
                 //LOGGER.info("Still waiting for all threads to complete execution...");
             }
             LOGGER.info("**Finished executing all threads**");
@@ -119,17 +120,18 @@ public class ExecutorServiceRunner {
         try {
             executorService.invokeAll(callables).stream().forEach(future -> {
                 for (int j = 0; j < numberOfThreads; j++) {
-                    LOGGER.info(Thread.currentThread().getName() + " Future execution- Start. Time = " + LocalDateTime.now());
                     try {
                         LOGGER.info("Waiting in the transit for next test flight to adjust overall ramp up time, wait time now = " + delayBetweenTwoThreadsInMilliSecs);
-                        Thread.sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
+                        sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
 
+                    LOGGER.info(Thread.currentThread().getName() + " Future execution- Start.... Time = " + now());
+
                     execute(future);
 
-                    LOGGER.info(Thread.currentThread().getName() + " Future execution- *Finished Time = " + LocalDateTime.now());
+                    LOGGER.info(Thread.currentThread().getName() + " Future execution- *Finished Time = " + now());
                 }
             });
         } catch (InterruptedException interruptEx) {
@@ -169,10 +171,8 @@ public class ExecutorServiceRunner {
     private void calculateAndSetDelayBetweenTwoThreadsInSecs(int rampUpPeriod) {
         if (rampUpPeriod == 0) {
             delayBetweenTwoThreadsInMilliSecs = 0D;
-
         } else {
-
-            delayBetweenTwoThreadsInMilliSecs = (Double.valueOf(rampUpPeriod) / Double.valueOf(numberOfThreads)) * 1000L;
+            delayBetweenTwoThreadsInMilliSecs = (valueOf(rampUpPeriod) / valueOf(numberOfThreads)) * 1000L;
         }
     }
 
@@ -193,8 +193,13 @@ public class ExecutorServiceRunner {
     }
 
     private void logLoadingProperties() {
-        LOGGER.info("### numberOfThreads : " + numberOfThreads);
-        LOGGER.info("### rampUpPeriodInSeconds : " + rampUpPeriod);
-        LOGGER.info("### loopCount : " + loopCount);
+        LOGGER.info(
+                "\nLOAD:" +
+                "\n-----------------------------------" +
+                "\n   ### numberOfThreads : " + numberOfThreads +
+                "\n   ### rampUpPeriodInSeconds : " + rampUpPeriod +
+                "\n   ### loopCount : " + loopCount +
+                "\n-----------------------------------\n");
+
     }
 }
