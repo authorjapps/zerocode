@@ -50,8 +50,8 @@ Testing becomes an easy and effortless job due to the **simplicity** nature of J
 
 Who uses Zerocode?
 --------------------
- + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft APIs Load aka Performance testing, Consumer Contract and E2E Integration Tests
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services Contract Tests
+ + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft APIs Load aka Performance testing, Consumer Contract and E2E Integration Testing
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services Contract Tests, HDFS/Hbase REST end point testing
  
 ## REST BDD Testing Framework
 
