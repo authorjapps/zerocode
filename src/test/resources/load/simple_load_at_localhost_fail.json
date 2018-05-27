@@ -1,0 +1,18 @@
+{
+    "scenarioName": "Load- Get call to home will fetch details -Fail",
+    "steps": [
+        {
+            "name": "fetch_home_details",
+            "url": "/home/bathroom/1",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 400,
+                "body": {
+                    "id": 1
+                }
+            }
+        }
+    ]
+}

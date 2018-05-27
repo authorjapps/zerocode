@@ -35,7 +35,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     Injector injector;
     SmartUtils smartUtils;
 
-    protected Description flowDescription;
+    protected Description scenarioDescription;
     protected boolean isRunSuccess;
     protected boolean passed;
     protected boolean testRunCompleted;
@@ -90,8 +90,8 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     @Override
     protected Description describeChild(ScenarioSpec child) {
 
-        this.flowDescription = Description.createTestDescription(testClass, child.getScenarioName());
-        return flowDescription;
+        this.scenarioDescription = Description.createTestDescription(testClass, child.getScenarioName());
+        return scenarioDescription;
 
         /*
          * Commented for right click, fix and enable, Try with IntelliJ or Eclipse, see if it works
@@ -129,8 +129,10 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
         final Description description = Description.createTestDescription(testClass, child.getScenarioName());
 
+        // ----------------------------------------------
         // Notify that this single test has been started.
         // Supply the scenario/journey name
+        // ----------------------------------------------
         notifier.fireTestStarted(description);
 
         passed = getInjectedMultiStepsRunner().runScenario(child, notifier, description);
