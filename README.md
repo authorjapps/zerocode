@@ -432,10 +432,12 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
 
 Generated test statistics reports. See the '/target' folder after every run. 
 e.g. Look for-
-- target/zerocode_full_report_2018-01-31T17-15-47.125.csv
-- target/zerocode-interactive.html
 
-See sample reports below
+> target/zerocode-junit-granular-report.csv
+
+> target/zerocode-junit-interactive-fuzzy-search.html
+
+See some sample reports below:
 
 ##### Spike Chart:
 
