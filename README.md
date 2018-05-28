@@ -338,7 +338,7 @@ is as below which is fed to the load runner -
 - [Browse the above example](https://github.com/authorjapps/zerocode-hello-world) in GitHub.
 - or [Download as zip](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) the above maven project to run from your IDE. 
 
-[More (Learn easy steps to generate load from your IDE) >>](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing(using-your-IDE)) for performance testing and how to analyse generated reports
+[More (Learn load testing using your IDE) >>](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 
 #### 3:
 #### Single step with more assertions
