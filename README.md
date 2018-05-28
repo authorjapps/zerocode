@@ -6,7 +6,7 @@ A simple and light weight automation testing lib for api end points with payload
 
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
 
-**Latest release: [1.1.34](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
+**Latest release: [1.2.0](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
 **HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
@@ -36,7 +36,7 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.1.34</version> 
+    <version>1.2.0</version> 
 </dependency>
 ```
 But check here for the latest- 
@@ -58,8 +58,6 @@ Who uses Zerocode?
 Develop and test applications with TDD and BDD approach while easily building up your regression suites. 
 
 Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
-
-Use the **powerful response assertions** mechanism with simple JSON requests/responses. 
 
 <pre><code><del>
 Testing no more a harder, slower and sleepless task
@@ -257,30 +255,90 @@ Because you are asserting with an expected status as 500, but the end point actu
 ```
 
 #### 27:
-#### Generating Load for stress testing aka performance testing
-Take advantage of the following class from the lib-
+#### Generating load for performance testing aka stress testing
+Take advantage of the following load runner from the lib-
 ```java
-org.jsmart.zerocode.parallel.ExecutorServiceRunner
+@RunWith(ZeroCodeLoadRunner.class)
 ```
 
-- Example usage using your own Junit-
-See here [JUnit test for Load generation](https://github.com/authorjapps/zerocode/blob/master/src/test/java/org/jsmart/zerocode/parallel/restful/LoadRestEndPointTest.java)
-```
-org.jsmart.zerocode.parallel.restful.LoadRestEndPointTest
-```
+- Example usage of your already existing tests-
+See here [Reusing existing Zerocode Junit tests for load generation](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/loadtesting/LoadGetEndPointTest.java)
 
-- Example with Junit extended runner-
+- Sample load test on GitHub GET api `/user/octocat`
 ```java
-@LoadWithProperties("load_gen.properties")
-@TestMethods(tests={
-     @TestMapping(testClass="GitHubGetTest", testMethod="testGetOctocat"),
-     @TestMapping(testClass="GitHubPostTest", testMethod="testPostNewUser"),
-})
-@RunWith(ZerocodeLoadRunner.class)
-public class LoadTest {
+@LoadWith("load_config_sample.properties")
+@TestMapping(testClass = TestGitGubEndPoint.class, testMethod = "testGitHubGET_load")
+@RunWith(ZeroCodeLoadRunner.class)
+public class LoadGetEndPointTest {
 
 }
 ```
+
+- The load generation properties are set here `load_config_sample.properties`
+```properties
+# You can enter as many threads to stimulate a load test. A single user is represented by each Thread. So if you wish
+# to simulate a load test with 5 concurrent users then you need to enter 5 as the value for this property. A high end
+# machine will be able to spawn more number of threads. To keep the consistent(or nearly consistent) gap between the
+# threads, adjust this number with 'ramp.up.period.in.seconds' and the actual response time of the API end point.
+number.of.threads=2
+
+# It indicates the time taken to create all of the threads needed to fork the requests. If you set 10 seconds as the
+# ramp-up period for 5 threads then the framework will take  10 seconds to create those 5 threads, i.e. each thread
+# will be at work appx 2 secs gap between the requests. Also by setting its value to 0 all the threads can be created
+# at once at the same time. Note- If you want to fire more threads/user-requests in less ramp up time e.g. 5 threads
+# in 2secs(or 5 threads in 1 sec), then, use '@UseHttpClient(SslTrustHttpClient.class)' as this closes the connection
+# before making the next connection.
+ramp.up.period.in.seconds=10
+
+# By specifying its value framework gets to know that how many times the test(s), i.e. the number of requests will be
+# repeated per every 'ramp.up.period.in.seconds'.
+# Supposing number.of.threads = x, ramp.up.period.in.seconds = y, loop.count = i
+# then (x * i) = number of requests will be fired over (y * i) seconds. If x=5, i=3, y=20, then 15 requests will be
+# fired in 60 seconds which means- every request in 4 seconds gap. 60/15 or 20/5 = 4seconds.
+loop.count=1
+
+# If you have set the loop count to a higher digit which e.g. should take 3hrs(3*60*60=10800sec),
+# but due to load or network delay it could take more time(you are speculating) e.g. 4hrs, then you can
+# set this abort value to 3hrs i.e. 3*60*60=10800sec.
+abort.after.time.lapsed.in.seconds=600
+```
+
+- The test case for GET api 
+
+> @TestMapping(testClass = TestGitGubEndPoint.class, testMethod = "testGitHubGET_load") 
+
+is as below which is fed to the load runner -
+
+```javascript
+{
+    "scenarioName": "Load testing- Git Hub GET API",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/users/octocat",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat",
+                    "id" : 583231,
+                    "avatar_url" : "https://avatars3.githubusercontent.com/u/583231?v=4",
+                    "type" : "User",
+                    "name" : "The Octocat",
+                    "company" : "GitHub"
+                }
+            }
+        }
+    ]
+}
+```
+- In one of the run during the load, if the `actual response` does not match the `expected response` i.e. writen in the `assertions` section above, then the test will fail.
+- [Browse the above example](https://github.com/authorjapps/zerocode-hello-world) in GitHub.
+- or [Download as zip](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) the above maven project to run from your IDE. 
+
+[More (Learn easy steps to generate load from your IDE) >>](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing(using-your-IDE)) for performance testing and how to analyse generated reports
 
 #### 3:
 #### Single step with more assertions
@@ -1409,4 +1467,3 @@ The below JSON block step will mock two end points using WireMock.
 [Zerocode zero code contract based testing (CBT)]: https://github.com/authorjapps/zerocode#zerocode
 [Zerocode zero code CCT]: https://github.com/authorjapps/zerocode#zerocode
 [Zerocode zero code End to End E2E Integration Point Testing]: https://github.com/authorjapps/zerocode#zerocode
-
