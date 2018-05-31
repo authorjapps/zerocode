@@ -3,17 +3,16 @@
     "steps": [
         {
             "name": "get_user_details",
-            "url": "/users/siddhagalaxy",
+            "url": "/users/octocat",
             "operation": "GET",
             "request": {
             },
             "assertions": {
                 "status": 200,
                 "body": {
-                    "login" : "siddhagalaxy",
-                    "id" : 33847730,
-                    "type" : "User",
-                    "followers_url" : "https://api.github.com/users/siddhagalaxy/followers"
+                    "login" : "octocat",
+                    "id" : 583231,
+                    "type" : "User"
                 }
             }
         }
