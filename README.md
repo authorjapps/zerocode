@@ -274,32 +274,11 @@ public class LoadGetEndPointTest {
 }
 ```
 
-- The load generation properties are set here `load_config_sample.properties`
+- The load generation properties are set here `load_config_sample.properties`. Learn [more >>](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based)#how-to-run-tests-in-parallel-in-context-of-one-or-more-scenarios-)
 ```properties
-# You can enter as many threads to stimulate a load test. A single user is represented by each Thread. So if you wish
-# to simulate a load test with 5 concurrent users then you need to enter 5 as the value for this property. A high end
-# machine will be able to spawn more number of threads. To keep the consistent(or nearly consistent) gap between the
-# threads, adjust this number with 'ramp.up.period.in.seconds' and the actual response time of the API end point.
 number.of.threads=2
-
-# It indicates the time taken to create all of the threads needed to fork the requests. If you set 10 seconds as the
-# ramp-up period for 5 threads then the framework will take  10 seconds to create those 5 threads, i.e. each thread
-# will be at work appx 2 secs gap between the requests. Also by setting its value to 0 all the threads can be created
-# at once at the same time. Note- If you want to fire more threads/user-requests in less ramp up time e.g. 5 threads
-# in 2secs(or 5 threads in 1 sec), then, use '@UseHttpClient(SslTrustHttpClient.class)' as this closes the connection
-# before making the next connection.
 ramp.up.period.in.seconds=10
-
-# By specifying its value framework gets to know that how many times the test(s), i.e. the number of requests will be
-# repeated per every 'ramp.up.period.in.seconds'.
-# Supposing number.of.threads = x, ramp.up.period.in.seconds = y, loop.count = i
-# then (x * i) = number of requests will be fired over (y * i) seconds. If x=5, i=3, y=20, then 15 requests will be
-# fired in 60 seconds which means- every request in 4 seconds gap. 60/15 or 20/5 = 4seconds.
 loop.count=1
-
-# If you have set the loop count to a higher digit which e.g. should take 3hrs(3*60*60=10800sec),
-# but due to load or network delay it could take more time(you are speculating) e.g. 4hrs, then you can
-# set this abort value to 3hrs i.e. 3*60*60=10800sec.
 abort.after.time.lapsed.in.seconds=600
 ```
 
@@ -338,7 +317,7 @@ is as below which is fed to the load runner -
 - [Browse the above example](https://github.com/authorjapps/zerocode-hello-world) in GitHub.
 - or [Download as zip](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) the above maven project to run from your IDE. 
 
-[More (Learn easy steps to generate load from your IDE) >>](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing(using-your-IDE)) for performance testing and how to analyse generated reports
+[More (Learn load testing using your IDE) >>](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 
 #### 3:
 #### Single step with more assertions
@@ -453,10 +432,12 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
 
 Generated test statistics reports. See the '/target' folder after every run. 
 e.g. Look for-
-- target/zerocode_full_report_2018-01-31T17-15-47.125.csv
-- target/zerocode-interactive.html
 
-See sample reports below
+> target/zerocode-junit-granular-report.csv
+
+> target/zerocode-junit-interactive-fuzzy-search.html
+
+See some sample reports below:
 
 ##### Spike Chart:
 
