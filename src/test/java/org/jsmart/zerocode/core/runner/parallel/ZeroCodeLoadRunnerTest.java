@@ -22,6 +22,7 @@ public class ZeroCodeLoadRunnerTest {
     ZeroCodeLoadRunner zeroCodePackageRunner;
     ZeroCodeLoadRunner runnerNoTestMapping;
     ZeroCodeLoadRunner runnerMultiTestMapping;
+    ZeroCodeLoadRunner runnerInvalidTestMapping;
 
     @LoadWith("load_config_test.properties")
     @TestMapping(testClass = JunitRestTestSample.class, testMethod = "testGetCallToHome_pass")
@@ -30,7 +31,7 @@ public class ZeroCodeLoadRunnerTest {
 
     }
 
-    // @TestMapping not present for unit test
+    // @TestMapping not present to check exception
     @LoadWith("load_config_test.properties")
     @RunWith(ZeroCodeLoadRunner.class)
     public class ExampleRunnerWithoutMappingTest {
@@ -43,11 +44,18 @@ public class ZeroCodeLoadRunnerTest {
     public class ExampleRunnerMultiMappingTest {
     }
 
+    @LoadWith("load_config_test.properties")
+    @TestMapping(testClass = JunitRestTestSample.class, testMethod = "dodgyAndInvalidTestMethod")
+    @RunWith(ZeroCodeLoadRunner.class)
+    public class ExampleRunnerInvalidMethodMappingTest {
+    }
+
     @Before
     public void initializeRunner() throws Exception {
         zeroCodePackageRunner = new ZeroCodeLoadRunner(ExampleRunnerTest.class);
         runnerNoTestMapping = new ZeroCodeLoadRunner(ExampleRunnerWithoutMappingTest.class);
         runnerMultiTestMapping = new ZeroCodeLoadRunner(ExampleRunnerMultiMappingTest.class);
+        runnerInvalidTestMapping = new ZeroCodeLoadRunner(ExampleRunnerInvalidMethodMappingTest.class);
     }
 
     @Test
@@ -67,6 +75,12 @@ public class ZeroCodeLoadRunnerTest {
     public void testPair_multiMappingException() {
         expectedException.expectMessage("Oops! Needs single @TestMapping, but found multiple of it on the load-generating test class");
         List<TestMapping> children = runnerMultiTestMapping.getChildren();
+    }
+
+    @Test
+    public void testPair_invalidTestMethodMappingException() {
+        expectedException.expectMessage("Mapped test method `dodgyAndInvalidTestMethod` was invalid, please re-check and pick");
+        List<TestMapping> children = runnerInvalidTestMapping.getChildren();
     }
 
     @Test
