@@ -34,6 +34,7 @@ public class ZeroCodeLoadRunner extends ParentRunner<TestMapping> {
     @Override
     protected List<TestMapping> getChildren() {
         validateAnnotationPresence();
+        validateTestMethod();
         return Arrays.asList(testClass.getAnnotationsByType(TestMapping.class));
     }
 
@@ -88,6 +89,17 @@ public class ZeroCodeLoadRunner extends ParentRunner<TestMapping> {
 
         }
 
+    }
+
+    private void validateTestMethod() {
+        String errMessage = " was invalid, please re-check and pick the correct test method to load.";
+        try {
+            TestMapping methodMapping = testClass.getAnnotation(TestMapping.class);
+            errMessage = "Mapped test method `" + methodMapping.testMethod() + "`" + errMessage;
+            methodMapping.testClass().getMethod(methodMapping.testMethod());
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(errMessage + e);
+        }
     }
 
 }
