@@ -47,7 +47,7 @@ public class ZeroCodeLoadRunnerTest {
     @LoadWith("load_config_test.properties")
     @TestMapping(testClass = JunitRestTestSample.class, testMethod = "dodgyAndInvalidTestMethod")
     @RunWith(ZeroCodeLoadRunner.class)
-    public class ExampleRunnerInvalidMethodMappingTest {
+    public class ExampleRunnerInvalidMethodTest {
     }
 
     @Before
@@ -55,7 +55,7 @@ public class ZeroCodeLoadRunnerTest {
         zeroCodePackageRunner = new ZeroCodeLoadRunner(ExampleRunnerTest.class);
         runnerNoTestMapping = new ZeroCodeLoadRunner(ExampleRunnerWithoutMappingTest.class);
         runnerMultiTestMapping = new ZeroCodeLoadRunner(ExampleRunnerMultiMappingTest.class);
-        runnerInvalidTestMapping = new ZeroCodeLoadRunner(ExampleRunnerInvalidMethodMappingTest.class);
+        runnerInvalidTestMapping = new ZeroCodeLoadRunner(ExampleRunnerInvalidMethodTest.class);
     }
 
     @Test
