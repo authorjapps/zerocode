@@ -98,6 +98,7 @@ public class ZeroCodeLoadRunner extends ParentRunner<TestMapping> {
             errMessage = "Mapped test method `" + methodMapping.testMethod() + "`" + errMessage;
             methodMapping.testClass().getMethod(methodMapping.testMethod());
         } catch (NoSuchMethodException e) {
+            LOGGER.error(errMessage);
             throw new RuntimeException(errMessage + e);
         }
     }
