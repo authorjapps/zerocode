@@ -224,8 +224,8 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                 .addColumn("stepLoop", CsvSchema.ColumnType.NUMBER)
                 .addColumn("correlationId")
                 .addColumn("requestTimeStamp")
-                .addColumn("responseTimeStamp")
                 .addColumn("responseDelayMilliSec", CsvSchema.ColumnType.NUMBER)
+                .addColumn("responseTimeStamp")
                 .addColumn("result")
                 .build();
 
@@ -264,8 +264,8 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     thisResult.getSteps().forEach(thisStep -> {
                         csvFileBuilder.stepLoop(thisStep.getLoop());
                         csvFileBuilder.stepName(thisStep.getName());
-                        csvFileBuilder.correlationId(thisStep.getCorrelationId()); //<-- in case of searching in the log file
-                        csvFileBuilder.result(thisStep.getResult()); //<-- passed or failed
+                        csvFileBuilder.correlationId(thisStep.getCorrelationId());
+                        csvFileBuilder.result(thisStep.getResult());
                         csvFileBuilder.requestTimeStamp(thisStep.getRequestTimeStamp().toString());
                         csvFileBuilder.responseTimeStamp(thisStep.getResponseTimeStamp().toString());
                         csvFileBuilder.responseDelayMilliSec(thisStep.getResponseDelay());
@@ -335,7 +335,6 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
             ofNullable(files).orElseThrow(() -> new RuntimeException("Somehow the '" + reportsFolder + "' has got no files."));
 
         } catch (Exception e) {
-            e.printStackTrace();
             final String message = "\n----------------------------------------------------------------------------------------\n" +
                     "Somehow the '" + reportsFolder + "' is not present or has no report JSON files. \n" +
                     "Possible reasons- \n" +
@@ -347,7 +346,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     "----------------------------------------------------------------------------------------\n";
 
             // TODO- Can Suppress as this error as this is only related to report. It doesn't hurt or affect the tests at all.
-            throw new RuntimeException(message);
+            throw new RuntimeException(message + e);
         }
 
     }

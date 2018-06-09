@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class TestGitHubApi {
 
-    @Ignore("Locally passes, but fails in Travis CI")
+    @Ignore("Locally passes, but fails in Travis CI due to rate limiting issue of GitHub")
     @Test
     @JsonTestCase("load/github_get_api_sample_test.json")
     public void testGitHubApi_get() throws Exception {
