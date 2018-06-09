@@ -46,6 +46,10 @@ Zerocode helps you to design better Test Cases for your business features, maint
 
 Testing becomes an easy and effortless job due to the **simplicity** nature of JSON and the native support by popular IDEs e.g. Eclipse /IntelliJ /NetBeans etc with no extra plugin. Your tests will not be cumbersome and complex anymore. Zerocode makes your tests independent, complete and structured and easily maintainable by the team or the new comers. It enables you to write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests` etc, at the **speed** of writing **JUnit** tests.
 
+- Browse or clone `contract tests` examples from [here](https://github.com/authorjapps/consumer-contract-tests)
+- Browse or clone `performance tests`(load, stress) examples [here]()
+
+
 [More >>](https://github.com/authorjapps/zerocode/wiki)
 
 Who uses Zerocode?
