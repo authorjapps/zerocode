@@ -21,11 +21,11 @@ Keep things simple, Zerocode alleviates the need of writing `code` for test asse
 [![Download HelloWorld](https://img.shields.io/badge/download-examples-blue.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) 
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
 [![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://github.com/authorjapps/zerocode/blob/master/img/code_coverage/code_coverage_granular.png)
-[![GitHub issue comments](https://img.shields.io/github/issues/detail/comments/badges/shields/979.svg)](https://github.com/authorjapps/zerocode/issues) 
 [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
 [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![codeproject](https://img.shields.io/badge/codeproject-zerocode-blue.svg)](https://www.codeproject.com/search.aspx?q=zerocode&x=0&y=0&sbo=kw)
+[![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 
 
 Supported testing frameworks:
@@ -45,6 +45,10 @@ https://github.com/authorjapps/zerocode/releases -or- [Maven Central](https://mv
 Zerocode helps you to design better Test Cases for your business features, maintain and update easily to avoid sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests, as well optionally you can use`Suite` Runner for CI builds. 
 
 Testing becomes an easy and effortless job due to the **simplicity** nature of JSON and the native support by popular IDEs e.g. Eclipse /IntelliJ /NetBeans etc with no extra plugin. Your tests will not be cumbersome and complex anymore. Zerocode makes your tests independent, complete and structured and easily maintainable by the team or the new comers. It enables you to write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests` etc, at the **speed** of writing **JUnit** tests.
+
+- Browse or clone `contract tests` examples from [here](https://github.com/authorjapps/consumer-contract-tests)
+- Browse or clone `performance tests`(load, stress) examples [here]()
+
 
 [More >>](https://github.com/authorjapps/zerocode/wiki)
 

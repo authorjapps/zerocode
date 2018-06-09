@@ -12,6 +12,7 @@ import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static java.lang.Double.valueOf;
@@ -90,6 +91,52 @@ public class ExecutorServiceRunner {
                         LOGGER.info(Thread.currentThread().getName() + " Executor - *Finished Time = " + now());
                     }
                 });
+            }
+        } catch (Exception interruptEx) {
+            throw new RuntimeException(interruptEx);
+        } finally {
+            executorService.shutdown();
+            while (!executorService.isTerminated()) {
+                // --------------------------------------
+                // wait for all tasks to finish execution
+                // --------------------------------------
+                //LOGGER.info("Still waiting for all threads to complete execution...");
+            }
+            LOGGER.info("**Finished executing all threads**");
+        }
+    }
+
+    public void runRunnablesMulti() {
+        if (runnables == null || runnables.size() == 0) {
+            throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
+        }
+
+        ExecutorService executorService = newFixedThreadPool(numberOfThreads);
+
+        try {
+            final AtomicInteger functionIndex = new AtomicInteger();
+
+            for (int i = 0; i < loopCount; i++) {
+                for (int j = 0; j < numberOfThreads; j++) {
+                    try {
+                        LOGGER.info("Waiting for the next test flight to adjust the overall ramp up time, " +
+                                "waiting time in the transit now = " + delayBetweenTwoThreadsInMilliSecs);
+                        sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    LOGGER.info(Thread.currentThread().getName() + " Executor - *Start... Time = " + now());
+
+                    executorService.execute(runnables.get(functionIndex.getAndIncrement()));
+
+                    LOGGER.info(Thread.currentThread().getName() + " Executor - *Finished Time = " + now());
+
+                    if(functionIndex.get() == runnables.size()){
+                        functionIndex.set(0);
+                    }
+                }
+
             }
         } catch (Exception interruptEx) {
             throw new RuntimeException(interruptEx);

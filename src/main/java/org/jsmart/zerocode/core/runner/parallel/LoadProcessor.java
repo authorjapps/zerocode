@@ -67,4 +67,21 @@ public class LoadProcessor {
             }
         };
     }
+
+    public boolean processMultiLoad() {
+        executorServiceRunner.runRunnablesMulti();
+
+        LOGGER.info(
+                "\n------------------------------------"
+                        + "\n   >> Total load test count:" + (failedCounter.get() + passedCounter.get())
+                        + "\n   >> Passed count:" + passedCounter.get()
+                        + "\n   >> Failed count:" + failedCounter.get()
+                        + "\n------------------------------------");
+
+        if(failedCounter.get() > 0){
+            return failed;
+        }
+
+        return passed;
+    }
 }
