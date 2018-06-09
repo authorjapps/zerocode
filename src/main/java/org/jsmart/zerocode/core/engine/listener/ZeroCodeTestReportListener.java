@@ -42,7 +42,7 @@ public class ZeroCodeTestReportListener extends RunListener {
 
         generateChartsAndReports();
 
-        LOGGER.info("\n\n### For more usage details please read the README file or click the url >>> https://github.com/authorjapps/zerocode#zerocode\n\n");
+        LOGGER.info("\n\n### For more help on the usages and examples, please refer the README file @url: https://github.com/authorjapps/zerocode#zerocode\n\n");
 
     }
 
