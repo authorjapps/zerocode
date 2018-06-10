@@ -130,7 +130,7 @@ restful.application.endpoint.context=
 - [Overriding with Custom HttpClient with Project demand, See also SSL Trusted Http Client](#16)
 - [Externalize host and port to properties files](#17)
 - [Single Scenario with single step](#2)
-- [Generating Load for stress testing aka performance testing](#27)
+- [Generating Load or stress for performance testing](#27)
 - [Step with more assertions](#3)
 - [Running with step loop](#4)
 - [Running with scenario loop](#5)
