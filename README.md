@@ -211,7 +211,7 @@ Note:
 > step name: free text without any space
 
 
-The above Test Case will PASS as the end point actually available is as below. Look at the "response" section below.
+The above test case will PASS as the end point actually responds as below. Look at the "response" section below.
 ```javaScript
         {
           "name": "Sample_Get_Employee_by_Id",
@@ -260,24 +260,24 @@ Because you are asserting with an expected status as 500, but the end point actu
 
 #### 27:
 #### Generating load for performance testing aka stress testing
-Take advantage of the following load runner from the lib-
-```java
-@RunWith(ZeroCodeLoadRunner.class)
-```
++ Browse or clone this [sample performance-tests repo](https://github.com/authorjapps/performance-tests) with examples.
+   + Take advantage of the following two extended Junit load runners from the lib-
 
-- Example usage of your already existing tests-
-See here [Reusing existing Zerocode Junit tests for load generation](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/loadtesting/LoadGetEndPointTest.java)
+> @RunWith(ZeroCodeLoadRunner.class)
 
-- Sample load test on GitHub GET api `/user/octocat`
+and
+
+> @RunWith(ZeroCodeMultiLoadRunner.class)
+
+- Load a single scenario using `ZeroCodeLoadRunner` (See example of [ZeroCodeMultiLoadRunner here](https://github.com/authorjapps/performance-tests#multi-scenario-parallel-load))
+
 ```java
 @LoadWith("load_config_sample.properties")
 @TestMapping(testClass = TestGitGubEndPoint.class, testMethod = "testGitHubGET_load")
 @RunWith(ZeroCodeLoadRunner.class)
 public class LoadGetEndPointTest {
-
 }
 ```
-
 - The load generation properties are set here `load_config_sample.properties`. Learn [more >>](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based)#how-to-run-tests-in-parallel-in-context-of-one-or-more-scenarios-)
 ```properties
 number.of.threads=2
@@ -285,12 +285,11 @@ ramp.up.period.in.seconds=10
 loop.count=1
 abort.after.time.lapsed.in.seconds=600
 ```
-
-- The test case for GET api 
+- The test case for GET api is mapped or fed into the load runner as below:
 
 > @TestMapping(testClass = TestGitGubEndPoint.class, testMethod = "testGitHubGET_load") 
 
-is as below which is fed to the load runner -
+which verifies the response in the `assertions` section -
 
 ```javascript
 {
@@ -317,11 +316,12 @@ is as below which is fed to the load runner -
     ]
 }
 ```
-- In one of the run during the load, if the `actual response` does not match the `expected response` i.e. writen in the `assertions` section above, then the test will fail.
+- In one of the response during the load, if the `actual response` does not match the `expected response` i.e. in the `assertions` section above, then the test will fail.
 - [Browse the above example](https://github.com/authorjapps/zerocode-hello-world) in GitHub.
-- or [Download as zip](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) the above maven project to run from your IDE. 
+or 
+- [Download as zip](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) the above maven project to run from your IDE. 
 
-[More (Learn load testing using your IDE) >>](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
+[More (Learn advantages of load testing using your IDE(Eclipse or Intellij etc)) >>](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 
 #### 3:
 #### Single step with more assertions
