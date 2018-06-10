@@ -260,9 +260,14 @@ Because you are asserting with an expected status as 500, but the end point actu
 
 #### 27:
 #### Generating load for performance testing aka stress testing
-Take advantage of the following load runner from the lib-
++ Browse or clone this [sample test repo](https://github.com/authorjapps/performance-tests) with examples.
+   + Take advantage of the following two extended Junit load runners from the lib-
 ```java
 @RunWith(ZeroCodeLoadRunner.class)
+
+and
+
+@RunWith(ZeroCodeMultiLoadRunner.class)
 ```
 
 - Example usage of your already existing tests-
