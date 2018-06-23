@@ -38,8 +38,8 @@ public class ZeroCodeTestReportListener extends RunListener {
         /*
          * Called when all tests have finished
          */
-        LOGGER.info("### ZeroCode: All test run completed for this runner, now generating test reports and charts. " +
-                "More help and examples are at README at GitHub");
+        LOGGER.info("### ZeroCode: Test run completed for this runner. Generating test reports and charts. " +
+                "More help and examples are available at the README in GitHub");
         generateChartsAndReports();
     }
 
