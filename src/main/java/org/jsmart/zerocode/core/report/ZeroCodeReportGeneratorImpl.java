@@ -60,6 +60,13 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     @Named("report.spike.chart.enabled")
     private boolean spikeChartReportEnabled;
 
+    /**
+     * Spike chat is disabled by default
+     */
+    @Inject(optional = true)
+    @Named("interactive.html.report.disabled")
+    private boolean interactiveHtmlReportDisabled;
+
     @Inject
     private ObjectMapper mapper;
 
@@ -74,6 +81,10 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
     @Override
     public void generateExtentReport() {
+
+        if(interactiveHtmlReportDisabled){
+            return;
+        }
 
         ExtentReports extentReports = ExtentReportsFactory.createReportTheme(TARGET_FILE_NAME);
 
