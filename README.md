@@ -1,3 +1,16 @@
+# Zerocode for TDD/BDD
+
+Welcome to the new efficient style of API Testing. The following are examples repos to clone/download and run locally. 
+
+ * https://github.com/authorjapps/zerocode-hello-world
+ * https://github.com/authorjapps/consumer-contract-tests
+ * https://github.com/authorjapps/performance-tests
+
+To build any of the projects, you can use the commands like
+```
+mvn clean install -DskipTests
+```
+
 ![Prepare Scenario](img/landing/pass_fail.png)
 
 Zerocode
