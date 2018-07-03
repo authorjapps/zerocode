@@ -84,11 +84,12 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
         } catch (Throwable severError) {
 
-            LOGGER.error("Ooooooooooops! There something unexpected happen at port: {}, " +
-                    "\n1) Check if any other service is running at this port." +
-                    "\n2) Stop the other service at this port. -or- " +
-                    "\n3) Configure WireMock to another port which might fix this problem.\n" +
-                    "See complete error below-", mockPort, severError);
+            LOGGER.error("Ooooooooooops! Something unexpected happened while connecting to the url:{} " +
+                    "\n1) Check if the service is running at the host -or-" +
+                    "\n2) Check the corporate proxy has been configured correctly -or" +
+                    "\n3) Choose another mocking(if in use) port not to conflict with the port:{} -or-" +
+                    "\n4) Restart the service. -or- " +
+                    "See the full error details below-\n{}", urlName, mockPort, severError);
 
             throw new RuntimeException(severError);
 
