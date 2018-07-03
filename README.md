@@ -771,30 +771,111 @@ $LT.<any_number>
 
 #### 15:
 #### Calling java methods(apis) for doing specific tasks:
++ Sample tests are [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldjavaexec/HelloWorldJavaMethodExecTest.java)
+    + Example of request response as JSON - [See here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworldjavaexec/hello_world_javaexec_req_resp_as_json.json)
+    + Example of passing a simple string - [See here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworldjavaexec/hello_world_java_method_return_assertions.json)
+
+- You can clone and execute from this repo [here](https://github.com/authorjapps/zerocode-hello-world)
 
 ```javaScript
 {
-      "name": "a_pre_step",
-      "url": "org.jsmart.zerocode.testhelp.utils.DbCleanUp",        //<--- class name
-      "operation": "executeSql",                                    //<-- method name
-      "request": "/scripts/sql/01_clean_up_db_and_sequences.sql",   //<--- parameter to the "executeSql" method
-      "assertions": {}
+    "scenarioName": "Java method return as JSON assertions",
+    "steps": [
+        {
+            "name": "execute_java_method",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",   //<--- class name
+            "operation": "fetchDbCustomers",                               //<-- method name
+            "request": "select id, name from customers",                   //<--- parameter to the method
+            "assertions": {
+                "dbResults": [
+                    {
+                        "id": 1,
+                        "name": "Elon Musk"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+
+            }
+        }
+    ]
 }
 ```
 
-In case a return from a java API needed assertion:
+In case of - Java method request, response as JSON:
 ```javaScript
-    {
-      "name": "another_pre_step",
-      "url": "org.jsmart.zerocode.testhelp.utils.DbCleanUp",            //<--- class name
-      "operation": "executeSqlReturnStatus",                            //<-- method name
-      "request": "/scripts/sql/02_clean_up_db_and_return_status.sql",   //<--- parameter to the "executeSqlReturnStatus"
-      "assertions": {
-        "result" : "SUCCESS"  //<--- returned result from java API
-      }
+{
+    "scenarioName": "Java method request, response as JSON",
+    "steps": [
+        {
+            "name": "execute_java_method",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.OrderCreator",
+            "operation": "createOrder",
+            "request": {
+                "itemName" : "Mango",
+                "quantity" : 15000
+            },
+            "assertions": {
+                "orderId" : 1020301,
+                "itemName" : "Mango",
+                "quantity" : 15000
+            }
+        }
+    ]
+}
+```
+
+Sample Java class and method used in the above step-
+```java
+public class OrderCreator {
+
+    public Order createOrder(Order order){
+        /**
+         * TODO- Suppose you process the "order" received, and finally return the "orderProcessed".
+         * Here it is hardcoded for simplicity and understanding purpose only
+         */
+	 
+        Order orderProcessed = new Order(1020301, order.getItemName(), order.getQuantity());
+
+        return orderProcessed;
+    }
+}
+```
+Order pojo looks like below, [full pojo src here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/main/java/org/jsmart/zerocode/zerocodejavaexec/pojo/Order.java)-
+```java
+public class Order {
+    private Integer orderId;
+    private String itemName;
+    private Long quantity;
+
+    @JsonCreator
+    public Order(
+            @JsonProperty("orderId")Integer orderId,
+            @JsonProperty("itemName")String itemName,
+            @JsonProperty("quantity")Long quantity) {
+        this.orderId = orderId;
+        this.itemName = itemName;
+        this.quantity = quantity;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public Long getQuantity() {
+        return quantity;
     }
 
 ```
+
+
+More examples here-
 
 - Link: [See here an example test](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/11_execute_local_java_program.json)
 
