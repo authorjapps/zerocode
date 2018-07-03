@@ -166,6 +166,7 @@ restful.application.endpoint.context=
 - [SOAP method invocation where Corporate Proxy enabled](#24)
 - [MIME Type Converters- XML to JSON, prettyfy XML etc](#25)
 - [Using WireMock for mocking dependent end points](#26)
+- [Basic http authentication step using zerocode](#28)
 - [General place holders and assertion place holder table](#99)
 - [References and Dicussions](#100)
 
@@ -1473,6 +1474,61 @@ The below JSON block step will mock two end points using WireMock.
         }
 
 ```
+
+#### 28:
+#### Http Basic authentication step using zerocode
++ How can I do basic http authentication in ZeroCode ?
+   + Ans: You can do this in so many ways, it depends on your project requirement. Most simplest one is to pass the base64 basicAuth in the request headers as below - e.g. `USERNAME/PASSWORD` as `charaanuser/passtwitter`
+
+Note-
+Zerocode framework helps you to achieve this, but has nothing to do with Basic-Auth. It uses `Apache Http Client` behind the scenes, this means whatever you can do using `Apache Http Client`, you can do it simply using `Zerocode`.
+
++ Positive scenario
+```javaScript
+{
+    "name": "get_book_using_basic_auth",
+    "url": "http://localhost:8088/api/v1/white-papers/WP-001",
+    "operation": "GET",
+    "request": {
+        "headers": {
+            "Authorization": "Basic Y2hhcmFhbnVzZXI6cGFzc3R3aXR0ZXI=" // You can generate this using Postman or java code
+        }
+    },
+    "assertions": {
+        "status": 200, // 401 - if unauthorised. See negatibe test below
+        "body": {
+            "id": "WP-001",
+            "type": "pdf",
+            "category": "Mule System API"
+        }
+    }
+}        
+```
+
++ Negative scenario
+```
+{
+    "name": "get_book_using_wrong_auth",
+    "url": "http://localhost:8088/api/v1/white-papers/WP-001",
+    "operation": "GET",
+    "request": {
+        "headers": {
+            "Authorization": "Basic aWRONG-PASSWORD"
+        }
+    },
+    "assertions": {
+        "status": 401 //401(or simillar code whatever the server responds), you can assert here.
+        "body": {
+            "message": "Unauthorised" 
+        }
+    }
+}        
+```
++ If your requirement is to put basic auth for all the API tests e.g. GET, POST, PUT, DELETE etc commonly in the regression suite, then you can put this `"Authorization"` header into your SSL client code. 
+You can refer to an example [test here](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/basicauth/BasicAuthContractTest.java).
+
++ In your custom http client, you add the header to the request at one place, which is common to all the API tests.
+See: `org.jsmart.zerocode.httpclient.CorpBankApcheHttpClient#addBasicAuthHeader` in the [http-client code](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/main/java/org/jsmart/zerocode/httpclient/CorpBankApcheHttpClient.java) it uses.
 
 #### 99:
 #### Place holders for End Point Mocking
