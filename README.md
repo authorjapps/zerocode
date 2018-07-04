@@ -19,7 +19,7 @@ A simple and light weight automation testing lib for api end points with payload
 
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
 
-**Latest release: [1.2.0](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
+**Latest release: [1.2.x](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
 **HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
@@ -49,7 +49,7 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.2.0</version> 
+    <version>1.2.x</version> 
 </dependency>
 ```
 But check here for the latest- 
@@ -67,8 +67,8 @@ Testing becomes an easy and effortless job due to the **simplicity** nature of J
 
 Who uses Zerocode?
 --------------------
- + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft APIs Load aka Performance testing, Consumer Contract and E2E Integration Testing
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services Contract Tests, HDFS/Hbase REST end point testing
+ + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft APIs `Load/Stres`s aka `Performance testing`, `Consumer Contract` and `E2E Integration` Testing
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services `Contract Tests`, HDFS/Hbase `REST end point` testing
  
 ## REST BDD Testing Framework
 
