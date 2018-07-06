@@ -388,4 +388,67 @@ public class ZeroCodeJsonTestProcesorImplTest {
 
         assertThat(failedReports.size(), is(0));
     }
+
+    @Test
+    public void testArraySize_numberOnly() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "array_size/array_size_number_only_test.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":2}"));
+
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 201,\n" +
+                "    \"body\": {\n" +
+                "        \"persons\": [\n" +
+                "            {\n" +
+                "                \"name\": \"Tom\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"name\": \"Mady\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(0));
+    }
+
+    @Test
+    public void testArraySize_numberOnlyNegative() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "array_size/array_size_number_only_test.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":2}"));
+
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 201,\n" +
+                "    \"body\": {\n" +
+                "        \"persons\": [\n" +
+                "            {\n" +
+                "                \"name\": \"Tom\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
+    }
 }

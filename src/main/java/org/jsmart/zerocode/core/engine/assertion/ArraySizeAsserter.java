@@ -27,7 +27,10 @@ public class ArraySizeAsserter implements JsonAsserter {
                 return AssertionReport.createFieldMatchesReport();
             }
 
-            return AssertionReport.createFieldDoesNotMatchReport(path, String.format("Array of size %d", expectedSize), result);
+            return AssertionReport.createFieldDoesNotMatchReport(
+                    path,
+                    String.format("Array of size %d", expectedSize),
+                    actualArrayValue.size());
 
         } else {
 
