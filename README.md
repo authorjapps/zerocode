@@ -2,9 +2,14 @@
 
 Welcome to the new efficient style of API Testing. The following are examples repos to clone/download and run locally. 
 
- * https://github.com/authorjapps/zerocode-hello-world
- * https://github.com/authorjapps/consumer-contract-tests
- * https://github.com/authorjapps/performance-tests
+ * https://github.com/authorjapps/zerocode-hello-world : 
+   + Basic usages of the framework
+ * https://github.com/authorjapps/consumer-contract-tests : 
+   + Sample banking app's contracts test suite for interfacing apps
+ * https://github.com/authorjapps/performance-tests : 
+   + Performance testing with varying capacity of Load/Stress generation 
+ * https://github.com/authorjapps/spring-boot-integration-test : 
+   + A Spring boot application with it's integration testing(simple n easy)
 
 To build any of the projects, you can use the commands like
 ```
