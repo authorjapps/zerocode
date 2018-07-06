@@ -362,4 +362,30 @@ public class ZeroCodeJsonTestProcesorImplTest {
 
         assertThat(failedReports.size(), is(0));
     }
+
+    @Test
+    public void testString_regexMatch() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "regex_match/string_matches_regex_test.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("{\"dob\":\"$MATCHES.STRING:\\\\d{4}-\\\\d{2}-\\\\d{2}\"}}"));
+
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "  \"status\": 201,\n" +
+                "  \"body\": {\n" +
+                "    \"dob\": \"2018-06-26\"\n" +
+                "  }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(0));
+    }
 }

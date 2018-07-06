@@ -6,19 +6,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.jsmart.zerocode.core.engine.assertion.ArrayIsEmptyAsserter;
-import org.jsmart.zerocode.core.engine.assertion.ArraySizeAsserter;
-import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasEqualNumberValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasExactValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasGreaterThanValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasInEqualNumberValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasLesserThanValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasSubStringIgnoreCaseValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasSubStringValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldIsNotNullAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldIsNullAsserter;
-import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
+import org.jsmart.zerocode.core.engine.assertion.*;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 
 import java.io.IOException;
@@ -78,6 +66,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_VALUE_EMPTY_ARRAY = "$[]";
     public static final String ASSERT_PATH_SIZE = ".SIZE";
     public static final String ASSERT_VALUE_CONTAINS_STRING = "$CONTAINS.STRING:";
+    public static final String ASSERT_VALUE_MATCHES_STRING = "$MATCHES.STRING:";
     public static final String ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE = "$CONTAINS.STRING.IGNORECASE:";
     public static final String ASSERT_VALUE_EQUAL_TO_NUMBER = "$EQ.";
     public static final String ASSERT_VALUE_NOT_EQUAL_TO_NUMBER = "$NOT.EQ.";
@@ -217,9 +206,6 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     @Override
     public List<JsonAsserter> createAssertersFrom(String resolvedAssertionJson) {
         List<JsonAsserter> asserters = new ArrayList<>();
-//        if(parsable resolvedAssertionJson){
-//
-//        }
         try {
             JsonNode jsonNode = mapper.readTree(resolvedAssertionJson);
 
@@ -248,6 +234,10 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     String expected = ((String) value).substring(ASSERT_VALUE_CONTAINS_STRING.length());
                     asserter = new FieldHasSubStringValueAsserter(path, expected);
                 }
+                else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_MATCHES_STRING)) {
+                    String expected = ((String) value).substring(ASSERT_VALUE_MATCHES_STRING.length());
+                    asserter = new FieldMatchesRegexPatternAsserter(path, expected);
+                }
                 else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE.length());
                     asserter = new FieldHasSubStringIgnoreCaseValueAsserter(path, expected);
@@ -272,10 +262,8 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     asserter = new FieldHasExactValueAsserter(path, value);
                 }
 
-                //System.out.println("### Asserter: " + asserter.toString());
                 asserters.add(asserter);
             }
-            //System.out.println("### Asserters size: " + asserters.size());
         } catch (IOException parEx) {
             throw new RuntimeException(parEx);
         }

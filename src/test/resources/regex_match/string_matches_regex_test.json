@@ -1,0 +1,23 @@
+{
+    "scenarioName": "Testing string matches a regex pattern",
+    "steps": [
+        {
+            "name": "StepNameWithoutSpaceEgCREATESD",
+            "url": "/persons",
+            "operation": "POST",
+            "request": {
+                "body": {
+                    "persons": {
+                        "dob": "2018-06-26"
+                    }
+                }
+            },
+            "assertions": {
+                "status": 201,
+                "body": {
+                    "dob": "$MATCHES.STRING:\\d{4}-\\d{2}-\\d{2}"
+                }
+            }
+        }
+    ]
+}

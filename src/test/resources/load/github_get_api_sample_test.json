@@ -12,7 +12,8 @@
                 "body": {
                     "login" : "octocat",
                     "id" : 583231,
-                    "type" : "User"
+                    "type" : "User",
+                    "location" : "$MATCHES.STRING:San Fra(.*)"
                 }
             }
         }
