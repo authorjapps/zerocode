@@ -3,8 +3,16 @@
 Welcome to the new efficient style of API Testing. The following are examples repos to clone/download and run locally. 
 
  * https://github.com/authorjapps/zerocode-hello-world
+   * Basic usages of the framework with hello-world examples
+   
  * https://github.com/authorjapps/consumer-contract-tests
+   * Sample banking app's contracts test suite for interfacing apps
+   
  * https://github.com/authorjapps/performance-tests
+   * Performance testing with varying capacity of Load/Stress generation 
+   
+ * https://github.com/authorjapps/spring-boot-integration-test
+   * A Spring boot application with it's integration testing(simple n easy)
 
 To build any of the projects, you can use the commands like
 ```
@@ -19,7 +27,7 @@ A simple and light weight automation testing lib for api end points with payload
 
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
 
-**Latest release: [1.2.0](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
+**Latest release: [1.2.x](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
 
 **HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
@@ -49,7 +57,7 @@ Latest maven release:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.2.0</version> 
+    <version>1.2.x</version> 
 </dependency>
 ```
 But check here for the latest- 
@@ -67,8 +75,8 @@ Testing becomes an easy and effortless job due to the **simplicity** nature of J
 
 Who uses Zerocode?
 --------------------
- + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft APIs Load aka Performance testing, Consumer Contract and E2E Integration Testing
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services Contract Tests, HDFS/Hbase REST end point testing
+ + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft APIs `Load/Stres`s aka `Performance testing`, `Consumer Contract` and `E2E Integration` Testing
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services `Contract Tests`, HDFS/Hbase `REST end point` testing
  
 ## REST BDD Testing Framework
 
@@ -166,6 +174,7 @@ restful.application.endpoint.context=
 - [SOAP method invocation where Corporate Proxy enabled](#24)
 - [MIME Type Converters- XML to JSON, prettyfy XML etc](#25)
 - [Using WireMock for mocking dependent end points](#26)
+- [Basic http authentication step using zerocode](#28)
 - [General place holders and assertion place holder table](#99)
 - [References and Dicussions](#100)
 
@@ -1473,6 +1482,61 @@ The below JSON block step will mock two end points using WireMock.
         }
 
 ```
+
+#### 28:
+#### Http Basic authentication step using zerocode
++ How can I do basic http authentication in ZeroCode ?
+   + Ans: You can do this in so many ways, it depends on your project requirement. Most simplest one is to pass the base64 basicAuth in the request headers as below - e.g. `USERNAME/PASSWORD` as `charaanuser/passtwitter`
+
+Note-
+Zerocode framework helps you to achieve this, but has nothing to do with Basic-Auth. It uses `Apache Http Client` behind the scenes, this means whatever you can do using `Apache Http Client`, you can do it simply using `Zerocode`.
+
++ Positive scenario
+```javaScript
+{
+    "name": "get_book_using_basic_auth",
+    "url": "http://localhost:8088/api/v1/white-papers/WP-001",
+    "operation": "GET",
+    "request": {
+        "headers": {
+            "Authorization": "Basic Y2hhcmFhbnVzZXI6cGFzc3R3aXR0ZXI=" // You can generate this using Postman or java code
+        }
+    },
+    "assertions": {
+        "status": 200, // 401 - if unauthorised. See negatibe test below
+        "body": {
+            "id": "WP-001",
+            "type": "pdf",
+            "category": "Mule System API"
+        }
+    }
+}        
+```
+
++ Negative scenario
+```
+{
+    "name": "get_book_using_wrong_auth",
+    "url": "http://localhost:8088/api/v1/white-papers/WP-001",
+    "operation": "GET",
+    "request": {
+        "headers": {
+            "Authorization": "Basic aWRONG-PASSWORD"
+        }
+    },
+    "assertions": {
+        "status": 401 //401(or simillar code whatever the server responds), you can assert here.
+        "body": {
+            "message": "Unauthorised" 
+        }
+    }
+}        
+```
++ If your requirement is to put basic auth for all the API tests e.g. GET, POST, PUT, DELETE etc commonly in the regression suite, then you can put this `"Authorization"` header into your SSL client code. 
+You can refer to an example [test here](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/basicauth/BasicAuthContractTest.java).
+
++ In your custom http client, you add the header to the request at one place, which is common to all the API tests.
+See: `org.jsmart.zerocode.httpclient.CorpBankApcheHttpClient#addBasicAuthHeader` in the [http-client code](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/main/java/org/jsmart/zerocode/httpclient/CorpBankApcheHttpClient.java) it uses.
 
 #### 99:
 #### Place holders for End Point Mocking
