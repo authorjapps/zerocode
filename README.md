@@ -1,6 +1,6 @@
 # Zerocode for TDD/BDD
 
->The simplest and convinient way of testing your APIs
+>The simplest and convinient way to test your APIs
 
 Welcome to the new efficient style of API Testing. The following are examples repos to clone/download and run locally. 
 
