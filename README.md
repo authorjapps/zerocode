@@ -1,5 +1,7 @@
 # Zerocode for TDD/BDD
 
+>The simplest and convinient way of testing your APIs
+
 Welcome to the new efficient style of API Testing. The following are examples repos to clone/download and run locally. 
 
  * https://github.com/authorjapps/zerocode-hello-world
@@ -37,7 +39,7 @@ A simple and light weight automation testing lib for api end points with payload
 
 > Make your test-driven API development efficient, accurate, fast and fun.
 
-Keep things simple, Zerocode alleviates the need of writing `code` for test assertions and boiler plate wrappers. It empowers the automation testers as well as developers to build up test scenario steps effortlessly, with asserting the entire or partial result as JSON `as it is`. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enables you to focus on business bcenarios, user journeys and acceptance criterias efficiently. 
+Keep things simple, Zerocode alleviates the need of writing `code` for test assertions and boiler plate wrappers. It empowers the automation testers as well as developers to build up test scenario steps effortlessly, with asserting the entire or part of the result as JSON `as it is`. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enabling you to focus on the business scenarios, user journeys and acceptance criterias acuurately. 
 
 [![Download HelloWorld](https://img.shields.io/badge/download-examples-blue.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) 
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
@@ -63,9 +65,9 @@ Latest maven release:
 But check here for the latest- 
 https://github.com/authorjapps/zerocode/releases -or- [Maven Central](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
 
-Zerocode helps you to design better Test Cases for your business features, maintain and update easily to avoid sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests, as well optionally you can use`Suite` Runner for CI builds. 
+Zerocode helps you to design better Test Cases for your business features, maintain and update them easily, avoiding sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests, as well optionally you can use`Suite` Runner for the CI builds. 
 
-Testing becomes an easy and effortless job due to the **simplicity** nature of JSON and the native support by popular IDEs e.g. Eclipse /IntelliJ /NetBeans etc with no extra plugin. Your tests will not be cumbersome and complex anymore. Zerocode makes your tests independent, complete and structured and easily maintainable by the team or the new comers. It enables you to write your `API End Point Tests`, `Consumer Contract Tests` and `End to End Tests` etc, at the **speed** of writing **JUnit** tests.
+Testing becomes an easy and effortless job due to the **simplicity** nature of JSON and the native support by popular IDEs e.g. Eclipse /IntelliJ /NetBeans etc with no extra plugin need. Your tests will not be cumbersome and complex anymore. Zerocode makes your tests independent, complete and structured, and easily maintainable by the team or the new comers. It enables you to write your `API End Point tests`, `Consumer Contract tests`, `End to End tests` as well as `Performance tests` etc, at the **speed** of writing **JUnit** tests.
 
 - Browse or clone `contract tests` examples from [here](https://github.com/authorjapps/consumer-contract-tests)
 - Browse or clone `performance tests`(load, stress) examples [here]()
@@ -1572,6 +1574,7 @@ See: `org.jsmart.zerocode.httpclient.CorpBankApcheHttpClient#addBasicAuthHeader`
 | $LT.99       | Assertion passes if a value lesser than 99 was present in the response | Can be any int, long, float etc |
 | $CONTAINS.STRING:id was cust-001       | Assertion passes if the node response contains string "id was cust-001" | Otherwise fails |
 | $CONTAINS.STRING.IGNORECASE:id WaS CuSt-001       | Assertion passes if the response value contains string "id was cust-001" with case insensitive | Otherwise fails |
+| $MATCHES.STRING:`\\d{4}-\\d{2}-\\d{2}`       | Assertion passes if the response value contains e.g. `"1989-07-09"` matching regex `\\d{4}-\\d{2}-\\d{2}` | Otherwise fails |
 
 #### Assertion Path holders
 
@@ -1582,6 +1585,8 @@ See: `org.jsmart.zerocode.httpclient.CorpBankApcheHttpClient#addBasicAuthHeader`
 
 #### 100:
 #### References, Dicussions and articles
+* [RESTful testing with test cases in JSON](https://youtu.be/nSWq5SuyqxE) - YouTube
+* [Performance testing using JUnit and maven](https://www.codeproject.com/Articles/1251046/How-to-do-performance-testing-using-JUnit-and-Mave) - Codeproject
 * [REST API or SOAP End Point Testing](https://www.codeproject.com/Articles/1242569/REST-API-or-SOAP-End-Point-Testing-with-ZeroCode-J) - Codeproject
 * [DZone- MuleSoft API Testing With Zerocode Test Framework](https://dzone.com/articles/zerocode-test-framework-for-restsoap-api-tddbdd-ap) - DZone
 * [Testing need not be harder or slower, it should be easier and faster](https://dzone.com/articles/rest-api-testing-using-the-zerocode-json-based-bdd) - DZone
