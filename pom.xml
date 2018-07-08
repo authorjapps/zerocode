@@ -202,7 +202,7 @@
         <dependency>
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>
-            <version>${extentreports.version}</version>
+            <version>${extentreports.version}</version> <!-- extent community version -->
         </dependency>
     </dependencies>
 
