@@ -5,16 +5,16 @@
 Welcome to the new efficient style of API Testing. The following are examples repos to clone/download and run locally. 
 
  * https://github.com/authorjapps/zerocode-hello-world <br/>
- (Basic usages of the framework with hello-world examples)
+ (Basic usages of the framework with **hello-world** examples)
    
  * https://github.com/authorjapps/consumer-contract-tests <br/>
- (Sample banking app's contracts test suite for interfacing apps)
+ (Sample banking app's **API contracts test** suite for interfacing apps)
    
  * https://github.com/authorjapps/performance-tests <br/>
- (Performance testing with varying capacity of Load/Stress generation)
+ (**Performance** testing with varying capacity of **Load/Stress** generation)
    
  * https://github.com/authorjapps/spring-boot-integration-test <br/>
- (A Spring boot application with its integration testing- simple n easy)
+ (A **Spring boot** application with its **integration testing**- simple n easy)
 
 To build any of the projects, you can use the commands like
 ```
@@ -77,8 +77,8 @@ Testing becomes an easy and effortless job due to the **simplicity** nature of J
 
 Who uses Zerocode?
 --------------------
- + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft APIs `Load/Stres`s aka `Performance testing`, `Consumer Contract` and `E2E Integration` Testing
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services `Contract Tests`, HDFS/Hbase `REST end point` testing
+ + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft APIs Load/Stress aka Performance testing, Consumer Contract testing and E2E Integration Testing
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services Contract Testing, HDFS/Hbase REST end point testing
  
 ## REST BDD Testing Framework
 
