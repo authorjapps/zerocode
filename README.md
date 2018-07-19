@@ -1,8 +1,9 @@
 # Zerocode for TDD/BDD
 
->The simplest and convinient way to test your APIs
+>The simplest way to test your APIs
 
-Welcome to the new efficient style of API Testing. The following are examples repos to clone/download and run locally. 
+Welcome to the simple and efficient style of API Testing. <br/>
+Clone/download the below demo repos to run locally. 
 
  * https://github.com/authorjapps/zerocode-hello-world <br/>
  (Basic usages of the framework with **hello-world** examples)
@@ -508,6 +509,56 @@ Possible reasons-
 
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
+##### Finding the occurance of an element in the array response
+e.g. your actual response is like below, 
+Your use-case is, `Dan` and `Mike` might not be returned in the same order always, but they appear only once in the array.
+```
+Url: "/api/v1/screening/persons",
+Operation: "GET",
+Response: 
+{
+                "status": 200,
+                "body": {
+                    "type" : "HIGH-VALUE",
+                    "persons":[
+                        {
+                            "id": "120.100.80.03",
+                            "name": "Dan"
+                        },
+                        {
+                            "id": "120.100.80.11",
+                            "name": "Mike"
+                        }
+                    ]
+                }
+}
+```
+To assert the above situation, you can find the element using `JSON path` as below and verify 'Dan' was returned only once in the array and 'Emma' was present in the 'persons' array.
+(See more JSON path here)
+```
+{
+    "scenarioName": "Scenario- Get all person details",
+    "steps": [
+        {
+            "name": "get_screening_details",
+            "url": "/api/v1/screening/persons",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "type": "HIGH-VALUE",
+                    "persons.SIZE": 2,
+                    "persons[?(@.name=='Dan')].id.SIZE": 1,
+                    "persons[?(@.name=='Mike')].id.SIZE": 1,
+                    "persons[?(@.name=='Emma')].id.SIZE": 0
+                }
+            }
+        }
+    ]
+}
+```
 
 #### 10:
 #### Chaining multiple steps for a scenario
