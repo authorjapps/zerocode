@@ -2,22 +2,22 @@
 
 >The simplest way to test your APIs
 
-Welcome to the simple and efficient style of API Testing. <br/>
-Clone/download the below demo repos to run locally. 
+Welcome to the new simple and efficient way to test your APIs. <br/>
+Clone/download the below demo repos to run them locally. 
 
- * https://github.com/authorjapps/zerocode-hello-world <br/>
- (Basic usages of the framework with **hello-world** examples)
+ * Basic usages of the framework with **hello-world** examples <br/> 
+ (https://github.com/authorjapps/zerocode-hello-world )
    
- * https://github.com/authorjapps/consumer-contract-tests <br/>
- (Sample banking app's **API contracts test** suite for interfacing apps)
+ * Sample banking app's **API contracts test** suite for interfacing apps <br/> 
+ (https://github.com/authorjapps/consumer-contract-tests )
    
- * https://github.com/authorjapps/performance-tests <br/>
- (**Performance** testing with varying capacity of **Load/Stress** generation)
+ * **Performance** testing with varying capacity of **Load/Stress** generation <br/> 
+ (https://github.com/authorjapps/performance-tests)
    
- * https://github.com/authorjapps/spring-boot-integration-test <br/>
- (A **Spring boot** application with its **integration testing**- simple n easy)
+ * A **Spring boot** application with its **integration testing**- simple n easy  <br/>
+ (https://github.com/authorjapps/spring-boot-integration-test)
 
-To build any of the projects, you can use the commands like
+To build any of the above projects, you can use the following command
 ```
 mvn clean install -DskipTests
 ```
@@ -559,6 +559,11 @@ To assert the above situation, you can find the element using `JSON path` as bel
     ]
 }
 ```
+What `persons[?(@.name=='Dan')].id.SIZE` means is-
+> In the `persons` array check every element with the name `Dan`, if found pick the `id` of element and return all of the `id`s as an array, then do `.SIZE` on the `id`s array and return a count.
+
+Note-
+Even if a single matching element is found, the return is always an array type. Also if you do a `.length()` on the returned `id`s e.g. `persons[?(@.name=='Dan')].id.length()`, that's also an array i.e. `[2]` instead of simple `2`. That's how JSON path behaves. 
 
 #### 10:
 #### Chaining multiple steps for a scenario
