@@ -2,7 +2,7 @@
 
 >The simplest way to test your APIs
 
-Welcome to the new simple and efficient way to test your APIs. <br/>
+Welcome to the new simple, convenient and efficient way to test your APIs. <br/>
 Clone/download the below demo repos to run them locally. 
 
  * Basic usages of the framework with **hello-world** examples <br/> 
@@ -147,7 +147,9 @@ restful.application.endpoint.port=443
 restful.application.endpoint.context=
 ```
 
-#### Define a Scenario with Steps, Then Run as JUnit([example](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java)) or run as Suite/Package([example](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldGitHubSuite.java)). See examples below-
+#### Define a Scenario with Steps, Then Run as JUnit([example](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java)) or run as Suite/Package([example](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldGitHubSuite.java)). <br>
+
+See more examples below-
 
 ## Table of Contents - 
 - [Help and usage](#1)
@@ -534,7 +536,7 @@ Response:
 }
 ```
 To assert the above situation, you can find the element using `JSON path` as below and verify 'Dan' was returned only once in the array and 'Emma' was present in the 'persons' array.
-(See more JSON path here)
+(See more JSON paths [here](https://github.com/json-path/JsonPath))
 ```
 {
     "scenarioName": "Scenario- Get all person details",
@@ -563,7 +565,9 @@ What `persons[?(@.name=='Dan')].id.SIZE` means is-
 > In the `persons` array check every element with the name `Dan`, if found pick the `id` of element and return all of the `id`s as an array, then do `.SIZE` on the `id`s array and return a count.
 
 Note-
-Even if a single matching element is found, the return is always an array type. Also if you do a `.length()` on the returned `id`s e.g. `persons[?(@.name=='Dan')].id.length()`, that's also an array i.e. `[2]` instead of simple `2`. That's how JSON path behaves. 
+Even if a single matching element is found, the return is always an array type. Also if you do a `.length()` on the returned `id`s e.g. `persons[?(@.name=='Dan')].id.length()`, that's also an array i.e. `[2]` instead of simple `2`. That's how JSON path behaves. Hence `.SIZE` helps to achieve this.
+
+Run [the above test case](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/test/resources/contract_tests/screeningservice/find_element_in_array_via_jsonpath.json) from [here - testFindElementInArray()](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/screeningservice/ScreeningServiceContractTest.java).
 
 #### 10:
 #### Chaining multiple steps for a scenario
@@ -996,13 +1000,77 @@ The runner looks like this:
 ```
 @TargetEnv("config_hosts_sample.properties")
 @RunWith(ZeroCodeUnitRunner.class)
-public class ZeroCodeSampleUnitRunner{
+public class ScreeningServiceContractTest {
+
+    @Test
+    @JsonTestCase("contract_tests/screeningservice/get_screening_details_by_custid.json")
+    public void testScreeningLocalAndGlobal() throws Exception {
+    }
 }
 ```
 
-- See example here : [See a test scenario](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/10_externalizing_host_port_into_properties_file.json)
-- See runner here: [See ZeroCodeSampleUnitRunner.java](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/ZeroCodeSampleUnitRunner.java)
-- See runner here: [See ZeroCodeSampleBulkRunner.java](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/tests/ZeroCodeSampleBulkRunner.java)
+- See example here of a test scenario: [hello-world test scenario](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json)
+```
+{
+    "scenarioName": "GIVEN- the GitHub REST api, WHEN- I invoke GET, THEN- I will receive the 200 status with body",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/users/octocat",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat",
+                    "type" : "User"
+                }
+            }
+        }
+    ]
+}
+```
+
+- See tests here using `ZeroCodeUnitRunner.class`: [hello-world via JUnit @Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java)
+```
+@TargetEnv("github_host.properties")
+@RunWith(ZeroCodeUnitRunner.class)
+public class JustHelloWorldTest {
+
+    @Test
+    @JsonTestCase("helloworld/hello_world_status_ok_assertions.json")
+    public void testGet() throws Exception {
+
+    }
+}
+```
+
+- See tests here using `ZeroCodePackageRunner.class`: [hello-world suite](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldGitHubSuite.java)
+```
+@TargetEnv("github_host.properties")
+@UseHttpClient(SslTrustHttpClient.class) //<--- Optional, Needed for https/ssl connections.
+@RunWith(ZeroCodePackageRunner.class)
+@TestPackageRoot("helloworld_github_REST_api") //<--- Root of the package to pick all tests including sub-folders
+public class HelloWorldGitHubSuite {
+
+}
+```
+
+- See tests here using `@RunWith(Suite.class)`: [Contract-test suite](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/ContractTestSuite.java)
+```
+@Suite.SuiteClasses({
+        RegulatoryServiceContractTest.class,
+        IdCheckServiceContractTest.class,
+        CorpLoanServiceContractTest.class,
+        ScreeningServiceContractTest.class
+})
+@RunWith(Suite.class)
+public class ContractTestSuite {
+
+}
+```
+
 
 
 #### 18:
@@ -1652,9 +1720,11 @@ See: `org.jsmart.zerocode.httpclient.CorpBankApcheHttpClient#addBasicAuthHeader`
 
 [Zerocode UUID or Zerocode uuid random UUID]: https://github.com/authorjapps/zerocode#zerocode
 
-[Zerocode zero code rest bdd blog]: https://github.com/authorjapps/zerocode#zerocode
-[Zerocode zero code behaviour driven development]: https://github.com/authorjapps/zerocode#zerocode
-[Zerocode zero code testing]: https://github.com/authorjapps/zerocode#zerocode
+[REST api JSON test cases]: https://github.com/authorjapps/zerocode
+[JSON tests cases for rest apis]: https://github.com/authorjapps/zerocode
+[Zerocode zero code rest bdd blog]: https://github.com/authorjapps/zerocode
+[Zerocode zero code behaviour driven development]: https://github.com/authorjapps/zerocode
+[Zerocode zero code testing]: https://github.com/authorjapps/zerocode
 [Zerocode zero code JSON based testing test cases]: https://github.com/authorjapps/zerocode#zerocode
 [Zerocode zero code Hello World]: https://github.com/authorjapps/zerocode#zerocode
 [Zerocode zero code example]: https://github.com/authorjapps/zerocode#zerocode
