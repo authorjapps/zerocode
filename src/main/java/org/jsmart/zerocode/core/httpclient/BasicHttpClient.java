@@ -1,7 +1,5 @@
 package org.jsmart.zerocode.core.httpclient;
 
-import org.jboss.resteasy.client.ClientResponse;
-
 import javax.ws.rs.core.Response;
 import java.util.Map;
 

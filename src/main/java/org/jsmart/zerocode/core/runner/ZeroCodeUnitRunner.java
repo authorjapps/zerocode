@@ -5,14 +5,10 @@ import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import org.jsmart.zerocode.core.di.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.RuntimeHttpClientModule;
-import org.jsmart.zerocode.core.domain.HostProperties;
-import org.jsmart.zerocode.core.domain.JsonTestCase;
-import org.jsmart.zerocode.core.domain.ScenarioSpec;
-import org.jsmart.zerocode.core.domain.TargetEnv;
-import org.jsmart.zerocode.core.domain.UseHttpClient;
+import org.jsmart.zerocode.core.domain.*;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.httpclient.RestEasyDefaultHttpClient;
+import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
@@ -177,7 +173,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
             Class<? extends BasicHttpClient> runtimeHttpClient =
-                    httpClientAnnotated != null ? httpClientAnnotated.value() : RestEasyDefaultHttpClient.class;
+                    httpClientAnnotated != null ? httpClientAnnotated.value() : SslTrustHttpClient.class;
 
             injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
                     .with(new RuntimeHttpClientModule(runtimeHttpClient)));
