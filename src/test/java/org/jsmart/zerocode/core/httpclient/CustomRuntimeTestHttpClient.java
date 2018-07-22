@@ -1,6 +1,10 @@
 package org.jsmart.zerocode.core.httpclient;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.RequestBuilder;
+
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.Map;
 
 public class CustomRuntimeTestHttpClient implements BasicHttpClient {
@@ -14,6 +18,26 @@ public class CustomRuntimeTestHttpClient implements BasicHttpClient {
         final Response built = Response.status(status).entity(responseBody).header("key1", "value1").build();
 
         return built;
+    }
+
+    @Override
+    public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) {
+        return null;
+    }
+
+    @Override
+    public RequestBuilder handleHeaders(Map<String, Object> headers, RequestBuilder requestBuilder) {
+        return null;
+    }
+
+    @Override
+    public String handleRequestBody(Object body) {
+        return null;
+    }
+
+    @Override
+    public Response handleResponse(CloseableHttpResponse httpResponse) throws IOException {
+        return null;
     }
 
 

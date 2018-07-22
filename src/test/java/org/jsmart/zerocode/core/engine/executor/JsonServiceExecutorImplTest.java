@@ -96,21 +96,21 @@ public class JsonServiceExecutorImplTest {
         JSONAssert.assertEquals("{\n" +
                 "    \"status\": 200,\n" +
                 "    \"headers\": {\n" +
-                "        \"Transfer-Encoding\": [\n" +
+                "        \"Transfer-Encoding\":" +
                 "            [\n" +
                 "                \"chunked\"\n" +
                 "            ]\n" +
-                "        ],\n" +
-                "        \"Content-Type\": [\n" +
+                "        ,\n" +
+                "        \"Content-Type\":" +
                 "            [\n" +
                 "                \"application/json\"\n" +
                 "            ]\n" +
-                "        ],\n" +
-                "        \"Connection\": [\n" +
+                "        ,\n" +
+                "        \"Connection\":" +
                 "            [\n" +
                 "                \"keep-alive\"\n" +
                 "            ]\n" +
-                "        ]\n" +
+                "        \n" +
                 "    },\n" +
                 "    \"body\": {\n" +
                 "        \"id\": 1,\n" +
