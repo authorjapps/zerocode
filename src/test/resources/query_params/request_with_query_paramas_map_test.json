@@ -4,7 +4,6 @@
         {
             "name": "find_match",
             "url": "/api/v1/search/persons",
-            //            "url": "/api/v1/search/persons?lang=Amazing&city=Lon",
             "operation": "GET",
             "request": {
                 "queryParams": {
@@ -23,7 +22,7 @@
             }
         },
         {
-            "name": "find_match_same_error",
+            "name": "find_match_introduce_error",
             "url": "/api/v1/search/persons?lang=Amazing&city=Lon",
             "operation": "GET",
             "request": {

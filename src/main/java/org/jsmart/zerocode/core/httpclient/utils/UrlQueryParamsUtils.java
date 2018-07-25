@@ -1,6 +1,5 @@
 package org.jsmart.zerocode.core.httpclient.utils;
 
-import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,7 @@ public class UrlQueryParamsUtils {
                 qualifiedQueryParam = qualifiedQueryParam + format("&%s=%s", key, queryParamsMap.get(key));
             }
         }
-        LOGGER.info("### qualifiedQueryParam : " + qualifiedQueryParam);
+        LOGGER.info("### qualifiedQueryParams : " + qualifiedQueryParam);
         return qualifiedQueryParam;
     }
 
