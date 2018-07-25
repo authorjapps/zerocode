@@ -111,8 +111,9 @@ public abstract class BasicHttpClient {
      * Once the client executes the http call, then it receives the http response. This method takes care of handling
      * that. In case you need to handle it differently you can override this method.
      *
-     * @param httpResponse
-     * @return
+     * @param httpResponse  : Received Apache http response from the server
+     *
+     * @return  : Effective response with handled http session.
      * @throws IOException
      */
     public Response handleResponse(CloseableHttpResponse httpResponse) throws IOException {
@@ -135,10 +136,25 @@ public abstract class BasicHttpClient {
     }
 
     /**
+     * If(optionally) query parameters was sent as a JSON in the request below, this gets available to this method
+     * for processing them with the url.
+     *
+     * e.g.
+     * "url": "/api/v1/search/people"
+     * "request": {
+     *     "queryParams": {
+     *         "city":"Lon",
+     *         "lang":"Awesome"
+     *     }
+     * }
+     * will resolve to effective url "/api/v1/search/people?city=Lon&lang=Awesome".
+     *
+     * In case you need to handle it differently you can override this method to change this behaviour to roll your own
+     * feature.
      *
      * @param httpUrl
      * @param queryParams
-     * @return
+     * @return : Effective url
      */
     public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) {
         if (queryParams != null) {
@@ -148,14 +164,14 @@ public abstract class BasicHttpClient {
     }
 
     /**
-     * Override this method in case you want to handle the headers differently which passed from the
-     * testcase requests. If there are keys with same name in case of some headers were populated from
-     * properties file, then how these should be handled. The framework will fall back to this default
-     * implementation to handle this.
+     * Override this method in case you want to handle the headers differently which were passed from the
+     * test-case requests. If there are keys with same name e.g. some headers were populated from
+     * properties file(or via any other way from your java application), then how these should be handled.
+     * The framework will fall back to this default implementation to handle this.
      *
      * @param headers
      * @param requestBuilder
-     * @return
+     * @return : An effective Apache http request builder object with processed headers.
      */
     public RequestBuilder handleHeaders(Map<String, Object> headers, RequestBuilder requestBuilder) {
         if (headers != null) {
@@ -245,7 +261,8 @@ public abstract class BasicHttpClient {
 
     /**
      * This method handles the http session to be maintained between the calls.
-     * In case the session is not needed or to be handled differently, then this method can be overridden.
+     * In case the session is not needed or to be handled differently, then this
+     * method can be overridden to do nothing or to roll your own feature.
      *
      * @param serverResponse
      * @param headerKey
