@@ -18,10 +18,10 @@
       "assertions": {
         "status": 200,
         "headers": {
-          "Content-Type" : [ [ "application/json" ] ],
-          "Connection" : [ [ "keep-alive" ] ],
-          "client_secret" : [ [ "secret_00001" ] ],
-          "client_id" : [ [ "cid_00001" ] ]
+          "Content-Type" : [ "application/json" ],
+          "Connection" : [ "keep-alive" ],
+          "client_secret" : [ "secret_00001" ],
+          "client_id" : [ "cid_00001" ]
         },
         "body": {
           "zeroKey": "zeroValue"

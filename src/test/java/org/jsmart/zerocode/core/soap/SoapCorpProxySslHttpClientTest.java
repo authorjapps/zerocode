@@ -3,15 +3,13 @@ package org.jsmart.zerocode.core.soap;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.UseHttpClient;
-import org.jsmart.zerocode.core.httpclient.soap.SoapCorporateProxySslHttpClient;
-import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
+import org.jsmart.zerocode.core.httpclient.ssl.SslTrustCorporateProxyHttpClient;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
-import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodeUnitRunner;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@UseHttpClient(SoapCorporateProxySslHttpClient.class)
+@UseHttpClient(SslTrustCorporateProxyHttpClient.class)
 @TargetEnv("host_with_corp_proxy.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class SoapCorpProxySslHttpClientTest {

@@ -11,7 +11,7 @@ import org.jsmart.zerocode.core.domain.TestPackageRoot;
 import org.jsmart.zerocode.core.domain.UseHttpClient;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.httpclient.RestEasyDefaultHttpClient;
+import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
@@ -166,7 +166,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 
         final UseHttpClient runtimeClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
-        Class<? extends BasicHttpClient> runtimeHttpClient = runtimeClientAnnotated != null ? runtimeClientAnnotated.value() : RestEasyDefaultHttpClient.class;
+        Class<? extends BasicHttpClient> runtimeHttpClient = runtimeClientAnnotated != null ? runtimeClientAnnotated.value() : SslTrustHttpClient.class;
 
         return createInjector(Modules.override(new ApplicationMainModule(serverEnv)).with(new RuntimeHttpClientModule(runtimeHttpClient)));
     }
