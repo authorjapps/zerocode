@@ -55,20 +55,16 @@ public class SslTrustHttpClient implements BasicHttpClient{
         if (headers != null) {
             Map headersMap = headers;
             for (Object key : headersMap.keySet()) {
+                if(CONTENT_TYPE.equals(key) && MULTIPART_FORM_DATA.equals(headersMap.get(key))){
+                    continue;
+                }
                 removeDuplicateHeaders(requestBuilder, (String) key);
                 requestBuilder.addHeader((String) key, (String) headersMap.get(key));
                 LOGGER.info("Overridden the header key:{}, with value:{}", key, headersMap.get(key));
             }
-
-            hasFilesToUpload = hasMultiPartHeader(headersMap);
         }
 
         return requestBuilder;
-    }
-
-    @Override
-    public String handleRequestBody(Object body) {
-        return getContentAsItIsJson(body);
     }
 
     @Override
@@ -92,38 +88,24 @@ public class SslTrustHttpClient implements BasicHttpClient{
         // -----------------------------------
         httpUrl = handleUrlAndQueryParams(httpUrl, queryParams);
 
-
-        // -------------------------------------
-        // Create default apache request builder
-        // -------------------------------------
-        RequestBuilder requestBuilder = createDefaultRequestBuilder(httpUrl, methodName, reqBodyAsString);
+        RequestBuilder requestBuilder;
+        if (hasMultiPartHeader(headers)) {
+            requestBuilder = createFileUploadRequestBuilder(httpUrl, methodName, reqBodyAsString);
+        } else {
+            requestBuilder = createDefaultRequestBuilder(httpUrl, methodName, reqBodyAsString);
+        }
 
         // ------------------
         // Handle the headers
         // ------------------
         handleHeaders(headers, requestBuilder);
 
-        CloseableHttpResponse httpResponse;
-        // =-=-=-=-=-=-=-=-=-=
-        // Execute the request
-        // =-=-=-=-=-=-=-=-=-=
-        if (hasFilesToUpload) {
-            LOGGER.info("Zerocode - Preparing file upload...");
+        // ------------------
+        // Handle cookies
+        // ------------------
+        addCookieToHeader(requestBuilder);
 
-            RequestBuilder uploadRequestBuilder = createFileUploadRequestBuilder(httpUrl, methodName, reqBodyAsString);
-
-            addCookieToHeader(uploadRequestBuilder);
-
-            LOGGER.info("Zerocode - Executing file upload");
-
-            httpResponse = httpclient.execute(uploadRequestBuilder.build());
-
-        } else {
-
-            addCookieToHeader(requestBuilder);
-
-            httpResponse = httpclient.execute(requestBuilder.build());
-        }
+        CloseableHttpResponse httpResponse = httpclient.execute(requestBuilder.build());
 
         // --------------------
         // Handle the response
@@ -169,6 +151,9 @@ public class SslTrustHttpClient implements BasicHttpClient{
     }
 
     private boolean hasMultiPartHeader(Map headersMap) {
+        if(headersMap == null){
+            return false;
+        }
         String contentType = (String) headersMap.get("content-type");
         return contentType != null ? contentType.contains("multipart/form-data") : false;
     }

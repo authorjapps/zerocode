@@ -13,10 +13,13 @@ import java.util.Map;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.jsmart.zerocode.core.httpclient.utils.FileUploadUtils.*;
+import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
 
 public interface BasicHttpClient {
     public static final String FILES_FIELD = "files";
     public static final String BOUNDARY_FIELD = "boundary";
+    public static final String MULTIPART_FORM_DATA = "multipart/form-data";
+    public static final String CONTENT_TYPE = "content-type";
 
     /**
      * @param httpUrl     : path to end point
@@ -33,10 +36,16 @@ public interface BasicHttpClient {
                      Map<String, Object> queryParams,
                      Object body) throws Exception;
 
+    /**
+     *
+     * @param httpUrl
+     * @param queryParams
+     * @return
+     */
     String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams);
 
     /**
-     * Implement this method in terms of how do handle the headers passed from the testcase request.
+     * Override this method in case you want to handle the headers passed from the testcase request differently.
      * If there are keys with same name in case of some headers were populated from properties file,
      * then how these should be handled. The framework will fall back to this implementation to handle
      * this.
@@ -46,7 +55,10 @@ public interface BasicHttpClient {
      */
     RequestBuilder handleHeaders(Map<String, Object> headers, RequestBuilder requestBuilder);
 
-    String handleRequestBody(Object body);
+
+    default String handleRequestBody(Object body) {
+        return getContentAsItIsJson(body);
+    }
 
     Response handleResponse(CloseableHttpResponse httpResponse) throws IOException;
 
