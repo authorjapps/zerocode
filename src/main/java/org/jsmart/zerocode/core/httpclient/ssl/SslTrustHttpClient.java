@@ -1,170 +1,35 @@
 package org.jsmart.zerocode.core.httpclient.ssl;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.client.CookieStore;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.utils.HelperJsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 
-import static java.lang.String.format;
-import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
-
-public class SslTrustHttpClient implements BasicHttpClient{
+public class SslTrustHttpClient extends BasicHttpClient{
     private static final Logger LOGGER = LoggerFactory.getLogger(SslTrustHttpClient.class);
 
-    private boolean hasFilesToUpload;
-    private Object COOKIE_JSESSIONID_VALUE;
-
-    private CloseableHttpClient httpclient;
-
     public SslTrustHttpClient() {
+        super();
     }
 
     public SslTrustHttpClient(CloseableHttpClient httpclient) {
-        this.httpclient = httpclient;
+        super(httpclient);
     }
 
     @Override
-    public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) {
-        if (queryParams != null) {
-            httpUrl = setQueryParams(httpUrl, queryParams);
-        }
-        return httpUrl;
-    }
-
-    @Override
-    public RequestBuilder handleHeaders(Map<String, Object> headers, RequestBuilder requestBuilder) {
-        if (headers != null) {
-            Map headersMap = headers;
-            for (Object key : headersMap.keySet()) {
-                if(CONTENT_TYPE.equals(key) && MULTIPART_FORM_DATA.equals(headersMap.get(key))){
-                    continue;
-                }
-                removeDuplicateHeaders(requestBuilder, (String) key);
-                requestBuilder.addHeader((String) key, (String) headersMap.get(key));
-                LOGGER.info("Overridden the header key:{}, with value:{}", key, headersMap.get(key));
-            }
-        }
-
-        return requestBuilder;
-    }
-
-    @Override
-    public Response execute(String httpUrl,
-                            String methodName,
-                            Map<String, Object> headers,
-                            Map<String, Object> queryParams,
-                            Object body) throws Exception {
-
+    public CloseableHttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
         LOGGER.info("###Used SSL Enabled Http Client for both Http and Https connections");
 
-        httpclient = createSslHttpClient();
-
-        // ---------------------------
-        // Handle request body content
-        // ---------------------------
-        String reqBodyAsString = handleRequestBody(body);
-
-        // -----------------------------------
-        // Handle the url and query parameters
-        // -----------------------------------
-        httpUrl = handleUrlAndQueryParams(httpUrl, queryParams);
-
-        RequestBuilder requestBuilder;
-        if (hasMultiPartHeader(headers)) {
-            requestBuilder = createFileUploadRequestBuilder(httpUrl, methodName, reqBodyAsString);
-        } else {
-            requestBuilder = createDefaultRequestBuilder(httpUrl, methodName, reqBodyAsString);
-        }
-
-        // ------------------
-        // Handle the headers
-        // ------------------
-        handleHeaders(headers, requestBuilder);
-
-        // ------------------
-        // Handle cookies
-        // ------------------
-        addCookieToHeader(requestBuilder);
-
-        CloseableHttpResponse httpResponse = httpclient.execute(requestBuilder.build());
-
-        // --------------------
-        // Handle the response
-        // --------------------
-        return handleResponse(httpResponse);
-    }
-
-    @Override
-    public Response handleResponse(CloseableHttpResponse httpResponse) throws IOException {
-        HttpEntity entity = httpResponse.getEntity();
-        Response serverResponse = Response
-                .status(httpResponse.getStatusLine().getStatusCode())
-                .entity(entity != null ? IOUtils.toString(entity.getContent()) : null)
-                .build();
-
-        Header[] allHeaders = httpResponse.getAllHeaders();
-        Response.ResponseBuilder responseBuilder = Response.fromResponse(serverResponse);
-        for (Header thisHeader : allHeaders) {
-            String headerKey = thisHeader.getName();
-            responseBuilder = responseBuilder.header(headerKey, thisHeader.getValue());
-
-            handleHttpSession(serverResponse, headerKey);
-        }
-
-        return responseBuilder.build();
-    }
-
-    // -=-=-=-=-=-=-=-=-=-=-
-    //
-    // Private methods area
-    //
-    // -=-=-=-=-=-=-=-=-=-=-
-
-    private void addCookieToHeader(RequestBuilder uploadRequestBuilder) {
-        // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-        // Setting cookies:
-        // Highly discouraged to use sessions, but in case of any server dependent upon session,
-        // then it's taken care here.
-        // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-        if (COOKIE_JSESSIONID_VALUE != null) {
-            uploadRequestBuilder.addHeader("Cookie", (String) COOKIE_JSESSIONID_VALUE);
-        }
-    }
-
-    private boolean hasMultiPartHeader(Map headersMap) {
-        if(headersMap == null){
-            return false;
-        }
-        String contentType = (String) headersMap.get("content-type");
-        return contentType != null ? contentType.contains("multipart/form-data") : false;
-    }
-
-    private void removeDuplicateHeaders(RequestBuilder requestBuilder, String key) {
-        if (requestBuilder.getFirstHeader(key) != null) {
-            requestBuilder.removeHeaders(key);
-        }
-    }
-
-    private CloseableHttpClient createSslHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
         SSLContext sslContext = new SSLContextBuilder()
                 .loadTrustMaterial(null, (certificate, authType) -> true).build();
 
@@ -175,35 +40,6 @@ public class SslTrustHttpClient implements BasicHttpClient{
                 .setSSLHostnameVerifier(new NoopHostnameVerifier())
                 .setDefaultCookieStore(cookieStore)
                 .build();
-    }
-
-    private String setQueryParams(String httpUrl, Map<String, Object> queryParams) {
-        String qualifiedQueryParams = createQualifiedQueryParams(queryParams);
-        httpUrl = httpUrl + qualifiedQueryParams;
-        return httpUrl;
-    }
-
-    private String createQualifiedQueryParams(Object queryParams) {
-        String qualifiedQueryParam = "?";
-        Map queryParamsMap = HelperJsonUtils.readHeadersAsMap(queryParams);
-        for (Object key : queryParamsMap.keySet()) {
-            if ("?".equals(qualifiedQueryParam)) {
-                qualifiedQueryParam = qualifiedQueryParam + format("%s=%s", key, queryParamsMap.get(key));
-            } else {
-                qualifiedQueryParam = qualifiedQueryParam + format("&%s=%s", key, queryParamsMap.get(key));
-            }
-        }
-        return qualifiedQueryParam;
-    }
-
-    private void handleHttpSession(Response serverResponse, String headerKey) {
-        /** ---------------
-         * Session handled
-         * ----------------
-         */
-        if ("Set-Cookie".equals(headerKey)) {
-            COOKIE_JSESSIONID_VALUE = serverResponse.getMetadata().get(headerKey);
-        }
     }
 
 }
