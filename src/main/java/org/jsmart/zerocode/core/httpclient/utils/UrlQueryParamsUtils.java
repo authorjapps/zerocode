@@ -1,29 +1,34 @@
 package org.jsmart.zerocode.core.httpclient.utils;
 
-import org.jsmart.zerocode.core.utils.HelperJsonUtils;
+import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 import static java.lang.String.format;
 
 public class UrlQueryParamsUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UrlQueryParamsUtils.class);
 
     public static String setQueryParams(String httpUrl, Map<String, Object> queryParams) {
         String qualifiedQueryParams = createQualifiedQueryParams(queryParams);
         httpUrl = httpUrl + qualifiedQueryParams;
+
+        LOGGER.info("### Effective url is : " + httpUrl);
         return httpUrl;
     }
 
-    private static String createQualifiedQueryParams(Object queryParams) {
-        String qualifiedQueryParam = "?";
-        Map queryParamsMap = HelperJsonUtils.readHeadersAsMap(queryParams);
+    protected static String createQualifiedQueryParams(Map<String, Object> queryParamsMap) {
+        String qualifiedQueryParam = "";
         for (Object key : queryParamsMap.keySet()) {
-            if ("?".equals(qualifiedQueryParam)) {
-                qualifiedQueryParam = qualifiedQueryParam + format("%s=%s", key, queryParamsMap.get(key));
+            if ("".equals(qualifiedQueryParam)) {
+                qualifiedQueryParam = "?" + format("%s=%s", key, queryParamsMap.get(key));
             } else {
                 qualifiedQueryParam = qualifiedQueryParam + format("&%s=%s", key, queryParamsMap.get(key));
             }
         }
+        LOGGER.info("### qualifiedQueryParam : " + qualifiedQueryParam);
         return qualifiedQueryParam;
     }
 

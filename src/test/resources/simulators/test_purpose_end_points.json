@@ -85,6 +85,21 @@
                     "zeroKey": "zeroValue"
                 }
             }
+        },
+        {
+            "name": "request with query params",
+            "operation": "GET",
+            "url": "/api/v1/search/persons?lang=Amazing&city=Lon",
+            "response": {
+                "status": 200,
+                "body": {
+                    "exactMatches": true,
+                    "name": "Mr Bean",
+                    "lang": "Amazing",
+                    "city": "Lon"
+                }
+            }
         }
+
     ]
 }
