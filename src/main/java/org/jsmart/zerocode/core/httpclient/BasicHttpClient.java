@@ -3,16 +3,25 @@ package org.jsmart.zerocode.core.httpclient;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +32,7 @@ import static org.jsmart.zerocode.core.httpclient.utils.HeaderUtils.removeDuplic
 import static org.jsmart.zerocode.core.httpclient.utils.UrlQueryParamsUtils.setQueryParams;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
 
-public abstract class BasicHttpClient {
+public class BasicHttpClient {
     Logger LOGGER = LoggerFactory.getLogger(BasicHttpClient.class);
 
     public static final String FILES_FIELD = "files";
@@ -51,10 +60,32 @@ public abstract class BasicHttpClient {
      * - org.jsmart.zerocode.core.httpclient.ssl.SslTrustCorporateProxyHttpClient#createHttpClient()
      * - org.jsmart.zerocode.core.httpclient.ssl.CorporateProxyNoSslContextHttpClient#createHttpClient()
 
-     * @return
+     * @return CloseableHttpClient
      * @throws Exception
      */
-    public abstract CloseableHttpClient createHttpClient() throws Exception;
+    public CloseableHttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
+        /**
+         * If your connections are not via SSL or corporate Proxy etc,
+         * You can simply override this method and return the below default
+         * client provided by "org.apache.httpcomponents.HttpClients".
+         *
+         *   - return HttpClients.createDefault();
+         */
+
+        LOGGER.info("###Creating SSL Enabled Http Client for both http/https/TLS connections");
+
+        SSLContext sslContext = new SSLContextBuilder()
+                .loadTrustMaterial(null, (certificate, authType) -> true).build();
+
+        CookieStore cookieStore = new BasicCookieStore();
+
+        return HttpClients.custom()
+                .setSSLContext(sslContext)
+                .setSSLHostnameVerifier(new NoopHostnameVerifier())
+                .setDefaultCookieStore(cookieStore)
+                .build();
+
+    }
 
     /**
      * Override this method in case you want to execute the http call differently via your http client.

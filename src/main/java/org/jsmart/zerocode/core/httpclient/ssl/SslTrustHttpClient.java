@@ -26,6 +26,10 @@ public class SslTrustHttpClient extends BasicHttpClient{
         super(httpclient);
     }
 
+    /**
+     * This method has been simply overridden to show how a custom/project-specific http client
+     * can be plugged into the framework.
+     */
     @Override
     public CloseableHttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
         LOGGER.info("###Used SSL Enabled Http Client for both Http and Https connections");
