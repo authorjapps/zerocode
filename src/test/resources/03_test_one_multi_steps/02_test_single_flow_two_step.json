@@ -1,10 +1,10 @@
 {
   "scenarioName": "Given_When_Then-Flow name which involves multiple REST calls Two STeps",
-  "loop": 5, //comments -- Allowed
+  "loop": 5, 
   "steps": [
     {
       "loop": 3,
-      "name": "StepNameWithoutSpaceEgCREATESD", //<---- with comments
+      "name": "StepNameWithoutSpaceEgCREATESD", 
       "url": "/persons",
       "operation": "POST",
       "request": {
@@ -31,7 +31,7 @@
     },
     {
       "loop": 3,
-      "name": "StepNameWithoutSpaceEgCREATESD", //<---- with comments
+      "name": "StepNameWithoutSpaceEgCREATESD",
       "url": "/persons",
       "operation": "POST",
       "request": {
