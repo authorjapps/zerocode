@@ -27,8 +27,14 @@ public class SslTrustHttpClient extends BasicHttpClient{
     }
 
     /**
-     * This method has been simply overridden to show how a custom/project-specific http client
+     * This method has been overridden here simply to show how a custom/project-specific http client
      * can be plugged into the framework.
+     *
+     * e.g. You can create your own project specific http client needed for http/https/tls connections.
+     * Sometimes you may not need a SSLContext, sometimes you need one, some other times you need a
+     * simple default http client e.g. HttpClients.createDefault() provided by Apache.
+     *
+     * If you do not override this method, the framework creates a http client suitable for both http/https.
      */
     @Override
     public CloseableHttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {

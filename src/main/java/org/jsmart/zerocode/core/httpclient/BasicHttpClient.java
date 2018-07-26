@@ -19,16 +19,13 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.jsmart.zerocode.core.httpclient.utils.FileUploadUtils.*;
 import static org.jsmart.zerocode.core.httpclient.utils.HeaderUtils.hasMultiPartHeader;
-import static org.jsmart.zerocode.core.httpclient.utils.HeaderUtils.removeDuplicateHeaders;
+import static org.jsmart.zerocode.core.httpclient.utils.HeaderUtils.processFrameworkDefault;
 import static org.jsmart.zerocode.core.httpclient.utils.UrlQueryParamsUtils.setQueryParams;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
 
@@ -205,18 +202,7 @@ public class BasicHttpClient {
      * @return : An effective Apache http request builder object with processed headers.
      */
     public RequestBuilder handleHeaders(Map<String, Object> headers, RequestBuilder requestBuilder) {
-        if (headers != null) {
-            Map headersMap = headers;
-            for (Object key : headersMap.keySet()) {
-                if(CONTENT_TYPE.equalsIgnoreCase((String)key) && MULTIPART_FORM_DATA.equals(headersMap.get(key))){
-                    continue;
-                }
-                removeDuplicateHeaders(requestBuilder, (String) key);
-                requestBuilder.addHeader((String) key, (String) headersMap.get(key));
-                LOGGER.info("Overridden the header key:{}, with value:{}", key, headersMap.get(key));
-            }
-        }
-
+        processFrameworkDefault(headers, requestBuilder);
         return requestBuilder;
     }
 

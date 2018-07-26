@@ -12,12 +12,25 @@ import static org.jsmart.zerocode.core.httpclient.BasicHttpClient.MULTIPART_FORM
 public class HeaderUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeaderUtils.class);
 
+    public static void processFrameworkDefault(Map<String, Object> headers, RequestBuilder requestBuilder) {
+        if (headers != null) {
+            Map headersMap = headers;
+            for (Object key : headersMap.keySet()) {
+                if(CONTENT_TYPE.equalsIgnoreCase((String)key) && MULTIPART_FORM_DATA.equals(headersMap.get(key))){
+                    continue;
+                }
+                removeDuplicateHeaders(requestBuilder, (String) key);
+                requestBuilder.addHeader((String) key, (String) headersMap.get(key));
+                LOGGER.info("Overridden the header key:{}, with value:{}", key, headersMap.get(key));
+            }
+        }
+    }
+
     public static void removeDuplicateHeaders(RequestBuilder requestBuilder, String key) {
         if (requestBuilder.getFirstHeader(key) != null) {
             requestBuilder.removeHeaders(key);
         }
     }
-
 
     public static boolean hasMultiPartHeader(Map headersMap) {
         if(headersMap == null){
