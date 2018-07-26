@@ -1,0 +1,58 @@
+{
+    "scenarioName": "request with query params as map test",
+    "steps": [
+        {
+            "name": "find_match",
+            "url": "/api/v1/search/persons",
+            "operation": "GET",
+            "request": {
+                "queryParams": {
+                    "lang": "Amazing",
+                    "city": "Lon"
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "exactMatches": true,
+                    "name": "Mr Bean",
+                    "lang": "Amazing",
+                    "city": "Lon"
+                }
+            }
+        },
+        {
+            "name": "find_match_introduce_error",
+            "url": "/api/v1/search/persons?lang=Amazing&city=Lon",
+            "operation": "GET",
+            "request": {
+                "queryParams": {
+                    "lang": "Amazing",
+                    "city": "Lon"
+                }
+            },
+            "assertions": {
+                "status": 404,
+                "body": {
+                    "errorId" : "$CONTAINS.STRING:could.not.find.end.point:/api/v1/search/persons?lang=Amazing&city=Lon?lang=Amazing&city=Lon"
+                }
+            }
+        },
+        {
+            "name": "find_match_same",
+            "url": "/api/v1/search/persons?lang=Amazing&city=Lon",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body" : {
+                    "exactMatches" : true,
+                    "name" : "Mr Bean",
+                    "lang" : "Amazing",
+                    "city" : "Lon"
+                }
+            }
+        }
+    ]
+}

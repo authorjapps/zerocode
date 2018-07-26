@@ -34,8 +34,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     protected boolean testRunCompleted;
     private ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner;
     private final Class<?> testClass;
-    Injector injector;
-    SmartUtils smartUtils;
+    private Injector injector;
+    private SmartUtils smartUtils;
 
     private HostProperties hostProperties;
     private String host;

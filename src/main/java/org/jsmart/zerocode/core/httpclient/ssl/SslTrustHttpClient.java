@@ -38,7 +38,7 @@ public class SslTrustHttpClient extends BasicHttpClient{
      */
     @Override
     public CloseableHttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
-        LOGGER.info("###Used SSL Enabled Http Client for both Http and Https connections");
+        LOGGER.info("###Used SSL Enabled Http Client for http/https/TLS connections");
 
         SSLContext sslContext = new SSLContextBuilder()
                 .loadTrustMaterial(null, (certificate, authType) -> true).build();
