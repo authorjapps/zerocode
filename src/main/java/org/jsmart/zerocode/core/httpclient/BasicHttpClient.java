@@ -63,7 +63,7 @@ public class BasicHttpClient {
      * @return CloseableHttpClient
      * @throws Exception
      */
-    public CloseableHttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
+    public CloseableHttpClient createHttpClient() throws Exception {
         /**
          * If your connections are not via SSL or corporate Proxy etc,
          * You can simply override this method and return the below default
