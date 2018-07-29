@@ -96,56 +96,22 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 
         final Description description = describeChild(method);
+        JsonTestCase annotation = method.getMethod().getAnnotation(JsonTestCase.class);
 
         if (isIgnored(method)) {
+
             notifier.fireTestIgnored(description);
+
+        } else if (annotation != null) {
+
+            runLeafJsonTest(notifier, description, annotation);
+
         } else {
-            JsonTestCase annotation = method.getMethod().getAnnotation(JsonTestCase.class);
 
-            if (annotation != null) {
-                currentTestCase = annotation.value();
-            } else {
-                currentTestCase = method.getName();
-            }
-
-            notifier.fireTestStarted(description);
-
-            LOGGER.debug("### Running currentTestCase : " + currentTestCase);
-
-            ScenarioSpec child = null;
-            try {
-                child = smartUtils.jsonFileToJava(currentTestCase, ScenarioSpec.class);
-
-                LOGGER.debug("### Found currentTestCase : -" + child);
-
-                final ZeroCodeMultiStepsScenarioRunner multiStepsRunner = getInjectedMultiStepsRunner();
-
-                /*
-                 * Override the properties file containing hosts and ports with HostProperties
-                 * only if the annotation is present on the runner.
-                 */
-                if (hostProperties != null) {
-                    ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideHost(host);
-                    ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overridePort(port);
-                    ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideApplicationContext(context);
-                }
-                passed = multiStepsRunner.runScenario(child, notifier, description);
-
-            } catch (Exception ioEx) {
-                ioEx.printStackTrace();
-                notifier.fireTestFailure(new Failure(description, ioEx));
-            }
-
-            testRunCompleted = true;
-
-            if (passed) {
-                LOGGER.info(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
-                        child.getScenarioName(),
-                        child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
-            }
-
-            notifier.fireTestFinished(description);
-
+            // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+            // It is an usual Junit test, not the JSON test case
+            // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+            runLeaf(methodBlock(method), description, notifier);
         }
 
     }
@@ -190,4 +156,47 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
+    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase annotation) {
+        if (annotation != null) {
+            currentTestCase = annotation.value();
+        }
+
+        notifier.fireTestStarted(description);
+
+        LOGGER.debug("### Running currentTestCase : " + currentTestCase);
+
+        ScenarioSpec child = null;
+        try {
+            child = smartUtils.jsonFileToJava(currentTestCase, ScenarioSpec.class);
+
+            LOGGER.debug("### Found currentTestCase : -" + child);
+
+            final ZeroCodeMultiStepsScenarioRunner multiStepsRunner = getInjectedMultiStepsRunner();
+
+            /*
+             * Override the properties file containing hosts and ports with HostProperties
+             * only if the annotation is present on the runner.
+             */
+            if (hostProperties != null) {
+                ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideHost(host);
+                ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overridePort(port);
+                ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideApplicationContext(context);
+            }
+            passed = multiStepsRunner.runScenario(child, notifier, description);
+
+        } catch (Exception ioEx) {
+            ioEx.printStackTrace();
+            notifier.fireTestFailure(new Failure(description, ioEx));
+        }
+
+        testRunCompleted = true;
+
+        if (passed) {
+            LOGGER.info(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
+                    child.getScenarioName(),
+                    child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
+        }
+
+        notifier.fireTestFinished(description);
+    }
 }
