@@ -180,6 +180,7 @@ See more examples below-
 - [MIME Type Converters- XML to JSON, prettyfy XML etc](#25)
 - [Using WireMock for mocking dependent end points](#26)
 - [Basic http authentication step using zerocode](#28)
+- [Sending query params in URL or separately](#29)
 - [General place holders and assertion place holder table](#99)
 - [References and Dicussions](#100)
 
@@ -1663,6 +1664,67 @@ You can refer to an example [test here](https://github.com/authorjapps/consumer-
 
 + In your custom http client, you add the header to the request at one place, which is common to all the API tests.
 See: `org.jsmart.zerocode.httpclient.CorpBankApcheHttpClient#addBasicAuthHeader` in the [http-client code](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/main/java/org/jsmart/zerocode/httpclient/CorpBankApcheHttpClient.java) it uses.
+
+#### 29:
+#### Sending query params in URL or separately
+You can pass query params in the usual way in the URL e.g. `?page=1&page_size=5` -or-
+You can pass them in the request as below.
+```
+...
+            "request": {
+                "queryParams":{
+                    "page":1,
+                    "per_page":6
+                }
+            }
+...
+```
+See below both the examples( See this in the hello-world repo in action i.e. the [Test-Case](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld_queryparams/github_get_repos_by_query_params.json) and the [JUnit Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldqueryparams/HelloWorldQueryParamsTest.java) )
+```
+{
+    "scenarioName": "Git Hub GET API - Fetch by queryParams",
+    "steps": [
+        {
+            "name": "get_repos_by_query",
+            "url": "https://api.github.com/users/octocat/repos?page=1&per_page=6",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body.SIZE": 6
+            }
+        },
+        {
+            "name": "get_repos_by_query_params",
+            "url": "https://api.github.com/users/octocat/repos",
+            "operation": "GET",
+            "request": {
+                "queryParams":{
+                    "page":1,
+                    "per_page":6
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body.SIZE": 6
+            }
+        },
+        {
+            "name": "get_all_reposs_without_query", // without the query params, which fetches everything.
+            "url": "https://api.github.com/users/octocat/repos",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body.SIZE": 8
+            }
+        }
+    ]
+}
+```
+
 
 #### 99:
 #### Place holders for End Point Mocking
