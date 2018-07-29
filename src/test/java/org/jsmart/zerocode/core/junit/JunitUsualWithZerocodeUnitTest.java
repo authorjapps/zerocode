@@ -3,7 +3,7 @@ package org.jsmart.zerocode.core.junit;
 import org.jsmart.zerocode.core.domain.HostProperties;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodeUnitRunner;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertTrue;
@@ -12,9 +12,36 @@ import static org.junit.Assert.assertTrue;
 @RunWith(TestOnlyZeroCodeUnitRunner.class)
 public class JunitUsualWithZerocodeUnitTest {
 
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        System.out.println("I am at BeforeClass.");
+    }
+
+    @AfterClass
+    public static void setUpAfterClass() {
+        System.out.println("I am at AfterClass.");
+    }
+
+    @Before
+    public void setUp() {
+        System.out.println("I am at Before.");
+    }
+
+    @After
+    public void tearDown() {
+        System.out.println("I am at After.");
+    }
+
     @Test
-    public void testZello() {
+    public void test1Is1() {
+        System.out.println("Checking 1 == 1");
         assertTrue(1 == 1);
+    }
+
+    @Test
+    public void test2Is2() {
+        System.out.println("Checking 2 == 2");
+        assertTrue(2 == 2);
     }
 
     /**
