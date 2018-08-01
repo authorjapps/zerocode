@@ -1770,8 +1770,12 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 
 
 #### 100:
-#### References, Dicussions and articles
+#### Video tutorials
 * [RESTful testing with test cases in JSON](https://youtu.be/nSWq5SuyqxE) - YouTube
+* [Zerocode - Simple and powerful testing library - HelloWorld](https://www.youtube.com/watch?v=YCV1cqGt5e0) - YouTube
+* [Zerocode Query Params Demo](https://www.youtube.com/watch?v=qbF_uB0_Fwg) - YouTube
+
+#### References, Dicussions and articles
 * [Performance testing using JUnit and maven](https://www.codeproject.com/Articles/1251046/How-to-do-performance-testing-using-JUnit-and-Mave) - Codeproject
 * [REST API or SOAP End Point Testing](https://www.codeproject.com/Articles/1242569/REST-API-or-SOAP-End-Point-Testing-with-ZeroCode-J) - Codeproject
 * [DZone- MuleSoft API Testing With Zerocode Test Framework](https://dzone.com/articles/zerocode-test-framework-for-restsoap-api-tddbdd-ap) - DZone
@@ -1801,5 +1805,9 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 [Zerocode zero code api testing]: https://github.com/authorjapps/zerocode#zerocode
 [Zerocode zero code API contract testing]: https://github.com/authorjapps/zerocode#zerocode
 [Zerocode zero code contract based testing (CBT)]: https://github.com/authorjapps/zerocode#zerocode
-[Zerocode zero code CCT]: https://github.com/authorjapps/zerocode#zerocode
+[REST API Contract Testing]: https://github.com/authorjapps/zerocode#zerocode
 [Zerocode zero code End to End E2E Integration Point Testing]: https://github.com/authorjapps/zerocode#zerocode
+[Mulesoft API testing]: https://github.com/authorjapps/zerocode#zerocode
+[Mulesoft System API testing]: https://github.com/authorjapps/zerocode#zerocode
+[Mulesoft Experience API testing]: https://github.com/authorjapps/zerocode#zerocode
+[Mule application testing, Mule API testing]: https://github.com/authorjapps/zerocode#zerocode
