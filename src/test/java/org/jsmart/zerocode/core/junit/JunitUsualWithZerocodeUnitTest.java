@@ -44,6 +44,7 @@ public class JunitUsualWithZerocodeUnitTest {
         assertTrue(2 == 2);
     }
 
+    @Ignore("Pure JUnit failure - Un-Ignore this to run manually to view the failure report in CSV format")
     @Test
     public void test2Is3() {
         System.out.println("Checking 2 == 3");
