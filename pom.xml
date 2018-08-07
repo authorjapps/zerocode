@@ -9,7 +9,7 @@
 
     <artifactId>zerocode-rest-bdd</artifactId>
     <groupId>org.jsmart</groupId>
-    <version>1.2.5-SNAPSHOT</version>
+    <version>1.2.6-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <name>ZeroCode REST BDD</name>
@@ -51,6 +51,11 @@
     </distributionManagement>
 
     <properties>
+        <!-- Build will not fail if error occurs during javadoc generation -->
+        <!--<maven.javadoc.failOnError>false</maven.javadoc.failOnError>-->
+        <!-- Build will skip the javadoc generation -->
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+
         <!-- this project properties -->
         <junit.version>4.12</junit.version>
         <jackson-databind.version>2.8.2</jackson-databind.version>
