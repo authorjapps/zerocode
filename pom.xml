@@ -55,6 +55,8 @@
         <!--<maven.javadoc.failOnError>false</maven.javadoc.failOnError>-->
         <!-- Build will skip the javadoc generation -->
         <maven.javadoc.skip>true</maven.javadoc.skip>
+        <!-- disable annoying HTML checks -->
+        <additionalparam>-Xdoclint:none</additionalparam>
 
         <!-- this project properties -->
         <junit.version>4.12</junit.version>

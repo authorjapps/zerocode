@@ -6,30 +6,37 @@ import com.google.inject.util.Modules;
 import org.jsmart.zerocode.core.di.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.domain.*;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportBuilder;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
+import org.jsmart.zerocode.core.logbuilder.LogCorrelationshipPrinter;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
 public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeUnitRunner.class);
 
-    static int i = 1;
     protected boolean passed;
     protected boolean testRunCompleted;
     private ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner;
@@ -41,15 +48,17 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private String host;
     private String context;
     private int port;
+    private List<String> smartTestCaseNames = new ArrayList<>();
+    private String currentTestCase;
+
+    private LogCorrelationshipPrinter logCorrelationshipPrinter;
+
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
      * @param klass
      * @throws InitializationError if the test class is malformed.
      */
-    List<String> smartTestCaseNames = new ArrayList<>();
-    String currentTestCase;
-
     public ZeroCodeUnitRunner(Class<?> klass) throws InitializationError {
         super(klass);
 
@@ -107,11 +116,10 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             runLeafJsonTest(notifier, description, annotation);
 
         } else {
-
             // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
             // It is an usual Junit test, not the JSON test case
             // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-            runLeaf(methodBlock(method), description, notifier);
+            runLeafJUnitTest(methodBlock(method), description, notifier);
         }
 
     }
@@ -198,5 +206,75 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         }
 
         notifier.fireTestFinished(description);
+    }
+
+    private final void runLeafJUnitTest(Statement statement, Description description,
+                                        RunNotifier notifier) {
+        LOGGER.info("Running a pure JUnit test...");
+
+        EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
+        eachNotifier.fireTestStarted();
+
+        final String logPrefixRelationshipId = prepareRequestReport(description);
+
+        try {
+            statement.evaluate();
+            passed = true;
+            LOGGER.info("JUnit test passed = {} ", passed);
+
+        } catch (AssumptionViolatedException e) {
+            passed = false;
+            LOGGER.warn("JUnit test failed due to : {},  passed = {}", e, passed);
+
+            eachNotifier.addFailedAssumption(e);
+
+        } catch (Throwable e) {
+            passed = false;
+            LOGGER.warn("JUnit test failed due to : {},  passed = {}", e, passed);
+
+            eachNotifier.addFailure(e);
+
+        } finally {
+            LOGGER.info("JUnit test run completed. See the results in the console or log.  passed = {}", passed);
+            prepareResponseReport(logPrefixRelationshipId);
+            buildReportAndPrintToFile(description);
+
+            eachNotifier.fireTestFinished();
+        }
+
+    }
+
+    private void buildReportAndPrintToFile(Description description) {
+        ZeroCodeExecResultBuilder reportResultBuilder = newInstance().loop(0).scenarioName(description.getClassName());
+        reportResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
+
+        ZeroCodeReportBuilder reportBuilder = ZeroCodeReportBuilder.newInstance().timeStamp(LocalDateTime.now());
+        reportBuilder.result(reportResultBuilder.build());
+        reportBuilder.printToFile(description.getClassName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
+    }
+
+    private void prepareResponseReport(String logPrefixRelationshipId) {
+        LocalDateTime timeNow = LocalDateTime.now();
+        LOGGER.info("JUnit *responseTimeStamp:{}, \nJUnit Response:{}", timeNow, logPrefixRelationshipId);
+        logCorrelationshipPrinter.aResponseBuilder()
+                .relationshipId(logPrefixRelationshipId)
+                .responseTimeStamp(timeNow);
+
+        logCorrelationshipPrinter.result(passed);
+        logCorrelationshipPrinter.buildResponseDelay();
+    }
+
+    private String prepareRequestReport(Description description) {
+        logCorrelationshipPrinter = LogCorrelationshipPrinter.newInstance(LOGGER);
+        logCorrelationshipPrinter.stepLoop(0);
+        final String logPrefixRelationshipId = logCorrelationshipPrinter.createRelationshipId();
+        LocalDateTime timeNow = LocalDateTime.now();
+        logCorrelationshipPrinter.aRequestBuilder()
+                .stepLoop(0)
+                .relationshipId(logPrefixRelationshipId)
+                .requestTimeStamp(timeNow)
+                .step(description.getMethodName());
+        LOGGER.info("JUnit *requestTimeStamp:{}, \nJUnit Request:{}", timeNow, logPrefixRelationshipId);
+        return logPrefixRelationshipId;
     }
 }

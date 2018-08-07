@@ -44,6 +44,12 @@ public class JunitUsualWithZerocodeUnitTest {
         assertTrue(2 == 2);
     }
 
+    @Test
+    public void test2Is3() {
+        System.out.println("Checking 2 == 3");
+        assertTrue(2 == 3);
+    }
+
     /**
      * Mock end points are in test/resources: simulators/test_purpose_end_points.json.
      * @RunWith(TestOnlyZeroCodeUnitRunner.class) : starts these mocks first before running the tests
