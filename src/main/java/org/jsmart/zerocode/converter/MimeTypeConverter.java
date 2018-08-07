@@ -53,9 +53,9 @@ public class MimeTypeConverter implements Converter {
      * - method jsonBlockToJson for unescaped json to json block.
      * - method jsonNodeToJson for unescaped json to json block.
      *
-     * @param jsonString
-     * @return
-     * @throws IOException
+     * @param jsonString - an object of String
+     * @return a JsonNode object
+     * @throws IOException - This method might throw IOException
      */
     @Override
     public Object jsonToJson(String jsonString) throws IOException {
@@ -66,11 +66,10 @@ public class MimeTypeConverter implements Converter {
      * Converts JSON Block({"a": "b", "active": true}) to JSON block
      * See also- jsonNodeToJson which is identical to jsonBlockToJson.
      *
-     * @param jsonNode
-     * @return
-     * @throws IOException
+     * @param jsonNode - an object of JsonNode
+     * @return a JsonNode object
      */
-    public Object jsonBlockToJson(JsonNode jsonNode) throws IOException {
+    public Object jsonBlockToJson(JsonNode jsonNode) {
         return jsonNode;
     }
 
