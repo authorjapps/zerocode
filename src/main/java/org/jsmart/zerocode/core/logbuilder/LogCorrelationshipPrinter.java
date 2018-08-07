@@ -85,10 +85,7 @@ public class LogCorrelationshipPrinter {
 
     public void print() {
 
-        responseDelay = durationMilliSecBetween(
-                requestLogBuilder.getRequestTimeStamp(),
-                responseLogBuilder.getResponseTimeStamp()
-        );
+        buildResponseDelay();
 
         logger.info(format("%s %s \n*Response delay:%s milli-secs \n%s \n-done-\n",
                 requestLogBuilder.toString(),
@@ -98,6 +95,13 @@ public class LogCorrelationshipPrinter {
                 )
         );
 
+    }
+
+    public void buildResponseDelay() {
+        responseDelay = durationMilliSecBetween(
+                requestLogBuilder.getRequestTimeStamp(),
+                responseLogBuilder.getResponseTimeStamp()
+        );
     }
 
     public static double durationMilliSecBetween(LocalDateTime requestTimeStamp, LocalDateTime responseTimeStamp) {

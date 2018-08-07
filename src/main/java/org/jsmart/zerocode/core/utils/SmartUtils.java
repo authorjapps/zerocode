@@ -155,6 +155,9 @@ public class SmartUtils {
     /**
      * This method was introduced later,
      * But Framework uses- ZeroCodeJsonTestProcesorImpl#getAllTokens(java.lang.String)
+     *
+     * @param aString - Containing the pattern
+     * @return List of strings matching the pattern
      */
     public static List<String> getAllTokens(String aString) {
 

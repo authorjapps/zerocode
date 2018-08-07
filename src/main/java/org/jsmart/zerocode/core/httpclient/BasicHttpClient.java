@@ -51,17 +51,18 @@ public class BasicHttpClient {
      * Override this method to create your own http or https client or a customized client if needed
      * for your project. Framework uses the below client which is the default implementation.
      * - org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient#createHttpClient()
-     *
+     * {@code
      * See examples:
      * - org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient#createHttpClient()
      * - org.jsmart.zerocode.core.httpclient.ssl.SslTrustCorporateProxyHttpClient#createHttpClient()
      * - org.jsmart.zerocode.core.httpclient.ssl.CorporateProxyNoSslContextHttpClient#createHttpClient()
-
+     * }
+     *
      * @return CloseableHttpClient
      * @throws Exception
      */
     public CloseableHttpClient createHttpClient() throws Exception {
-        /**
+        /*
          * If your connections are not via SSL or corporate Proxy etc,
          * You can simply override this method and return the below default
          * client provided by "org.apache.httpcomponents.HttpClients".
@@ -166,7 +167,7 @@ public class BasicHttpClient {
     /**
      * If(optionally) query parameters was sent as a JSON in the request below, this gets available to this method
      * for processing them with the url.
-     *
+     *<pre>{@code
      * e.g.
      * "url": "/api/v1/search/people"
      * "request": {
@@ -175,13 +176,14 @@ public class BasicHttpClient {
      *         "lang":"Awesome"
      *     }
      * }
-     * will resolve to effective url "/api/v1/search/people?city=Lon&lang=Awesome".
+     * }</pre>
+     * will resolve to effective url "/api/v1/search/people?city=Lon{@literal &}lang=Awesome".
      *
      * In case you need to handle it differently you can override this method to change this behaviour to roll your own
      * feature.
      *
-     * @param httpUrl
-     * @param queryParams
+     * @param httpUrl - Url of the target service
+     * @param queryParams - Query parameters to pass
      * @return : Effective url
      */
     public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) {
