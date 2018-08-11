@@ -1,0 +1,28 @@
+{
+    "scenarioName": "Array SIZE assert expression test Fail LT",
+    "steps": [
+        {
+            "name": "StepNameWithoutSpaceEgCREATESD",
+            "url": "/persons",
+            "operation": "POST",
+            "request": {
+                "body": {
+                    "persons": [
+                        {
+                            "name": "Tom"
+                        },
+                        {
+                            "name": "Mady"
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "status": 201,
+                "body": {
+                    "persons.SIZE": "$LT.1"
+                }
+            }
+        }
+    ]
+}

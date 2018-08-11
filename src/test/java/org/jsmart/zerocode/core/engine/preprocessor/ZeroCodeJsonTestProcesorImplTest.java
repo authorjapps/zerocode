@@ -451,4 +451,141 @@ public class ZeroCodeJsonTestProcesorImplTest {
 
         assertThat(failedReports.size(), is(1));
     }
+
+    @Test
+    public void testArraySize_expressionGT() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "array_size/array_size_expresssion_test_GT.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$GT.1\"}"));
+
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 201,\n" +
+                "    \"body\": {\n" +
+                "        \"persons\": [\n" +
+                "            {\n" +
+                "                \"name\": \"Tom\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"name\": \"Mady\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(0));
+    }
+
+    @Test
+    public void testArraySize_expressionFailTest() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "array_size/array_size_expresssion_fail_test_GT.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$GT.5\"}"));
+
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 201,\n" +
+                "    \"body\": {\n" +
+                "        \"persons\": [\n" +
+                "            {\n" +
+                "                \"name\": \"Tom\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"name\": \"Mady\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
+        assertThat(failedReports.get(0).toString(),
+                is("Assertion path '$.body.persons' with actual value '2' did not match the expected value 'Array of size $GT.5'"));
+    }
+
+    @Test
+    public void testArraySize_expressionLT() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "array_size/array_size_expresssion_test_LT.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$LT.3\"}"));
+
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 201,\n" +
+                "    \"body\": {\n" +
+                "        \"persons\": [\n" +
+                "            {\n" +
+                "                \"name\": \"Tom\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"name\": \"Mady\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(0));
+    }
+
+    @Test
+    public void testArraySize_expressionFailLT() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "array_size/array_size_expresssion_test_fail_LT.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$LT.1\"}"));
+
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 201,\n" +
+                "    \"body\": {\n" +
+                "        \"persons\": [\n" +
+                "            {\n" +
+                "                \"name\": \"Tom\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"name\": \"Mady\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
+        assertThat(failedReports.get(0).toString(),
+                is("Assertion path '$.body.persons' with actual value '2' did not match the expected value 'Array of size $LT.1'"));
+    }
+
 }
