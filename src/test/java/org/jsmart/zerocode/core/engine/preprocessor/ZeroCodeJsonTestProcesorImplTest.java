@@ -652,6 +652,8 @@ public class ZeroCodeJsonTestProcesorImplTest {
         List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
+        assertThat(failedReports.get(0).toString(),
+                is("Assertion path '$.body.persons' with actual value '2' did not match the expected value 'Array of size $EQ.3'"));
     }
 
     @Test
@@ -718,5 +720,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
+        assertThat(failedReports.get(0).toString(),
+                is("Assertion path '$.body.persons' with actual value '2' did not match the expected value 'Array of size $NOT.EQ.2'"));
     }
 }
