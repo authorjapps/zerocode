@@ -1,0 +1,9 @@
+coverage:
+  precision: 2
+  round: nearest
+  #range - below minimum range, coverage badge (we'll get to badges in a sec) will be red, and as approching to 100% it will become greener
+  range: "40...70"
+  #ignore tag- all files which are not "meant" to be unit-tested, like GUI and constants-files
+  # so coverage percent won't be reduce by this code.
+  ignore:
+  - "zerocode/src/main/java/org/jsmart/zerocode/converter/SoapMocker.java"

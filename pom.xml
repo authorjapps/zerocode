@@ -231,6 +231,21 @@
                             <target>${java-compiler-target.version}</target>
                         </configuration>
                     </plugin>
+
+                    <!-- code cov plugin to generate report on code coverage-->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>2.7</version>
+                        <configuration>
+                            <formats>
+                                <format>html</format>
+                                <format>xml</format>
+                            </formats>
+                            <check />
+                        </configuration>
+                    </plugin>
+
                 </plugins>
             </build>
         </profile>
@@ -315,6 +330,20 @@
                             <goals>deploy</goals>
                         </configuration>
                     </plugin>
+                    <!-- code cov plugin to generate report on code coverage-->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>2.7</version>
+                        <configuration>
+                            <formats>
+                                <format>html</format>
+                                <format>xml</format>
+                            </formats>
+                            <check />
+                        </configuration>
+                    </plugin>
+
                 </plugins>
             </build>
 
