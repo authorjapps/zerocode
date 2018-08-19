@@ -1,0 +1,28 @@
+{
+    "scenarioName": "Array SIZE assert expression test EQ",
+    "steps": [
+        {
+            "name": "StepNameArraySizeEQExpression",
+            "url": "/persons",
+            "operation": "POST",
+            "request": {
+                "body": {
+                    "persons": [
+                        {
+                            "name": "Tom"
+                        },
+                        {
+                            "name": "Mady"
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "status": 201,
+                "body": {
+                    "persons.SIZE": "$EQ.2"
+                }
+            }
+        }
+    ]
+}

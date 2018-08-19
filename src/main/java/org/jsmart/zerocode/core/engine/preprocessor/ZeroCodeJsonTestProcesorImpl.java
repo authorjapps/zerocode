@@ -228,7 +228,13 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 }
                 else if (path.endsWith(ASSERT_PATH_SIZE)) {
                     path = path.substring(0, path.length() - ASSERT_PATH_SIZE.length());
-                    asserter = new ArraySizeAsserter(path, ((Integer) value).intValue());
+                    if(value instanceof Number){
+                        asserter = new ArraySizeAsserter(path, ((Integer) value).intValue());
+                    } else if(value instanceof String){
+                        asserter = new ArraySizeAsserter(path, (String)value);
+                    } else {
+                        throw new RuntimeException(format("Oops! Unsupported value for .SIZE: %s", value));
+                    }
                 }
                 else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_CONTAINS_STRING)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_CONTAINS_STRING.length());
