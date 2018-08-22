@@ -168,8 +168,8 @@ See more examples below-
 - [Asserting general and exception messages](#12)
 - [Asserting with LT(lesser than) and GT(greater than)](#13)
 - [Dealing with arrays](#9) 
-- [Asserting an empty array)](#14)
-- [Asserting an array SIZE)](#14.1)
+- [Asserting an empty array](#14)
+- [Asserting an array SIZE](#141)
 - [Calling java methods(apis) for specific tasks)](#15)
 - [Generating IDs and sharing across steps](#18)
 - [Bare JSON String without curly braces, still a valid JSON](#19)
@@ -841,7 +841,7 @@ $LT.<any_number>
 
 - Link: [See full examples](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
 
-#### 14.1:
+#### 141:
 #### Asserting an array SIZE
 If your response contains the below:
 ```
