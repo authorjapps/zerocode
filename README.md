@@ -80,7 +80,19 @@ Who uses Zerocode?
 --------------------
  + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft APIs Load/Stress aka Performance testing, Consumer Contract testing and E2E Integration Testing
  + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services Contract Testing, HDFS/Hbase REST end point testing
- 
+
+Code Coverage Report
+--------------------
+Link to see the coverage : http://please-provide-the-link-here
+
+using codecov open source tool to generate report for code coverage in unit testing.
+How do we integrate it with GitHub?
+Sign up in codecov.io via your GitHub account
+
+Choose the repository you want to apply the coverage for. After applying codecov report will be generated as below 
+<img width="697" alt="codecov" src="https://user-images.githubusercontent.com/5318345/44539006-9d05df80-a720-11e8-9dbe-723e3f5180f1.PNG">
+
+
 ## REST BDD Testing Framework
 
 Develop and test applications with TDD and BDD approach while easily building up your regression suites. 
@@ -1860,11 +1872,3 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 [Mulesoft System API testing]: https://github.com/authorjapps/zerocode#zerocode
 [Mulesoft Experience API testing]: https://github.com/authorjapps/zerocode#zerocode
 [Mule application testing, Mule API testing]: https://github.com/authorjapps/zerocode#zerocode
-
-# Code Coverage Report
-using codecov open source tool to generate report for code coverage in unit testing.
-How do we integrate it with GitHub?
-Sign up in codecov.io via your GitHub account
-
-Choose the repository you want to apply the coverage for. After applying codecov report will be generated as below 
-<img width="697" alt="codecov" src="https://user-images.githubusercontent.com/5318345/44539006-9d05df80-a720-11e8-9dbe-723e3f5180f1.PNG">
