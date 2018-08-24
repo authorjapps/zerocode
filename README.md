@@ -163,12 +163,13 @@ See more examples below-
 - [Generated reports and charts](#6)
 - [More assertion with handy place holders](#7)
 - [General Place holders](#8)
-- [Dealing with arrays](#9) 
 - [Chaining multiple steps for a scenario](#10)
 - [Generating random strings, random numbers and static strings](#11)
 - [Asserting general and exception messages](#12)
 - [Asserting with LT(lesser than) and GT(greater than)](#13)
-- [Asserting an empty array)](#14)
+- [Dealing with arrays](#9) 
+- [Asserting an empty array](#14)
+- [Asserting an array SIZE](#141)
 - [Calling java methods(apis) for specific tasks)](#15)
 - [Generating IDs and sharing across steps](#18)
 - [Bare JSON String without curly braces, still a valid JSON](#19)
@@ -822,7 +823,7 @@ $LT.<any_number>
 
 
 #### 14:
-#### Asserting empty array with $[]
+#### Asserting an empty array with $[]
 
 ```javaScript
     {
@@ -839,6 +840,54 @@ $LT.<any_number>
 ```
 
 - Link: [See full examples](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+
+#### 141:
+#### Asserting an array SIZE
+If your response contains the below:
+```
+e.g. http response body:
+{
+                "results": [
+                    {
+                        "id": 1,
+                        "name": "Elon Musk"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+}
+```
+
+Then you can assert many ways for the desired result-
+
+```javaScript
+        {
+	    ...
+            "assertions": {
+                "results.SIZE": 2
+            }
+        }
+
+-or-
+        {
+	    ...
+            "assertions": {
+                "results.SIZE": "$GT.1"
+            }
+        }
+-or-
+        {
+	    ...
+            "assertions": {
+                "results.SIZE": "$LT.3"
+            }
+        }
+etc
+```
+
+See more SIZE examples [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld_array_size/hello_world_array_size_assertions_test.json) in the [hello-world repo](https://github.com/authorjapps/zerocode-hello-world).
 
 
 #### 15:
