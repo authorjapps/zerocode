@@ -1,4 +1,4 @@
-# Zerocode for TDD/BDD
+# Zerocode for TDD and BDD
 
 >The simplest way to test your APIs
 
@@ -30,7 +30,7 @@ A simple and light weight automation testing lib for api end points with payload
 
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
 
-**Latest release: [1.2.x](http://search.maven.org/#search%7Cga%7C1%7Czerocode)**
+**Latest release: [1.2.x](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)**
 
 **HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
@@ -78,9 +78,10 @@ Testing becomes an easy and effortless job due to the **simplicity** nature of J
 
 Who uses Zerocode?
 --------------------
- + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft APIs Load/Stress aka Performance testing, Consumer Contract testing and E2E Integration Testing
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services Contract Testing, HDFS/Hbase REST end point testing
- 
+ + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
+ + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Authentication testing
+
 ## REST BDD Testing Framework
 
 Develop and test applications with TDD and BDD approach while easily building up your regression suites. 
