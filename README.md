@@ -1,4 +1,4 @@
-# <img width="67"  height="80" alt="screen shot 2018-08-16 at 8 29 24 am" src="https://user-images.githubusercontent.com/12598420/44622577-fef64e80-a8b2-11e8-9916-4b0e4a505676.png"> Zerocode for TDD/BDD
+# Zerocode for TDD/BDD
 
 >The simplest way to test your APIs
 
