@@ -1864,3 +1864,8 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 [Mulesoft System API testing]: https://github.com/authorjapps/zerocode#zerocode
 [Mulesoft Experience API testing]: https://github.com/authorjapps/zerocode#zerocode
 [Mule application testing, Mule API testing]: https://github.com/authorjapps/zerocode#zerocode
+
+
+For latest news/upcoming release and new features -
+####Follow us - 
+<a href="https://twitter.com/ZeroCod55231349"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
