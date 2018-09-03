@@ -1867,5 +1867,5 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 
 
 For latest news/upcoming release and new features
-####Follow us - 
+#### Follow us - 
 <a href="https://twitter.com/ZeroCod55231349"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
