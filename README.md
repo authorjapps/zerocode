@@ -3,7 +3,7 @@
 
 >The simplest way to test your APIs
 
-Welcome to the new simple, convenient and efficient way to test your APIs. 
+Welcome to the new simple, convenient and efficient way to test your APIs using tiny declarative JSON steps. 
 <br/>
 <br/>
 Clone/download the below demo repos to run them locally. 
@@ -29,7 +29,7 @@ mvn clean install -DskipTests
 
 Zerocode
 ====
-A simple and light weight automation testing lib for api end points with payload and assertions as JSON.
+A simple and light weight automation testing lib for api end points using tiny declarative JSON steps.
 
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
 
@@ -43,7 +43,7 @@ A simple and light weight automation testing lib for api end points with payload
 
 > Make your test-driven API development efficient, accurate, fast and fun.
 
-Keep things simple, Zerocode alleviates the need of writing `code` for test assertions and boiler plate wrappers. It empowers the automation testers as well as developers to build up test scenario steps effortlessly, with asserting the entire or part of the result as JSON `as it is`. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enabling you to focus on the business scenarios, user journeys and acceptance criterias acuurately. 
+Keep things simple, Zerocode alleviates the need of writing `code` for test assertions and boiler plate wrappers. It empowers the automation testers as well as developers to build up test scenario steps effortlessly, with sending payload and asserting the entire or part of the result as JSON `as it is`. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enabling you to focus on the business scenarios, user journeys and acceptance criterias acuurately. 
 
 [![Download HelloWorld](https://img.shields.io/badge/download-examples-blue.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) 
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
@@ -85,11 +85,16 @@ Who uses Zerocode?
  + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
  + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Authentication testing
 
+#### Latest news/releases/features
+
+#### Follow us - 
+<a href="https://twitter.com/ZeroCod55231349"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
+
 ## REST BDD Testing Framework
 
 Develop and test applications with TDD and BDD approach while easily building up your regression suites. 
 
-Execute your complex business scenario steps with simple jsons which defines your RESTful service behaviour.
+Execute your complex business scenario steps with simple declarative jsons which defines your RESTful service behaviour.
 
 <pre><code><del>
 Testing no more a harder, slower and sleepless task
@@ -1865,7 +1870,3 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 [Mulesoft Experience API testing]: https://github.com/authorjapps/zerocode#zerocode
 [Mule application testing, Mule API testing]: https://github.com/authorjapps/zerocode#zerocode
 
-
-For latest news/upcoming release and new features
-#### Follow us - 
-<a href="https://twitter.com/ZeroCod55231349"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
