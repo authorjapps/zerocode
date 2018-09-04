@@ -1831,7 +1831,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 #### Video tutorials
 * [RESTful testing with test cases in JSON](https://youtu.be/nSWq5SuyqxE) - YouTube
 * [Zerocode - Simple and powerful testing library - HelloWorld](https://www.youtube.com/watch?v=YCV1cqGt5e0) - YouTube
-* [Zerocode Query Params Demo](https://www.youtube.com/watch?v=qbF_uB0_Fwg) - YouTube
+* [Zerocode Query Params Demo](https://www.youtube.com/watch?v=a7JhwMxVcCM) - YouTube
 
 #### References, Dicussions and articles
 * [Performance testing using JUnit and maven](https://www.codeproject.com/Articles/1251046/How-to-do-performance-testing-using-JUnit-and-Mave) - Codeproject
