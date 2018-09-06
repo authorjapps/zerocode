@@ -4,21 +4,18 @@
 >The simplest way to test your APIs
 
 Welcome to the new simple, convenient and efficient way to test your APIs using tiny declarative JSON steps. 
-<br/>
-<br/>
-Clone/download the below demo repos to run them locally. 
 
- * Basic usages of the framework with **hello-world** examples <br/> 
- (https://github.com/authorjapps/zerocode-hello-world )
-   
- * Sample banking app's **API contracts test** suite for interfacing apps <br/> 
- (https://github.com/authorjapps/consumer-contract-tests )
-   
- * **Performance** testing with varying capacity of **Load/Stress** generation <br/> 
- (https://github.com/authorjapps/performance-tests)
-   
- * A **Spring boot** application with its **integration testing**- simple n easy  <br/>
- (https://github.com/authorjapps/spring-boot-integration-test)
+Clone or download the below quick-start repos to run them locally. 
+
+ * Quick start - [**Hello World** examples](https://github.com/authorjapps/zerocode-hello-world) <br/> 
+  
+ * Quick start - [**API Contracts testing** - Interfacing applications](https://github.com/authorjapps/consumer-contract-tests) <br/> 
+ 
+ *  Quick start - [**Performance** testing -  Varying **Load/Stress** generation](https://github.com/authorjapps/performance-tests) <br/> 
+ 
+ * Quick start - [**Spring Boot** application - **Integration testing** - In-Memory](https://github.com/authorjapps/spring-boot-integration-test) <br/>
+
+ * Quick start - [**Performance testing** - Resusing Spring JUnit tests - JUnit-Spring-Zerocode](https://github.com/authorjapps/zerocode-spring-junit) <br/>
 
 To build any of the above projects, you can use the following command
 ```
