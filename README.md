@@ -3,7 +3,7 @@
 
 >The simplest way to test your APIs
 
-Welcome to the new simple, convenient and efficient way to test your APIs using tiny declarative JSON steps. 
+An open source API testing framework using tiny declarative JSON steps - Simple, convenient and efficient. 
 
 Clone or download the below quick-start repos to run them locally. 
 
@@ -641,7 +641,7 @@ Random UUID-
       "operation": "POST",
       "request": {
         "body": {
-          "id": "${RANDON.UUID}", //<-- Everytime it creates unique uuid. See below example.
+          "id": "${RANDOM.UUID}", //<-- Everytime it creates unique uuid. See below example.
           "name": "Elen M"   
         }
       },
@@ -1821,7 +1821,9 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 
 | Place Holder  | Output        | More  |
 | ------------- |:-------------| -----|
-| $<path.to.array>.SIZE       | Assertion passes if the array size matches with value | See usage in the test json |
+| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : 3` - Assertion passes if the array size matches with value(3) | Search for `dealing with arrays` in this README for more usages |
+| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : "$GT.2"` - Assertion passes if the array size is greater than the value(2) | Search for `dealing with arrays` in this README for more usages |
+| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : "$LT.4"` - Assertion passes if the array size is lesser than the value(4) | Search for `dealing with arrays` in this README for more usages |
 
 
 #### 100:
