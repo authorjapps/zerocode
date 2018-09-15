@@ -1,9 +1,16 @@
 ## Zerocode - TDD and BDD <img width="84"  height="98" alt="screen shot 2018-08-16 at 8 29 27 am" src="https://user-images.githubusercontent.com/12598420/44822411-f8d5da00-abf2-11e8-94c3-8ef9817ddaa4.png"> 
 
-
->The simplest way to test your APIs
+[![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
+[![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://github.com/authorjapps/zerocode/blob/master/img/code_coverage/code_coverage_granular.png)
+[![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
+[![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
+[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
+[![codeproject](https://img.shields.io/badge/codeproject-zerocode-blue.svg)](https://www.codeproject.com/search.aspx?q=zerocode&x=0&y=0&sbo=kw)
+[![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 
 An open source API testing framework using tiny declarative JSON steps - Simple, convenient and efficient. 
+
+>The simplest way to test your APIs
 
 e.g. Keeping it simple - Your AC(Acceptance Criteria) or an `user journey` scenario like below,
 ```java
@@ -35,6 +42,18 @@ translates to the below executable JSON using `Zerocode` - As simple as that !
 }
 ```
 
+Maven and CI
+====
+**Latest release: [1.2.x](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)**
+
+**Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
+**HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
+**Help and Usage:** [Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
+**Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
+**License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
+
+> The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
+
 #### Clone or download the below quick-start repos to run them in local IDE or maven command. 
 
  * Quick start - [**Hello World** examples](https://github.com/authorjapps/zerocode-hello-world) <br/> 
@@ -52,35 +71,15 @@ To build any of the above projects, you can use the following command
 mvn clean install -DskipTests
 ```
 
+#### In a nutshell
+
 ![Prepare Scenario](img/landing/pass_fail.png)
 
-Zerocode
-====
 A simple and light weight automation testing lib for api end points using tiny declarative JSON steps.
 
-> The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
-
-**Latest release: [1.2.x](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)**
-
-**HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
-**Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
-**Help and Usage:** [Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
-**Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
-**License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
-
-> Make your test-driven API development efficient, accurate, fast and fun.
+> Making your test-driven API development efficient, accurate, fast and fun.
 
 Keep things simple, Zerocode alleviates the need of writing `code` for test assertions and boiler plate wrappers. It empowers the automation testers as well as developers to build up test scenario steps effortlessly, with sending payload and asserting the entire or part of the result as JSON `as it is`. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enabling you to focus on the business scenarios, user journeys and acceptance criterias acuurately. 
-
-[![Download HelloWorld](https://img.shields.io/badge/download-examples-blue.svg)](https://github.com/authorjapps/zerocode-hello-world/archive/master.zip) 
-[![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
-[![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://github.com/authorjapps/zerocode/blob/master/img/code_coverage/code_coverage_granular.png)
-[![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
-[![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
-[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
-[![codeproject](https://img.shields.io/badge/codeproject-zerocode-blue.svg)](https://www.codeproject.com/search.aspx?q=zerocode&x=0&y=0&sbo=kw)
-[![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
-
 
 Supported testing frameworks:
  * [JUnit](http://junit.org)
@@ -155,7 +154,9 @@ Add these `two` maven dependencies:
 </dependency>
 ```
 
-Then annotate your `JUnit` test method pointing to the JSON file and `run` as a unit test.
+Then annotate your `JUnit` test method pointing to the JSON file as below and `run` as a unit test. 
+That's it. Done.
+
 ```java
 @TargetEnv("github_host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
@@ -168,7 +169,7 @@ public class JustHelloWorldTest {
     }
 }
 ```
-
+Where,
 the `hello_world_status_ok_assertions.json` looks as below:
 ```javaScript
 {
@@ -200,9 +201,7 @@ restful.application.endpoint.port=443
 restful.application.endpoint.context=
 ```
 
-#### Define a Scenario with Steps, Then Run as JUnit([example](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java)) or run as Suite/Package([example](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldGitHubSuite.java)). <br>
-
-See more examples below-
+See more usages and examples below.
 
 ## Table of Contents - 
 - [Help and usage](#1)
