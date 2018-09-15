@@ -18,7 +18,8 @@ GIVEN- the GitHub REST api GET end point,
 WHEN- I invoke the API, 
 THEN- I will receive 200(OK) status with body and assert the response
 ```
-translates to the below executable JSON using `Zerocode` - As simple as that !
+translates to the below executable JSON in `Zerocode` - As simple as that ! <br/>
+Note- It's in simple JSON. ~~No feature files, no extra plugins, no statements or grammar needed.~~
 ```javaScript
 {
     "scenarioName": "Invoke the GET api and assert the response",
@@ -122,18 +123,9 @@ Develop and test applications with TDD and BDD approach while easily building up
 
 Execute your complex business scenario steps with simple declarative jsons which defines your RESTful service behaviour.
 
-<pre><code><del>
-Testing no more a harder, slower and sleepless task
-</del></code></pre>
-
-| ![Prepare Scenario](img/01_prepare_scenario_70_65.png) <br/> **Prepare scenario** | ![Write steps](img/02_write_steps_70_65.png) <br/> **Build up step(s)** | ![Execute steps pass](img/03_execute_70_65.png) &nbsp; &nbsp; ![Execute steps fail](img/04_execute_fail_70_65.png)<br/> **Execute** |
-|:-------------:|:-------------:|:-------------:|
-| Pick a "business scenario" or an "acceptance criteria", then convert it into easy and clean "JSON steps". | Assert the step(s) outcome with expected response "as it is" and optionally weave the next step to the earlier step input(s), using simple "JSON path" e.g. "created customerId", "customerType" etc. i.e. "$.step1.response.body.customerId" | Run the scenario using "@Test" annotation as a "JUnit" test or as "Suite" of tests as part of CI build.|
-
-Look for examples below-
+~~Testing no more a harder, slower and sleepless task~~
 
 See the [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) and [more](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldmore/JustHelloWorldMoreTest.java)
-
 
 ## Getting started
 
@@ -170,6 +162,11 @@ public class JustHelloWorldTest {
 }
 ```
 Where,
+
+~~GIVEN- the GitHub REST api GET end point,~~ <br/>
+~~WHEN- I invoke the API,~~ <br/>
+~~THEN- I will receive 200(OK) status with body and assert the response~~ <br/>
+
 the `hello_world_status_ok_assertions.json` looks as below:
 ```javaScript
 {
