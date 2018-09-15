@@ -5,7 +5,37 @@
 
 An open source API testing framework using tiny declarative JSON steps - Simple, convenient and efficient. 
 
-Clone or download the below quick-start repos to run them locally. 
+e.g. Keeping it simple - Your AC(Acceptance Criteria) or an `user journey` scenario like below,
+```java
+GIVEN- the GitHub REST api GET end point, 
+WHEN- I invoke the API, 
+THEN- I will receive 200(OK) status with body and assert the response
+```
+translates to the below executable JSON using `Zerocode` - As simple as that !
+```javaScript
+{
+    "scenarioName": "Invoke the GET api and assert the response",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "https://api.github.com/users/octocat",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat",
+                    "id" : 33847731,
+                    "type" : "User"
+                }
+            }
+        }
+    ]
+}
+```
+
+#### Clone or download the below quick-start repos to run them in local IDE or maven command. 
 
  * Quick start - [**Hello World** examples](https://github.com/authorjapps/zerocode-hello-world) <br/> 
   
@@ -106,8 +136,26 @@ Look for examples below-
 See the [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) and [more](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldmore/JustHelloWorldMoreTest.java)
 
 
-### Easy! Simple! Readable! JSON Based!
+## Getting started
 
+Add these `two` maven dependencies:
+```xml
+<dependency>
+    <groupId>org.jsmart</groupId>
+    <artifactId>zerocode-rest-bdd</artifactId>
+    <version>1.2.x</version> 
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.12</version>
+    <scope>test</scope>
+</dependency>
+```
+
+Then annotate your `JUnit` test method pointing to the JSON file and `run` as a unit test.
 ```java
 @TargetEnv("github_host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
@@ -124,21 +172,20 @@ public class JustHelloWorldTest {
 the `hello_world_status_ok_assertions.json` looks as below:
 ```javaScript
 {
-    "scenarioName": "GIVEN-the GitHub REST end point, WHEN-I invoke GET, THEN-I will receive the 200 status with body",
+    "scenarioName": "Invoke the GET api and assert the response",
     "steps": [
         {
             "name": "get_user_details",
-            "url": "/users/siddhagalaxy",
+            "url": "/users/octocat",
             "operation": "GET",
             "request": {
             },
             "assertions": {
                 "status": 200,
                 "body": {
-                    "login" : "siddhagalaxy",
-                    "id" : 33847730,
-                    "type" : "User",
-                    "followers_url" : "https://api.github.com/users/siddhagalaxy/followers"
+                    "login" : "octocat",
+                    "id" : 33847731,
+                    "type" : "User"
                 }
             }
         }
