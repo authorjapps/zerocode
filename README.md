@@ -12,11 +12,11 @@ An open source API testing framework using tiny declarative JSON steps - Simple,
 
 >The simplest way to test your APIs
 
-e.g. Keeping it simple - Your AC(Acceptance Criteria) or an `user journey` scenario like below,
+e.g. Keeping it simple - Your below AC(Acceptance Criteria) or an `user journey` scenario ,
 ```java
 GIVEN- the GitHub REST api GET end point, 
 WHEN- I invoke the API, 
-THEN- I will receive 200(OK) status with body and assert the response
+THEN- I will receive 200(OK) status with the body and assert the response
 ```
 translates to the below executable JSON in `Zerocode` - As simple as that ! <br/>
 Note- It's in simple JSON. ~~No feature files, no extra plugins, no statements or grammar needed.~~
@@ -42,6 +42,7 @@ Note- It's in simple JSON. ~~No feature files, no extra plugins, no statements o
     ]
 }
 ```
+and it is **declarative** DSL, with the `request/response` fields available for the next steps via the `JSON Path`.
 
 Maven and CI
 ====
@@ -162,12 +163,27 @@ public class JustHelloWorldTest {
 }
 ```
 Where,
-
+You need not have to do any GIVEN-WHEN-THEN like below. <br/>
 ~~GIVEN- the GitHub REST api GET end point,~~ <br/>
 ~~WHEN- I invoke the API,~~ <br/>
 ~~THEN- I will receive 200(OK) status with body and assert the response~~ <br/>
 
-the `hello_world_status_ok_assertions.json` looks as below:
+or
+
+~~GIVEN- the GitHub REST url and the method GET,~~ <br/>
+~~WHEN- I invoke the API,~~ <br/>
+~~THEN- I will receive 200(OK) status with body~~ <br/>
+~~AND assert the response~~ <br/>
+
+or
+
+~~GIVEN- the GitHub REST url~~ <br/>
+~~AND the http method GET~~ <br/>
+~~WHEN- I invoke the API using a HTTP client,~~ <br/>
+~~THEN- I will receive 200(OK) status with body~~ <br/>
+~~AND assert the response~~ <br/>
+
+You just need the below `hello_world_status_ok_assertions.json`.
 ```javaScript
 {
     "scenarioName": "Invoke the GET api and assert the response",
