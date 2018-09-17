@@ -1,14 +1,14 @@
 ## Zerocode - TDD and BDD <img width="84"  height="98" alt="screen shot 2018-08-16 at 8 29 27 am" src="https://user-images.githubusercontent.com/12598420/44822411-f8d5da00-abf2-11e8-94c3-8ef9817ddaa4.png"> 
 
-[![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
+An open source API testing framework using declarative JSON steps - Simple, light weight and efficient. 
+
+[![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
 [![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://github.com/authorjapps/zerocode/blob/master/img/code_coverage/code_coverage_granular.png)
 [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
 [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![codeproject](https://img.shields.io/badge/codeproject-zerocode-blue.svg)](https://www.codeproject.com/search.aspx?q=zerocode&x=0&y=0&sbo=kw)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
-
-An open source API testing framework using tiny declarative JSON steps - Simple, convenient and efficient. 
 
 >The simplest way to test your APIs
 
@@ -19,7 +19,8 @@ WHEN- I invoke the API,
 THEN- I will receive 200(OK) status with the body and assert the response
 ```
 translates to the below executable JSON in `Zerocode` - As simple as that ! <br/>
-Note- It's in simple JSON. ~~No feature files, no extra plugins, no statements or grammar needed.~~
+Note: It's in simple JSON. ~~No feature files, no extra plugins, no statements or grammar needed.~~
+
 ```javaScript
 {
     "scenarioName": "Invoke the GET api and assert the response",
@@ -43,6 +44,8 @@ Note- It's in simple JSON. ~~No feature files, no extra plugins, no statements o
 }
 ```
 and it is **declarative** DSL, with the `request/response` fields available for the next steps via the `JSON Path`.
+
+See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) for usages and examples.
 
 Maven and CI
 ====
@@ -76,8 +79,6 @@ mvn clean install -DskipTests
 #### In a nutshell
 
 ![Prepare Scenario](img/landing/pass_fail.png)
-
-A simple and light weight automation testing lib for api end points using tiny declarative JSON steps.
 
 > Making your test-driven API development efficient, accurate, fast and fun.
 
@@ -177,8 +178,8 @@ or
 
 or
 
-~~GIVEN- the GitHub REST url~~ <br/>
-~~AND the http method GET~~ <br/>
+~~GIVEN- the GET methos~~ <br/>
+~~AND the http url of GitHub api~~ <br/>
 ~~WHEN- I invoke the API using a HTTP client,~~ <br/>
 ~~THEN- I will receive 200(OK) status with body~~ <br/>
 ~~AND assert the response~~ <br/>
