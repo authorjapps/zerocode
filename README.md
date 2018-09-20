@@ -165,6 +165,7 @@ public class JustHelloWorldTest {
 ```
 Where,
 You need not have to do any GIVEN-WHEN-THEN like below. <br/>
+
 ~~GIVEN- the GitHub REST api GET end point,~~ <br/>
 ~~WHEN- I invoke the API,~~ <br/>
 ~~THEN- I will receive 200(OK) status with body and assert the response~~ <br/>
@@ -183,6 +184,29 @@ or
 ~~WHEN- I invoke the API using a HTTP client,~~ <br/>
 ~~THEN- I will receive 200(OK) status with body~~ <br/>
 ~~AND assert the response~~ <br/>
+
+or
+
+
+~~HttpResponse<User> response =~~
+
+~~aHttpClient.get("https://<host_post_externalized>/users/octocat")~~
+
+  ~~.header("accept", "application/json")~~
+
+  ~~.execute();~~
+
+~~User user = response.getUser();~~
+
+~~assertThat(response.getStatusCode(), is(200))~~
+
+~~assertThat(user.getId(), is(33847731))~~
+
+~~assertThat(user.getLogin(), is("octocat"))~~
+
+~~assertThat(user.getType(), is("user"))~~
+
+</br>
 
 You just need the below `hello_world_status_ok_assertions.json`.
 ```javaScript
