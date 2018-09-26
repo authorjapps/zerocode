@@ -2,6 +2,8 @@
 
 An open source API testing framework using declarative JSON steps - Simple, light weight and efficient. 
 
+Keeping it simple, Zerocode helps to eliminate writing code for http method calls, POJOs/Builders, ser/deserialization of request/response payloads and result assertions. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It also helps in mocking/stubbing interfacing APIs via Wiremock under the hood. It empowers engineers to streamline and automate the user-jouneys keeping full focus on the ACs(acceptance criterias) with as simple as Copy-Paste of full or part the payload/assertions as JSON. Also its approach to IDE based performance testing to generate load/stress on the target application is the most simplest, accurate and efficient.
+
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
 [![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://github.com/authorjapps/zerocode/blob/master/img/code_coverage/code_coverage_granular.png)
 [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
@@ -19,7 +21,8 @@ WHEN- I invoke the API,
 THEN- I will receive 200(OK) status with the body and assert the response
 ```
 translates to the below executable JSON in `Zerocode` - As simple as that ! <br/>
-Note: It's in simple JSON. ~~No feature files, no extra plugins, no statements or grammar needed.~~
+_(See here a full blown CRUD operation [with POST, PUT, GET, DELETE](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) example.)_ <br/>
+Note: It's in simple JSON. ~~No feature files, no extra plugins, no statements or grammar needed.~~ 
 
 ```javaScript
 {
@@ -82,7 +85,7 @@ mvn clean install -DskipTests
 
 > Making your test-driven API development efficient, accurate, fast and fun.
 
-Keep things simple, Zerocode alleviates the need of writing `code` for test assertions and boiler plate wrappers. It empowers the automation testers as well as developers to build up test scenario steps effortlessly, with sending payload and asserting the entire or part of the result as JSON `as it is`. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enabling you to focus on the business scenarios, user journeys and acceptance criterias acuurately. 
+Zerocode empowers the automation testers as well as developers to build up test scenario steps effortlessly, with sending/receiving payload and asserting the response as JSON. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enabling you to focus on the business scenarios, user journeys and acceptance criterias acuurately. 
 
 Supported testing frameworks:
  * [JUnit](http://junit.org)
@@ -95,7 +98,7 @@ Latest maven release:
     <version>1.2.x</version> 
 </dependency>
 ```
-But check here for the latest- 
+Check here for the latest- 
 https://github.com/authorjapps/zerocode/releases -or- [Maven Central](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
 
 Zerocode helps you to design better Test Cases for your business features, maintain and update them easily, avoiding sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests, as well optionally you can use`Suite` Runner for the CI builds. 
@@ -984,7 +987,7 @@ See more SIZE examples [here](https://github.com/authorjapps/zerocode-hello-worl
 #### Calling java methods(apis) for doing specific tasks:
 + Sample tests are [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldjavaexec/HelloWorldJavaMethodExecTest.java)
     + Example of request response as JSON - [See here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworldjavaexec/hello_world_javaexec_req_resp_as_json.json)
-    + Example of passing a simple string - [See here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworldjavaexec/hello_world_java_method_return_assertions.json)
+    + Example of passing a simple string e.g. SQL query etc - [See here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworldjavaexec/hello_world_java_method_return_assertions.json)
 
 - You can clone and execute from this repo [here](https://github.com/authorjapps/zerocode-hello-world)
 
@@ -994,9 +997,9 @@ See more SIZE examples [here](https://github.com/authorjapps/zerocode-hello-worl
     "steps": [
         {
             "name": "execute_java_method",
-            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",   //<--- class name
-            "operation": "fetchDbCustomers",                               //<-- method name
-            "request": "select id, name from customers",                   //<--- parameter to the method
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor", //<--- class name
+            "operation": "fetchDbCustomers",              //<-- method name
+            "request": "select id, name from customers",     //<--- parameter to the method
             "assertions": {
                 "dbResults": [
                     {
