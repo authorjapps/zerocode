@@ -2,27 +2,33 @@
 
 An open source API testing framework using declarative JSON steps - Simple, light weight and efficient. 
 
-Keeping it simple, Zerocode helps to eliminate writing code for http method calls, POJOs/Builders, ser/deserialization of request/response payloads and result assertions. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It also helps in mocking/stubbing interfacing APIs via Wiremock under the hood. It empowers engineers to streamline and automate the user-jouneys keeping full focus on the ACs(acceptance criterias) with as simple as Copy-Paste of full or part the payload/assertions as JSON. Also its approach to IDE based performance testing to generate load/stress on the target application is the most simplest, accurate and efficient.
+Keeping it simple, Zerocode helps to eliminate writing code for http method calls, POJOs/Builders, ser/deserialization of request/response payloads and result assertions. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It also helps in mocking/stubbing interfacing APIs via Wiremock under the hood. It empowers engineers to streamline and automate the user-jouneys keeping full focus on the ACs(acceptance criterias) with as simple as Copy-Paste of full or part the payload/assertions as JSON. Also its approach to IDE based performance testing to generate load/stress on the target application is the most simplest, accurate and efficient one.
 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
 [![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://github.com/authorjapps/zerocode/blob/master/img/code_coverage/code_coverage_granular.png)
 [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
 [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
-[![codeproject](https://img.shields.io/badge/codeproject-zerocode-blue.svg)](https://www.codeproject.com/search.aspx?q=zerocode&x=0&y=0&sbo=kw)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 
 >The simplest way to test your APIs
+#### In a nutshell
 
-e.g. Keeping it simple - Your below AC(Acceptance Criteria) or an `user journey` scenario ,
+![Prepare Scenario](img/landing/pass_fail.png)
+
+> Making your test-driven API development efficient, accurate, fast and fun.
+
+e.g. Your below AC(Acceptance Criteria) or an `user journey` scenario ,
 ```java
-GIVEN- the GitHub REST api GET end point, 
+GIVEN- The GitHub REST api GET end point, 
 WHEN- I invoke the API, 
-THEN- I will receive 200(OK) status with the body and assert the response
+THEN- I will receive 200(OK) status with the body 
+AND- assert the response
 ```
 translates to the below executable JSON in `Zerocode` - As simple as that ! <br/>
-_(See here a full blown CRUD operation [with POST, PUT, GET, DELETE](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) example.)_ <br/>
-Note: It's in simple JSON. ~~No feature files, no extra plugins, no statements or grammar needed.~~ 
+_(See here [a full blown CRUD operation scenario](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) with POST, PUT, GET, DELETE example.)_ <br/>
+Note: It's in simple JSON. <br/>
+~~No feature files, no extra plugins, no statements or grammar syntax needed.~~ 
 
 ```javaScript
 {
@@ -72,18 +78,12 @@ Maven and CI
  
  * Quick start - [**Spring Boot** application - **Integration testing** - In-Memory](https://github.com/authorjapps/spring-boot-integration-test) <br/>
 
- * Quick start - [**Performance testing** - Resusing Spring JUnit tests - JUnit-Spring-Zerocode](https://github.com/authorjapps/zerocode-spring-junit) <br/>
+ * Quick start - [**Performance testing** - Resusing Spring JUnit tests(`less common`) - JUnit-Spring-Zerocode](https://github.com/authorjapps/zerocode-spring-junit) <br/>
 
 To build any of the above projects, you can use the following command
 ```
 mvn clean install -DskipTests
 ```
-
-#### In a nutshell
-
-![Prepare Scenario](img/landing/pass_fail.png)
-
-> Making your test-driven API development efficient, accurate, fast and fun.
 
 Zerocode empowers the automation testers as well as developers to build up test scenario steps effortlessly, with sending/receiving payload and asserting the response as JSON. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enabling you to focus on the business scenarios, user journeys and acceptance criterias acuurately. 
 
