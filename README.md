@@ -11,7 +11,8 @@ Keeping it simple, Zerocode helps to eliminate writing code for http method call
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 
->The simplest way to test your APIs
+>Testing was _never_ this good before.
+
 #### In a nutshell
 
 ![Prepare Scenario](img/landing/pass_fail.png)
@@ -27,8 +28,9 @@ AND- assert the response
 ```
 translates to the below executable JSON in `Zerocode` - As simple as that ! <br/>
 _(See here [a full blown CRUD operation scenario](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) with POST, PUT, GET, DELETE example.)_ <br/>
-Note: It's in simple JSON. <br/>
-~~No feature files, no extra plugins, no statements or grammar syntax needed.~~ 
+
+Keep in mind: It's simple JSON. <br/>
+~~_No feature files, no extra plugins, no statements or grammar syntax overhead._~~ 
 
 ```javaScript
 {
@@ -89,6 +91,11 @@ To build any of the above projects, you can use the following command
 mvn clean install -DskipTests
 ```
 
+#### Latest news/releases/features
+
+#### Follow us(Twitter) - 
+<a href="https://twitter.com/ZercodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
+
 Zerocode empowers the automation testers as well as developers to build up test scenario steps effortlessly, with sending/receiving payload and asserting the response as JSON. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enabling you to focus on the business scenarios, user journeys and acceptance criterias acuurately. 
 
 Supported testing frameworks:
@@ -120,11 +127,6 @@ Who uses Zerocode?
  + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
  + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
  + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Authentication testing
-
-#### Latest news/releases/features
-
-#### Follow us(Twitter) - 
-<a href="https://twitter.com/ZercodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
 
 ## REST BDD Testing Framework
 
@@ -1934,33 +1936,42 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 
 [Zerocode UUID or Zerocode uuid random UUID]: https://github.com/authorjapps/zerocode#zerocode
 
-[REST api JSON test cases]: https://github.com/authorjapps/zerocode
-[JSON tests cases for rest apis]: https://github.com/authorjapps/zerocode
-[Zerocode zero code rest bdd blog]: https://github.com/authorjapps/zerocode
-[Zerocode zero code behaviour driven development]: https://github.com/authorjapps/zerocode
-[Zerocode zero code testing]: https://github.com/authorjapps/zerocode
+[restful web services]: https://github.com/authorjapps/zerocode
+[restful]: https://github.com/authorjapps/zerocode
+[what is automation testing]: https://github.com/authorjapps/zerocode
+[rest client]: https://github.com/authorjapps/zerocode
+[qa and testing]: https://github.com/authorjapps/zerocode
+[bdd testing]: https://github.com/authorjapps/zerocode
+[test url]: https://github.com/authorjapps/zerocode
+[api performance testing]: https://github.com/authorjapps/zerocode
+[java test automation tools]: https://github.com/authorjapps/zerocode
+[test automation framework]: https://github.com/authorjapps/zerocode
+[black box testing]: https://github.com/authorjapps/zerocode
+[software testing framework]: https://github.com/authorjapps/zerocode
+[https test]: https://github.com/authorjapps/zerocode
+[automation framework]: https://github.com/authorjapps/zerocode
+[regression]: https://github.com/authorjapps/zerocode
 [Zerocode zero code JSON based testing test cases]: https://github.com/authorjapps/zerocode
-[Zerocode zero code Hello World]: https://github.com/authorjapps/zerocode
-[Zerocode zero code example]: https://github.com/authorjapps/zerocode
-[Zerocode zero code REST api and SOAP testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code RESTful API testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code end to end testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code contract based testing (CBT)]: https://github.com/authorjapps/zerocode
-[Zerocode zero code contract driven development (CDD)]: https://github.com/authorjapps/zerocode
-[Zerocode zero code Consumer Contract Testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code Mule System API, Experience API TDD BDD]: https://github.com/authorjapps/zerocode
-[Zerocode zero code JSON based testing test cases]: https://github.com/authorjapps/zerocode
-[Zerocode zero code api testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code API contract testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code contract based testing (CBT)]: https://github.com/authorjapps/zerocode
-[REST API Contract Testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code End to End E2E Integration Point Testing]: https://github.com/authorjapps/zerocode
-[Mulesoft API testing]: https://github.com/authorjapps/zerocode
-[Mulesoft System API SAPI testing]: https://github.com/authorjapps/zerocode
-[Mulesoft Experience API testing]: https://github.com/authorjapps/zerocode
-[Mule application testing, Mule API testing]: https://github.com/authorjapps/zerocode
-[API testing using declarative JSON steps]: https://github.com/authorjapps/zerocode
-[Performance testing using declarative JSON steps]: https://github.com/authorjapps/zerocode
-[Performance testing using JUnit and maven]: https://github.com/authorjapps/zerocode
-[REST apis Performance testing REST apis]: https://github.com/authorjapps/zerocode
+[functional testing]: https://github.com/authorjapps/zerocode
+[postman rest client]: https://github.com/authorjapps/zerocode
+[java automated testing tools]: https://github.com/authorjapps/zerocode
+[qa automation]: https://github.com/authorjapps/zerocode
+[soap ui testing]: https://github.com/authorjapps/zerocode
+[rest api testing]: https://github.com/authorjapps/zerocode
+[cucumber framework]: https://github.com/authorjapps/zerocode
+[cucumber java]: https://github.com/authorjapps/zerocode
+[bdd]: https://github.com/authorjapps/zerocode
+[microservices example]: https://github.com/authorjapps/zerocode
+[microservices testing]: https://github.com/authorjapps/zerocode
+[Performance testing]: https://github.com/authorjapps/zerocode
+[junit performance testing]: https://github.com/authorjapps/zerocode
+[feature files]: https://github.com/authorjapps/zerocode
+[restful web services example]: https://github.com/authorjapps/zerocode
+[open source api testing tools]: https://github.com/authorjapps/zerocode
+[automated app testing]: https://github.com/authorjapps/zerocode
+[api contract testing]: https://github.com/authorjapps/zerocode
+[json compare]: https://github.com/authorjapps/zerocode
+[spring boot integration test]: https://github.com/authorjapps/zerocode
+[json assertion]: https://github.com/authorjapps/zerocode
+[mulesoft api]: https://github.com/authorjapps/zerocode
 
