@@ -1,0 +1,36 @@
+{
+    "scenarioName": "Unload - consume a message from kafka - raw dump to file",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo",
+            "operation": "produce",
+            "request": {
+                "key": "${RANDOM.NUMBER}",
+                "value": "Hello World"
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "dump_file_record_count",
+            "url": "kafka-topic:demo",
+            "operation": "consume",
+            "request": {
+                "consumeTestProperties": {
+                    "fileDumpTo": "target/temp/demo.txt",
+                    "fileDumpType": "RAW",
+                    "commitAsync":true,
+                    "showRecordsAsResponse":false,
+                    "MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS": 5
+                }
+
+            },
+            "assertions": {
+                "status": "Ok",
+                "recordCount": 1
+            }
+        }
+    ]
+}

@@ -13,7 +13,7 @@ import static org.jsmart.zerocode.core.utils.SmartUtils.getEnvPropertyValue;
 
 /**
  * This code is used by Unit and Package runner.
- * Hence coded at a single place here.
+ * Hence resides at a common place.
  */
 public class RunnerUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(RunnerUtils.class);

@@ -1,0 +1,27 @@
+{
+    "scenarioName": "Unload - consume a message from kafka",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo",
+            "operation": "load",
+            "request": {
+                "key": "${RANDOM.NUMBER}",
+                "value": "Hello World"
+            },
+            "assertions": {
+                "status" : "Ok"
+            }
+        },
+        {
+            "name": "onload_kafka",
+            "url": "kafka-topic:demo",
+            "operation": "unload",
+            "request": {
+            },
+            "assertions": {
+                "records.SIZE" : 1 // this will pass only when consumer does a commit i.e. commitAsync or sync
+            }
+        }
+    ]
+}

@@ -15,7 +15,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
-import org.jsmart.zerocode.core.di.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;

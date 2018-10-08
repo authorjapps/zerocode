@@ -1,8 +1,9 @@
-package org.jsmart.zerocode.core.di;
+package org.jsmart.zerocode.core.di.module;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 
 import javax.inject.Singleton;
 
@@ -15,16 +16,3 @@ public class ObjectMapperModule implements Module {
     }
 }
 
-
-
-/*
- * Another way : By extending from AbstractModule, "binder" is still available via binder()
- */
-
-//public class ObjectMapperModule extends AbstractModule {
-//
-//    @Override
-//    public void configure() {
-//        bind(ObjectMapper.class).toProvider(ObjectMapperProvider.class).in(Singleton.class);
-//    }
-//}

@@ -5,7 +5,7 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
-import org.jsmart.zerocode.core.di.ObjectMapperProvider;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 
 import java.io.File;
 import java.io.IOException;

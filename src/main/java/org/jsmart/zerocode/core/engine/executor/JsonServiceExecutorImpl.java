@@ -10,6 +10,9 @@ import com.jayway.jsonpath.PathNotFoundException;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.Response;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
+import org.jsmart.zerocode.core.kafka.KafkaService;
+import org.jsmart.zerocode.core.kafka.ZeroCodeKafkaLoadHelper;
+import org.jsmart.zerocode.core.kafka.ZeroCodeKafkaUnloadHelper;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithLocalMock;
-import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithVirtuosoMock;
-import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithWireMock;
+import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.*;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceExecutorImpl.class);
 
-    //guice
     @Inject
     private JavaExecutor javaExecutor;
 
@@ -41,11 +41,12 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     @Inject
     BasicHttpClient httpClient;
 
+    @Inject
+    KafkaService kafkaService;
+
     @Inject(optional = true)
     @Named("mock.api.port")
     private int mockPort;
-
-    //guice
 
     public JsonServiceExecutorImpl() {
     }
@@ -92,6 +93,45 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
                     "See the full error details below-\n{}", urlName, mockPort, severError);
 
             throw new RuntimeException(severError);
+
+        }
+    }
+
+    @Override
+    public String executeKafkaService(String kafkaServers, String topicName, String methodName, String requestJson) {
+        try {
+            switch(methodName) {
+                case "publish":
+                case "load":
+                case "produce":
+                case "send":
+                    return ZeroCodeKafkaLoadHelper.load(kafkaServers, topicName, requestJson);
+//                    return kafkaService.produce(kafkaServers, topicName, requestJson);
+
+                case "subscribe":
+                case "unload":
+                case "consume":
+                case "receive":
+                    return ZeroCodeKafkaUnloadHelper.unload(kafkaServers, topicName, requestJson);
+
+                case "poll":
+                    return ZeroCodeKafkaLoadHelper.load(kafkaServers, topicName, requestJson);
+
+                default:
+                    throw new RuntimeException("Unsupported Kafka operation");
+            }
+
+        } catch (Throwable severeExcep) {
+
+            LOGGER.error("Exception during Kafka operation, " +
+                    "\n topicName:{}, " +
+                    "\n operation:{}, " +
+                    "\n error: {}",
+                    topicName,
+                    methodName,
+                    severeExcep);
+
+            throw new RuntimeException(severeExcep);
 
         }
     }

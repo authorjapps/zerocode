@@ -10,7 +10,7 @@ import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.jsmart.zerocode.core.di.ObjectMapperProvider;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

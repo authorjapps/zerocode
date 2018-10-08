@@ -1,7 +1,7 @@
 package org.jsmart.zerocode.core.utils;
 
 import com.google.inject.Inject;
-import org.jsmart.zerocode.core.di.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jukito.JukitoRunner;
