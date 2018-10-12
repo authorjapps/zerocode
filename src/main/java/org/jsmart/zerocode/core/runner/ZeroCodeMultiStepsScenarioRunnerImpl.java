@@ -50,15 +50,15 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     private JsonServiceExecutor serviceExecutor;
 
     @Inject
-    @Named("restful.application.endpoint.host")
+    @Named("web.application.endpoint.host")
     private String host;
 
     @Inject
-    @Named("restful.application.endpoint.port")
+    @Named("web.application.endpoint.port")
     private String port;
 
     @Inject
-    @Named("restful.application.endpoint.context")
+    @Named("web.application.endpoint.context")
     private String applicationContext;
     //guice -ends
 

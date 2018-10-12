@@ -31,7 +31,7 @@ public class ApplicationMainModuleTest {
     SmartUtils smartUtils;
 
     @Inject
-    @Named("restful.application.endpoint.host")
+    @Named("web.application.endpoint.host")
     private String host;
 
     @Rule
