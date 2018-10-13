@@ -1,8 +1,10 @@
 ## Zerocode - TDD and BDD <img width="84"  height="103" alt="logo BnW" src="https://user-images.githubusercontent.com/12598420/46505720-e2dabb00-c829-11e8-943d-f967fa1f2a98.png"> 
 
-An open source API testing framework using declarative JSON steps - Simple, light weight and efficient. 
+An open source lib enables API testing via simple declarative JSON steps - REST, SOAP and DB services
 
-Keeping it simple, Zerocode helps to eliminate writing code for http method calls, POJOs/Builders, ser/deserialization of request/response payloads and result assertions. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It also helps in mocking/stubbing interfacing APIs via Wiremock under the hood. It empowers engineers to streamline and automate the user-jouneys keeping full focus on the ACs(acceptance criterias) with as simple as Copy-Paste of full or part the payload/assertions as JSON. Also its approach to IDE based performance testing to generate load/stress on the target application is the most simplest, accurate and efficient one.
+Zerocode brings the simplicity in testing and validating APIs by eliminating repetitive code for test assertions, http calls and payload parsing. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
+
+It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - It goes a step further enabling you to simply reuse the test(s) from your regression pack.
 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
 [![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://github.com/authorjapps/zerocode/blob/master/img/code_coverage/code_coverage_granular.png)
@@ -11,13 +13,7 @@ Keeping it simple, Zerocode helps to eliminate writing code for http method call
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 
->Testing was _never_ this good before.
-
-#### In a nutshell
-
-![Prepare Scenario](img/landing/pass_fail.png)
-
-> Making your test-driven API development efficient, accurate, fast and fun.
+>Testing was _never_ so easy before.
 
 e.g. Your below AC(Acceptance Criteria) or an `user journey` scenario ,
 ```java
