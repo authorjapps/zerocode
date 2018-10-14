@@ -322,38 +322,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         return true;
     }
 
-    private void resolveExtJsonFile(Step thisStep) {
-        // 1. inspect all elements for JSON file reference
-        // - get a list of the fields
-        // - iterate through the list n replace the content
-        // Let it be request or response or headers
-
-        // JSON flatten to get the path-
-
-        JsonNode requestNode = thisStep.getRequest();
-        JsonNode bodyNode = requestNode.get("body");
-        String payloadFileString = bodyNode != null ? bodyNode.asText() : null;
-        List<String> allTokens = new ArrayList<>();
-        if (payloadFileString != null) {
-            allTokens = getAllTokens(payloadFileString);
-        }
-        if (allTokens != null && !allTokens.isEmpty()) {
-            String token = allTokens.get(0);
-            if (token.startsWith(JSON_PAYLOAD_FILE)) {
-                String resourceJsonFile = token.substring(JSON_PAYLOAD_FILE.length());
-                Object bodyContent = null;
-                try {
-                    bodyContent = objectMapper.readTree(new File(getResource(resourceJsonFile).getPath()));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                ((ObjectNode) requestNode).putPOJO("body", bodyContent);
-                System.out.println(">>>>>>>>>>>>> payloadFile(modified)- \n" + requestNode);
-            }
-        }
-    }
-
     @Override
     public boolean runChildStep(ScenarioSpec scenarioSpec, BiConsumer testPassHandler) {
 

@@ -44,14 +44,6 @@ public class Step {
         return assertions;
     }
 
-    public void setRequest(JsonNode jsonNode) {
-        this.request = jsonNode;
-    }
-
-    public void setAssertions(JsonNode assertions) {
-        this.assertions = assertions;
-    }
-
     @JsonCreator
     public Step(
             @JsonProperty("stepLoop") Integer loop,
