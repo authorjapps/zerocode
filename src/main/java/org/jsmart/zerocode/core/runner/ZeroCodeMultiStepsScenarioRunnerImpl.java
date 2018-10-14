@@ -1,8 +1,6 @@
 package org.jsmart.zerocode.core.runner;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -22,31 +20,22 @@ import org.jsmart.zerocode.core.logbuilder.LogCorrelationshipPrinter;
 import org.jsmart.zerocode.core.utils.ServiceType;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
+import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static com.google.common.io.Resources.getResource;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesorImpl.JSON_PAYLOAD_FILE;
-import static org.jsmart.zerocode.core.utils.SmartUtils.getAllTokens;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Singleton
 public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsScenarioRunner {
 
-    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeMultiStepsScenarioRunnerImpl.class);
-
-    //guice -starts
-    @Inject
-    private ObjectMapper objectMapper;
+    private static final Logger LOGGER = getLogger(ZeroCodeMultiStepsScenarioRunnerImpl.class);
 
     @Inject
     private ZeroCodeJsonTestProcesor zeroCodeJsonTestProcesor;
@@ -68,7 +57,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     @Inject
     @Named("restful.application.endpoint.context")
     private String applicationContext;
-    //guice -ends
 
     private LogCorrelationshipPrinter logCorrelationshipPrinter;
 
@@ -101,8 +89,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     .scenarioName(scenario.getScenarioName());
 
             for (Step thisStep : scenario.getSteps()) {
-                // Another way to get the String
-                // String requestJson = objectMapper.valueToTree(thisStep.getRequest()).toString();
 
                 final int stepLoopTimes = thisStep.getLoop() == null ? 1 : thisStep.getLoop();
                 for (int i = 0; i < stepLoopTimes; i++) {
@@ -200,10 +186,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         stepExecutionState.addResponse(executionResult);
                         scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
 
-                        /** ******************************
-                         * Handle assertion section -START
-                         * *******************************
-                         */
+                        // ---------------------------------
+                        // Handle assertion section -START
+                        // ---------------------------------
                         String resolvedAssertionJson = zeroCodeJsonTestProcesor.resolveStringJson(
                                 thisStep.getAssertions().toString(),
                                 scenarioExecutionState.getResolvedScenarioState()
@@ -242,11 +227,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 thisStepName,
                                 failureResults,
                                 notificationHandler::handleAssertionPassed);
-
-                        /** ******************************
-                         * Handle assertion section   -END
-                         * *******************************
-                         */
+                        // ---------------------------------
+                        // Handle assertion section -END
+                        // ---------------------------------
 
                         logCorrelationshipPrinter.result(stepOutcome);
 
