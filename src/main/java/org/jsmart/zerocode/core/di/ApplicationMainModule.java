@@ -7,15 +7,15 @@ import org.jsmart.zerocode.core.engine.executor.JavaExecutor;
 import org.jsmart.zerocode.core.engine.executor.JavaExecutorImpl;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesorImpl;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGeneratorImpl;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunner;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunnerImpl;
-import org.jsmart.zerocode.parallel.ExecutorServiceRunner;
 
-import javax.inject.Singleton;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -52,6 +52,7 @@ public class ApplicationMainModule extends AbstractModule {
         bind(JavaExecutor.class).to(JavaExecutorImpl.class);
         bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
+        bind(ZeroCodeExternalFileProcessor.class).to(ZeroCodeExternalFileProcessorImpl.class);
         //bind(ExecutorServiceRunner.class).in(Singleton.class);
         //bind(SmartUtils.class);
 
