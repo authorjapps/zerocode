@@ -54,7 +54,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     /*
      * General place holders
      */
-    public static final String JSON_PAYLOAD_FILE = "JSON.PAYLOAD.FILE:";
+    public static final String JSON_PAYLOAD_FILE = "JSON.FILE:";
 
     private static final String PREFIX_ASU = "ASU";
     private static final String RANDOM_NUMBER = "RANDOM.NUMBER";

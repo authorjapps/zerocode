@@ -6,7 +6,7 @@
             "url": "/home/bathroom",
             "operation": "POST",
             "request": {
-                "body" : "${JSON.PAYLOAD.FILE:filebody/bodyonly/request_body.json}"
+                "body" : "${JSON.FILE:filebody/bodyonly/request_body.json}"
             },
             "assertions": {
                 "status": 201
@@ -20,7 +20,7 @@
             },
             "assertions": {
                 "status": 200,
-                "body" : "${JSON.PAYLOAD.FILE:filebody/bodyonly/response_body.json}"
+                "body" : "${JSON.FILE:filebody/bodyonly/response_body.json}"
             }
         }
     ]
