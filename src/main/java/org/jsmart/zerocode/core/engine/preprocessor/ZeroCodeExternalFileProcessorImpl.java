@@ -42,7 +42,17 @@ import static org.slf4j.LoggerFactory.getLogger;
  * Given a Json Java map, it digs deep into the fields and finds the references to the external content
  * in the classpath and replaces the value of this key with the content from the file.
  *
+ * Issue-2 - Feature requested by @UmeshIghe(Github)
+ * Github Link - https://github.com/authorjapps/zerocode/issues/2
+ *
+ * Suggestion and Recommendation:
+ * Try to keep the test cases as independent possible. Do not create too much nested dependencies which adds
+ * unnecessary complexity to the project. The complexity could be in terms project maintenance or interpreting the
+ * test case itself. We should use the IDE features which now a days makes a lot easier in terms of dealing with
+ * JSON contents to keep the testing life cycle simple.
+ *
  * @author nirmal.fleet@google.com (Nirmal Chandra)
+ * @author ghorpade.a.g@gmail.com (Amit Ghorpade)
  */
 @Singleton
 public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFileProcessor {
@@ -55,6 +65,15 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Resolves the external file content for a place holder against a key e.g. in the payload or assertions.
+     *
+     * First the logic checks if dig-deep needed to avoid unwanted recursions. If not needed, the step definition is
+     * returned intact. Otherwise calls the dig deep method to perform the operation.
+     *
+     * @param thisStep A step, defining the API call and validation
+     * @return The effective step definition
+     */
     @Override
     public Step resolveExtJsonFile(Step thisStep) {
 
@@ -85,6 +104,12 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
 
     }
 
+    /**
+     * Digs deep into the nested map and looks for external file reference,if found, replaces the place holder with
+     * the file content. This is handy when the engineers wants to drive the common contents from a central place.
+     *
+     * @param map A map representing the key-value pairs, can be nested
+     */
     void digReplaceContent(Map<String, Object> map) {
 
         map.entrySet().stream().forEach(entry -> {
