@@ -16,22 +16,14 @@
  */
 package org.jsmart.zerocode.core.engine.preprocessor;
 
+import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 
 import java.util.List;
 
-public interface ZeroCodeJsonTestProcesor {
+public interface ZeroCodeExternalFileProcessor {
 
-    String resolveStringJson(String requestJsonAsString, String resolvedScenarioState);
+    Step resolveExtJsonFile(Step thisStep);
 
-    List<String> getAllTokens(String requestJsonAsString);
-
-    String resolveJsonPaths(String resolvedFromTemplate, String jsonString);
-
-    public List<String> getAllJsonPathTokens(String requestJsonAsString);
-
-    List<JsonAsserter> createAssertersFrom(String resolvedAssertionJson);
-
-    List<AssertionReport> assertAllAndReturnFailed(List<JsonAsserter> asserters, String executionResult);
 }
