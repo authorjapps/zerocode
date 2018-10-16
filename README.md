@@ -1129,6 +1129,11 @@ Each runner is capable of running with a properties file which can have host and
 -OR-
 - can have a single properties file shared across all the runners means all tests run against the same environment.
 
+** Note - As per Latest config update, we have updated endpoint configuration fields.
+From the release 1.2.8 onwards we will be allowing web. and deprecating restful. in endpoint configuration
+We will take away support for restful. from endpoint configuration in future releases
+1.2.8 will work for both as we have made this backward compatible.
+
 e.g.
 
 "config_hosts_sample.properties"
