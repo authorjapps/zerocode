@@ -15,7 +15,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 //this config file is to test backword compatibility, remove after release 1.2.9
 @RunWith(JukitoRunner.class)
-public class ApplicationMainModuleTestWithBackwordCompatibility {
+public class ApplicationMainModuleBackwordCompatibilityTest {
 
     public static class JukitoModule extends TestModule {
         @Override
