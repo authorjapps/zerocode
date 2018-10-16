@@ -239,9 +239,9 @@ You just need the below `hello_world_status_ok_assertions.json`.
 
 the `github_host.properties` looks as below:
 ```
-restful.application.endpoint.host=https://api.github.com
-restful.application.endpoint.port=443
-restful.application.endpoint.context=
+web.application.endpoint.host=https://api.github.com
+web.application.endpoint.port=443
+web.application.endpoint.context=
 ```
 
 See more usages and examples below.
@@ -1129,16 +1129,21 @@ Each runner is capable of running with a properties file which can have host and
 -OR-
 - can have a single properties file shared across all the runners means all tests run against the same environment.
 
+** Note - As per Latest config update, we have updated endpoint configuration fields.
+From the release 1.2.8 onwards we will be allowing `web.` and deprecating `restful.` in endpoint configurations.
+We will take away support for `restful.` from endpoint configuration in the future releases.
+Version 1.2.8 will work for both as we have made the framework backward compatible.
+
 e.g.
 
 "config_hosts_sample.properties"
 
 ```
-restful.application.endpoint.host=http://{host-name-or-ip}
+web.application.endpoint.host=http://{host-name-or-ip}
 
-restful.application.endpoint.port=9998
+web.application.endpoint.port=9998
 
-restful.application.endpoint.context=/google-emp-services
+web.application.endpoint.context=/google-emp-services
 ```
 
 The runner looks like this:
@@ -1515,11 +1520,11 @@ public class HelloWorldTest {
 soap_host_with_corp_proxy.properties
 ---------------------------
 # Web Server host and port
-restful.application.endpoint.host=https://soap-server-host/ServiceName
-restful.application.endpoint.port=443
+web.application.endpoint.host=https://soap-server-host/ServiceName
+web.application.endpoint.port=443
 
 # Web Service context; Leave it blank in case you do not have a common context
-restful.application.endpoint.context=
+web.application.endpoint.context=
 
 #sample test purpose - if you remove this from ehre, then make sure to remove from Java file
 corporate.proxy.host=http://exam.corporate-proxy-host.co.uk
