@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.parallel;
+package org.jsmart.zerocode.github;
 
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.TargetEnv;
@@ -7,11 +7,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@TargetEnv("github_host_test.properties")
+@TargetEnv("github_host_old_fashion_test.properties")
 @RunWith(ZeroCodeUnitRunner.class)
-public class TestGitHubApi {
+public class TestGitHubApiOldFashionHost {
 
-    @Ignore("Locally passes, but fails in Travis CI due to rate limiting issue of GitHub")
+    @Ignore("Locally passes, but fails in Travis CI due to rate limiting of GitHub")
     @Test
     @JsonTestCase("load/github_get_api_sample_test.json")
     public void testGitHubApi_get() throws Exception {
