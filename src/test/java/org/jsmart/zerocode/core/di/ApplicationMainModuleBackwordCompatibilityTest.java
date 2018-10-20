@@ -13,14 +13,14 @@ import org.junit.runner.RunWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-
+//this config file is to test backword compatibility, remove after release 1.2.9
 @RunWith(JukitoRunner.class)
-public class ApplicationMainModuleTest {
+public class ApplicationMainModuleBackwordCompatibilityTest {
 
     public static class JukitoModule extends TestModule {
         @Override
         protected void configureTest() {
-            ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test.properties");
+            ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test_backword_compatibility.properties");
 
             /* Finally install the main module */
             install(applicationMainModule);
@@ -31,7 +31,7 @@ public class ApplicationMainModuleTest {
     SmartUtils smartUtils;
 
     @Inject
-    @Named("web.application.endpoint.host")
+    @Named("restful.application.endpoint.host")
     private String host;
 
     @Rule
@@ -45,7 +45,7 @@ public class ApplicationMainModuleTest {
 
     @Test
     public void willInject_host() throws Exception {
-        assertThat(host, is("http://localhost-test"));
+        assertThat(host, is("http://localhost-test-backword-compatibility"));
     }
 
 }

@@ -15,41 +15,27 @@ It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its
 
 >Testing was _never_ so easy before.
 
-e.g. Your below AC(Acceptance Criteria) or an `user journey` scenario ,
+e.g. Your below User-Journey or ACs(Acceptance Criterias) or a scenario,
 ```java
-GIVEN- The GitHub REST api GET end point, 
-WHEN- I invoke the API, 
-THEN- I will receive 200(OK) status with the body 
-AND- assert the response
+AC1:
+GIVEN- the POST api end point '/api/v1/users' to create an user,     
+WHEN- I invoke the API,     
+THEN- I will receive the 201 status with the a user ID and headers 
+AND- I will validate the response
+
+AC2:
+GIVEN- the REST api GET end point '/api/v1/users/${created-User-Id}',     
+WHEN- I invoke the API,     
+THEN- I will receive the 200(Ok) status with body(user details) and headers
+AND- I will assert the response
 ```
-translates to the below executable JSON in `Zerocode` - As simple as that ! <br/>
+translates to the below executable JSON in `Zerocode` - Simple and clean ! <br/>
 _(See here [a full blown CRUD operation scenario](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) with POST, PUT, GET, DELETE example.)_ <br/>
 
 Keep in mind: It's simple JSON. <br/>
 ~~_No feature files, no extra plugins, no statements or grammar syntax overhead._~~ 
+<img width="624" alt="post_get_user" src="https://user-images.githubusercontent.com/12598420/47145467-bc089400-d2c1-11e8-8707-8e2d2e8c3127.png">
 
-```javaScript
-{
-    "scenarioName": "Invoke the GET api and assert the response",
-    "steps": [
-        {
-            "name": "get_user_details",
-            "url": "https://api.github.com/users/octocat",
-            "operation": "GET",
-            "request": {
-            },
-            "assertions": {
-                "status": 200,
-                "body": {
-                    "login" : "octocat",
-                    "id" : 33847731,
-                    "type" : "User"
-                }
-            }
-        }
-    ]
-}
-```
 and it is **declarative** DSL, with the `request/response` fields available for the next steps via the `JSON Path`.
 
 See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) for usages and examples.
@@ -239,9 +225,9 @@ You just need the below `hello_world_status_ok_assertions.json`.
 
 the `github_host.properties` looks as below:
 ```
-restful.application.endpoint.host=https://api.github.com
-restful.application.endpoint.port=443
-restful.application.endpoint.context=
+web.application.endpoint.host=https://api.github.com
+web.application.endpoint.port=443
+web.application.endpoint.context=
 ```
 
 See more usages and examples below.
@@ -1129,16 +1115,21 @@ Each runner is capable of running with a properties file which can have host and
 -OR-
 - can have a single properties file shared across all the runners means all tests run against the same environment.
 
+** Note - As per Latest config update, we have updated endpoint configuration fields.
+From the release 1.2.8 onwards we will be allowing `web.` and deprecating `restful.` in endpoint configurations.
+We will take away support for `restful.` from endpoint configuration in the future releases.
+Version 1.2.8 will work for both as we have made the framework backward compatible.
+
 e.g.
 
 "config_hosts_sample.properties"
 
 ```
-restful.application.endpoint.host=http://{host-name-or-ip}
+web.application.endpoint.host=http://{host-name-or-ip}
 
-restful.application.endpoint.port=9998
+web.application.endpoint.port=9998
 
-restful.application.endpoint.context=/google-emp-services
+web.application.endpoint.context=/google-emp-services
 ```
 
 The runner looks like this:
@@ -1515,11 +1506,11 @@ public class HelloWorldTest {
 soap_host_with_corp_proxy.properties
 ---------------------------
 # Web Server host and port
-restful.application.endpoint.host=https://soap-server-host/ServiceName
-restful.application.endpoint.port=443
+web.application.endpoint.host=https://soap-server-host/ServiceName
+web.application.endpoint.port=443
 
 # Web Service context; Leave it blank in case you do not have a common context
-restful.application.endpoint.context=
+web.application.endpoint.context=
 
 #sample test purpose - if you remove this from ehre, then make sure to remove from Java file
 corporate.proxy.host=http://exam.corporate-proxy-host.co.uk
