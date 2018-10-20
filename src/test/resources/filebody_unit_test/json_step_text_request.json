@@ -1,0 +1,12 @@
+{
+    "name": "create_emp",
+    "url": "/api/test/v1/employess",
+    "operation": "POST",
+    "request": "I am a simple text",
+    "assertions": {
+        "status": 201,
+        "body": {
+            "id": 100
+        }
+    }
+}
