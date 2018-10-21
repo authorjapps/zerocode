@@ -1,0 +1,34 @@
+{
+    "scenarioName": "POST via file body - usual way",
+    "steps": [
+        {
+            "name": "create_emp",
+            "url": "/home/bathroom",
+            "operation": "POST",
+            "request": {
+                "body": {
+                    "name": "Shower",
+                    "availability": true
+                }
+            },
+            "assertions": {
+                "status": 201
+            }
+        },
+        {
+            "name": "get_user_details",
+            "url": "/home/bathroom/${$.create_emp.response.body.id}",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": 1,
+                    "name": "Shower",
+                    "availability": true
+                }
+            }
+        }
+    ]
+}
