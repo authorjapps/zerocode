@@ -49,7 +49,7 @@ public class HelperJsonUtils {
 
     }
 
-    public static Map<String, Object> readHeadersAsMap(Object headers) {
+    public static Map<String, Object> readObjectAsMap(Object headers) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             map = (new ObjectMapperProvider()).get().readValue(headers.toString(), HashMap.class);
@@ -81,7 +81,7 @@ public class HelperJsonUtils {
     }
 
     private void setRequestHeaders(Object headers, ClientRequest clientExecutor) {
-        Map<String, Object> headersMap = HelperJsonUtils.readHeadersAsMap(headers);
+        Map<String, Object> headersMap = HelperJsonUtils.readObjectAsMap(headers);
         for (Object key : headersMap.keySet()) {
             clientExecutor.header((String) key, headersMap.get(key));
         }

@@ -1,10 +1,13 @@
 package org.jsmart.zerocode.core.httpclient;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.EntityBuilder;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -13,18 +16,20 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.jsmart.zerocode.core.utils.HelperJsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.jsmart.zerocode.core.httpclient.utils.FileUploadUtils.*;
-import static org.jsmart.zerocode.core.httpclient.utils.HeaderUtils.hasMultiPartHeader;
 import static org.jsmart.zerocode.core.httpclient.utils.HeaderUtils.processFrameworkDefault;
 import static org.jsmart.zerocode.core.httpclient.utils.UrlQueryParamsUtils.setQueryParams;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
@@ -35,6 +40,7 @@ public class BasicHttpClient {
     public static final String FILES_FIELD = "files";
     public static final String BOUNDARY_FIELD = "boundary";
     public static final String MULTIPART_FORM_DATA = "multipart/form-data";
+    public static final String APPLICATION_FORM_URL_ENCODED = "application/x-www-form-urlencoded";
     public static final String CONTENT_TYPE = "Content-Type";
 
     private Object COOKIE_JSESSIONID_VALUE;
@@ -231,7 +237,7 @@ public class BasicHttpClient {
      * @param reqBodyAsString
      * @return
      */
-    public RequestBuilder createDefaultRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) {
+    private RequestBuilder createDefaultRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) {
         RequestBuilder requestBuilder = RequestBuilder
                 .create(methodName)
                 .setUri(httpUrl);
@@ -242,6 +248,23 @@ public class BasicHttpClient {
                     .setText(reqBodyAsString)
                     .build();
             requestBuilder.setEntity(httpEntity);
+        }
+        return requestBuilder;
+    }
+
+    private RequestBuilder createFormUrlEncodedRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) throws IOException {
+        RequestBuilder requestBuilder = RequestBuilder
+                .create(methodName)
+                .setUri(httpUrl);
+        if (reqBodyAsString != null) {
+            Map<String, Object> reqBodyMap = HelperJsonUtils.readObjectAsMap(reqBodyAsString);
+            List<NameValuePair> reqBody = new ArrayList<>();
+             for(String key : reqBodyMap.keySet()) {
+                 reqBody.add(new BasicNameValuePair(key, (String) reqBodyMap.get(key)));
+             }
+             HttpEntity httpEntity = new UrlEncodedFormEntity(reqBody);
+             requestBuilder.setEntity(httpEntity);
+            requestBuilder.setHeader(CONTENT_TYPE, APPLICATION_FORM_URL_ENCODED);
         }
         return requestBuilder;
     }
@@ -262,7 +285,7 @@ public class BasicHttpClient {
      * @return
      * @throws IOException
      */
-    public RequestBuilder createFileUploadRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) throws IOException {
+    private RequestBuilder createFileUploadRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) throws IOException {
         Map<String, Object> fileFieldNameValueMap = getFileFieldNameValue(reqBodyAsString);
 
         List<String> fileFieldsList = (List<String>) fileFieldNameValueMap.get(FILES_FIELD);
@@ -307,13 +330,15 @@ public class BasicHttpClient {
         }
     }
 
-    private RequestBuilder createRequestBuilder(String httpUrl, String methodName, Map<String, Object> headers, String reqBodyAsString) throws IOException {
-        RequestBuilder requestBuilder;
-        if (hasMultiPartHeader(headers)) {
-            requestBuilder = createFileUploadRequestBuilder(httpUrl, methodName, reqBodyAsString);
-        } else {
-            requestBuilder = createDefaultRequestBuilder(httpUrl, methodName, reqBodyAsString);
+    public RequestBuilder createRequestBuilder(String httpUrl, String methodName, Map<String, Object> headers, String reqBodyAsString) throws IOException {
+        String contentType = headers != null? (String) headers.get(CONTENT_TYPE) :null;
+        if(contentType!=null){
+            if(contentType.equals(MULTIPART_FORM_DATA)){
+                return createFileUploadRequestBuilder(httpUrl, methodName, reqBodyAsString);
+            } else if(contentType.equals(APPLICATION_FORM_URL_ENCODED)) {
+                return createFormUrlEncodedRequestBuilder(httpUrl, methodName, reqBodyAsString);
+            }
         }
-        return requestBuilder;
+        return createDefaultRequestBuilder(httpUrl, methodName, reqBodyAsString);
     }
 }
