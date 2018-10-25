@@ -192,7 +192,7 @@ public class BasicHttpClient {
      * @param queryParams - Query parameters to pass
      * @return : Effective url
      */
-    public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) {
+    public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) throws IOException {
         if (queryParams != null) {
             httpUrl = setQueryParams(httpUrl, queryParams);
         }
@@ -217,7 +217,7 @@ public class BasicHttpClient {
     /**
      * Override this method when you want to manipulate the request body passed from your test cases.
      * Otherwise the framework falls back to this default implementation.
-     *
+     * You can override this method via @UseHttpClient(YourCustomHttpClient.class)
      * @param body
      * @return
      */
@@ -232,12 +232,14 @@ public class BasicHttpClient {
      * Please see the following request builder to handle file uploads.
      *     - BasicHttpClient#createFileUploadRequestBuilder(java.lang.String, java.lang.String, java.lang.String)
      *
+     * You can override this method via @UseHttpClient(YourCustomHttpClient.class)
+     *
      * @param httpUrl
      * @param methodName
      * @param reqBodyAsString
      * @return
      */
-    private RequestBuilder createDefaultRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) {
+    public RequestBuilder createDefaultRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) {
         RequestBuilder requestBuilder = RequestBuilder
                 .create(methodName)
                 .setUri(httpUrl);
@@ -252,7 +254,18 @@ public class BasicHttpClient {
         return requestBuilder;
     }
 
-    private RequestBuilder createFormUrlEncodedRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) throws IOException {
+    /**
+     * This is how framework makes the KeyValue pair when "application/x-www-form-urlencoded" headers
+     * is passed in the request.  In case you want to build or prepare the requests differently,
+     * you can override this method via @UseHttpClient(YourCustomHttpClient.class).
+     *
+     * @param httpUrl
+     * @param methodName
+     * @param reqBodyAsString
+     * @return
+     * @throws IOException
+     */
+    public RequestBuilder createFormUrlEncodedRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) throws IOException {
         RequestBuilder requestBuilder = RequestBuilder
                 .create(methodName)
                 .setUri(httpUrl);
@@ -260,7 +273,7 @@ public class BasicHttpClient {
             Map<String, Object> reqBodyMap = HelperJsonUtils.readObjectAsMap(reqBodyAsString);
             List<NameValuePair> reqBody = new ArrayList<>();
              for(String key : reqBodyMap.keySet()) {
-                 reqBody.add(new BasicNameValuePair(key, (String) reqBodyMap.get(key)));
+                 reqBody.add(new BasicNameValuePair(key, reqBodyMap.get(key).toString()));
              }
              HttpEntity httpEntity = new UrlEncodedFormEntity(reqBody);
              requestBuilder.setEntity(httpEntity);
@@ -279,13 +292,15 @@ public class BasicHttpClient {
      * also send more request-params and "boundary" from the test cases if needed. The boundary defaults to an unique
      * string of local-date-time-stamp if not provided in the request.
      *
+     * You can override this method via @UseHttpClient(YourCustomHttpClient.class)
+     *
      * @param httpUrl
      * @param methodName
      * @param reqBodyAsString
      * @return
      * @throws IOException
      */
-    private RequestBuilder createFileUploadRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) throws IOException {
+    public RequestBuilder createFileUploadRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) throws IOException {
         Map<String, Object> fileFieldNameValueMap = getFileFieldNameValue(reqBodyAsString);
 
         List<String> fileFieldsList = (List<String>) fileFieldNameValueMap.get(FILES_FIELD);
@@ -331,13 +346,25 @@ public class BasicHttpClient {
     }
 
     public RequestBuilder createRequestBuilder(String httpUrl, String methodName, Map<String, Object> headers, String reqBodyAsString) throws IOException {
+
         String contentType = headers != null? (String) headers.get(CONTENT_TYPE) :null;
+
         if(contentType!=null){
+
             if(contentType.equals(MULTIPART_FORM_DATA)){
+
                 return createFileUploadRequestBuilder(httpUrl, methodName, reqBodyAsString);
+
             } else if(contentType.equals(APPLICATION_FORM_URL_ENCODED)) {
+
                 return createFormUrlEncodedRequestBuilder(httpUrl, methodName, reqBodyAsString);
             }
+            // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+            // Extention- Any other header types to be specially handled here
+            // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+            // else if(contentType.equals("OTHER-TYPES")){
+            //    Handling logic
+            // }
         }
         return createDefaultRequestBuilder(httpUrl, methodName, reqBodyAsString);
     }
