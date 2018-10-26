@@ -60,4 +60,21 @@ public class BasicHttpClientTest {
 
         assertThat(effectiveUrl, is("http://abc.com?q1=value1&q2=value2&state%2Fregion=London+UK"));
     }
+
+    @Test
+    public void createRequestBuilder_jsonValue() throws IOException {
+        header.put("Content-Type", "application/x-www-form-urlencoded");
+        String reqBodyAsString = "{\n" +
+                "  \"Company\": \"Amazon\",\n" +
+                "  \"addresses\": {\n" +
+                "    \"city\": \"NewYork\",\n" +
+                "    \"type\": \"HeadOffice\"\n" +
+                "  }\n" +
+                "}";
+        RequestBuilder requestBuilder = basicHttpClient.createRequestBuilder("/api/v1/founder", "POST", header, reqBodyAsString);
+        String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
+        assertThat(requestBuilder.getMethod(), is("POST"));
+        //On the server side: address={city=NewYork, type=HeadOffice}
+        assertThat(nameValuePairString, is("Company=Amazon&addresses=%7Bcity%3DNewYork%2C+type%3DHeadOffice%7D"));
+    }
 }
