@@ -1,10 +1,13 @@
 package org.jsmart.zerocode.core.httpclient;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.EntityBuilder;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -13,18 +16,20 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.jsmart.zerocode.core.utils.HelperJsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.jsmart.zerocode.core.httpclient.utils.FileUploadUtils.*;
-import static org.jsmart.zerocode.core.httpclient.utils.HeaderUtils.hasMultiPartHeader;
 import static org.jsmart.zerocode.core.httpclient.utils.HeaderUtils.processFrameworkDefault;
 import static org.jsmart.zerocode.core.httpclient.utils.UrlQueryParamsUtils.setQueryParams;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
@@ -35,6 +40,7 @@ public class BasicHttpClient {
     public static final String FILES_FIELD = "files";
     public static final String BOUNDARY_FIELD = "boundary";
     public static final String MULTIPART_FORM_DATA = "multipart/form-data";
+    public static final String APPLICATION_FORM_URL_ENCODED = "application/x-www-form-urlencoded";
     public static final String CONTENT_TYPE = "Content-Type";
 
     private Object COOKIE_JSESSIONID_VALUE;
@@ -186,7 +192,7 @@ public class BasicHttpClient {
      * @param queryParams - Query parameters to pass
      * @return : Effective url
      */
-    public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) {
+    public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) throws IOException {
         if (queryParams != null) {
             httpUrl = setQueryParams(httpUrl, queryParams);
         }
@@ -211,7 +217,7 @@ public class BasicHttpClient {
     /**
      * Override this method when you want to manipulate the request body passed from your test cases.
      * Otherwise the framework falls back to this default implementation.
-     *
+     * You can override this method via @UseHttpClient(YourCustomHttpClient.class)
      * @param body
      * @return
      */
@@ -225,6 +231,8 @@ public class BasicHttpClient {
      *
      * Please see the following request builder to handle file uploads.
      *     - BasicHttpClient#createFileUploadRequestBuilder(java.lang.String, java.lang.String, java.lang.String)
+     *
+     * You can override this method via @UseHttpClient(YourCustomHttpClient.class)
      *
      * @param httpUrl
      * @param methodName
@@ -247,6 +255,34 @@ public class BasicHttpClient {
     }
 
     /**
+     * This is how framework makes the KeyValue pair when "application/x-www-form-urlencoded" headers
+     * is passed in the request.  In case you want to build or prepare the requests differently,
+     * you can override this method via @UseHttpClient(YourCustomHttpClient.class).
+     *
+     * @param httpUrl
+     * @param methodName
+     * @param reqBodyAsString
+     * @return
+     * @throws IOException
+     */
+    public RequestBuilder createFormUrlEncodedRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) throws IOException {
+        RequestBuilder requestBuilder = RequestBuilder
+                .create(methodName)
+                .setUri(httpUrl);
+        if (reqBodyAsString != null) {
+            Map<String, Object> reqBodyMap = HelperJsonUtils.readObjectAsMap(reqBodyAsString);
+            List<NameValuePair> reqBody = new ArrayList<>();
+             for(String key : reqBodyMap.keySet()) {
+                 reqBody.add(new BasicNameValuePair(key, reqBodyMap.get(key).toString()));
+             }
+             HttpEntity httpEntity = new UrlEncodedFormEntity(reqBody);
+             requestBuilder.setEntity(httpEntity);
+            requestBuilder.setHeader(CONTENT_TYPE, APPLICATION_FORM_URL_ENCODED);
+        }
+        return requestBuilder;
+    }
+
+    /**
      * This is the http request builder for file uploads, using Apache Http Client. In case you want to build
      * or prepare the requests differently, you can override this method.
      *
@@ -255,6 +291,8 @@ public class BasicHttpClient {
      * this is reserved for "multipart/form-data" which the client sends to server during the file uploads. You can
      * also send more request-params and "boundary" from the test cases if needed. The boundary defaults to an unique
      * string of local-date-time-stamp if not provided in the request.
+     *
+     * You can override this method via @UseHttpClient(YourCustomHttpClient.class)
      *
      * @param httpUrl
      * @param methodName
@@ -307,13 +345,27 @@ public class BasicHttpClient {
         }
     }
 
-    private RequestBuilder createRequestBuilder(String httpUrl, String methodName, Map<String, Object> headers, String reqBodyAsString) throws IOException {
-        RequestBuilder requestBuilder;
-        if (hasMultiPartHeader(headers)) {
-            requestBuilder = createFileUploadRequestBuilder(httpUrl, methodName, reqBodyAsString);
-        } else {
-            requestBuilder = createDefaultRequestBuilder(httpUrl, methodName, reqBodyAsString);
+    public RequestBuilder createRequestBuilder(String httpUrl, String methodName, Map<String, Object> headers, String reqBodyAsString) throws IOException {
+
+        String contentType = headers != null? (String) headers.get(CONTENT_TYPE) :null;
+
+        if(contentType!=null){
+
+            if(contentType.equals(MULTIPART_FORM_DATA)){
+
+                return createFileUploadRequestBuilder(httpUrl, methodName, reqBodyAsString);
+
+            } else if(contentType.equals(APPLICATION_FORM_URL_ENCODED)) {
+
+                return createFormUrlEncodedRequestBuilder(httpUrl, methodName, reqBodyAsString);
+            }
+            // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+            // Extention- Any other header types to be specially handled here
+            // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+            // else if(contentType.equals("OTHER-TYPES")){
+            //    Handling logic
+            // }
         }
-        return requestBuilder;
+        return createDefaultRequestBuilder(httpUrl, methodName, reqBodyAsString);
     }
 }

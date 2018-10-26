@@ -13,7 +13,7 @@ import java.util.Map;
 
 // TODO: Move this to Smartutils class
 public class HelperJsonUtils {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(HelperJsonUtils.class);
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HelperJsonUtils.class);
     private static ObjectMapper mapper = new ObjectMapperProvider().get();
 
 
@@ -49,13 +49,13 @@ public class HelperJsonUtils {
 
     }
 
-    public static Map<String, Object> readHeadersAsMap(Object headers) {
+    public static Map<String, Object> readObjectAsMap(Object jsonContent) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            map = (new ObjectMapperProvider()).get().readValue(headers.toString(), HashMap.class);
-        } catch (IOException e) {
-            // return empty map if exception occurs
-            return map;
+            map = mapper.readValue(jsonContent.toString(), HashMap.class);
+        } catch (IOException exx) {
+            LOGGER.error("Exception occurred during parse to HashMap - " + exx);
+            throw new RuntimeException(exx);
         }
 
         return map;
@@ -63,7 +63,7 @@ public class HelperJsonUtils {
 
     public static String createAndReturnAssertionResultJson(int httpResponseCode,
                                                             String resultBodyContent, String locationHref) {
-        logger.debug("\n#locationHref: " + locationHref);
+        LOGGER.debug("\n#locationHref: " + locationHref);
 
         if (StringUtils.isEmpty(resultBodyContent)) {
             resultBodyContent = "{}";
@@ -81,7 +81,7 @@ public class HelperJsonUtils {
     }
 
     private void setRequestHeaders(Object headers, ClientRequest clientExecutor) {
-        Map<String, Object> headersMap = HelperJsonUtils.readHeadersAsMap(headers);
+        Map<String, Object> headersMap = HelperJsonUtils.readObjectAsMap(headers);
         for (Object key : headersMap.keySet()) {
             clientExecutor.header((String) key, headersMap.get(key));
         }
