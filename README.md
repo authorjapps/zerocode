@@ -32,11 +32,12 @@ AND- I will assert the response
 translates to the below executable JSON in `Zerocode` - Simple and clean ! <br/>
 _(See here [a full blown CRUD operation scenario](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) with POST, PUT, GET, DELETE example.)_ <br/>
 
-Keep in mind: It's simple JSON. <br/>
-~~_No feature files, no extra plugins, no statements or grammar syntax overhead._~~ 
 <img width="624" alt="post_get_user" src="https://user-images.githubusercontent.com/12598420/47145467-bc089400-d2c1-11e8-8707-8e2d2e8c3127.png">
 
-and it is **declarative** DSL, with the `request/response` fields available for the next steps via the `JSON Path`.
+Keep in mind: It's simple JSON. <br/>
+~~_No feature files, no extra plugins, no statements or grammar syntax overhead._~~ 
+
+And it is **declarative** DSL, with the `request/response` fields available for the next steps via the `JSON Path`.
 
 See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) for usages and examples.
 
@@ -255,6 +256,7 @@ See more usages and examples below.
 - [Generating IDs and sharing across steps](#18)
 - [Bare JSON String without curly braces, still a valid JSON](#19)
 - [Passing Headers to the REST API](#20) 
+- [Passing "Content-Type": "application/x-www-form-urlencoded" header](#201) 
 - [Setting Jenkins env propperty and picking environment specific properties file](#21)
 - [LocalDate and LocalDateTime format example](#22)
 - [SOAP method invocation example using xml input](#23)
@@ -1226,6 +1228,37 @@ public class ContractTestSuite {
 
 - [See a running example](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/16_passing_headers_to_rest_apis.json)
 
+#### 201:
+#### Passing "Content-Type": "application/x-www-form-urlencoded" header
+It is very easy to send this content-type in the header and assert the response.
+
+When you use this header, then you just need to put the `Key-Value` or `Name-Value` content under request `body` or request `queryParams` section. That's it.
+
+e.g.
+```javaScript
+         "request": {
+            "headers": {
+               "Content-Type": "application/x-www-form-urlencoded"
+            },
+            "body": {
+               "unit-no": "12-07",
+               "block-number": 33,
+               "state/region": "Singapore North",
+               "country": "Singapore",
+               "pin": "87654321",
+            }
+         }
+```
+
+- What happens if my **Key** contains a `space` or front slash `/` etc?
+
+This is automatically taken care by `Apache Http Client`. That means it gets converted to the equivalent encoded char which is understood by the server(e.g. Spring boot or Jersey or Tomcat etc ).
+
+e.g. 
+The above name-value pair behind the scene is sent to the server as below:
+> unit-no=12-07&country=Singapore&block-number=33&pin=87654321&state%2Fregion=Singapore+North
+
+See more examples and usages in the [Wiki >>](https://github.com/authorjapps/zerocode/wiki/application-x-www-form-urlencoded-urlencoded-with-KeyValue-params)
 
 #### 21:
 #### Passing environment param via Jenkins and dynamically picking environment specific properties file in CI
