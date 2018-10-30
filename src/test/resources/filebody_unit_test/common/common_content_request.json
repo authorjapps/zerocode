@@ -1,0 +1,10 @@
+{
+    "headers":{
+        "api_key":"hello key"
+    },
+    "body": {
+        "id": "Emp-No-${RANDOM.NUMBER}",
+        "age": 16,
+        "secret": "passwwrd"
+    }
+}

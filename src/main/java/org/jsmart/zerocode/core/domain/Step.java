@@ -16,8 +16,8 @@ public class Step {
     private final String name;
     private final String operation;
     private final String url;
-    private final JsonNode request;
-    private final JsonNode assertions;
+    private JsonNode request;
+    private JsonNode assertions;
 
 
     public Integer getLoop() {

@@ -31,12 +31,4 @@ public class HeaderUtils {
             requestBuilder.removeHeaders(key);
         }
     }
-
-    public static boolean hasMultiPartHeader(Map headersMap) {
-        if(headersMap == null){
-            return false;
-        }
-        String contentType = (String) headersMap.get(CONTENT_TYPE);
-        return contentType != null ? contentType.contains(MULTIPART_FORM_DATA) : false;
-    }
 }

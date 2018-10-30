@@ -64,7 +64,7 @@
             },
             "assertions": {
                 "status" : 404,
-                "rawBody" : "$CONTAINS.STRING:HTTP ERROR 404"
+                "rawBody" : "$CONTAINS.STRING:Request was not matched"
             }
         }
 

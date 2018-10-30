@@ -11,6 +11,8 @@ import org.jsmart.zerocode.core.engine.executor.JavaExecutor;
 import org.jsmart.zerocode.core.engine.executor.JavaExecutorImpl;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesorImpl;
 import org.jsmart.zerocode.core.kafka.KafkaService;
@@ -23,6 +25,8 @@ import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunnerImpl;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import static org.jsmart.zerocode.core.di.PropertyKeys.*;
+
 public class ApplicationMainModule extends AbstractModule {
     private static final Logger LOGGER = Logger.getLogger(ApplicationMainModule.class.getName());
 
@@ -31,7 +35,6 @@ public class ApplicationMainModule extends AbstractModule {
     public ApplicationMainModule(String serverEnv) {
         this.serverEnv = serverEnv;
     }
-
 
     @Override
     public void configure() {
@@ -64,14 +67,34 @@ public class ApplicationMainModule extends AbstractModule {
         try {
             properties.load(getClass().getClassLoader().getResourceAsStream(host));
 
+            // ----------------------------------------------------
+            // Below code is for backward compatibility,
+            // remove this after publishing for withdrawing support
+            // ----------------------------------------------------
+            checkAndLoadOldProperties(properties);
+
         } catch (Exception e) {
             LOGGER.info("###Oops!Exception### while reading target env file: " + host + ". Have you mentioned env details?");
-            e.printStackTrace();
-
             throw new RuntimeException("could not read the target-env properties file --" + host + "-- from the classpath.");
         }
 
         return properties;
+    }
+
+    private void checkAndLoadOldProperties(Properties properties) {
+
+        if(properties.get(WEB_APPLICATION_ENDPOINT_HOST) == null){
+            properties.setProperty(WEB_APPLICATION_ENDPOINT_HOST, (String)properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST));
+        }
+
+        if(properties.get(WEB_APPLICATION_ENDPOINT_PORT) == null){
+            properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, (String)properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT));
+        }
+
+        if(properties.get(WEB_APPLICATION_ENDPOINT_CONTEXT) == null){
+            properties.setProperty(WEB_APPLICATION_ENDPOINT_CONTEXT, (String)properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT));
+        }
+
     }
 
 }

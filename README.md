@@ -1,52 +1,43 @@
-## Zerocode - TDD and BDD <img width="84"  height="98" alt="screen shot 2018-08-16 at 8 29 27 am" src="https://user-images.githubusercontent.com/12598420/44822411-f8d5da00-abf2-11e8-94c3-8ef9817ddaa4.png"> 
+## Zerocode - TDD and BDD <img width="84"  height="103" alt="logo BnW" src="https://user-images.githubusercontent.com/12598420/46505720-e2dabb00-c829-11e8-943d-f967fa1f2a98.png"> 
 
-An open source API testing framework using declarative JSON steps - Simple, light weight and efficient. 
+An open source lib enables API testing via simple declarative JSON steps - REST, SOAP and DB services
 
-Keeping it simple, Zerocode helps to eliminate writing code for http method calls, POJOs/Builders, ser/deserialization of request/response payloads and result assertions. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It also helps in mocking/stubbing interfacing APIs via Wiremock under the hood. It empowers engineers to streamline and automate the user-jouneys keeping full focus on the ACs(acceptance criterias) with as simple as Copy-Paste of full or part the payload/assertions as JSON. Also its approach to IDE based performance testing to generate load/stress on the target application is the most simplest, accurate and efficient.
+Zerocode brings the simplicity in testing and validating APIs by eliminating repetitive code for test assertions, http calls and payload parsing. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
+
+It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - It goes a step further enabling you to simply reuse the test(s) from your regression pack.
 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
 [![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://github.com/authorjapps/zerocode/blob/master/img/code_coverage/code_coverage_granular.png)
 [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
 [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
-[![codeproject](https://img.shields.io/badge/codeproject-zerocode-blue.svg)](https://www.codeproject.com/search.aspx?q=zerocode&x=0&y=0&sbo=kw)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 
->The simplest way to test your APIs
+>Testing was _never_ so easy before.
 
-e.g. Keeping it simple - Your below AC(Acceptance Criteria) or an `user journey` scenario ,
+e.g. Your below User-Journey or ACs(Acceptance Criterias) or a scenario,
 ```java
-GIVEN- the GitHub REST api GET end point, 
-WHEN- I invoke the API, 
-THEN- I will receive 200(OK) status with the body and assert the response
-```
-translates to the below executable JSON in `Zerocode` - As simple as that ! <br/>
-_(See here a full blown CRUD operation [with POST, PUT, GET, DELETE](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) example.)_ <br/>
-Note: It's in simple JSON. ~~No feature files, no extra plugins, no statements or grammar needed.~~ 
+AC1:
+GIVEN- the POST api end point '/api/v1/users' to create an user,     
+WHEN- I invoke the API,     
+THEN- I will receive the 201 status with the a user ID and headers 
+AND- I will validate the response
 
-```javaScript
-{
-    "scenarioName": "Invoke the GET api and assert the response",
-    "steps": [
-        {
-            "name": "get_user_details",
-            "url": "https://api.github.com/users/octocat",
-            "operation": "GET",
-            "request": {
-            },
-            "assertions": {
-                "status": 200,
-                "body": {
-                    "login" : "octocat",
-                    "id" : 33847731,
-                    "type" : "User"
-                }
-            }
-        }
-    ]
-}
+AC2:
+GIVEN- the REST api GET end point '/api/v1/users/${created-User-Id}',     
+WHEN- I invoke the API,     
+THEN- I will receive the 200(Ok) status with body(user details) and headers
+AND- I will assert the response
 ```
-and it is **declarative** DSL, with the `request/response` fields available for the next steps via the `JSON Path`.
+translates to the below executable JSON in `Zerocode` - Simple and clean ! <br/>
+_(See here [a full blown CRUD operation scenario](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) with POST, PUT, GET, DELETE example.)_ <br/>
+
+<img width="624" alt="post_get_user" src="https://user-images.githubusercontent.com/12598420/47145467-bc089400-d2c1-11e8-8707-8e2d2e8c3127.png">
+
+Keep in mind: It's simple JSON. <br/>
+~~_No feature files, no extra plugins, no statements or grammar syntax overhead._~~ 
+
+And it is **declarative** DSL, with the `request/response` fields available for the next steps via the `JSON Path`.
 
 See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) for usages and examples.
 
@@ -60,7 +51,11 @@ Maven and CI
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 
+
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
+
+Hello World
+====
 
 #### Clone or download the below quick-start repos to run them in local IDE or maven command. 
 
@@ -72,18 +67,17 @@ Maven and CI
  
  * Quick start - [**Spring Boot** application - **Integration testing** - In-Memory](https://github.com/authorjapps/spring-boot-integration-test) <br/>
 
- * Quick start - [**Performance testing** - Resusing Spring JUnit tests - JUnit-Spring-Zerocode](https://github.com/authorjapps/zerocode-spring-junit) <br/>
+ * Quick start - [**Performance testing** - Resusing Spring JUnit tests(`less common`) - JUnit-Spring-Zerocode](https://github.com/authorjapps/zerocode-spring-junit) <br/>
 
 To build any of the above projects, you can use the following command
 ```
 mvn clean install -DskipTests
 ```
 
-#### In a nutshell
+#### Latest news/releases/features
 
-![Prepare Scenario](img/landing/pass_fail.png)
-
-> Making your test-driven API development efficient, accurate, fast and fun.
+#### Follow us(Twitter) - 
+<a href="https://twitter.com/ZercodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
 
 Zerocode empowers the automation testers as well as developers to build up test scenario steps effortlessly, with sending/receiving payload and asserting the response as JSON. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enabling you to focus on the business scenarios, user journeys and acceptance criterias acuurately. 
 
@@ -116,11 +110,6 @@ Who uses Zerocode?
  + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
  + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
  + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Authentication testing
-
-#### Latest news/releases/features
-
-#### Follow us(Twitter) - 
-<a href="https://twitter.com/ZercodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
 
 ## REST BDD Testing Framework
 
@@ -237,9 +226,9 @@ You just need the below `hello_world_status_ok_assertions.json`.
 
 the `github_host.properties` looks as below:
 ```
-restful.application.endpoint.host=https://api.github.com
-restful.application.endpoint.port=443
-restful.application.endpoint.context=
+web.application.endpoint.host=https://api.github.com
+web.application.endpoint.port=443
+web.application.endpoint.context=
 ```
 
 See more usages and examples below.
@@ -267,6 +256,7 @@ See more usages and examples below.
 - [Generating IDs and sharing across steps](#18)
 - [Bare JSON String without curly braces, still a valid JSON](#19)
 - [Passing Headers to the REST API](#20) 
+- [Passing "Content-Type": "application/x-www-form-urlencoded" header](#201) 
 - [Setting Jenkins env propperty and picking environment specific properties file](#21)
 - [LocalDate and LocalDateTime format example](#22)
 - [SOAP method invocation example using xml input](#23)
@@ -1127,16 +1117,21 @@ Each runner is capable of running with a properties file which can have host and
 -OR-
 - can have a single properties file shared across all the runners means all tests run against the same environment.
 
+** Note - As per Latest config update, we have updated endpoint configuration fields.
+From the release 1.2.8 onwards we will be allowing `web.` and deprecating `restful.` in endpoint configurations.
+We will take away support for `restful.` from endpoint configuration in the future releases.
+Version 1.2.8 will work for both as we have made the framework backward compatible.
+
 e.g.
 
 "config_hosts_sample.properties"
 
 ```
-restful.application.endpoint.host=http://{host-name-or-ip}
+web.application.endpoint.host=http://{host-name-or-ip}
 
-restful.application.endpoint.port=9998
+web.application.endpoint.port=9998
 
-restful.application.endpoint.context=/google-emp-services
+web.application.endpoint.context=/google-emp-services
 ```
 
 The runner looks like this:
@@ -1233,6 +1228,37 @@ public class ContractTestSuite {
 
 - [See a running example](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/16_passing_headers_to_rest_apis.json)
 
+#### 201:
+#### Passing "Content-Type": "application/x-www-form-urlencoded" header
+It is very easy to send this content-type in the header and assert the response.
+
+When you use this header, then you just need to put the `Key-Value` or `Name-Value` content under request `body` or request `queryParams` section. That's it.
+
+e.g.
+```javaScript
+         "request": {
+            "headers": {
+               "Content-Type": "application/x-www-form-urlencoded"
+            },
+            "body": {
+               "unit-no": "12-07",
+               "block-number": 33,
+               "state/region": "Singapore North",
+               "country": "Singapore",
+               "pin": "87654321",
+            }
+         }
+```
+
+- What happens if my **Key** contains a `space` or front slash `/` etc?
+
+This is automatically taken care by `Apache Http Client`. That means it gets converted to the equivalent encoded char which is understood by the server(e.g. Spring boot or Jersey or Tomcat etc ).
+
+e.g. 
+The above name-value pair behind the scene is sent to the server as below:
+> unit-no=12-07&country=Singapore&block-number=33&pin=87654321&state%2Fregion=Singapore+North
+
+See more examples and usages in the [Wiki >>](https://github.com/authorjapps/zerocode/wiki/application-x-www-form-urlencoded-urlencoded-with-KeyValue-params)
 
 #### 21:
 #### Passing environment param via Jenkins and dynamically picking environment specific properties file in CI
@@ -1513,11 +1539,11 @@ public class HelloWorldTest {
 soap_host_with_corp_proxy.properties
 ---------------------------
 # Web Server host and port
-restful.application.endpoint.host=https://soap-server-host/ServiceName
-restful.application.endpoint.port=443
+web.application.endpoint.host=https://soap-server-host/ServiceName
+web.application.endpoint.port=443
 
 # Web Service context; Leave it blank in case you do not have a common context
-restful.application.endpoint.context=
+web.application.endpoint.context=
 
 #sample test purpose - if you remove this from ehre, then make sure to remove from Java file
 corporate.proxy.host=http://exam.corporate-proxy-host.co.uk
@@ -1930,33 +1956,42 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 
 [Zerocode UUID or Zerocode uuid random UUID]: https://github.com/authorjapps/zerocode#zerocode
 
-[REST api JSON test cases]: https://github.com/authorjapps/zerocode
-[JSON tests cases for rest apis]: https://github.com/authorjapps/zerocode
-[Zerocode zero code rest bdd blog]: https://github.com/authorjapps/zerocode
-[Zerocode zero code behaviour driven development]: https://github.com/authorjapps/zerocode
-[Zerocode zero code testing]: https://github.com/authorjapps/zerocode
+[restful web services]: https://github.com/authorjapps/zerocode
+[restful]: https://github.com/authorjapps/zerocode
+[what is automation testing]: https://github.com/authorjapps/zerocode
+[rest client]: https://github.com/authorjapps/zerocode
+[qa and testing]: https://github.com/authorjapps/zerocode
+[bdd testing]: https://github.com/authorjapps/zerocode
+[test url]: https://github.com/authorjapps/zerocode
+[api performance testing]: https://github.com/authorjapps/zerocode
+[java test automation tools]: https://github.com/authorjapps/zerocode
+[test automation framework]: https://github.com/authorjapps/zerocode
+[black box testing]: https://github.com/authorjapps/zerocode
+[software testing framework]: https://github.com/authorjapps/zerocode
+[https test]: https://github.com/authorjapps/zerocode
+[automation framework]: https://github.com/authorjapps/zerocode
+[regression]: https://github.com/authorjapps/zerocode
 [Zerocode zero code JSON based testing test cases]: https://github.com/authorjapps/zerocode
-[Zerocode zero code Hello World]: https://github.com/authorjapps/zerocode
-[Zerocode zero code example]: https://github.com/authorjapps/zerocode
-[Zerocode zero code REST api and SOAP testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code RESTful API testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code end to end testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code contract based testing (CBT)]: https://github.com/authorjapps/zerocode
-[Zerocode zero code contract driven development (CDD)]: https://github.com/authorjapps/zerocode
-[Zerocode zero code Consumer Contract Testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code Mule System API, Experience API TDD BDD]: https://github.com/authorjapps/zerocode
-[Zerocode zero code JSON based testing test cases]: https://github.com/authorjapps/zerocode
-[Zerocode zero code api testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code API contract testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code contract based testing (CBT)]: https://github.com/authorjapps/zerocode
-[REST API Contract Testing]: https://github.com/authorjapps/zerocode
-[Zerocode zero code End to End E2E Integration Point Testing]: https://github.com/authorjapps/zerocode
-[Mulesoft API testing]: https://github.com/authorjapps/zerocode
-[Mulesoft System API SAPI testing]: https://github.com/authorjapps/zerocode
-[Mulesoft Experience API testing]: https://github.com/authorjapps/zerocode
-[Mule application testing, Mule API testing]: https://github.com/authorjapps/zerocode
-[API testing using declarative JSON steps]: https://github.com/authorjapps/zerocode
-[Performance testing using declarative JSON steps]: https://github.com/authorjapps/zerocode
-[Performance testing using JUnit and maven]: https://github.com/authorjapps/zerocode
-[REST apis Performance testing REST apis]: https://github.com/authorjapps/zerocode
+[functional testing]: https://github.com/authorjapps/zerocode
+[postman rest client]: https://github.com/authorjapps/zerocode
+[java automated testing tools]: https://github.com/authorjapps/zerocode
+[qa automation]: https://github.com/authorjapps/zerocode
+[soap ui testing]: https://github.com/authorjapps/zerocode
+[rest api testing]: https://github.com/authorjapps/zerocode
+[cucumber framework]: https://github.com/authorjapps/zerocode
+[cucumber java]: https://github.com/authorjapps/zerocode
+[bdd]: https://github.com/authorjapps/zerocode
+[microservices example]: https://github.com/authorjapps/zerocode
+[microservices testing]: https://github.com/authorjapps/zerocode
+[Performance testing]: https://github.com/authorjapps/zerocode
+[junit performance testing]: https://github.com/authorjapps/zerocode
+[feature files]: https://github.com/authorjapps/zerocode
+[restful web services example]: https://github.com/authorjapps/zerocode
+[open source api testing tools]: https://github.com/authorjapps/zerocode
+[automated app testing]: https://github.com/authorjapps/zerocode
+[api contract testing]: https://github.com/authorjapps/zerocode
+[json compare]: https://github.com/authorjapps/zerocode
+[spring boot integration test]: https://github.com/authorjapps/zerocode
+[json assertion]: https://github.com/authorjapps/zerocode
+[mulesoft api]: https://github.com/authorjapps/zerocode
 
