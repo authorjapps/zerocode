@@ -1,10 +1,8 @@
 package org.jsmart.zerocode.core.runner;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
@@ -25,9 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.KAFKA_TOPIC;
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.PROPERTY_KEY_HOST;
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.PROPERTY_KEY_PORT;
+import static org.jsmart.zerocode.core.domain.ZerocodeConstants.*;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.serviceType;
@@ -49,17 +45,14 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     private JsonServiceExecutor serviceExecutor;
 
     @Inject(optional = true)
-    @Inject
     @Named("web.application.endpoint.host")
     private String host;
 
     @Inject(optional = true)
-    @Inject
     @Named("web.application.endpoint.port")
     private String port;
 
     @Inject(optional = true)
-    @Inject
     @Named("web.application.endpoint.context")
     private String applicationContext;
 
@@ -359,20 +352,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     public void overrideApplicationContext(String applicationContext) {
         this.applicationContext = applicationContext;
-    }
-
-    private ServiceType serviceType(String serviceName, String methodName) {
-        ServiceType serviceType;
-
-        if (StringUtils.isEmpty(serviceName) || isEmpty(methodName)) {
-            serviceType = ServiceType.NONE;
-        } else if (serviceName != null && serviceName.contains("/")) {
-            serviceType = ServiceType.REST_CALL;
-        } else {
-            serviceType = ServiceType.JAVA_CALL;
-        }
-
-        return serviceType;
     }
 
     private String getFullyQualifiedRestUrl(String serviceEndPoint) {

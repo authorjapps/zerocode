@@ -2,6 +2,7 @@ package org.jsmart.zerocode.core.di;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
 import org.jukito.TestModule;
@@ -13,7 +14,7 @@ import org.junit.runner.RunWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-//this config file is to test backword compatibility, remove after release 1.2.9
+//this config file is to test backword compatibility, remove this test only after release 1.2.9 or later releases
 @RunWith(JukitoRunner.class)
 public class ApplicationMainModuleBackwordCompatibilityTest {
 

@@ -4,6 +4,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -31,9 +32,10 @@ public class ZeroCodeKafkaUnloadHelperTest {
         assertThat(lineCount, is(2L));
     }
 
-    @Test(expected = RuntimeException.class)
+    //Caused by: java.lang.RuntimeException: Create file '//////zerocode/target/temp/demo2.txt' Exceptionjava.nio.file.AccessDeniedException: /zerocode
+    @Test (expected = RuntimeException.class)
     public void test_dodgyFile() throws IOException {
-        String absoluteFileName = "~//zerocode/target/temp/demo2.txt";
-        ZeroCodeKafkaUnloadHelper.dumpRecords(absoluteFileName, new ArrayList<>());
+        String badAbsoluteFileName = "//////zerocode/target/temp/demo2.txt";
+        ZeroCodeKafkaUnloadHelper.dumpRecords(badAbsoluteFileName, new ArrayList<>());
     }
 }

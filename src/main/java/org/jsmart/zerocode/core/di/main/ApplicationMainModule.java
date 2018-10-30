@@ -5,7 +5,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import org.jsmart.zerocode.core.di.module.GsonModule;
 import org.jsmart.zerocode.core.di.module.HttpClientModule;
-import org.jsmart.zerocode.core.di.module.KafkaModule;
 import org.jsmart.zerocode.core.di.module.ObjectMapperModule;
 import org.jsmart.zerocode.core.engine.executor.JavaExecutor;
 import org.jsmart.zerocode.core.engine.executor.JavaExecutorImpl;
@@ -55,6 +54,7 @@ public class ApplicationMainModule extends AbstractModule {
         bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
         bind(KafkaService.class).to(KafkaServiceImpl.class);
+        bind(ZeroCodeExternalFileProcessor.class).to(ZeroCodeExternalFileProcessorImpl.class);
 
         /*
 		 * Bind properties for localhost, CI, PRE-PROD etc
@@ -83,16 +83,19 @@ public class ApplicationMainModule extends AbstractModule {
 
     private void checkAndLoadOldProperties(Properties properties) {
 
-        if(properties.get(WEB_APPLICATION_ENDPOINT_HOST) == null){
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_HOST, (String)properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST));
+        if(properties.get(WEB_APPLICATION_ENDPOINT_HOST) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST) != null){
+            Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST);
+            properties.setProperty(WEB_APPLICATION_ENDPOINT_HOST, oldPropertyValue != null ? oldPropertyValue.toString() : null);
         }
 
-        if(properties.get(WEB_APPLICATION_ENDPOINT_PORT) == null){
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, (String)properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT));
+        if(properties.get(WEB_APPLICATION_ENDPOINT_PORT) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT) != null){
+            Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT);
+            properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, oldPropertyValue != null ? oldPropertyValue.toString() : null);
         }
 
-        if(properties.get(WEB_APPLICATION_ENDPOINT_CONTEXT) == null){
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_CONTEXT, (String)properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT));
+        if(properties.get(WEB_APPLICATION_ENDPOINT_CONTEXT) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT) != null){
+            Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT);
+            properties.setProperty(WEB_APPLICATION_ENDPOINT_CONTEXT, oldPropertyValue != null ? oldPropertyValue.toString() : null);
         }
 
     }

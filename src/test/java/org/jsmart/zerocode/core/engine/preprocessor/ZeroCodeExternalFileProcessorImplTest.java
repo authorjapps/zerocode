@@ -2,7 +2,7 @@ package org.jsmart.zerocode.core.engine.preprocessor;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jsmart.zerocode.core.di.ObjectMapperProvider;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.Step;
 import org.junit.Test;
 
