@@ -51,9 +51,10 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     public JsonServiceExecutorImpl() {
     }
 
+    @Override
     public String executeJavaService(String serviceName, String methodName, String requestJson) throws JsonProcessingException {
 
-        if( javaExecutor == null) {
+        if (javaExecutor == null) {
             throw new RuntimeException("Can not proceed as the framework could not load the executors. ");
         }
 
@@ -76,10 +77,11 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         }
     }
 
+    @Override
     public String executeRESTService(String urlName, String methodName, String requestJson) {
 
         try {
-            String responseJson =  executeRESTInternal(urlName, methodName, requestJson);
+            String responseJson = executeRESTInternal(urlName, methodName, requestJson);
 
             return responseJson;
 
@@ -98,42 +100,8 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     }
 
     @Override
-    public String executeKafkaService(String kafkaServers, String topicName, String methodName, String requestJson) {
-        try {
-            switch(methodName) {
-                case "publish":
-                case "load":
-                case "produce":
-                case "send":
-                    return ZeroCodeKafkaLoadHelper.load(kafkaServers, topicName, requestJson);
-//                    return kafkaService.produce(kafkaServers, topicName, requestJson);
-
-                case "subscribe":
-                case "unload":
-                case "consume":
-                case "receive":
-                    return ZeroCodeKafkaUnloadHelper.unload(kafkaServers, topicName, requestJson);
-
-                case "poll":
-                    return ZeroCodeKafkaLoadHelper.load(kafkaServers, topicName, requestJson);
-
-                default:
-                    throw new RuntimeException("Unsupported Kafka operation");
-            }
-
-        } catch (Throwable severeExcep) {
-
-            LOGGER.error("Exception during Kafka operation, " +
-                    "\n topicName:{}, " +
-                    "\n operation:{}, " +
-                    "\n error: {}",
-                    topicName,
-                    methodName,
-                    severeExcep);
-
-            throw new RuntimeException(severeExcep);
-
-        }
+    public String executeKafkaService(String kafkaServers, String topicName, String operation, String requestJson) {
+        return kafkaService.execute(kafkaServers, topicName, operation, requestJson);
     }
 
     private String executeRESTInternal(String httpUrl, String methodName, String requestJson) throws Exception {
@@ -164,46 +132,46 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
         final MultivaluedMap responseHeaders = serverResponse.getMetadata();
 
-        final String responseBodyAsString = (String)serverResponse.getEntity();
-    
+        final String responseBodyAsString = (String) serverResponse.getEntity();
+
         Response zeroCodeResponse = deriveZeroCodeResponseFrom(responseStatus, responseHeaders, responseBodyAsString);
-        
+
         final String zeroCodeResponseString = objectMapper.writeValueAsString(zeroCodeResponse);
 
         return prettyPrintJson(zeroCodeResponseString);
     }
-    
+
     private Response deriveZeroCodeResponseFrom(int responseStatus,
-                    MultivaluedMap responseHeaders,
-                    String responseBodyAsString)
-                    throws IOException {
-        
+                                                MultivaluedMap responseHeaders,
+                                                String responseBodyAsString)
+            throws IOException {
+
         final JsonNode jsonBody;
         final String rawBody;
-        
-        if(isEmpty(responseBodyAsString)){
+
+        if (isEmpty(responseBodyAsString)) {
             jsonBody = null;
             rawBody = null;
-    
-        } else if(isParsableJson(responseBodyAsString)){
+
+        } else if (isParsableJson(responseBodyAsString)) {
             jsonBody = objectMapper.readValue(responseBodyAsString, JsonNode.class);
             rawBody = null;
-            
+
         } else {
             jsonBody = null;
             rawBody = responseBodyAsString;
-        
+
         }
-        
+
         return new Response(responseStatus, responseHeaders, jsonBody, rawBody, null);
     }
-    
+
     private boolean completedMockingEndPoints(String httpUrl, String requestJson, String methodName, Object bodyContent) throws java.io.IOException {
-        if(httpUrl.contains("/$MOCK") && methodName.equals("$USE.WIREMOCK")){
+        if (httpUrl.contains("/$MOCK") && methodName.equals("$USE.WIREMOCK")) {
 
             MockSteps mockSteps = smartUtils.getMapper().readValue(requestJson, MockSteps.class);
 
-            if(mockPort > 0){
+            if (mockPort > 0) {
                 createWithWireMock(mockSteps, mockPort);
 
                 LOGGER.info("#SUCCESS: End points simulated via wiremock.");
@@ -215,9 +183,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
                     "Usage: e.g. in your <env host config .properties> file provide- \n " +
                     "mock.api.port=8888\n\n");
             return false;
-        }
-
-        else if(httpUrl.contains("/$MOCK") && methodName.equals("$USE.VIRTUOSO")){
+        } else if (httpUrl.contains("/$MOCK") && methodName.equals("$USE.VIRTUOSO")) {
             LOGGER.info("\n#body:\n" + bodyContent);
 
             //read the content of the "request". This contains the complete rest API.
@@ -225,9 +191,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
             LOGGER.info("#SUCCESS: End point simulated via virtuoso.");
             return true;
-        }
-
-        else if(httpUrl.contains("/$MOCK") && methodName.equals("$USE.SIMULATOR")){
+        } else if (httpUrl.contains("/$MOCK") && methodName.equals("$USE.SIMULATOR")) {
             LOGGER.info("\n#body:\n" + bodyContent);
 
             //read the content of the "request". This contains the complete rest API.
@@ -241,25 +205,25 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     }
 
     private Object readJsonPathOrElseNull(String requestJson, String jsonPath) {
-        try{
+        try {
             return JsonPath.read(requestJson, jsonPath);
-        } catch(PathNotFoundException pEx){
+        } catch (PathNotFoundException pEx) {
             LOGGER.debug("No " + jsonPath + " was present in the request. returned null.");
-            return  null;
+            return null;
         }
     }
-    
+
     private boolean isParsableJson(String potentialJsonString) {
         try {
             objectMapper.readTree(potentialJsonString);
             return true;
         } catch (IOException e) {
             LOGGER.warn("\n---------------------------------------------\n\n"
-                         + "\t\t\t\t\t\t * Warning *  \n\nOutput was not a valid JSON body. It was treated as a simple rawBody."
-                        + " If it was intentional, you can ignore this warning. "
-                         + "\n -OR- Update your assertions block with \"rawBody\" instead of \"body\" "
-                         + "\n e.g. \"rawBody\" : \"an expected string \""
-                         + "\n\n---------------------------------------------");
+                    + "\t\t\t\t\t\t * Warning *  \n\nOutput was not a valid JSON body. It was treated as a simple rawBody."
+                    + " If it was intentional, you can ignore this warning. "
+                    + "\n -OR- Update your assertions block with \"rawBody\" instead of \"body\" "
+                    + "\n e.g. \"rawBody\" : \"an expected string \""
+                    + "\n\n---------------------------------------------");
             return false;
         }
     }

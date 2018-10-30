@@ -13,7 +13,7 @@ public class TestKafkaConsume {
 
     @Test
     @JsonTestCase("kafka/consume/test_kafka_subscribe.json")
-    public void testKafka() throws Exception {
+    public void testKafkaConsume() throws Exception {
     }
 
     @Test
