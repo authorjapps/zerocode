@@ -10,6 +10,7 @@ import java.util.Objects;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConsumeRequestConfig {
+    // Change to "consumerLocalProperties"
     private final ConsumeTestProperties consumeTestProperties;
 
     @JsonCreator

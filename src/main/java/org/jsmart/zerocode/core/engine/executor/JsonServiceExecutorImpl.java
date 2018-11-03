@@ -10,9 +10,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.Response;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.kafka.KafkaService;
-import org.jsmart.zerocode.core.kafka.ZeroCodeKafkaLoadHelper;
-import org.jsmart.zerocode.core.kafka.ZeroCodeKafkaUnloadHelper;
+import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +34,13 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     private ObjectMapper objectMapper;
 
     @Inject
-    SmartUtils smartUtils;
+    private SmartUtils smartUtils;
 
     @Inject
-    BasicHttpClient httpClient;
+    private BasicHttpClient httpClient;
 
     @Inject
-    KafkaService kafkaService;
+    private BasicKafkaClient kafkaClient;
 
     @Inject(optional = true)
     @Named("mock.api.port")
@@ -101,7 +99,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
     @Override
     public String executeKafkaService(String kafkaServers, String topicName, String operation, String requestJson) {
-        return kafkaService.execute(kafkaServers, topicName, operation, requestJson);
+        return kafkaClient.execute(kafkaServers, topicName, operation, requestJson);
     }
 
     private String executeRESTInternal(String httpUrl, String methodName, String requestJson) throws Exception {

@@ -1,14 +1,20 @@
-package org.jsmart.zerocode.core.kafka;
+package org.jsmart.zerocode.core.kafka.receive;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.jsmart.zerocode.core.kafka.ConsumedRecords;
+import org.jsmart.zerocode.core.kafka.DeliveryStatus;
+import org.jsmart.zerocode.core.kafka.KafkaConstants;
 import org.jsmart.zerocode.core.kafka.consume.ConsumeRequestConfig;
 import org.jsmart.zerocode.core.kafka.consume.ConsumeTestProperties;
 import org.slf4j.Logger;
@@ -30,13 +36,20 @@ import static java.time.Duration.ofMillis;
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.OK;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
-public class ZeroCodeKafkaUnloadHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeKafkaUnloadHelper.class);
+@Singleton
+public class KafkaReceiver {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaReceiver.class);
+
+    @Inject(optional = true)
+    @Named("kafka.consumer.properties")
+    private String consumerPropertyFile;
 
     private static ObjectMapper objectMapper = new ObjectMapperProvider().get();
     private static Gson gson = new GsonSerDeProvider().get();
 
-    public static String unload(String kafkaServers, String topicName, String consumePropertiesAsJson) throws IOException {
+    public String receive(String kafkaServers, String topicName, String consumePropertiesAsJson) throws IOException {
+
         ConsumeTestProperties consumeLocalTestProps = readConsumerLocalTestProperties(consumePropertiesAsJson);
 
         Consumer<Long, String> consumer = createConsumer(kafkaServers, topicName);
@@ -133,8 +146,8 @@ public class ZeroCodeKafkaUnloadHelper {
         }
     }
 
-    private static Consumer<Long, String> createConsumer(String bootStrapServers, String topic) {
-        try (InputStream propsIs = Resources.getResource("hosts_servers/kafka_consumer.properties").openStream()) {
+    private Consumer<Long, String> createConsumer(String bootStrapServers, String topic) {
+        try (InputStream propsIs = Resources.getResource(consumerPropertyFile).openStream()) {
             Properties properties = new Properties();
             properties.load(propsIs);
             properties.put("bootstrap.servers", bootStrapServers);
@@ -184,5 +197,4 @@ public class ZeroCodeKafkaUnloadHelper {
     private static String osIndependentNewLine() {
         return System.getProperty("line.separator");
     }
-
 }

@@ -14,8 +14,7 @@ public class KafkaServiceImpl implements KafkaService {
     private String key1;
 
     @Inject
-    BasicKafkaClient kafkaClient;
-
+    private BasicKafkaClient kafkaClient;
 
     @Override
     public String consume(String serviceName, String methodName, String requestJson) {

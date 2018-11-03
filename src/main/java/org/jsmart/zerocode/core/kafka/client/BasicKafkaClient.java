@@ -1,55 +1,53 @@
 package org.jsmart.zerocode.core.kafka.client;
 
-import org.jsmart.zerocode.core.kafka.ZeroCodeKafkaLoadHelper;
-import org.jsmart.zerocode.core.kafka.ZeroCodeKafkaUnloadHelper;
+import com.google.inject.Inject;
+import org.jsmart.zerocode.core.kafka.receive.KafkaReceiver;
+import org.jsmart.zerocode.core.kafka.send.KafkaSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BasicKafkaClient {
-    Logger LOGGER = LoggerFactory.getLogger(BasicKafkaClient.class);
+    private Logger LOGGER = LoggerFactory.getLogger(BasicKafkaClient.class);
+
+    @Inject
+    private  KafkaSender sender;
+
+    @Inject
+    private  KafkaReceiver receiver;
 
 
     public BasicKafkaClient() {
     }
 
     public String execute(String brokers, String topicName, String operation, String requestJson) {
-        LOGGER.info("Executing via <<BasicKafkaClient>> brokers:{}, topicName:{}, operation:{}, requestJson:{}",
-                brokers, topicName, operation, requestJson);
+        LOGGER.info("brokers:{}, topicName:{}, operation:{}, requestJson:{}", brokers, topicName, operation, requestJson);
 
         try {
             switch (operation) {
-                case "publish":
-                case "load":
-                case "produce":
                 case "send":
-                    return ZeroCodeKafkaLoadHelper.load(brokers, topicName, requestJson);
-                    //return kafkaService.produce(kafkaServers, topicName, requestJson);
+                case "load":
+                case "publish":
+                case "produce":
+                    return sender.send(brokers, topicName, requestJson);
 
-                case "subscribe":
                 case "unload":
                 case "consume":
                 case "receive":
-                    return ZeroCodeKafkaUnloadHelper.unload(brokers, topicName, requestJson);
+                case "subscribe":
+                    return receiver.receive(brokers, topicName, requestJson);
 
                 case "poll":
-                    return ZeroCodeKafkaLoadHelper.load(brokers, topicName, requestJson);
+                    throw new RuntimeException("poll - Not yet Implemented");
 
                 default:
-                    throw new RuntimeException("Unsupported Kafka operation");
+                    throw new RuntimeException("Unsupported. Framework could not assume a default Kafka operation");
             }
 
-        } catch (Throwable severeExcep) {
+        } catch (Throwable exx) {
 
-            LOGGER.error("Exception during Kafka operation, " +
-                            "\n topicName:{}, " +
-                            "\n operation:{}, " +
-                            "\n error: {}",
-                    topicName,
-                    operation,
-                    severeExcep);
+            LOGGER.error("Exception during operation:{}, topicName:{}, error:{}", operation, topicName, exx);
 
-            throw new RuntimeException(severeExcep);
-
+            throw new RuntimeException(exx);
         }
 
     }

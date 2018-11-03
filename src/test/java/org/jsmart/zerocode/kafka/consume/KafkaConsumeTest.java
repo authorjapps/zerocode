@@ -7,9 +7,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@TargetEnv("hosts_servers/kafka_test_server.properties")
+@TargetEnv(
+        value="hosts_servers/kafka_test_server.properties"
+)
 @RunWith(ZeroCodeUnitRunner.class)
-public class TestKafkaConsume {
+public class KafkaConsumeTest {
 
     @Test
     @JsonTestCase("kafka/consume/test_kafka_subscribe.json")
