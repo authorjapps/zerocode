@@ -40,7 +40,6 @@ import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFil
 public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeUnitRunner.class);
 
-    protected boolean passed;
     private ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner;
     private final Class<?> testClass;
     private Injector injector;
@@ -53,6 +52,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private String currentTestCase;
     private LogCorrelationshipPrinter logCorrelationshipPrinter;
     protected boolean testRunCompleted;
+    protected boolean passed;
 
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}

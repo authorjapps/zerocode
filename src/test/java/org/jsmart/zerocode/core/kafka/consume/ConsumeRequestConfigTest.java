@@ -15,7 +15,7 @@ public class ConsumeRequestConfigTest {
     @Test
     public void testSerDeser() throws IOException {
         ConsumeRequestConfig javaObject = new ConsumeRequestConfig(
-                new ConsumeTestProperties("RAW:/target/ttt", "RAW", true, null));
+                new ConsumeTestProperties("RAW:/target/ttt", "RAW", true, null, null));
         ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
         String json = objectMapper.writeValueAsString(javaObject);
@@ -28,7 +28,7 @@ public class ConsumeRequestConfigTest {
     @Test
     public void testSerDeser_oneFieldOnly() throws IOException {
         ConsumeRequestConfig javaObject = new ConsumeRequestConfig(
-                new ConsumeTestProperties("JSON:/target/ttt", "RAW", null, null));
+                new ConsumeTestProperties("JSON:/target/ttt", "RAW", null, null, null));
 
         String json = objectMapper.writeValueAsString(javaObject);
         assertThat(json, is("{\"consumeTestProperties\":{\"fileDumpTo\":\"JSON:/target/ttt\",\"fileDumpType\":\"RAW\"}}"));

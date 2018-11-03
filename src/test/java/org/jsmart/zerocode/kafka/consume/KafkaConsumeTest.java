@@ -7,9 +7,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@TargetEnv(
-        value="hosts_servers/kafka_test_server.properties"
-)
+@TargetEnv("hosts_servers/kafka_test_server.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaConsumeTest {
 

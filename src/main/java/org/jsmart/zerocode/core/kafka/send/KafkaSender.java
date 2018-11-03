@@ -2,12 +2,10 @@ package org.jsmart.zerocode.core.kafka.send;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -17,13 +15,9 @@ import org.jsmart.zerocode.core.kafka.DeliveryStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.FAILED;
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.OK;
-import static org.jsmart.zerocode.core.kafka.common.CommonConfigs.BOOTSTRAP_SERVERS;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.createProducer;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 @Singleton
@@ -35,12 +29,12 @@ public class KafkaSender {
     private String producerPropertyFile;
 
 
-    private static ObjectMapper objectMapper = new ObjectMapperProvider().get();
-    private static Gson gson = new GsonSerDeProvider().get();
+    private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
+    private final Gson gson = new GsonSerDeProvider().get();
 
 
     public String send(String brokers, String topicName, String requestJson) throws JsonProcessingException {
-        Producer<Long, String> producer = createProducer(brokers);
+        Producer<Long, String> producer = createProducer(brokers, producerPropertyFile);
         String status = objectMapper.writeValueAsString(new DeliveryStatus(OK));
 
         for (int index = 0; index < 1; index++) {
@@ -69,17 +63,4 @@ public class KafkaSender {
 
     }
 
-    private Producer<Long, String> createProducer(String bootStrapServers) {
-
-        try (InputStream propsIs = Resources.getResource(producerPropertyFile).openStream()) {
-            Properties properties = new Properties();
-            properties.load(propsIs);
-            properties.put(BOOTSTRAP_SERVERS, bootStrapServers);
-
-            return new KafkaProducer(properties);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Exception while reading kafka producer properties" + e);
-        }
-    }
 }

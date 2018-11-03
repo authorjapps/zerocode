@@ -13,6 +13,7 @@ public class ConsumeTestProperties {
     private final String fileDumpTo;
     private final String fileDumpType;
     private final Boolean commitAsync;
+    private final Boolean commitSync;
     private final Boolean showRecordsAsResponse;
 
     @JsonCreator
@@ -20,15 +21,17 @@ public class ConsumeTestProperties {
             @JsonProperty("fileDumpTo") String fileDumpTo,
             @JsonProperty("fileDumpType") String fileDumpType,
             @JsonProperty("commitAsync") Boolean commitAsync,
+            @JsonProperty("commitSync") Boolean commitSync,
             @JsonProperty("showRecordsAsResponse") Boolean showRecordsAsResponse) {
         this.fileDumpTo = fileDumpTo;
         this.fileDumpType = fileDumpType;
         this.commitAsync = commitAsync;
+        this.commitSync = commitSync;
         this.showRecordsAsResponse = showRecordsAsResponse;
     }
 
     ConsumeTestProperties() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
     public static ConsumeTestProperties empty(){
@@ -47,6 +50,10 @@ public class ConsumeTestProperties {
         return commitAsync;
     }
 
+    public Boolean getCommitSync() {
+        return commitSync;
+    }
+
     public Boolean getShowRecordsAsResponse() {
         return showRecordsAsResponse;
     }
@@ -59,13 +66,14 @@ public class ConsumeTestProperties {
         return Objects.equals(fileDumpTo, that.fileDumpTo) &&
                 Objects.equals(fileDumpType, that.fileDumpType) &&
                 Objects.equals(commitAsync, that.commitAsync) &&
+                Objects.equals(commitSync, that.commitSync) &&
                 Objects.equals(showRecordsAsResponse, that.showRecordsAsResponse);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(fileDumpTo, fileDumpType, commitAsync, showRecordsAsResponse);
+        return Objects.hash(fileDumpTo, fileDumpType, commitAsync, commitSync, showRecordsAsResponse);
     }
 
     @Override
@@ -74,6 +82,7 @@ public class ConsumeTestProperties {
                 "fileDumpTo='" + fileDumpTo + '\'' +
                 ", fileDumpType='" + fileDumpType + '\'' +
                 ", commitAsync=" + commitAsync +
+                ", commitSync=" + commitSync +
                 ", showRecordsAsResponse=" + showRecordsAsResponse +
                 '}';
     }
