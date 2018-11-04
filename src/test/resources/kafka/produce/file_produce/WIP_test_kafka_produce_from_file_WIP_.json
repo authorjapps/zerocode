@@ -24,7 +24,7 @@
             "url": "kafka-topic:demo",
             "operation": "consume",
             "request": {
-                "consumeTestProperties": {
+                "consumerLocalConfigs": {
                     "fileDumpTo": "target/temp/demo.txt",
                     "fileDumpType": "RAW",
                     "commitAsync":true,

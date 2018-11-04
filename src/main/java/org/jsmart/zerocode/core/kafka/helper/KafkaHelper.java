@@ -5,7 +5,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
-import org.jsmart.zerocode.core.kafka.consume.ConsumeTestProperties;
+import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +44,7 @@ public class KafkaHelper {
         }
     }
 
-    public static void validateConsumeProperties(ConsumeTestProperties consumeLocalTestProps) {
+    public static void validateConsumeProperties(ConsumerLocalConfigs consumeLocalTestProps) {
         if (null != consumeLocalTestProps.getFileDumpType() && consumeLocalTestProps.getFileDumpTo() == null) {
             throw new RuntimeException("Found type, but no fileName. Try e.g. 'fileDumpTo':'target/temp/abc.txt' ");
         }

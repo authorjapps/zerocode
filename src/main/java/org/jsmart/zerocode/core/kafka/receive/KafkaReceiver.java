@@ -14,8 +14,8 @@ import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.ConsumedRecords;
 import org.jsmart.zerocode.core.kafka.DeliveryStatus;
 import org.jsmart.zerocode.core.kafka.KafkaConstants;
-import org.jsmart.zerocode.core.kafka.consume.ConsumeRequestConfig;
-import org.jsmart.zerocode.core.kafka.consume.ConsumeTestProperties;
+import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigsWrap;
+import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class KafkaReceiver {
 
         Consumer<Long, String> consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
 
-        ConsumeTestProperties consumeLocalTestProps = readConsumerLocalTestProperties(consumePropertiesAsJson);
+        ConsumerLocalConfigs consumeLocalTestProps = readConsumerLocalTestProperties(consumePropertiesAsJson);
 
         final List<ConsumerRecord> fetchedRecords = new ArrayList<>();
 
@@ -93,7 +93,7 @@ public class KafkaReceiver {
 
     }
 
-    private String prepareResult(ConsumeTestProperties consumeLocalTestProps, List<ConsumerRecord> fetchedRecords) throws JsonProcessingException {
+    private String prepareResult(ConsumerLocalConfigs consumeLocalTestProps, List<ConsumerRecord> fetchedRecords) throws JsonProcessingException {
         if (consumeLocalTestProps != null && !consumeLocalTestProps.getShowRecordsAsResponse()) {
 
             return objectMapper.writeValueAsString(new DeliveryStatus(OK, fetchedRecords.size()));
@@ -105,7 +105,7 @@ public class KafkaReceiver {
         }
     }
 
-    private void handleCommitSyncAsync(Consumer<Long, String> consumer, ConsumeTestProperties consumeLocalTestProps) {
+    private void handleCommitSyncAsync(Consumer<Long, String> consumer, ConsumerLocalConfigs consumeLocalTestProps) {
 
         if(consumeLocalTestProps != null){
 
@@ -129,11 +129,11 @@ public class KafkaReceiver {
         // ---------------------------------------------------
     }
 
-    private ConsumeTestProperties readConsumerLocalTestProperties(String consumePropertiesAsJson) {
+    private ConsumerLocalConfigs readConsumerLocalTestProperties(String consumePropertiesAsJson) {
         try {
-            ConsumeRequestConfig consumeRequestConfig = objectMapper.readValue(consumePropertiesAsJson, ConsumeRequestConfig.class);
+            ConsumerLocalConfigsWrap consumerLocalConfigsWrap = objectMapper.readValue(consumePropertiesAsJson, ConsumerLocalConfigsWrap.class);
 
-            return consumeRequestConfig.getConsumeTestProperties();
+            return consumerLocalConfigsWrap.getConsumerLocalConfigs();
 
         } catch (IOException exx) {
             throw new RuntimeException(exx);

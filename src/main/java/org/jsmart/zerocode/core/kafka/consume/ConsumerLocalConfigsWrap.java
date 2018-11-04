@@ -9,36 +9,35 @@ import java.util.Objects;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConsumeRequestConfig {
-    // Change to "consumerLocalProperties"
-    private final ConsumeTestProperties consumeTestProperties;
+public class ConsumerLocalConfigsWrap {
+    private final ConsumerLocalConfigs consumerLocalConfigs;
 
     @JsonCreator
-    public ConsumeRequestConfig(@JsonProperty("consumeTestProperties") ConsumeTestProperties consumeTestProperties) {
-        this.consumeTestProperties = consumeTestProperties;
+    public ConsumerLocalConfigsWrap(@JsonProperty("consumerLocalConfigs") ConsumerLocalConfigs consumerLocalConfigs) {
+        this.consumerLocalConfigs = consumerLocalConfigs;
     }
 
-    public ConsumeTestProperties getConsumeTestProperties() {
-        return consumeTestProperties;
+    public ConsumerLocalConfigs getConsumerLocalConfigs() {
+        return consumerLocalConfigs;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ConsumeRequestConfig that = (ConsumeRequestConfig) o;
-        return Objects.equals(consumeTestProperties, that.consumeTestProperties);
+        ConsumerLocalConfigsWrap that = (ConsumerLocalConfigsWrap) o;
+        return Objects.equals(consumerLocalConfigs, that.consumerLocalConfigs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(consumeTestProperties);
+        return Objects.hash(consumerLocalConfigs);
     }
 
     @Override
     public String toString() {
-        return "ConsumeRequestConfig{" +
-                "consumeTestProperties=" + consumeTestProperties +
+        return "ConsumerLocalConfigsWrap{" +
+                "consumerLocalConfigs=" + consumerLocalConfigs +
                 '}';
     }
 }

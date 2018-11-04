@@ -14,8 +14,6 @@ import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcesso
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesorImpl;
-import org.jsmart.zerocode.core.kafka.KafkaService;
-import org.jsmart.zerocode.core.kafka.KafkaServiceImpl;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGeneratorImpl;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunner;
@@ -53,12 +51,11 @@ public class ApplicationMainModule extends AbstractModule {
         bind(JavaExecutor.class).to(JavaExecutorImpl.class);
         bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
-        bind(KafkaService.class).to(KafkaServiceImpl.class);
         bind(ZeroCodeExternalFileProcessor.class).to(ZeroCodeExternalFileProcessorImpl.class);
 
-        /*
-		 * Bind properties for localhost, CI, PRE-PROD etc
-		 */
+        // ------------------------------------------------
+        // Bind properties for localhost, CI, DIT, SIT etc
+        // ------------------------------------------------
         Names.bindProperties(binder(), getProperties(serverEnv));
     }
 

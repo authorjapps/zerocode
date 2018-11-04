@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ConsumeTestProperties {
+public class ConsumerLocalConfigs {
     private final String fileDumpTo;
     private final String fileDumpType;
     private final Boolean commitAsync;
@@ -17,7 +17,7 @@ public class ConsumeTestProperties {
     private final Boolean showRecordsAsResponse;
 
     @JsonCreator
-    public ConsumeTestProperties(
+    public ConsumerLocalConfigs(
             @JsonProperty("fileDumpTo") String fileDumpTo,
             @JsonProperty("fileDumpType") String fileDumpType,
             @JsonProperty("commitAsync") Boolean commitAsync,
@@ -30,12 +30,12 @@ public class ConsumeTestProperties {
         this.showRecordsAsResponse = showRecordsAsResponse;
     }
 
-    ConsumeTestProperties() {
+    ConsumerLocalConfigs() {
         this(null, null, null, null, null);
     }
 
-    public static ConsumeTestProperties empty(){
-        return new ConsumeTestProperties();
+    public static ConsumerLocalConfigs empty(){
+        return new ConsumerLocalConfigs();
     }
 
     public String getFileDumpTo() {
@@ -62,7 +62,7 @@ public class ConsumeTestProperties {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ConsumeTestProperties that = (ConsumeTestProperties) o;
+        ConsumerLocalConfigs that = (ConsumerLocalConfigs) o;
         return Objects.equals(fileDumpTo, that.fileDumpTo) &&
                 Objects.equals(fileDumpType, that.fileDumpType) &&
                 Objects.equals(commitAsync, that.commitAsync) &&
@@ -78,7 +78,7 @@ public class ConsumeTestProperties {
 
     @Override
     public String toString() {
-        return "ConsumeTestProperties{" +
+        return "ConsumerLocalConfigs{" +
                 "fileDumpTo='" + fileDumpTo + '\'' +
                 ", fileDumpType='" + fileDumpType + '\'' +
                 ", commitAsync=" + commitAsync +

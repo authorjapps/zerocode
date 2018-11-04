@@ -1,7 +1,7 @@
 package org.jsmart.zerocode.core.kafka.helper;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.jsmart.zerocode.core.kafka.consume.ConsumeTestProperties;
+import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,7 +14,7 @@ import java.util.List;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.validateConsumeProperties;
 
 public class KafkaFileRecordHelper {
-    public static void handleRecordsDump(ConsumeTestProperties consumeLocalTestProps, List<ConsumerRecord> fetchedRecords) {
+    public static void handleRecordsDump(ConsumerLocalConfigs consumeLocalTestProps, List<ConsumerRecord> fetchedRecords) {
         String fileDumpType = consumeLocalTestProps != null ? consumeLocalTestProps.getFileDumpType() : null;
 
         if (fileDumpType != null) {
