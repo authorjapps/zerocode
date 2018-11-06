@@ -38,6 +38,14 @@ public class KafkaReceiver {
     private static Gson gson = new GsonSerDeProvider().get();
 
     @Inject(optional = true)
+    @Named("consumer.commitSync")
+    private boolean commitSync;
+
+    @Inject(optional = true)
+    @Named("consumer.commitAsync")
+    private boolean commitAsync;
+
+    @Inject(optional = true)
     @Named("kafka.consumer.properties")
     private String consumerPropertyFile;
 
@@ -107,18 +115,22 @@ public class KafkaReceiver {
 
     private void handleCommitSyncAsync(Consumer<Long, String> consumer, ConsumerLocalConfigs consumeLocalTestProps) {
 
-        if(consumeLocalTestProps != null){
+        if (consumeLocalTestProps != null) {
 
-            Boolean commitAsync = consumeLocalTestProps.getCommitAsync();
-            Boolean commitSync = consumeLocalTestProps.getCommitSync();
+            Boolean localCommitSync = consumeLocalTestProps.getCommitSync();
+            Boolean localCommitAsync = consumeLocalTestProps.getCommitAsync();
 
-            //TODO- Validate - Warning if enable both, it throws exception.
+            validateIfBothEnabled(localCommitSync, localCommitAsync);
 
-            if (commitAsync != null && commitAsync == true) {
-                consumer.commitAsync();
+            Boolean effectiveCommitSync = localCommitSync != null ? localCommitSync : commitSync;
+            Boolean effectiveCommitAsync = localCommitAsync != null ? localCommitAsync : commitAsync;
 
-            } else if (commitSync != null && commitSync == true) {
+
+            if (effectiveCommitSync != null && effectiveCommitSync == true) {
                 consumer.commitSync();
+
+            } else if (effectiveCommitAsync != null && effectiveCommitAsync == true) {
+                consumer.commitAsync();
 
             } else {
                 LOGGER.warn("Kafka client neither did `commitAsync()` nor `commitSync()`");
@@ -127,6 +139,13 @@ public class KafkaReceiver {
         // ---------------------------------------------------
         // Leave this to the user to commit it explicitly
         // ---------------------------------------------------
+    }
+
+    private void validateIfBothEnabled(Boolean localCommitSync, Boolean localCommitAsync) {
+        if( (localCommitSync != null && localCommitAsync != null )
+                && localCommitSync == true && localCommitAsync == true){
+            throw new RuntimeException("\n********* Both commitSync and commitAsync can not be true *********\n");
+        }
     }
 
     private ConsumerLocalConfigs readConsumerLocalTestProperties(String consumePropertiesAsJson) {
