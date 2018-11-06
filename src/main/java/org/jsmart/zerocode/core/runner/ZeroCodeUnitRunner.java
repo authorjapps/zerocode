@@ -303,7 +303,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
              * - https://github.com/gradle/gradle/issues/842
              * - many more related tickets.
              */
-            LOGGER.info("Bypassed JUnit RunListener. Generating useful reports...");
+            LOGGER.debug("Bypassed JUnit RunListener [as configured by the build tool] to generate useful reports...");
             reportListener.testRunFinished(new Result());
         }
     }
