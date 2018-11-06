@@ -15,5 +15,7 @@ public interface ZeroCodeReportProperties {
     String REPORT_DISPLAY_NAME_DEFAULT = "Zerocode Interactive Report";
     String DEFAULT_REGRESSION_CATEGORY = "Regression";
     String LINK_LABEL_NAME = "Spike Chart(Click here)";
+    String ZEROCODE_JUNIT = "zerocode.junit";
+    String NO_RUN_LISTENER = "no-run-listener";
 
 }
