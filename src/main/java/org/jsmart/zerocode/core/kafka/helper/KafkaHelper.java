@@ -6,6 +6,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
+import org.jsmart.zerocode.core.kafka.receive.ConsumerCommonConfigs;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,5 +51,23 @@ public class KafkaHelper {
         }
     }
 
+    public static void validateLocalConfigs(ConsumerLocalConfigs consumeLocalTestProps) {
+        if (consumeLocalTestProps != null) {
+            Boolean localCommitSync = consumeLocalTestProps.getCommitSync();
+            Boolean localCommitAsync = consumeLocalTestProps.getCommitAsync();
+
+            validateIfBothEnabled(localCommitSync, localCommitAsync);
+        }
+    }
+
+    public static void validateCommonConfigs(ConsumerCommonConfigs consumerCommonConfigs) {
+        validateIfBothEnabled(consumerCommonConfigs.getCommitSync(), consumerCommonConfigs.getCommitAsync());
+    }
+
+    private static void validateIfBothEnabled(Boolean commitSync, Boolean commitAsync) {
+        if ((commitSync != null && commitAsync != null)  && commitSync == true && commitAsync == true) {
+            throw new RuntimeException("\n********* Both commitSync and commitAsync can not be true *********\n");
+        }
+    }
 
 }

@@ -27,6 +27,8 @@ import static java.time.Duration.ofMillis;
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.OK;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaFileRecordHelper.handleRecordsDump;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.createConsumer;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.validateCommonConfigs;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.validateLocalConfigs;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 @Singleton
@@ -38,22 +40,20 @@ public class KafkaReceiver {
     private static Gson gson = new GsonSerDeProvider().get();
 
     @Inject(optional = true)
-    @Named("consumer.commitSync")
-    private boolean commitSync;
-
-    @Inject(optional = true)
-    @Named("consumer.commitAsync")
-    private boolean commitAsync;
-
-    @Inject(optional = true)
     @Named("kafka.consumer.properties")
     private String consumerPropertyFile;
 
+    @Inject(optional = true)
+    private ConsumerCommonConfigs consumerCommonConfigs;
+
     public String receive(String kafkaServers, String topicName, String consumePropertiesAsJson) throws IOException {
 
-        Consumer<Long, String> consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
+        validateCommonConfigs(consumerCommonConfigs);
 
         ConsumerLocalConfigs consumeLocalTestProps = readConsumerLocalTestProperties(consumePropertiesAsJson);
+        validateLocalConfigs(consumeLocalTestProps);
+
+        Consumer<Long, String> consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
 
         final List<ConsumerRecord> fetchedRecords = new ArrayList<>();
 
@@ -101,6 +101,7 @@ public class KafkaReceiver {
 
     }
 
+
     private String prepareResult(ConsumerLocalConfigs consumeLocalTestProps, List<ConsumerRecord> fetchedRecords) throws JsonProcessingException {
         if (consumeLocalTestProps != null && !consumeLocalTestProps.getShowRecordsAsResponse()) {
 
@@ -114,39 +115,41 @@ public class KafkaReceiver {
     }
 
     private void handleCommitSyncAsync(Consumer<Long, String> consumer, ConsumerLocalConfigs consumeLocalTestProps) {
-
-        if (consumeLocalTestProps != null) {
-
-            Boolean localCommitSync = consumeLocalTestProps.getCommitSync();
-            Boolean localCommitAsync = consumeLocalTestProps.getCommitAsync();
-
-            validateIfBothEnabled(localCommitSync, localCommitAsync);
-
-            Boolean effectiveCommitSync = localCommitSync != null ? localCommitSync : commitSync;
-            Boolean effectiveCommitAsync = localCommitAsync != null ? localCommitAsync : commitAsync;
-
-
-            if (effectiveCommitSync != null && effectiveCommitSync == true) {
-                consumer.commitSync();
-
-            } else if (effectiveCommitAsync != null && effectiveCommitAsync == true) {
-                consumer.commitAsync();
-
-            } else {
-                LOGGER.warn("Kafka client neither did `commitAsync()` nor `commitSync()`");
-            }
+        if(consumeLocalTestProps == null){
+            LOGGER.warn("[No local test configs]-Kafka client neither did `commitAsync()` nor `commitSync()`");
+            return;
         }
+
+        Boolean effectiveCommitSync;
+        Boolean effectiveCommitAsync;
+
+        Boolean localCommitSync = consumeLocalTestProps.getCommitSync();
+        Boolean localCommitAsync = consumeLocalTestProps.getCommitAsync();
+
+        if (localCommitSync == null && localCommitAsync == null) {
+            effectiveCommitSync = consumerCommonConfigs.getCommitSync();
+            effectiveCommitAsync = consumerCommonConfigs.getCommitAsync();
+
+        } else {
+            effectiveCommitSync = localCommitSync;
+            effectiveCommitAsync = localCommitAsync;
+        }
+
+        if (effectiveCommitSync != null && effectiveCommitSync == true) {
+            consumer.commitSync();
+
+        } else if (effectiveCommitAsync != null && effectiveCommitAsync == true) {
+            consumer.commitAsync();
+
+        } else {
+            LOGGER.warn("Kafka client neither configured for `commitAsync()` nor `commitSync()`");
+        }
+
         // ---------------------------------------------------
         // Leave this to the user to commit it explicitly
         // ---------------------------------------------------
     }
 
-    private void validateIfBothEnabled(Boolean localCommitSync, Boolean localCommitAsync) {
-        if( (localCommitSync != null && localCommitAsync != null )
-                && localCommitSync == true && localCommitAsync == true){
-            throw new RuntimeException("\n********* Both commitSync and commitAsync can not be true *********\n");
-        }
-    }
 
     private ConsumerLocalConfigs readConsumerLocalTestProperties(String consumePropertiesAsJson) {
         try {

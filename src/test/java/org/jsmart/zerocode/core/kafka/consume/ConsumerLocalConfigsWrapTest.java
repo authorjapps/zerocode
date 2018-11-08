@@ -1,6 +1,7 @@
 package org.jsmart.zerocode.core.kafka.consume;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.junit.Test;
 
@@ -39,6 +40,26 @@ public class ConsumerLocalConfigsWrapTest {
 
     @Test
     public void testDser_json() throws IOException {
+        String json = "{\n" +
+                "                \"consumerLocalConfigs\": {\n" +
+                "                    \"fileDumpTo\": \"target/temp/demo.txt\",\n" +
+                "                    \"fileDumpType\": \"RAW\",\n" +
+                "                    \"commitAsync\":true,\n" +
+                "                    \"showRecordsAsResponse\":false\n" +
+                "                }\n" +
+                "\n" +
+                "            }";
+
+        ConsumerLocalConfigsWrap javaPojo = objectMapper.readValue(json, ConsumerLocalConfigsWrap.class);
+
+        assertThat(javaPojo.getConsumerLocalConfigs().getFileDumpTo(), is("target/temp/demo.txt"));
+        assertThat(javaPojo.getConsumerLocalConfigs().getShowRecordsAsResponse(), is(false));
+
+
+    }
+
+    @Test(expected = UnrecognizedPropertyException.class)
+    public void testDser_UnRecognizedField() throws IOException {
         String json = "{\n" +
                 "                \"consumerLocalConfigs\": {\n" +
                 "                    \"fileDumpTo\": \"target/temp/demo.txt\",\n" +
