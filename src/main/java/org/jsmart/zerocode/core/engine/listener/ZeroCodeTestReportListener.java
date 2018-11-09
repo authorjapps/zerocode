@@ -34,7 +34,7 @@ public class ZeroCodeTestReportListener extends RunListener {
     }
 
     @Override
-    public void testRunFinished(Result result) throws Exception {
+    public void testRunFinished(Result result) {
         /*
          * Called when all tests have finished
          */

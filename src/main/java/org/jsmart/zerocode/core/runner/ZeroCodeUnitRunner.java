@@ -17,6 +17,7 @@ import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
+import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -31,7 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.System.getProperty;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.CHARTS_AND_CSV;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.ZEROCODE_JUNIT;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
 public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
@@ -97,8 +101,16 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier) {
-        notifier.addListener(new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator()));
+        ZeroCodeTestReportListener reportListener = new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator());
+
+        LOGGER.info("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
+        if(!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))){
+            notifier.addListener(reportListener);
+        }
+
         super.run(notifier);
+
+        handleNoRunListenerReport(reportListener);
     }
 
     @Override
@@ -276,5 +288,23 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
                 .step(description.getMethodName());
         LOGGER.info("JUnit *requestTimeStamp:{}, \nJUnit Request:{}", timeNow, logPrefixRelationshipId);
         return logPrefixRelationshipId;
+    }
+
+    private void handleNoRunListenerReport(ZeroCodeTestReportListener reportListener) {
+        if(CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))){
+            /**
+             * Gradle does not support JUnit RunListener. Hence Zerocode gracefully handled this
+             * upon request from Gradle users. But this is not limited to Gradle, anywhere you
+             * want to bypass the JUnit RunListener, you can achieve this way.
+             * See README for details.
+             *
+             * There are number of tickets opened for this, but not yet fixed.
+             * - https://discuss.gradle.org/t/testrunfinished-not-run-in-junit-integration/14644
+             * - https://github.com/gradle/gradle/issues/842
+             * - many more related tickets.
+             */
+            LOGGER.debug("Bypassed JUnit RunListener [as configured by the build tool] to generate useful reports...");
+            reportListener.testRunFinished(new Result());
+        }
     }
 }
