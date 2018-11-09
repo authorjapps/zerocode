@@ -16,6 +16,6 @@ public interface ZeroCodeReportProperties {
     String DEFAULT_REGRESSION_CATEGORY = "Regression";
     String LINK_LABEL_NAME = "Spike Chart(Click here)";
     String ZEROCODE_JUNIT = "zerocode.junit";
-    String NO_RUN_LISTENER = "no-run-listener";
+    String CHARTS_AND_CSV = "gen-smart-charts-csv-reports";
 
 }

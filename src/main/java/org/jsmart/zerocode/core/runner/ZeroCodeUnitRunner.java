@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.System.getProperty;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.NO_RUN_LISTENER;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.CHARTS_AND_CSV;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.ZEROCODE_JUNIT;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
@@ -104,7 +104,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         ZeroCodeTestReportListener reportListener = new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator());
 
         LOGGER.info("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
-        if(!NO_RUN_LISTENER.equals(getProperty(ZEROCODE_JUNIT))){
+        if(!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))){
             notifier.addListener(reportListener);
         }
 
@@ -291,7 +291,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     private void handleNoRunListenerReport(ZeroCodeTestReportListener reportListener) {
-        if(NO_RUN_LISTENER.equals(getProperty(ZEROCODE_JUNIT))){
+        if(CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))){
             /**
              * Gradle does not support JUnit RunListener. Hence Zerocode gracefully handled this
              * upon request from Gradle users. But this is not limited to Gradle, anywhere you
