@@ -23,7 +23,8 @@ import static org.jsmart.zerocode.core.di.PropertyKeys.*;
 
 public class ApplicationMainModule extends AbstractModule {
     private static final Logger LOGGER = Logger.getLogger(ApplicationMainModule.class.getName());
-
+    public final String HTTP_DEFAULT_PORT = "8080";
+    public final String HTTPS_DEFAULT_PORT = "443";
     private final String serverEnv;
 
     public ApplicationMainModule(String serverEnv) {
@@ -51,8 +52,8 @@ public class ApplicationMainModule extends AbstractModule {
         //bind(SmartUtils.class);
 
         /*
-		 * Bind properties for localhost, CI, PRE-PROD etc
-		 */
+         * Bind properties for localhost, CI, PRE-PROD etc
+         */
         Names.bindProperties(binder(), getProperties(serverEnv));
     }
 
@@ -77,16 +78,24 @@ public class ApplicationMainModule extends AbstractModule {
 
     private void checkAndLoadOldProperties(Properties properties) {
 
-        if(properties.get(WEB_APPLICATION_ENDPOINT_HOST) == null){
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_HOST, (String)properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST));
+        if (properties.get(WEB_APPLICATION_ENDPOINT_HOST) == null) {
+            properties.setProperty(WEB_APPLICATION_ENDPOINT_HOST, (String) properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST));
         }
 
-        if(properties.get(WEB_APPLICATION_ENDPOINT_PORT) == null){
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, (String)properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT));
+        if (properties.get(WEB_APPLICATION_ENDPOINT_PORT) == null) {
+            if (properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT) != null) {
+                properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, (String) properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT));
+            } else { //this code is to assign default port value depending on host is ssl enabled or not
+                if (properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("HTTP") || properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("http")) {
+                    properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, HTTP_DEFAULT_PORT);
+                } else if (properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("HTTPS") || properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("https")) {
+                    properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, HTTPS_DEFAULT_PORT);
+                }
+            }
         }
 
-        if(properties.get(WEB_APPLICATION_ENDPOINT_CONTEXT) == null){
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_CONTEXT, (String)properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT));
+        if (properties.get(WEB_APPLICATION_ENDPOINT_CONTEXT) == null) {
+            properties.setProperty(WEB_APPLICATION_ENDPOINT_CONTEXT, (String) properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT));
         }
 
     }

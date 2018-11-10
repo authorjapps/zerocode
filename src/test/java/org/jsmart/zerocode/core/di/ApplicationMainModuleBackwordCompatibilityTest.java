@@ -34,6 +34,11 @@ public class ApplicationMainModuleBackwordCompatibilityTest {
     @Named("restful.application.endpoint.host")
     private String host;
 
+    @Inject
+    @Named("web.application.endpoint.port")
+    private String port;
+
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -46,6 +51,7 @@ public class ApplicationMainModuleBackwordCompatibilityTest {
     @Test
     public void willInject_host() throws Exception {
         assertThat(host, is("http://localhost-test-backword-compatibility"));
+        assertThat(port,is("8080"));
     }
 
 }

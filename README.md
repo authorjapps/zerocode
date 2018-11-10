@@ -1130,7 +1130,8 @@ e.g.
 
 ```
 web.application.endpoint.host=http://{host-name-or-ip}
-
+//web.application.endpoint.port is optional field, if your host is ssl enabled then 
+//it will pickup port as 443 while in case if it is not ssl enabled then default port is 8080
 web.application.endpoint.port=9998
 
 web.application.endpoint.context=/google-emp-services
