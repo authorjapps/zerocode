@@ -86,10 +86,10 @@ public class ApplicationMainModule extends AbstractModule {
             if (properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT) != null) {
                 properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, (String) properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT));
             } else { //this code is to assign default port value depending on host is ssl enabled or not
-                if (properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("HTTP") || properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("http")) {
-                    properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, HTTP_DEFAULT_PORT);
-                } else if (properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("HTTPS") || properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("https")) {
+                if (properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("HTTPS") || properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("https")) {
                     properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, HTTPS_DEFAULT_PORT);
+                }else if (properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("HTTP") || properties.getProperty(WEB_APPLICATION_ENDPOINT_HOST).startsWith("http")) {
+                    properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, HTTP_DEFAULT_PORT);
                 }
             }
         }
