@@ -6,12 +6,6 @@ import com.google.inject.name.Named;
 
 @Singleton
 public class ConsumerCommonConfigs {
-//    private final String fileDumpTo;
-//    private final String fileDumpType;
-//    private final Boolean commitAsync;
-//    private final Boolean commitSync;
-//    private final Boolean showRecordsAsResponse;
-
 
     @Inject(optional = true)
     @Named("consumer.commitSync")
@@ -21,6 +15,33 @@ public class ConsumerCommonConfigs {
     @Named("consumer.commitAsync")
     private Boolean commitAsync;
 
+    @Inject(optional = true)
+    @Named("consumer.fileDumpTo")
+    private String fileDumpTo;
+
+    @Inject(optional = true)
+    @Named("consumer.fileDumpType")
+    private String fileDumpType;
+
+    @Inject(optional = true)
+    @Named("consumer.showRecordsAsResponse")
+    private Boolean showRecordsAsResponse;
+
+    public ConsumerCommonConfigs() {
+    }
+
+    public ConsumerCommonConfigs(Boolean commitSync,
+                                 Boolean commitAsync,
+                                 String fileDumpTo,
+                                 String fileDumpType,
+                                 Boolean showRecordsAsResponse) {
+        this.commitSync = commitSync;
+        this.commitAsync = commitAsync;
+        this.fileDumpTo = fileDumpTo;
+        this.fileDumpType = fileDumpType;
+        this.showRecordsAsResponse = showRecordsAsResponse;
+    }
+
     public Boolean getCommitSync() {
         return commitSync;
     }
@@ -29,11 +50,26 @@ public class ConsumerCommonConfigs {
         return commitAsync;
     }
 
+    public String getFileDumpTo() {
+        return fileDumpTo;
+    }
+
+    public String getFileDumpType() {
+        return fileDumpType;
+    }
+
+    public Boolean getShowRecordsAsResponse() {
+        return showRecordsAsResponse;
+    }
+
     @Override
     public String toString() {
         return "ConsumerCommonConfigs{" +
                 "commitSync=" + commitSync +
                 ", commitAsync=" + commitAsync +
+                ", fileDumpTo='" + fileDumpTo + '\'' +
+                ", fileDumpType='" + fileDumpType + '\'' +
+                ", showRecordsAsResponse=" + showRecordsAsResponse +
                 '}';
     }
 }

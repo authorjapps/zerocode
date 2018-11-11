@@ -14,7 +14,6 @@ import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.ConsumedRecords;
 import org.jsmart.zerocode.core.kafka.DeliveryStatus;
 import org.jsmart.zerocode.core.kafka.KafkaConstants;
-import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigsWrap;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +25,7 @@ import java.util.List;
 import static java.time.Duration.ofMillis;
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.OK;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaFileRecordHelper.handleRecordsDump;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.createConsumer;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.validateCommonConfigs;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.validateLocalConfigs;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.*;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 @Singleton
@@ -36,22 +33,22 @@ public class KafkaReceiver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaReceiver.class);
 
-    private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
     private static Gson gson = new GsonSerDeProvider().get();
+
+    private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
     @Inject(optional = true)
     @Named("kafka.consumer.properties")
     private String consumerPropertyFile;
 
-    @Inject(optional = true)
+    @Inject//(optional = true)
     private ConsumerCommonConfigs consumerCommonConfigs;
 
-    public String receive(String kafkaServers, String topicName, String consumePropertiesAsJson) throws IOException {
+    public String receive(String kafkaServers, String topicName, String requestJsonWithConfig) throws IOException {
 
-        validateCommonConfigs(consumerCommonConfigs);
+        ConsumerLocalConfigs consumerLocalConfigs = readConsumerLocalTestProperties(requestJsonWithConfig);
 
-        ConsumerLocalConfigs consumeLocalTestProps = readConsumerLocalTestProperties(consumePropertiesAsJson);
-        validateLocalConfigs(consumeLocalTestProps);
+        ConsumerLocalConfigs effectiveLocalTestProps = deriveEffectiveConfigs(consumerLocalConfigs, consumerCommonConfigs);
 
         Consumer<Long, String> consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
 
@@ -60,6 +57,7 @@ public class KafkaReceiver {
         int noOfTimeOuts = 0;
 
         while (true) {
+            LOGGER.info("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
             //TODO- Configure poll millisec in localTestProperties
             final ConsumerRecords<Long, String> records = consumer.poll(ofMillis(100));
 
@@ -90,17 +88,16 @@ public class KafkaReceiver {
                 });
             }
 
-            handleCommitSyncAsync(consumer, consumeLocalTestProps);
+            handleCommitSyncAsync(consumer, effectiveLocalTestProps);
         }
 
         consumer.close();
 
-        handleRecordsDump(consumeLocalTestProps, fetchedRecords);
+        handleRecordsDump(effectiveLocalTestProps, fetchedRecords);
 
-        return prepareResult(consumeLocalTestProps, fetchedRecords);
+        return prepareResult(effectiveLocalTestProps, fetchedRecords);
 
     }
-
 
     private String prepareResult(ConsumerLocalConfigs consumeLocalTestProps, List<ConsumerRecord> fetchedRecords) throws JsonProcessingException {
         if (consumeLocalTestProps != null && !consumeLocalTestProps.getShowRecordsAsResponse()) {
@@ -150,16 +147,5 @@ public class KafkaReceiver {
         // ---------------------------------------------------
     }
 
-
-    private ConsumerLocalConfigs readConsumerLocalTestProperties(String consumePropertiesAsJson) {
-        try {
-            ConsumerLocalConfigsWrap consumerLocalConfigsWrap = objectMapper.readValue(consumePropertiesAsJson, ConsumerLocalConfigsWrap.class);
-
-            return consumerLocalConfigsWrap.getConsumerLocalConfigs();
-
-        } catch (IOException exx) {
-            throw new RuntimeException(exx);
-        }
-    }
 
 }
