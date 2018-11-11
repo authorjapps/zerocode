@@ -9,6 +9,7 @@ import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.deriveEffectiveConfigs;
 
 public class KafkaHelperTest {
@@ -20,6 +21,24 @@ public class KafkaHelperTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+
+    @Test
+    public void test_syncAsyncTrueCommon() throws Exception{
+        consumerCommon = new ConsumerCommonConfigs(true, true, "aTestFile", "JSON", true);
+
+        expectedException.expectMessage("Both commitSync and commitAsync can not be true");
+        ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(null, consumerCommon);
+    }
+
+    @Test
+    public void test_syncAsyncTrueLocal() throws Exception{
+        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true);
+        consumerLocal = new ConsumerLocalConfigs("sTestLocalFile", "RAW", true, true, false);
+        ConsumerLocalConfigsWrap localConfigsWrap = new ConsumerLocalConfigsWrap(consumerLocal);
+
+        expectedException.expectMessage("Both commitSync and commitAsync can not be true");
+        ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
+    }
 
     @Test
     public void test_effectiveConfigsIsLocal() throws Exception{
@@ -52,21 +71,50 @@ public class KafkaHelperTest {
     }
 
     @Test
-    public void test_syncAsyncTrueCommon() throws Exception{
-        consumerCommon = new ConsumerCommonConfigs(true, true, "aTestFile", "JSON", true);
+    public void test_effectiveCommitAsync_true() throws Exception{
 
-        expectedException.expectMessage("Both commitSync and commitAsync can not be true");
-        ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(null, consumerCommon);
+        consumerCommon = new ConsumerCommonConfigs(true, null, "aTestFile", "JSON", true);
+        consumerLocal = new ConsumerLocalConfigs("sTestLocalFile", "RAW", true, false, false);
+
+        ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
+
+        assertThat(consumerEffectiveConfigs.getCommitAsync(), is(true));
+        assertThat(consumerEffectiveConfigs.getCommitSync(), is(false));
     }
 
     @Test
-    public void test_syncAsyncTrueLocal() throws Exception{
-        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true);
-        consumerLocal = new ConsumerLocalConfigs("sTestLocalFile", "RAW", true, true, false);
-        ConsumerLocalConfigsWrap localConfigsWrap = new ConsumerLocalConfigsWrap(consumerLocal);
+    public void test_effectiveCommitSync_true() throws Exception{
 
-        expectedException.expectMessage("Both commitSync and commitAsync can not be true");
+        consumerCommon = new ConsumerCommonConfigs(null, true, "aTestFile", "JSON", true);
+        consumerLocal = new ConsumerLocalConfigs("sTestLocalFile", "RAW", null, true, false);
+
         ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
+
+        assertThat(consumerEffectiveConfigs.getCommitSync(), is(true));
+        assertThat(consumerEffectiveConfigs.getCommitAsync(), nullValue());
     }
 
+    @Test
+    public void test_effectiveCommitSyncFromCommon_true() throws Exception{
+
+        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true);
+        consumerLocal = new ConsumerLocalConfigs("sTestLocalFile", "RAW", null, null, false);
+
+        ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
+
+        assertThat(consumerEffectiveConfigs.getCommitSync(), is(true));
+        assertThat(consumerEffectiveConfigs.getCommitAsync(), is(false));
+    }
+
+    @Test
+    public void test_effectiveCommitAsyncFromCommon_true() throws Exception{
+
+        consumerCommon = new ConsumerCommonConfigs(null, true, "aTestFile", "JSON", true);
+        consumerLocal = new ConsumerLocalConfigs("sTestLocalFile", "RAW", true, false, false);
+
+        ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
+
+        assertThat(consumerEffectiveConfigs.getCommitAsync(), is(true));
+        assertThat(consumerEffectiveConfigs.getCommitSync(), is(false));
+    }
 }
