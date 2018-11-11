@@ -1,20 +1,20 @@
 package org.jsmart.zerocode.core.kafka.consume;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Objects;
 
-//@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonIgnoreProperties(ignoreUnknown = true) //<--- Do not enable this. All properties to be aware of and processed
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ConsumerLocalConfigs {
     private final String fileDumpTo;
     private final String fileDumpType;
     private final Boolean commitAsync;
     private final Boolean commitSync;
-    private final Boolean showRecordsAsResponse;
+    private final Boolean showRecordsInResponse;
+    private final Integer maxNoOfRetryPollsOrTimeouts;
 
     @JsonCreator
     public ConsumerLocalConfigs(
@@ -22,16 +22,18 @@ public class ConsumerLocalConfigs {
             @JsonProperty("fileDumpType") String fileDumpType,
             @JsonProperty("commitAsync") Boolean commitAsync,
             @JsonProperty("commitSync") Boolean commitSync,
-            @JsonProperty("showRecordsAsResponse") Boolean showRecordsAsResponse) {
+            @JsonProperty("showRecordsInResponse") Boolean showRecordsInResponse,
+            @JsonProperty("maxNoOfRetryPollsOrTimeouts") Integer maxNoOfRetryPollsOrTimeouts) {
         this.fileDumpTo = fileDumpTo;
         this.fileDumpType = fileDumpType;
         this.commitAsync = commitAsync;
         this.commitSync = commitSync;
-        this.showRecordsAsResponse = showRecordsAsResponse;
+        this.showRecordsInResponse = showRecordsInResponse;
+        this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
     }
 
     ConsumerLocalConfigs() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     public static ConsumerLocalConfigs empty(){
@@ -54,8 +56,12 @@ public class ConsumerLocalConfigs {
         return commitSync;
     }
 
-    public Boolean getShowRecordsAsResponse() {
-        return showRecordsAsResponse;
+    public Boolean getShowRecordsInResponse() {
+        return showRecordsInResponse;
+    }
+
+    public Integer getMaxNoOfRetryPollsOrTimeouts() {
+        return maxNoOfRetryPollsOrTimeouts;
     }
 
     @Override
@@ -67,13 +73,14 @@ public class ConsumerLocalConfigs {
                 Objects.equals(fileDumpType, that.fileDumpType) &&
                 Objects.equals(commitAsync, that.commitAsync) &&
                 Objects.equals(commitSync, that.commitSync) &&
-                Objects.equals(showRecordsAsResponse, that.showRecordsAsResponse);
+                Objects.equals(showRecordsInResponse, that.showRecordsInResponse) &&
+                Objects.equals(maxNoOfRetryPollsOrTimeouts, that.maxNoOfRetryPollsOrTimeouts);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(fileDumpTo, fileDumpType, commitAsync, commitSync, showRecordsAsResponse);
+        return Objects.hash(fileDumpTo, fileDumpType, commitAsync, commitSync, showRecordsInResponse, maxNoOfRetryPollsOrTimeouts);
     }
 
     @Override
@@ -83,7 +90,8 @@ public class ConsumerLocalConfigs {
                 ", fileDumpType='" + fileDumpType + '\'' +
                 ", commitAsync=" + commitAsync +
                 ", commitSync=" + commitSync +
-                ", showRecordsAsResponse=" + showRecordsAsResponse +
+                ", showRecordsInResponse=" + showRecordsInResponse +
+                ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 '}';
     }
 }

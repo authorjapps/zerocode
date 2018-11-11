@@ -13,7 +13,6 @@ import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.ConsumedRecords;
 import org.jsmart.zerocode.core.kafka.DeliveryStatus;
-import org.jsmart.zerocode.core.kafka.KafkaConstants;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +57,7 @@ public class KafkaReceiver {
 
         while (true) {
             LOGGER.info("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
-            //TODO- Configure poll millisec in localTestProperties
+
             final ConsumerRecords<Long, String> records = consumer.poll(ofMillis(100));
 
             //String jsonRecords = gson.toJson(records);
@@ -66,8 +65,7 @@ public class KafkaReceiver {
 
             if (records.count() == 0) {
                 noOfTimeOuts++;
-                //TODO- make this configurable
-                if (noOfTimeOuts > KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS) {
+                if (noOfTimeOuts > getMaxTimeOuts(effectiveLocalTestProps)) {
                     break;
                 } else {
                     continue;
@@ -100,7 +98,7 @@ public class KafkaReceiver {
     }
 
     private String prepareResult(ConsumerLocalConfigs consumeLocalTestProps, List<ConsumerRecord> fetchedRecords) throws JsonProcessingException {
-        if (consumeLocalTestProps != null && !consumeLocalTestProps.getShowRecordsAsResponse()) {
+        if (consumeLocalTestProps != null && !consumeLocalTestProps.getShowRecordsInResponse()) {
 
             return objectMapper.writeValueAsString(new DeliveryStatus(OK, fetchedRecords.size()));
 

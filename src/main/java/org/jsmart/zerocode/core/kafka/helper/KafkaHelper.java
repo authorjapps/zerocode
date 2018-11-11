@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Properties;
 
 import static java.util.Optional.ofNullable;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
 import static org.jsmart.zerocode.core.kafka.common.CommonConfigs.BOOTSTRAP_SERVERS;
 
 public class KafkaHelper {
@@ -89,8 +90,8 @@ public class KafkaHelper {
                     consumerCommon.getFileDumpType(),
                     consumerCommon.getCommitAsync(),
                     consumerCommon.getCommitSync(),
-                    consumerCommon.getShowRecordsAsResponse()
-            );
+                    consumerCommon.getShowRecordsInResponse(),
+                    consumerCommon.getMaxNoOfRetryPollsOrTimeouts());
         }
 
         // Handle fileDumpTo
@@ -99,11 +100,13 @@ public class KafkaHelper {
         // Handle fileDumpType
         String effectiveFileDumpType = ofNullable(consumerLocal.getFileDumpType()).orElse(consumerCommon.getFileDumpType());
 
-        // Handle showRecordsAsResponse
-        Boolean effectiveShowRecordsAsResponse = ofNullable(consumerLocal.getShowRecordsAsResponse()).orElse(consumerCommon.getShowRecordsAsResponse());
+        // Handle showRecordsInResponse
+        Boolean effectiveShowRecordsInResponse = ofNullable(consumerLocal.getShowRecordsInResponse()).orElse(consumerCommon.getShowRecordsInResponse());
 
+        // Handle maxNoOfRetryPollsOrTimeouts
+        Integer effectiveMaxNoOfRetryPollsOrTimeouts = ofNullable(consumerLocal.getMaxNoOfRetryPollsOrTimeouts()).orElse(consumerCommon.getMaxNoOfRetryPollsOrTimeouts());
 
-        // Handle commitSync and commitAsync
+        // Handle commitSync and commitAsync -START
         Boolean effectiveCommitSync;
         Boolean effectiveCommitAsync;
 
@@ -124,7 +127,8 @@ public class KafkaHelper {
                 effectiveFileDumpType,
                 effectiveCommitAsync,
                 effectiveCommitSync,
-                effectiveShowRecordsAsResponse);
+                effectiveShowRecordsInResponse,
+                effectiveMaxNoOfRetryPollsOrTimeouts);
     }
 
     public static ConsumerLocalConfigs readConsumerLocalTestProperties(String requestJsonWithConfigWrapped) {
@@ -138,4 +142,11 @@ public class KafkaHelper {
             throw new RuntimeException(exx);
         }
     }
+
+    public static Integer getMaxTimeOuts(ConsumerLocalConfigs effectiveLocalTestProps) {
+        Integer maxRetries = effectiveLocalTestProps.getMaxNoOfRetryPollsOrTimeouts();
+        return   maxRetries != null ? maxRetries : MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
+    }
+
+
 }

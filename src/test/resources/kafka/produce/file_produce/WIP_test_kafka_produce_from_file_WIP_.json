@@ -28,7 +28,7 @@
                     "fileDumpTo": "target/temp/demo.txt",
                     "fileDumpType": "RAW",
                     "commitAsync":true,
-                    "showRecordsAsResponse":false,
+                    "showRecordsInResponse":false,
                     "MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS": 5
                 }
 

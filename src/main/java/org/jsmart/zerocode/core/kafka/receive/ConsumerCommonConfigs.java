@@ -24,8 +24,12 @@ public class ConsumerCommonConfigs {
     private String fileDumpType;
 
     @Inject(optional = true)
-    @Named("consumer.showRecordsAsResponse")
-    private Boolean showRecordsAsResponse;
+    @Named("consumer.showRecordsInResponse")
+    private Boolean showRecordsInResponse;
+
+    @Inject(optional = true)
+    @Named("consumer.maxNoOfRetryPollsOrTimeouts")
+    private Integer maxNoOfRetryPollsOrTimeouts;
 
     public ConsumerCommonConfigs() {
     }
@@ -34,12 +38,16 @@ public class ConsumerCommonConfigs {
                                  Boolean commitAsync,
                                  String fileDumpTo,
                                  String fileDumpType,
-                                 Boolean showRecordsAsResponse) {
+                                 Boolean showRecordsInResponse,
+                                 Integer maxNoOfRetryPollsOrTimeouts
+
+    ) {
         this.commitSync = commitSync;
         this.commitAsync = commitAsync;
         this.fileDumpTo = fileDumpTo;
         this.fileDumpType = fileDumpType;
-        this.showRecordsAsResponse = showRecordsAsResponse;
+        this.showRecordsInResponse = showRecordsInResponse;
+        this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
     }
 
     public Boolean getCommitSync() {
@@ -58,8 +66,12 @@ public class ConsumerCommonConfigs {
         return fileDumpType;
     }
 
-    public Boolean getShowRecordsAsResponse() {
-        return showRecordsAsResponse;
+    public Boolean getShowRecordsInResponse() {
+        return showRecordsInResponse;
+    }
+
+    public Integer getMaxNoOfRetryPollsOrTimeouts() {
+        return maxNoOfRetryPollsOrTimeouts;
     }
 
     @Override
@@ -69,7 +81,8 @@ public class ConsumerCommonConfigs {
                 ", commitAsync=" + commitAsync +
                 ", fileDumpTo='" + fileDumpTo + '\'' +
                 ", fileDumpType='" + fileDumpType + '\'' +
-                ", showRecordsAsResponse=" + showRecordsAsResponse +
+                ", showRecordsInResponse=" + showRecordsInResponse +
+                ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 '}';
     }
 }
