@@ -31,6 +31,10 @@ public class ConsumerCommonConfigs {
     @Named("consumer.maxNoOfRetryPollsOrTimeouts")
     private Integer maxNoOfRetryPollsOrTimeouts;
 
+    @Inject(optional = true)
+    @Named("consumer.pollingTime")
+    private Long pollingTime;
+
     public ConsumerCommonConfigs() {
     }
 
@@ -39,7 +43,8 @@ public class ConsumerCommonConfigs {
                                  String fileDumpTo,
                                  String fileDumpType,
                                  Boolean showRecordsInResponse,
-                                 Integer maxNoOfRetryPollsOrTimeouts
+                                 Integer maxNoOfRetryPollsOrTimeouts,
+                                 Long pollingTime
 
     ) {
         this.commitSync = commitSync;
@@ -48,6 +53,7 @@ public class ConsumerCommonConfigs {
         this.fileDumpType = fileDumpType;
         this.showRecordsInResponse = showRecordsInResponse;
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
+        this.pollingTime = pollingTime;
     }
 
     public Boolean getCommitSync() {
@@ -74,6 +80,10 @@ public class ConsumerCommonConfigs {
         return maxNoOfRetryPollsOrTimeouts;
     }
 
+    public Long getPollingTime() {
+        return pollingTime;
+    }
+
     @Override
     public String toString() {
         return "ConsumerCommonConfigs{" +
@@ -83,6 +93,7 @@ public class ConsumerCommonConfigs {
                 ", fileDumpType='" + fileDumpType + '\'' +
                 ", showRecordsInResponse=" + showRecordsInResponse +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
+                ", pollingTime=" + pollingTime +
                 '}';
     }
 }

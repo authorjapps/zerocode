@@ -40,14 +40,16 @@ public class KafkaReceiver {
     @Named("kafka.consumer.properties")
     private String consumerPropertyFile;
 
-    @Inject//(optional = true)
+    @Inject
     private ConsumerCommonConfigs consumerCommonConfigs;
 
     public String receive(String kafkaServers, String topicName, String requestJsonWithConfig) throws IOException {
 
         ConsumerLocalConfigs consumerLocalConfigs = readConsumerLocalTestProperties(requestJsonWithConfig);
 
-        ConsumerLocalConfigs effectiveLocalTestProps = deriveEffectiveConfigs(consumerLocalConfigs, consumerCommonConfigs);
+        ConsumerLocalConfigs effectiveLocal = deriveEffectiveConfigs(consumerLocalConfigs, consumerCommonConfigs);
+
+        LOGGER.info("\n### Consumer Effective configs:{}\n", effectiveLocal);
 
         Consumer<Long, String> consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
 
@@ -58,14 +60,14 @@ public class KafkaReceiver {
         while (true) {
             LOGGER.info("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
 
-            final ConsumerRecords<Long, String> records = consumer.poll(ofMillis(100));
+            final ConsumerRecords<Long, String> records = consumer.poll(ofMillis(getPollTime(effectiveLocal)));
 
             //String jsonRecords = gson.toJson(records);
             //System.out.println("jsonRecords>>>>>>>>>>\n" + jsonRecords);
 
             if (records.count() == 0) {
                 noOfTimeOuts++;
-                if (noOfTimeOuts > getMaxTimeOuts(effectiveLocalTestProps)) {
+                if (noOfTimeOuts > getMaxTimeOuts(effectiveLocal)) {
                     break;
                 } else {
                     continue;
@@ -86,14 +88,14 @@ public class KafkaReceiver {
                 });
             }
 
-            handleCommitSyncAsync(consumer, effectiveLocalTestProps);
+            handleCommitSyncAsync(consumer, effectiveLocal);
         }
 
         consumer.close();
 
-        handleRecordsDump(effectiveLocalTestProps, fetchedRecords);
+        handleRecordsDump(effectiveLocal, fetchedRecords);
 
-        return prepareResult(effectiveLocalTestProps, fetchedRecords);
+        return prepareResult(effectiveLocal, fetchedRecords);
 
     }
 

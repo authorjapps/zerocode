@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.IOException;
 
@@ -25,7 +23,8 @@ public class ConsumerLocalConfigsWrapTest {
                         true,
                         null,
                         null,
-                        3));
+                        3,
+                        50L));
         ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
         String json = objectMapper.writeValueAsString(javaObject);
@@ -34,7 +33,8 @@ public class ConsumerLocalConfigsWrapTest {
                 "      \"fileDumpTo\": \"RAW:/target/ttt\",\n" +
                 "      \"fileDumpType\": \"RAW\",\n" +
                 "      \"commitAsync\": true,\n" +
-                "      \"maxNoOfRetryPollsOrTimeouts\": 3\n" +
+                "      \"maxNoOfRetryPollsOrTimeouts\": 3,\n" +
+                "      \"pollingTime\": 50\n" +
                 "   }\n" +
                 "}",
                 json, LENIENT);
@@ -51,7 +51,8 @@ public class ConsumerLocalConfigsWrapTest {
                         null,
                         null,
                         null,
-                        3));
+                        3,
+                        null));
 
         String json = objectMapper.writeValueAsString(javaObject);
         assertEquals("{\n" +

@@ -15,6 +15,8 @@ public interface KafkaConstants {
 
 	public static Integer MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS =5;
 
+	public static Long DEFAULT_POLLING_TIME_MILLI_SEC = 100L;
+
 	public static String OFFSET_RESET_LATEST="latest";
 	
 	public static String OFFSET_RESET_EARLIER="earliest";

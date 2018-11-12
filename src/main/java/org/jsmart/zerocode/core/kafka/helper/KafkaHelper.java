@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Properties;
 
 import static java.util.Optional.ofNullable;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
 import static org.jsmart.zerocode.core.kafka.common.CommonConfigs.BOOTSTRAP_SERVERS;
 
@@ -91,7 +92,8 @@ public class KafkaHelper {
                     consumerCommon.getCommitAsync(),
                     consumerCommon.getCommitSync(),
                     consumerCommon.getShowRecordsInResponse(),
-                    consumerCommon.getMaxNoOfRetryPollsOrTimeouts());
+                    consumerCommon.getMaxNoOfRetryPollsOrTimeouts(),
+                    consumerCommon.getPollingTime());
         }
 
         // Handle fileDumpTo
@@ -105,6 +107,9 @@ public class KafkaHelper {
 
         // Handle maxNoOfRetryPollsOrTimeouts
         Integer effectiveMaxNoOfRetryPollsOrTimeouts = ofNullable(consumerLocal.getMaxNoOfRetryPollsOrTimeouts()).orElse(consumerCommon.getMaxNoOfRetryPollsOrTimeouts());
+
+        // Handle pollingTime
+        Long effectivePollingTime = ofNullable(consumerLocal.getPollingTime()).orElse(consumerCommon.getPollingTime());
 
         // Handle commitSync and commitAsync -START
         Boolean effectiveCommitSync;
@@ -128,7 +133,8 @@ public class KafkaHelper {
                 effectiveCommitAsync,
                 effectiveCommitSync,
                 effectiveShowRecordsInResponse,
-                effectiveMaxNoOfRetryPollsOrTimeouts);
+                effectiveMaxNoOfRetryPollsOrTimeouts,
+                effectivePollingTime);
     }
 
     public static ConsumerLocalConfigs readConsumerLocalTestProperties(String requestJsonWithConfigWrapped) {
@@ -144,9 +150,14 @@ public class KafkaHelper {
     }
 
     public static Integer getMaxTimeOuts(ConsumerLocalConfigs effectiveLocalTestProps) {
-        Integer maxRetries = effectiveLocalTestProps.getMaxNoOfRetryPollsOrTimeouts();
-        return   maxRetries != null ? maxRetries : MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
+        return ofNullable(effectiveLocalTestProps.getMaxNoOfRetryPollsOrTimeouts())
+                .orElse(MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS);
     }
 
+
+    public static Long getPollTime(ConsumerLocalConfigs effectiveLocal) {
+        return ofNullable(effectiveLocal.getPollingTime())
+                .orElse(DEFAULT_POLLING_TIME_MILLI_SEC);
+    }
 
 }
