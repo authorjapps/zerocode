@@ -15,6 +15,7 @@ import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
+import org.junit.runner.Result;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
@@ -24,10 +25,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.inject.Guice.createInjector;
+import static java.lang.System.getProperty;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.CHARTS_AND_CSV;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.ZEROCODE_JUNIT;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
 public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ZeroCodePackageRunner.class);
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ZeroCodePackageRunner.class);
 
     private ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner;
     private final Class<?> testClass;
@@ -111,8 +115,17 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
     @Override
     public void run(RunNotifier notifier){
-        notifier.addListener(new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator()));
+        ZeroCodeTestReportListener reportListener = new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator());
+        notifier.addListener(reportListener);
+
+        LOGGER.info("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
+        if(!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))){
+            notifier.addListener(reportListener);
+        }
+
         super.run(notifier);
+
+        handleNoRunListenerReport(reportListener);
     }
 
     /**
@@ -140,7 +153,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         testRunCompleted = true;
 
         if (passed) {
-            logger.info(String.format("\nPackageRunner- **FINISHED executing all Steps for [%s] **.\nSteps were:%s",
+            LOGGER.info(String.format("\nPackageRunner- **FINISHED executing all Steps for [%s] **.\nSteps were:%s",
                             child.getScenarioName(),
                             child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
         }
@@ -190,4 +203,23 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     public void setZeroCodeMultiStepsScenarioRunner(ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner) {
         this.zeroCodeMultiStepsScenarioRunner = zeroCodeMultiStepsScenarioRunner;
     }
+
+    private void handleNoRunListenerReport(ZeroCodeTestReportListener reportListener) {
+        if(CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))){
+            /**
+             * Gradle does not support JUnit RunListener. Hence Zerocode gracefully handled this
+             * upon request from Gradle users. But this is not limited to Gradle, anywhere you
+             * want to bypass the JUnit RunListener, you can achieve this way.
+             * See README for details.
+             *
+             * There are number of tickets opened for this, but not yet fixed.
+             * - https://discuss.gradle.org/t/testrunfinished-not-run-in-junit-integration/14644
+             * - https://github.com/gradle/gradle/issues/842
+             * - many more related tickets.
+             */
+            LOGGER.debug("Bypassed JUnit RunListener [as configured by the build tool] to generate useful reports...");
+            reportListener.testRunFinished(new Result());
+        }
+    }
+
 }
