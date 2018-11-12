@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 
 @TargetEnv("hosts_servers/kafka_test_bad_server.properties")
 @RunWith(ZeroCodeUnitRunner.class)
-public class TestKafkaPublishFailure {
+public class KafkaPublishFailureTest {
 
     @Ignore("Sometimes - 2018-10-06 23:33:15,673 [main] WARN org.apache.kafka.common.utils.AppInfoParser - Error registering AppInfo mbean\n" +
             "javax.management.InstanceAlreadyExistsException: kafka.producer:type=app-info,id=zerocode-producer\n")
