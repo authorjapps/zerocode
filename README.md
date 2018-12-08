@@ -35,9 +35,9 @@ _(See here [a full blown CRUD operation scenario](https://github.com/authorjapps
 <img width="624" alt="post_get_user" src="https://user-images.githubusercontent.com/12598420/47145467-bc089400-d2c1-11e8-8707-8e2d2e8c3127.png">
 
 Keep in mind: It's simple JSON. <br/>
-~~_No feature files, no extra plugins, no statements or grammar syntax overhead._~~ 
+~~_No feature files, no extra plugins, no assertThat(...), no statements or grammar syntax overhead._~~ 
 
-And it is **declarative** DSL, with the `request/response` fields available for the next steps via the `JSON Path`.
+And it is **declarative** JSON DSL, with the `request/response` fields available for the next steps via the `JSON Path`.
 
 See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) for usages and examples.
 
@@ -66,6 +66,8 @@ Hello World
  *  Quick start - [**Performance** testing -  Varying **Load/Stress** generation](https://github.com/authorjapps/performance-tests) <br/> 
  
  * Quick start - [**Spring Boot** application - **Integration testing** - In-Memory](https://github.com/authorjapps/spring-boot-integration-test) <br/>
+ 
+ * Quick start - [**Mock or Stub** server - **Click, Click, Done** - Via Wiremock Json DSL](https://github.com/authorjapps/api-mock-maker) <br/>
 
  * Quick start - [**Performance testing** - Resusing Spring JUnit tests(`less common`) - JUnit-Spring-Zerocode](https://github.com/authorjapps/zerocode-spring-junit) <br/>
 
@@ -155,8 +157,39 @@ public class JustHelloWorldTest {
     }
 }
 ```
-Where,
-You need not have to do any GIVEN-WHEN-THEN like below. <br/>
+Where, You just need the below `hello_world_status_ok_assertions.json`.
+
+```javaScript
+{
+    "scenarioName": "Invoke the GET api and assert the response",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/users/octocat",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat",
+                    "id" : 33847731,
+                    "type" : "User"
+                }
+            }
+        }
+    ]
+}
+```
+
+the `github_host.properties` looks as below:
+```
+web.application.endpoint.host=https://api.github.com
+web.application.endpoint.port=443
+web.application.endpoint.context=
+```
+
+And you need not have to deal with any assertThat(...), GIVEN-WHEN-THEN etc like below. <br/>
 
 ~~GIVEN- the GitHub REST api GET end point,~~ <br/>
 ~~WHEN- I invoke the API,~~ <br/>
@@ -199,37 +232,6 @@ or
 ~~assertThat(user.getType(), is("user"))~~
 
 </br>
-
-You just need the below `hello_world_status_ok_assertions.json`.
-```javaScript
-{
-    "scenarioName": "Invoke the GET api and assert the response",
-    "steps": [
-        {
-            "name": "get_user_details",
-            "url": "/users/octocat",
-            "operation": "GET",
-            "request": {
-            },
-            "assertions": {
-                "status": 200,
-                "body": {
-                    "login" : "octocat",
-                    "id" : 33847731,
-                    "type" : "User"
-                }
-            }
-        }
-    ]
-}
-```
-
-the `github_host.properties` looks as below:
-```
-web.application.endpoint.host=https://api.github.com
-web.application.endpoint.port=443
-web.application.endpoint.context=
-```
 
 See more usages and examples below.
 
@@ -545,6 +547,8 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
 
 #### 6:
 #### Generated reports and charts
+
+_(For Gradle build setup - See [here - Wiki](https://github.com/authorjapps/zerocode/wiki/Gradle-build-for-JUnit-Smart-Chart-and-CSV-Reports))_
 
 Generated test statistics reports. See the '/target' folder after every run. 
 e.g. Look for-
