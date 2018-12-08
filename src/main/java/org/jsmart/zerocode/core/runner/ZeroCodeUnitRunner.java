@@ -71,20 +71,20 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         this.testClass = klass;
         this.smartUtils = getInjectedSmartUtilsClass();
 
-        smartTestCaseNames = getSmartChildrenList();
+        this.smartTestCaseNames = getSmartChildrenList();
 
         /*
          * Read the host, port, context etc from the inline annotation instead of a properties file
          */
-        hostProperties = testClass.getAnnotation(HostProperties.class);
+        this.hostProperties = testClass.getAnnotation(HostProperties.class);
 
-        if (hostProperties != null) {
-            host = hostProperties.host();
-            port = hostProperties.port();
-            context = hostProperties.context();
+        if (this.hostProperties != null) {
+            this.host = hostProperties.host();
+            this.port = hostProperties.port();
+            this.context = hostProperties.context();
         }
 
-        multiStepsRunner = createZeroCodeMultiStepRunner();
+        this.multiStepsRunner = createZeroCodeMultiStepRunner();
     }
 
     @Override
