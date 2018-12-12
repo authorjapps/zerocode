@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.EnvProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,4 +65,25 @@ public class RunnerUtils {
         final String DOT_PROPERTIES = ".properties";
         return serverEnv.replace(DOT_PROPERTIES, resolvedEnvPropNameWithPrefix + DOT_PROPERTIES);
     }
+
+    public static String getFullyQualifiedUrl(String serviceEndPoint,
+                                              String host,
+                                              String port,
+                                              String applicationContext) {
+        if (serviceEndPoint.startsWith("http://") || serviceEndPoint.startsWith("https://")) {
+            return serviceEndPoint;
+
+        } else if(StringUtils.isEmpty(port)){
+            return String.format("%s%s%s", host, applicationContext, serviceEndPoint);
+
+        } else {
+            /*
+             * Make sure your property file contains context-path with a front slash like "/google-map".
+             * -OR-
+             * Empty context path is also ok if it requires. In this case do not put front slash.
+             */
+            return String.format("%s:%s%s%s", host, port, applicationContext, serviceEndPoint);
+        }
+    }
+
 }

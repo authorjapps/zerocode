@@ -19,6 +19,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
@@ -31,18 +32,17 @@ import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.Z
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
 public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ZeroCodePackageRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodePackageRunner.class);
 
-    private ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner;
     private final Class<?> testClass;
-    List<ScenarioSpec> scenarioSpecs;
-    Injector injector;
-    SmartUtils smartUtils;
-
+    private List<ScenarioSpec> scenarioSpecs;
+    private Injector injector;
+    private SmartUtils smartUtils;
     protected Description scenarioDescription;
     protected boolean isRunSuccess;
     protected boolean passed;
     protected boolean testRunCompleted;
+    private ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner;
 
     public ZeroCodePackageRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
@@ -148,7 +148,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         // ----------------------------------------------
         notifier.fireTestStarted(description);
 
-        passed = getInjectedMultiStepsRunner().runScenario(child, notifier, description);
+        passed = zeroCodeMultiStepsScenarioRunner.runScenario(child, notifier, description);
 
         testRunCompleted = true;
 
@@ -160,15 +160,6 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         
         notifier.fireTestFinished(description);
     
-    }
-
-    private ZeroCodeMultiStepsScenarioRunner getInjectedMultiStepsRunner() {
-        zeroCodeMultiStepsScenarioRunner = getInjector().getInstance(ZeroCodeMultiStepsScenarioRunner.class);
-        return zeroCodeMultiStepsScenarioRunner;
-    }
-
-    private ZeroCodeReportGenerator getInjectedReportGenerator() {
-        return getInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
     public Injector getInjector() {
@@ -202,6 +193,15 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
     public void setZeroCodeMultiStepsScenarioRunner(ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner) {
         this.zeroCodeMultiStepsScenarioRunner = zeroCodeMultiStepsScenarioRunner;
+    }
+
+    private ZeroCodeMultiStepsScenarioRunner getInjectedMultiStepsRunner() {
+        zeroCodeMultiStepsScenarioRunner = getInjector().getInstance(ZeroCodeMultiStepsScenarioRunner.class);
+        return zeroCodeMultiStepsScenarioRunner;
+    }
+
+    private ZeroCodeReportGenerator getInjectedReportGenerator() {
+        return getInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
     private void handleNoRunListenerReport(ZeroCodeTestReportListener reportListener) {
