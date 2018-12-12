@@ -1,6 +1,5 @@
 package org.jsmart.zerocode.core.runner;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -29,6 +28,7 @@ import java.util.function.BiConsumer;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -133,7 +133,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         final LocalDateTime requestTimeStamp = LocalDateTime.now();
                         switch (serviceType(serviceName, operationName)) {
                             case REST_CALL:
-                                serviceName = getFullyQualifiedRestUrl(serviceName);
+                                serviceName = getFullyQualifiedUrl(serviceName, host, port, applicationContext);
                                 logCorrelationshipPrinter.aRequestBuilder()
                                         .stepLoop(i)
                                         .relationshipId(logPrefixRelationshipId)
@@ -338,19 +338,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         }
 
         return serviceType;
-    }
-
-    private String getFullyQualifiedRestUrl(String serviceEndPoint) {
-        if (serviceEndPoint.startsWith("http://") || serviceEndPoint.startsWith("https://")) {
-            return serviceEndPoint;
-        } else {
-            /*
-             * Make sure your property file contains context-path with a front slash like "/google-map".
-             * -OR-
-             * Empty context path is also ok if it requires. In this case dont put front slash.
-             */
-            return String.format("%s:%s%s%s", host, port, applicationContext, serviceEndPoint);
-        }
     }
 
     private void stopWireMockServer() {
