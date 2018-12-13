@@ -77,4 +77,12 @@ public class BasicHttpClientTest {
         //On the server side: address={city=NewYork, type=HeadOffice}
         assertThat(nameValuePairString, is("Company=Amazon&addresses=%7Bcity%3DNewYork%2C+type%3DHeadOffice%7D"));
     }
+    
+    @Test
+    public void test_emptyQueryParams() throws IOException {
+    	String effectiveUrl = basicHttpClient.handleUrlAndQueryParams("http://test-url", new HashMap<>());
+    	assertThat(effectiveUrl, is("http://test-url"));
+    	effectiveUrl = basicHttpClient.handleUrlAndQueryParams("http://test-url", null);
+    	assertThat(effectiveUrl, is("http://test-url"));
+    }
 }

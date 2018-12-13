@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -19,6 +20,7 @@ import org.jsmart.zerocode.core.di.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
 import org.jukito.TestModule;
@@ -246,6 +248,82 @@ public class RestEndPointMockerTest {
         final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
         assertThat(responseBodyActual, is(soapResponseExpected));
+
+    }
+    
+    @Test
+    public void willMockUTF16Response() throws Exception{
+        WireMock.configureFor(9073);
+        givenThat(get(urlEqualTo("/charset/utf16"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=UTF-16")
+                        /*"This is utf-16 text" is utf-16 encoded and converted to base64 
+                         * ref https://www.base64encode.org/*/
+                        .withBase64Body("//5UAGgAaQBzACAAaQBzACAAdQB0AGYALQAxADYAIAB0AGUAeAB0AA==")));
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet request = new HttpGet("http://localhost:9073" + "/charset/utf16");
+       
+        
+        CloseableHttpResponse response = httpClient.execute(request);
+
+        BasicHttpClient basicHttpClient = new BasicHttpClient();
+        final String responseBodyActual = (String) basicHttpClient.handleResponse(response).getEntity();
+        System.err.println(responseBodyActual);
+        assertThat(responseBodyActual, is("This is utf-16 text"));
+
+    }
+    
+    @Test
+    public void willMockUTF8Response() throws Exception{
+    	
+    	final String response = "utf-8 encoded text";
+        WireMock.configureFor(9073);
+        givenThat(get(urlEqualTo("/charset/utf8"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=UTF-8")
+                       .withBody(response)));
+        
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet request = new HttpGet("http://localhost:9073" + "/charset/utf8");
+       
+        
+        CloseableHttpResponse closeableHttpResponse = httpClient.execute(request);
+
+        BasicHttpClient basicHttpClient = new BasicHttpClient();
+        final String responseBodyActual = (String) basicHttpClient.handleResponse(closeableHttpResponse).getEntity();
+        assertThat(responseBodyActual, is(response));
+        
+        
+        
+
+    }
+    
+    @Test
+    public void willMockDefaultResponseEncoding() throws Exception{
+    	
+    	final String response = "utf-8 encoded text";
+        WireMock.configureFor(9073);
+        givenThat(get(urlEqualTo("/charset/none"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", APPLICATION_JSON)
+                       .withBody(response)));
+        
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet request = new HttpGet("http://localhost:9073" + "/charset/none");
+       
+        
+        CloseableHttpResponse closeableHttpResponse = httpClient.execute(request);
+
+        BasicHttpClient basicHttpClient = new BasicHttpClient();
+        final String responseBodyActual = (String) basicHttpClient.handleResponse(closeableHttpResponse).getEntity();
+        assertThat(responseBodyActual, is(response));
+        
+        
+        
 
     }
 }
