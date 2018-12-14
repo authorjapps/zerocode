@@ -153,13 +153,7 @@ public class BasicHttpClient {
      * @throws IOException
      */
     public Response handleResponse(CloseableHttpResponse httpResponse) throws IOException {
-        HttpEntity entity = httpResponse.getEntity();
-        Charset charset = ContentType.getOrDefault(httpResponse.getEntity()).getCharset();
-        charset = (charset == null) ? Charset.defaultCharset() : charset;
-        Response serverResponse = Response
-                .status(httpResponse.getStatusLine().getStatusCode())
-                .entity(entity != null ? IOUtils.toString(entity.getContent(), charset) : null)
-                .build();
+        Response serverResponse = createCharsetResponse(httpResponse);
 
         Header[] allHeaders = httpResponse.getAllHeaders();
         Response.ResponseBuilder responseBuilder = Response.fromResponse(serverResponse);
@@ -171,6 +165,32 @@ public class BasicHttpClient {
         }
 
         return responseBuilder.build();
+    }
+
+    /**
+     * Override this method in case you want to make the Charset response differently for your project.
+     * Otherwise the framework falls back to this implementation by default which means- If the Charset
+     * is not set by the server framework will default to 'Charset.defaultCharset()', otherwise it will
+     * use the Charset sent by the server e.g. UAT-8 or UTF-16 or UTF-32 etc.
+     *
+     * Note-
+     * See implementation of java.nio.charset.Charset#defaultCharset. Here the default is UTF-8 if the
+     * 'defaultCharset' is not set by the JVM, otherwise it picks the JVM provided 'defaultCharset'
+     *
+     * @param httpResponse
+     * @return  : A http response compatible with Charset received from the http server e.g. UTF-8, UTF-16 etc
+     * @throws IOException
+     *
+     * @author santhoshkumar santhoshTpixler
+     */
+    public Response createCharsetResponse(CloseableHttpResponse httpResponse) throws IOException {
+        HttpEntity entity = httpResponse.getEntity();
+        Charset charset = ContentType.getOrDefault(httpResponse.getEntity()).getCharset();
+        charset = (charset == null) ? Charset.defaultCharset() : charset;
+        return Response
+                .status(httpResponse.getStatusLine().getStatusCode())
+                .entity(entity != null ? IOUtils.toString(entity.getContent(), charset) : null)
+                .build();
     }
 
     /**
@@ -194,6 +214,8 @@ public class BasicHttpClient {
      * @param httpUrl - Url of the target service
      * @param queryParams - Query parameters to pass
      * @return : Effective url
+     *
+     * @author santhoshkumar santhoshTpixler (Fixed empty queryParams map handling)
      */
     public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) throws IOException {
         if ((queryParams != null) && (!queryParams.isEmpty())) {
