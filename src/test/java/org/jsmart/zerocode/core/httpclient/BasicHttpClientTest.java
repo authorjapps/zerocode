@@ -128,9 +128,7 @@ public class BasicHttpClientTest {
 
         BasicHttpClient basicHttpClient = new BasicHttpClient();
         final String responseBodyActual = (String) basicHttpClient.handleResponse(response).getEntity();
-        System.err.println(responseBodyActual);
         assertThat(responseBodyActual, CoreMatchers.is("This is utf-16 text"));
-
     }
 
     @Test
