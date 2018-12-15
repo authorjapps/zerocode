@@ -99,7 +99,7 @@ public class BasicHttpClient {
      * @param httpUrl     : path to end point
      * @param methodName  : e.g. GET, PUT etc
      * @param headers     : headers, cookies etc
-     * @param queryParams : key-value query params after the '?' in the url
+     * @param queryParams : key-value query params after the ? in the url
      * @param body        : json body
      *
      * @return : Http response consists of status code, entity, headers, cookies etc
@@ -170,12 +170,12 @@ public class BasicHttpClient {
     /**
      * Override this method in case you want to make the Charset response differently for your project.
      * Otherwise the framework falls back to this implementation by default which means- If the Charset
-     * is not set by the server framework will default to 'Charset.defaultCharset()', otherwise it will
+     * is not set by the server framework will default to Charset.defaultCharset(), otherwise it will
      * use the Charset sent by the server e.g. UAT-8 or UTF-16 or UTF-32 etc.
      *
      * Note-
      * See implementation of java.nio.charset.Charset#defaultCharset. Here the default is UTF-8 if the
-     * 'defaultCharset' is not set by the JVM, otherwise it picks the JVM provided 'defaultCharset'
+     * defaultCharset is not set by the JVM, otherwise it picks the JVM provided defaultCharset
      *
      * @param httpResponse
      * @return  : A http response compatible with Charset received from the http server e.g. UTF-8, UTF-16 etc
@@ -227,7 +227,7 @@ public class BasicHttpClient {
     /**
      * The framework will fall back to this default implementation to handle the headers.
      * If you want to override any headers, you can do that by overriding the
-     * 'amendRequestHeaders(Map<String, Object> headers)' method.
+     * amendRequestHeaders(Map<String, Object> headers) method.
      *
      * @param headers
      * @param requestBuilder
@@ -375,7 +375,7 @@ public class BasicHttpClient {
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
         // Setting cookies:
         // Highly discouraged to use sessions, but in case of any server dependent upon session,
-        // then it's taken care here.
+        // then it is taken care here.
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
         if (COOKIE_JSESSIONID_VALUE != null) {
             uploadRequestBuilder.addHeader("Cookie", (String) COOKIE_JSESSIONID_VALUE);
