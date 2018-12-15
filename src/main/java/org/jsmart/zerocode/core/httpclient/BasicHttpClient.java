@@ -225,18 +225,30 @@ public class BasicHttpClient {
     }
 
     /**
-     * Override this method in case you want to handle the headers differently which were passed from the
-     * test-case requests. If there are keys with same name e.g. some headers were populated from
-     * properties file(or via any other way from your java application), then how these should be handled.
-     * The framework will fall back to this default implementation to handle this.
+     * The framework will fall back to this default implementation to handle the headers.
+     * If you want to override any headers, you can do that by overriding the
+     * 'amendRequestHeaders(Map<String, Object> headers)' method.
      *
      * @param headers
      * @param requestBuilder
      * @return : An effective Apache http request builder object with processed headers.
      */
     public RequestBuilder handleHeaders(Map<String, Object> headers, RequestBuilder requestBuilder) {
-        processFrameworkDefault(headers, requestBuilder);
+        Map<String, Object> amendedHeaders = amendRequestHeaders(headers);
+        processFrameworkDefault(amendedHeaders, requestBuilder);
         return requestBuilder;
+    }
+
+    /**
+     * Override this method only in case you want to
+     * - Add more headers to the http request or
+     * - Amend or modify the headers which were supplied from the JSON test-case request step.
+     *
+     * @param headers : The headers passed from the JSON test step request
+     * @return : An effective headers map.
+     */
+    public Map<String, Object> amendRequestHeaders(Map<String, Object> headers) {
+        return headers;
     }
 
     /**
