@@ -9,7 +9,7 @@
 
     <artifactId>zerocode-rest-bdd</artifactId>
     <groupId>org.jsmart</groupId>
-    <version>1.2.14-SNAPSHOT</version>
+    <version>1.2.14</version>
 
     <packaging>jar</packaging>
     <name>ZeroCode REST BDD</name>
