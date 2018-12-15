@@ -227,7 +227,7 @@ public class BasicHttpClient {
     /**
      * The framework will fall back to this default implementation to handle the headers.
      * If you want to override any headers, you can do that by overriding the
-     * amendRequestHeaders(Map<String, Object> headers) method.
+     * amendRequestHeaders(headers) method.
      *
      * @param headers
      * @param requestBuilder
