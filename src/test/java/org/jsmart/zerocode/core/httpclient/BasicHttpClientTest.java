@@ -23,6 +23,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 
 public class BasicHttpClientTest {
     private BasicHttpClient basicHttpClient;
@@ -127,8 +128,20 @@ public class BasicHttpClientTest {
         CloseableHttpResponse response = httpClient.execute(request);
 
         BasicHttpClient basicHttpClient = new BasicHttpClient();
-        final String responseBodyActual = (String) basicHttpClient.handleResponse(response).getEntity();
+        String responseBodyActual = (String) basicHttpClient.handleResponse(response).getEntity();
         assertThat(responseBodyActual, CoreMatchers.is("This is utf-16 text"));
+
+        // --------------------------------------
+        // Now set to UTF-8 and see the assertion
+        // --------------------------------------
+        givenThat(get(urlEqualTo("/charset/utf16"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json; charset=UTF-8")
+                        .withBase64Body("//5UAGgAaQBzACAAaQBzACAAdQB0AGYALQAxADYAIAB0AGUAeAB0AA==")));
+        response = httpClient.execute(request);
+        responseBodyActual = (String) basicHttpClient.handleResponse(response).getEntity();
+        assertThat(responseBodyActual, not("This is utf-16 text"));
     }
 
     @Test
