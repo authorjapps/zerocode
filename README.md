@@ -43,7 +43,7 @@ See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-con
 
 Maven and CI
 ====
-**Latest release: [1.2.x](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)**
+**Latest release: [1.2.x](https://search.maven.org/search?q=zerocode-rest-bdd)**
 
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
 **HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
@@ -94,8 +94,8 @@ Latest maven release:
     <version>1.2.x</version> 
 </dependency>
 ```
-Check here for the latest- 
-https://github.com/authorjapps/zerocode/releases -or- [Maven Central](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
+Check here for the latest release- 
+Maven Repository](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd) or [search maven repo](https://search.maven.org/search?q=zerocode-rest-bdd)
 
 Zerocode helps you to design better Test Cases for your business features, maintain and update them easily, avoiding sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests, as well optionally you can use`Suite` Runner for the CI builds. 
 
@@ -258,7 +258,8 @@ See more usages and examples below.
 - [Generating IDs and sharing across steps](#18)
 - [Bare JSON String without curly braces, still a valid JSON](#19)
 - [Passing Headers to the REST API](#20) 
-- [Passing "Content-Type": "application/x-www-form-urlencoded" header](#201) 
+- [Passing "Content-Type": "application/x-www-form-urlencoded" header](#20.1) 
+- [Handling Content-Type with charset-16 or charset-32](#20.2) 
 - [Setting Jenkins env propperty and picking environment specific properties file](#21)
 - [LocalDate and LocalDateTime format example](#22)
 - [SOAP method invocation example using xml input](#23)
@@ -981,36 +982,9 @@ See more SIZE examples [here](https://github.com/authorjapps/zerocode-hello-worl
 #### Calling java methods(apis) for doing specific tasks:
 + Sample tests are [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldjavaexec/HelloWorldJavaMethodExecTest.java)
     + Example of request response as JSON - [See here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworldjavaexec/hello_world_javaexec_req_resp_as_json.json)
-    + Example of passing a simple string e.g. SQL query etc - [See here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworldjavaexec/hello_world_java_method_return_assertions.json)
+    + Example of passing a simple string e.g. DB SQL query for Postgres, MySql, Oracle etc - [See step-by-step details Wiki](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor)
 
 - You can clone and execute from this repo [here](https://github.com/authorjapps/zerocode-hello-world)
-
-```javaScript
-{
-    "scenarioName": "Java method return as JSON assertions",
-    "steps": [
-        {
-            "name": "execute_java_method",
-            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor", //<--- class name
-            "operation": "fetchDbCustomers",              //<-- method name
-            "request": "select id, name from customers",     //<--- parameter to the method
-            "assertions": {
-                "dbResults": [
-                    {
-                        "id": 1,
-                        "name": "Elon Musk"
-                    },
-                    {
-                        "id": 2,
-                        "name": "Jeff Bezos"
-                    }
-                ]
-
-            }
-        }
-    ]
-}
-```
 
 In case of - Java method request, response as JSON:
 ```javaScript
@@ -1085,30 +1059,25 @@ public class Order {
 
 More examples here-
 
-- Link: [See here an example test](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/11_execute_local_java_program.json)
+- Multiple host in a properties file [See here an example test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworldjavaexec/read_config_properties_into_test_case_1.json)
 
-- Link: [All examples root folder](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+- More [examples here](https://github.com/authorjapps/zerocode-hello-world/tree/master/src/test/resources/helloworldjavaexec)
 
 
 #### 16:
 #### Overriding with Custom HttpClient with Project demand
 
-See here how to Use SSL HttpClient : [See usage of @UseHttpClient](https://github.com/authorjapps/zerocode/blob/master/src/test/java/org/jsmart/zerocode/core/verification/SslTrustUseHttpClientTest.java)
+See here how to pass custom headers in the HttpClient : [See usage of @UseHttpClient](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldCustomHttpClientSuite.java)
 
-See here custom one : [See usage of @UseHttpClient](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore/ZeroCodeUnitRunnerWithCustomHttpClient.java)
+See here custom one : [See usage of @UseHttpClient](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/main/java/org/jsmart/zerocode/zerocodejavaexec/httpclient/CustomHttpClient.java)
 
 e.g.
 ```java
-@UseHttpClient(SslTrustHttpClient.class)
-@TargetEnv("hosts_ci.properties")
-@RunWith(ZeroCodeUnitRunner.class)
-public class SslTrustUseHttpClientTest {
-
-    @Test
-    @JsonTestCase("foo/bar/test_case_file.json")
-    public void testASmartTestCase_createUpdate() throws Exception {
-
-    }
+@TargetEnv("github_host.properties")
+@UseHttpClient(CustomHttpClient.class)
+@RunWith(ZeroCodePackageRunner.class)
+@TestPackageRoot("helloworld_github_REST_api") //<--- Root of the folder in test/resources to pick all tests
+public class HelloWorldCustomHttpClientSuite {
 }
 ```
 
@@ -1232,7 +1201,8 @@ public class ContractTestSuite {
 
 - [See a running example](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/16_passing_headers_to_rest_apis.json)
 
-#### 201:
+
+#### 20.1:
 #### Passing "Content-Type": "application/x-www-form-urlencoded" header
 It is very easy to send this content-type in the header and assert the response.
 
@@ -1263,6 +1233,13 @@ The above name-value pair behind the scene is sent to the server as below:
 > unit-no=12-07&country=Singapore&block-number=33&pin=87654321&state%2Fregion=Singapore+North
 
 See more examples and usages in the [Wiki >>](https://github.com/authorjapps/zerocode/wiki/application-x-www-form-urlencoded-urlencoded-with-KeyValue-params)
+
+#### 20.2:
+#### Handling Content-Type with charset-16 or charset-32
+When the http server sends response with charset other than utf-8 i.e. utf-16 or utf-32 etc, then the Zerocode framework automatically handles it correctly.
+See [Wiki - Charset in response](https://github.com/authorjapps/zerocode/wiki/Charset-UTF-8-or-UTF-16-or-UTF-32-etc-in-the-http-response) for details on how it handles.
+
+Also the framework enables you to override this behaviour/handling by overriding method `createCharsetResponse` in the class `BasicHttpClient.java`. See an example in the working code example of HelloWorld repo.
 
 #### 21:
 #### Passing environment param via Jenkins and dynamically picking environment specific properties file in CI
