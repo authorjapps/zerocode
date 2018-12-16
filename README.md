@@ -12,6 +12,8 @@ It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its
 [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
+[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeEasyTDD)
+
 
 >Testing was _never_ so easy before.
 
@@ -71,6 +73,9 @@ Hello World
 
  * Quick start - [**Performance testing** - Resusing Spring JUnit tests(`less common`) - JUnit-Spring-Zerocode](https://github.com/authorjapps/zerocode-spring-junit) <br/>
 
+ * Quick start - [**Kotlin Integration** - A Simple Kotlin Application - Dev and Test Best Practice](https://github.com/BeTheCodeWithYou/SpringBoot-Kotlin) <br/>
+
+
 To build any of the above projects, you can use the following command
 ```
 mvn clean install -DskipTests
@@ -79,15 +84,13 @@ mvn clean install -DskipTests
 #### Latest news/releases/features
 
 #### Follow us(Twitter) - 
-<a href="https://twitter.com/ZercodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
-
-Zerocode empowers the automation testers as well as developers to build up test scenario steps effortlessly, with sending/receiving payload and asserting the response as JSON. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enabling you to focus on the business scenarios, user journeys and acceptance criterias acuurately. 
+<a href="https://twitter.com/ZerocodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
 
 Supported testing frameworks:
  * [JUnit](http://junit.org)
 
 Latest maven release:
-```
+```xml
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
@@ -95,7 +98,7 @@ Latest maven release:
 </dependency>
 ```
 Check here for the latest release- 
-Maven Repository](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd) or [search maven repo](https://search.maven.org/search?q=zerocode-rest-bdd)
+[Search in the Maven Portal](https://search.maven.org/search?q=zerocode-rest-bdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
 
 Zerocode helps you to design better Test Cases for your business features, maintain and update them easily, avoiding sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests, as well optionally you can use`Suite` Runner for the CI builds. 
 
