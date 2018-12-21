@@ -173,7 +173,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 break;
 
                             default:
-                                throw new RuntimeException("Opps! Service Undecided. If it is intentional, then leave it blank for same response as request");
+                                throw new RuntimeException("Oops! Service Type Undecided. If it is intentional, " +
+                                        "then keep the value as empty to receive the request in the response");
                         }
 
                         // logging response
@@ -200,6 +201,27 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createAssertersFrom(resolvedAssertionJson);
                         List<AssertionReport> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
 
+                        // --------------------------------------------------------------------------------
+                        // Non dependent requests into a single JSON file (Issue-167 - Feature Implemented)
+                        // --------------------------------------------------------------------------------
+                        boolean ignoreStepFailures = scenario.getIgnoreStepFailures() == null? false : scenario.getIgnoreStepFailures();
+                        if(ignoreStepFailures == true && !failureResults.isEmpty()){
+                            stepOutcome = notificationHandler.handleAssertion(
+                                    notifier,
+                                    description,
+                                    scenario.getScenarioName(),
+                                    thisStepName,
+                                    failureResults,
+                                    notificationHandler::handleAssertionFailed);
+
+                            logCorrelationshipPrinter.result(stepOutcome);
+
+                            // ---------------------------------------------------------------------
+                            // Continue to the next step after printing/logging the failure report.
+                            // Do not stop execution for this step
+                            // ---------------------------------------------------------------------
+                            continue;
+                        }
                         if (!failureResults.isEmpty()) {
                             /*
                              * Step failed

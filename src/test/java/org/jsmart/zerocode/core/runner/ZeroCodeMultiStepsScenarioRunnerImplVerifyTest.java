@@ -43,8 +43,14 @@ public class ZeroCodeMultiStepsScenarioRunnerImplVerifyTest {
     @Test
     @JsonTestCase("01_verification_test_cases/20_ignored.json")
     public void willNotRunIf_ignored() throws Exception {
-        
     }
+
+    @Ignore("Enable this to verify that all steps has been executed.")
+    @Test
+    @JsonTestCase("01_verification_test_cases/22_multi_step_exec_all.json")
+    public void testMultiStepIgnoreStepFailures_execAll() throws Exception {
+    }
+
 }
 
 
