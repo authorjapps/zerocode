@@ -1,0 +1,38 @@
+{
+    "scenarioName": "Unique Scenario 2",
+    "ignoreStepFailures": true,
+    "steps": [
+        {
+            "name": "us2_step1",
+            "url": "/home/bathroom/1",
+            "operation": "GET",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/json;charset=UTF-8",
+                    "Cookie": "cookie_123"
+                },
+                "body": {
+                }
+            },
+            "assertions": {
+                "status": 200
+            }
+        },
+        {
+            "name": "us2_step2",
+            "url": "/home/bathroom/2${$.us2_step1.response.body.id}",
+            "operation": "GET",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/json;charset=UTF-8",
+                    "Cookie": "some_cookie___${$.us2_step1.response.body.id}"
+                },
+                "body": {
+                }
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+    ]
+}

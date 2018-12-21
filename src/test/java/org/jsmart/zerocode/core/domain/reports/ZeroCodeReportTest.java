@@ -8,15 +8,25 @@ import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportStepBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
 
 public class ZeroCodeReportTest {
+    public static final String SCENARIO_1 = "Unique Scenario 1";
+    public static final String SCENARIO_2 = "Unique Scenario 2";
+
     private ObjectMapper mapper = new ObjectMapperProvider().get();
 
     @Test
@@ -57,6 +67,40 @@ public class ZeroCodeReportTest {
         assertThat(jsonDeDone.getResults().get(0).getLoop(), is(10));
         assertThat(jsonDeDone.getResults().get(0).getSteps().get(0).getLoop(), is(30));
         assertThat(jsonDeDone.getResults().get(0).getSteps().get(0).getResult(), is("PASS-PASS"));
-
     }
+
+    @Test
+    public void testReport_correct_scenariosAndSteps() {
+        Result result = JUnitCore.runClasses(ZeroCodeRunTwoScenariosForReport.class);
+        assertThat(result.getRunCount(), is(2));
+
+        File[] files = new File(TARGET_REPORT_DIR).listFiles((dir, fileName) -> fileName.endsWith(".json"));
+
+        List<File> relevantReportFiles = Arrays.asList(files).stream()
+                .filter(thisFile -> thisFile.getName().contains(SCENARIO_1) || thisFile.getName().contains(SCENARIO_2))
+                .collect(Collectors.toList());
+
+        assertThat(relevantReportFiles.size(), is(2));
+
+        relevantReportFiles.forEach(this::testStepSize);
+    }
+
+    private void testStepSize(File thisFile) {
+        ZeroCodeReport rawJsonReport = null;
+        try {
+            rawJsonReport = mapper.readValue(new File(thisFile.getAbsolutePath()), ZeroCodeReport.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (thisFile.getName().contains(SCENARIO_1)) {
+            assertThat(rawJsonReport.getResults().size(), is(1));
+            assertThat(rawJsonReport.getResults().get(0).getSteps().size(), is(2));
+
+        } else if (thisFile.getName().contains(SCENARIO_2)) {
+            assertThat(rawJsonReport.getResults().size(), is(1));
+            assertThat(rawJsonReport.getResults().get(0).getSteps().size(), is(2));
+        }
+    }
+
 }

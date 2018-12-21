@@ -62,7 +62,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private static StepNotificationHandler notificationHandler = new StepNotificationHandler();
 
-    private ZeroCodeReportBuilder reportBuilder = ZeroCodeReportBuilder.newInstance().timeStamp(LocalDateTime.now());
+    private ZeroCodeReportBuilder reportBuilder;
 
     private ZeroCodeExecResultBuilder reportResultBuilder;
 
@@ -72,6 +72,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     public synchronized boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
 
         LOGGER.info("\n-------------------------- BDD: Scenario:{} -------------------------\n", scenario.getScenarioName());
+
+        reportBuilder = ZeroCodeReportBuilder.newInstance().timeStamp(LocalDateTime.now());
 
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
