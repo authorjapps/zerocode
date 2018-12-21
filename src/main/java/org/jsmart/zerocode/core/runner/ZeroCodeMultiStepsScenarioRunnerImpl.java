@@ -66,7 +66,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private ZeroCodeExecResultBuilder reportResultBuilder;
 
-    private Boolean stepOutcome;
+    private Boolean stepOutcomeGreen;
 
     @Override
     public synchronized boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
@@ -208,7 +208,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         // --------------------------------------------------------------------------------
                         boolean ignoreStepFailures = scenario.getIgnoreStepFailures() == null? false : scenario.getIgnoreStepFailures();
                         if(ignoreStepFailures == true && !failureResults.isEmpty()){
-                            stepOutcome = notificationHandler.handleAssertion(
+                            stepOutcomeGreen = notificationHandler.handleAssertion(
                                     notifier,
                                     description,
                                     scenario.getScenarioName(),
@@ -216,11 +216,18 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                     failureResults,
                                     notificationHandler::handleAssertionFailed);
 
-                            logCorrelationshipPrinter.result(stepOutcome);
+                            logCorrelationshipPrinter.result(stepOutcomeGreen);
 
                             // ---------------------------------------------------------------------
+                            // Make it Green so that the report doesn't get generated again,
+                            // in the finally block i.e. printToFile. Once the scenario
+                            // get executed all reports(passed n failed) printed to file at once
+                            // ---------------------------------------------------------------------
+                            stepOutcomeGreen = true;
+
+                            // ---------------------------------------------------------------------
+                            // Do not stop execution after this step.
                             // Continue to the next step after printing/logging the failure report.
-                            // Do not stop execution for this step
                             // ---------------------------------------------------------------------
                             continue;
                         }
@@ -228,7 +235,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             /*
                              * Step failed
                              */
-                            stepOutcome = notificationHandler.handleAssertion(
+                            stepOutcomeGreen = notificationHandler.handleAssertion(
                                     notifier,
                                     description,
                                     scenario.getScenarioName(),
@@ -236,15 +243,15 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                     failureResults,
                                     notificationHandler::handleAssertionFailed);
 
-                            logCorrelationshipPrinter.result(stepOutcome);
+                            logCorrelationshipPrinter.result(stepOutcomeGreen);
 
-                            return stepOutcome;
+                            return stepOutcomeGreen;
                         }
 
                         /*
-                         * Test step stepOutcome
+                         * Test step stepOutcomeGreen
                          */
-                        stepOutcome = notificationHandler.handleAssertion(
+                        stepOutcomeGreen = notificationHandler.handleAssertion(
                                 notifier,
                                 description,
                                 scenario.getScenarioName(),
@@ -255,7 +262,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         // Handle assertion section -END
                         // ---------------------------------
 
-                        logCorrelationshipPrinter.result(stepOutcome);
+                        logCorrelationshipPrinter.result(stepOutcomeGreen);
 
                     } catch (Exception ex) {
 
@@ -273,7 +280,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         /*
                          * Step threw an exception
                          */
-                        stepOutcome = notificationHandler.handleAssertion(
+                        stepOutcomeGreen = notificationHandler.handleAssertion(
                                 notifier,
                                 description,
                                 scenario.getScenarioName(),
@@ -281,9 +288,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 (new RuntimeException("ZeroCode Step execution failed. Details:" + ex)),
                                 notificationHandler::handleStepException);
 
-                        logCorrelationshipPrinter.result(stepOutcome);
+                        logCorrelationshipPrinter.result(stepOutcomeGreen);
 
-                        return stepOutcome;
+                        return stepOutcomeGreen;
 
                     } finally {
                         logCorrelationshipPrinter.print();
@@ -297,7 +304,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         /*
                          * FAILED and Exception reports are generated here
                          */
-                        if (!stepOutcome) {
+                        if (!stepOutcomeGreen) {
                             reportBuilder.result(reportResultBuilder.build());
                             reportBuilder.printToFile(scenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
                         }

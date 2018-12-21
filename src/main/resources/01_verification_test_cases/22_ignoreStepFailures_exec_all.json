@@ -1,9 +1,9 @@
 {
-    "scenarioName": "Multi step exec all steps via ignore step failure",
+    "scenarioName": "Multi step - ignoreStepFailures",
     "ignoreStepFailures": true,
     "steps": [
         {
-            "name": "getbathroom1",
+            "name": "step1",
             "url": "/home/bathroom/1",
             "operation": "GET",
             "request": {
@@ -22,34 +22,13 @@
             }
         },
         {
-            "name": "getbathroom21",
-            "url": "/home/bathroom/2${$.getbathroom1.response.body.id}",
+            "name": "step2",
+            "url": "/home/bathroom/2${$.step1.response.body.id}",
             "operation": "GET",
             "request": {
                 "headers": {
                     "Content-Type": "application/json;charset=UTF-8",
-                    "Cookie": "some_cookie___${$.getbathroom1.response.body.id}"
-                },
-                "body": {
-                }
-            },
-            "assertions": {
-                "status": 200,
-                "body": {
-                    "id": 21,
-                    "name": "Shower-21",
-                    "availability": true
-                }
-            }
-        },
-        {
-            "name": "getbathroom3",
-            "url": "/home/bathroom/2${$.getbathroom1.response.body.id}",
-            "operation": "GET",
-            "request": {
-                "headers": {
-                    "Content-Type": "application/json;charset=UTF-8",
-                    "Cookie": "some_cookie___${$.getbathroom21.response.body.id}"
+                    "Cookie": "some_cookie___${$.step1.response.body.id}"
                 },
                 "body": {
                 }
