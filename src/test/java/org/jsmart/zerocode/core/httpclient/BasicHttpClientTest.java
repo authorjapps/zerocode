@@ -101,6 +101,11 @@ public class BasicHttpClientTest {
         effectiveUrl = basicHttpClient.handleUrlAndQueryParams("http://test-url", null);
         assertThat(effectiveUrl, is("http://test-url"));
     }
+    
+    @Test
+    public void test_multipart_without_file() throws IOException {
+    	basicHttpClient.createFileUploadRequestBuilder("http://test-url", "POST", "{\"modelStorage\":\"DB\",\"sketchingAlgorithm\":\"UPDATE\"}");
+    }
 
     @Test
     public void willMockUTF16Response() throws Exception {

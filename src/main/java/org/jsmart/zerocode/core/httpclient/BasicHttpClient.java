@@ -344,7 +344,14 @@ public class BasicHttpClient {
 
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 
-        buildAllFilesToUpload(fileFieldsList, multipartEntityBuilder);
+        /*
+	 * Allow fileFieldsList to be null.
+	 * fileFieldsList can be null if multipart/form-data is sent without any files
+	 * Refer Issue #168 - Raised and fixed by santhoshTpixler
+	 */
+        if(fileFieldsList != null) {
+        	buildAllFilesToUpload(fileFieldsList, multipartEntityBuilder);
+	}
 
         buildOtherRequestParams(fileFieldNameValueMap, multipartEntityBuilder);
 
