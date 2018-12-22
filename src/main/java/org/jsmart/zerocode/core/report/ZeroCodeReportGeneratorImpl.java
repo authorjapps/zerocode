@@ -106,9 +106,11 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     test.createNode(thisStep.getName(), TEST_STEP_CORRELATION_ID + " "
                             + thisStep.getCorrelationId()).log(testStatus, thisStep.getName()
                             + " has " + thisStep.getResult()
-                            + ". \n Search in the log file for-  " + TEST_STEP_CORRELATION_ID + "  \n"
+                            + ". \n Search in the log file in 'target/logs' folder for-  " + TEST_STEP_CORRELATION_ID + "  \n"
                             + thisStep.getCorrelationId() + "\n"
                             + ", url:" + thisStep.getUrl() + "\n"
+                            + "\n .See the entire Request, Response and Assertions at a single place. "
+                            + "Copy paste this content into an email and share with the interested stakeholders."
                     );
 
                     extentReports.flush();
