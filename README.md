@@ -2,6 +2,29 @@
 
 An open source lib enables API testing via simple declarative JSON steps - REST, SOAP and DB services
 
+> Enables to use the JSON payload structure without manipulating
+
+```javaScript
+A single step looks like below doing a single API call.
+
+{
+   "name": "get_user_step", //<---  [Step] A name used for step chaining using JSON path.
+   "url": "/users/octocat", //<---  [Request] Url of an API - Host and port configured via properties file.
+   "operation": "GET",      //<---  [Request] Operation e.g. PUT, POST, PATCH, DELETE etc.
+   "request": {},           //<---  [Request] Request payload with headers - Auth token, client_id, secret etc.
+   "assertions": {          //<---  [Response] Assertions - Performs response matching at the same time.
+      "status": 200,        //<---  [Response] Http status returned from REST or SOAP server.
+      "body": {             //<---  [Response] Response payload for assertion - JSON structure, no manipulation.
+          "id": 583231,
+          "login": "octocat",
+          "addresses": [
+             ...
+          ]
+      }
+   }
+}
+```
+
 Zerocode brings the simplicity in testing and validating APIs by eliminating repetitive code for test assertions, http calls and payload parsing. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
 
 It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - It goes a step further enabling you to simply reuse the test(s) from your regression pack.
@@ -251,6 +274,7 @@ See more usages and examples below.
 - [More assertion with handy place holders](#7)
 - [General Place holders](#8)
 - [Chaining multiple steps for a scenario](#10)
+- [Enabling ignoreStepFailures for executing all steps in a scenario](#10.1)
 - [Generating random strings, random numbers and static strings](#11)
 - [Asserting general and exception messages](#12)
 - [Asserting with LT(lesser than) and GT(greater than)](#13)
@@ -662,6 +686,7 @@ Even if a single matching element is found, the return is always an array type. 
 
 Run [the above test case](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/test/resources/contract_tests/screeningservice/find_element_in_array_via_jsonpath.json) from [here - testFindElementInArray()](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/screeningservice/ScreeningServiceContractTest.java).
 
+
 #### 10:
 #### Chaining multiple steps for a scenario
 
@@ -710,6 +735,22 @@ Chaining steps: Multi-Step REST calls with earlier response(IDs etc) as input to
 
 - Example : [Scenario with two steps - 1st create and then get](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/12_chaining_multiple_steps_with_prev_response.json)
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+
+#### 10.1:
+#### Enabling ignoreStepFailures for executing all steps in a scenario
+
+Setting `"ignoreStepFailures": true` will allow to execute the next step even if the earlier step failed.
+
+e.g.
+```
+{
+    "scenarioName": "Multi step - ignoreStepFailures",
+    "ignoreStepFailures": true,
+    "steps": [
+
+```
+
+See HelloWorld repo for a running example.
 
 
 #### 11:
