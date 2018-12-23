@@ -2,19 +2,19 @@
 
 An open source lib enables API testing via simple declarative JSON steps - REST, SOAP and DB services
 
-> Enables to use the JSON payload structure without manipulating
+> Enables to use the JSON payload structure without manipulating it.
 
 ```javaScript
-A single step looks like below doing a single API call.
+A single step looks like below doing a 'GET' call to '/users/octocat' and asserting the 'GET' response.
 
 {
-   "name": "get_user_step", //<---  [Step] A name used for step chaining using JSON path.
-   "url": "/users/octocat", //<---  [Request] Url of an API - Host and port configured via properties file.
-   "operation": "GET",      //<---  [Request] Operation e.g. PUT, POST, PATCH, DELETE etc.
-   "request": {},           //<---  [Request] Request payload with headers - Auth token, client_id, secret etc.
-   "assertions": {          //<---  [Response] Assertions - Performs response matching at the same time.
-      "status": 200,        //<---  [Response] Http status returned from REST or SOAP server.
-      "body": {             //<---  [Response] Response payload for assertion - JSON structure, no manipulation.
+   "name": "get_user_step", 
+   "url": "/users/octocat", 
+   "operation": "GET",      
+   "request": {},           
+   "assertions": {          
+      "status": 200,        
+      "body": {             
           "id": 583231,
           "login": "octocat",
           "addresses": [
