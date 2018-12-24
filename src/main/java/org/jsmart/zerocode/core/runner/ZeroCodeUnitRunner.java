@@ -212,25 +212,6 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         notifier.fireTestFinished(description);
     }
 
-    private Injector getMainModuleInjector() {
-        // Synchronise this with an object lock e.g. synchronized (ZeroCodeUnitRunner.class) {}
-        synchronized (this) {
-            final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
-            String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
-
-            serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
-
-            final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
-            Class<? extends BasicHttpClient> runtimeHttpClient =
-                    httpClientAnnotated != null ? httpClientAnnotated.value() : SslTrustHttpClient.class;
-
-            injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
-                    .with(new RuntimeHttpClientModule(runtimeHttpClient)));
-
-            return injector;
-        }
-    }
-
     private List<String> getSmartChildrenList() {
         List<FrameworkMethod> children = getChildren();
         children.forEach(
