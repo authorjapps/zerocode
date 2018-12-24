@@ -54,7 +54,6 @@ public class FileUploadUtils {
 
     public static void buildOtherRequestParams(Map<String, Object> fileFieldNameValueMap, MultipartEntityBuilder multipartEntityBuilder) {
         for (Map.Entry<String, Object> entry : fileFieldNameValueMap.entrySet()) {
-            System.out.println(entry.getKey() + "/" + entry.getValue());
             if (entry.getKey().equals(FILES_FIELD) || entry.getKey().equals(BOUNDARY_FIELD)) {
                 continue;
             }

@@ -2,6 +2,29 @@
 
 An open source lib enables API testing via simple declarative JSON steps - REST, SOAP and DB services
 
+> Enables to use the JSON payload structure without manipulating it.
+
+```javaScript
+A single step looks like below doing a 'GET' call to '/users/octocat' and asserting the 'GET' response.
+
+{
+   "name": "get_user_step", 
+   "url": "/users/octocat", 
+   "operation": "GET",      
+   "request": {},           
+   "assertions": {          
+      "status": 200,        
+      "body": {             
+          "id": 583231,
+          "login": "octocat",
+          "addresses": [
+             ...
+          ]
+      }
+   }
+}
+```
+
 Zerocode brings the simplicity in testing and validating APIs by eliminating repetitive code for test assertions, http calls and payload parsing. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
 
 It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - It goes a step further enabling you to simply reuse the test(s) from your regression pack.
@@ -12,6 +35,8 @@ It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its
 [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
+[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeEasyTDD)
+
 
 >Testing was _never_ so easy before.
 
@@ -43,7 +68,7 @@ See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-con
 
 Maven and CI
 ====
-**Latest release: [1.2.x](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)**
+**Latest release: [1.2.x](https://search.maven.org/search?q=zerocode-rest-bdd)**
 
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
 **HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
@@ -66,8 +91,13 @@ Hello World
  *  Quick start - [**Performance** testing -  Varying **Load/Stress** generation](https://github.com/authorjapps/performance-tests) <br/> 
  
  * Quick start - [**Spring Boot** application - **Integration testing** - In-Memory](https://github.com/authorjapps/spring-boot-integration-test) <br/>
+ 
+ * Quick start - [**Mock or Stub** server - **Click, Click, Done** - Via Wiremock Json DSL](https://github.com/authorjapps/api-mock-maker) <br/>
 
  * Quick start - [**Performance testing** - Resusing Spring JUnit tests(`less common`) - JUnit-Spring-Zerocode](https://github.com/authorjapps/zerocode-spring-junit) <br/>
+
+ * Quick start - [**Kotlin Integration** - A Simple Kotlin Application - Dev and Test Best Practice](https://github.com/BeTheCodeWithYou/SpringBoot-Kotlin) <br/>
+
 
 To build any of the above projects, you can use the following command
 ```
@@ -77,23 +107,21 @@ mvn clean install -DskipTests
 #### Latest news/releases/features
 
 #### Follow us(Twitter) - 
-<a href="https://twitter.com/ZercodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
-
-Zerocode empowers the automation testers as well as developers to build up test scenario steps effortlessly, with sending/receiving payload and asserting the response as JSON. The repititive tasks of the everyday automation have been taken care optimally at the framework level, enabling you to focus on the business scenarios, user journeys and acceptance criterias acuurately. 
+<a href="https://twitter.com/ZerocodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
 
 Supported testing frameworks:
  * [JUnit](http://junit.org)
 
 Latest maven release:
-```
+```xml
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-rest-bdd</artifactId>
     <version>1.2.x</version> 
 </dependency>
 ```
-Check here for the latest- 
-https://github.com/authorjapps/zerocode/releases -or- [Maven Central](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
+Check here for the latest release- 
+[Search in the Maven Portal](https://search.maven.org/search?q=zerocode-rest-bdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
 
 Zerocode helps you to design better Test Cases for your business features, maintain and update them easily, avoiding sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests, as well optionally you can use`Suite` Runner for the CI builds. 
 
@@ -246,6 +274,7 @@ See more usages and examples below.
 - [More assertion with handy place holders](#7)
 - [General Place holders](#8)
 - [Chaining multiple steps for a scenario](#10)
+- [Enabling ignoreStepFailures for executing all steps in a scenario](#10.1)
 - [Generating random strings, random numbers and static strings](#11)
 - [Asserting general and exception messages](#12)
 - [Asserting with LT(lesser than) and GT(greater than)](#13)
@@ -256,7 +285,8 @@ See more usages and examples below.
 - [Generating IDs and sharing across steps](#18)
 - [Bare JSON String without curly braces, still a valid JSON](#19)
 - [Passing Headers to the REST API](#20) 
-- [Passing "Content-Type": "application/x-www-form-urlencoded" header](#201) 
+- [Passing "Content-Type": "application/x-www-form-urlencoded" header](#20.1) 
+- [Handling Content-Type with charset-16 or charset-32](#20.2) 
 - [Setting Jenkins env propperty and picking environment specific properties file](#21)
 - [LocalDate and LocalDateTime format example](#22)
 - [SOAP method invocation example using xml input](#23)
@@ -656,6 +686,7 @@ Even if a single matching element is found, the return is always an array type. 
 
 Run [the above test case](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/test/resources/contract_tests/screeningservice/find_element_in_array_via_jsonpath.json) from [here - testFindElementInArray()](https://github.com/authorjapps/consumer-contract-tests/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/screeningservice/ScreeningServiceContractTest.java).
 
+
 #### 10:
 #### Chaining multiple steps for a scenario
 
@@ -704,6 +735,22 @@ Chaining steps: Multi-Step REST calls with earlier response(IDs etc) as input to
 
 - Example : [Scenario with two steps - 1st create and then get](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/12_chaining_multiple_steps_with_prev_response.json)
 - Link: [See test cases folder](https://github.com/authorjapps/helpme/tree/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+
+#### 10.1:
+#### Enabling ignoreStepFailures for executing all steps in a scenario
+
+Setting `"ignoreStepFailures": true` will allow to execute the next step even if the earlier step failed.
+
+e.g.
+```
+{
+    "scenarioName": "Multi step - ignoreStepFailures",
+    "ignoreStepFailures": true,
+    "steps": [
+
+```
+
+See HelloWorld repo for a running example.
 
 
 #### 11:
@@ -979,36 +1026,9 @@ See more SIZE examples [here](https://github.com/authorjapps/zerocode-hello-worl
 #### Calling java methods(apis) for doing specific tasks:
 + Sample tests are [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldjavaexec/HelloWorldJavaMethodExecTest.java)
     + Example of request response as JSON - [See here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworldjavaexec/hello_world_javaexec_req_resp_as_json.json)
-    + Example of passing a simple string e.g. SQL query etc - [See here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworldjavaexec/hello_world_java_method_return_assertions.json)
+    + Example of passing a simple string e.g. DB SQL query for Postgres, MySql, Oracle etc - [See step-by-step details Wiki](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor)
 
 - You can clone and execute from this repo [here](https://github.com/authorjapps/zerocode-hello-world)
-
-```javaScript
-{
-    "scenarioName": "Java method return as JSON assertions",
-    "steps": [
-        {
-            "name": "execute_java_method",
-            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor", //<--- class name
-            "operation": "fetchDbCustomers",              //<-- method name
-            "request": "select id, name from customers",     //<--- parameter to the method
-            "assertions": {
-                "dbResults": [
-                    {
-                        "id": 1,
-                        "name": "Elon Musk"
-                    },
-                    {
-                        "id": 2,
-                        "name": "Jeff Bezos"
-                    }
-                ]
-
-            }
-        }
-    ]
-}
-```
 
 In case of - Java method request, response as JSON:
 ```javaScript
@@ -1083,30 +1103,25 @@ public class Order {
 
 More examples here-
 
-- Link: [See here an example test](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/11_execute_local_java_program.json)
+- Multiple host in a properties file [See here an example test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworldjavaexec/read_config_properties_into_test_case_1.json)
 
-- Link: [All examples root folder](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios)
+- More [examples here](https://github.com/authorjapps/zerocode-hello-world/tree/master/src/test/resources/helloworldjavaexec)
 
 
 #### 16:
 #### Overriding with Custom HttpClient with Project demand
 
-See here how to Use SSL HttpClient : [See usage of @UseHttpClient](https://github.com/authorjapps/zerocode/blob/master/src/test/java/org/jsmart/zerocode/core/verification/SslTrustUseHttpClientTest.java)
+See here how to pass custom headers in the HttpClient : [See usage of @UseHttpClient](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldCustomHttpClientSuite.java)
 
-See here custom one : [See usage of @UseHttpClient](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/java/org/jsmart/zerocode/testhelp/zcmore/ZeroCodeUnitRunnerWithCustomHttpClient.java)
+See here custom one : [See usage of @UseHttpClient](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/main/java/org/jsmart/zerocode/zerocodejavaexec/httpclient/CustomHttpClient.java)
 
 e.g.
 ```java
-@UseHttpClient(SslTrustHttpClient.class)
-@TargetEnv("hosts_ci.properties")
-@RunWith(ZeroCodeUnitRunner.class)
-public class SslTrustUseHttpClientTest {
-
-    @Test
-    @JsonTestCase("foo/bar/test_case_file.json")
-    public void testASmartTestCase_createUpdate() throws Exception {
-
-    }
+@TargetEnv("github_host.properties")
+@UseHttpClient(CustomHttpClient.class)
+@RunWith(ZeroCodePackageRunner.class)
+@TestPackageRoot("helloworld_github_REST_api") //<--- Root of the folder in test/resources to pick all tests
+public class HelloWorldCustomHttpClientSuite {
 }
 ```
 
@@ -1230,7 +1245,8 @@ public class ContractTestSuite {
 
 - [See a running example](https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/16_passing_headers_to_rest_apis.json)
 
-#### 201:
+
+#### 20.1:
 #### Passing "Content-Type": "application/x-www-form-urlencoded" header
 It is very easy to send this content-type in the header and assert the response.
 
@@ -1261,6 +1277,13 @@ The above name-value pair behind the scene is sent to the server as below:
 > unit-no=12-07&country=Singapore&block-number=33&pin=87654321&state%2Fregion=Singapore+North
 
 See more examples and usages in the [Wiki >>](https://github.com/authorjapps/zerocode/wiki/application-x-www-form-urlencoded-urlencoded-with-KeyValue-params)
+
+#### 20.2:
+#### Handling Content-Type with charset-16 or charset-32
+When the http server sends response with charset other than utf-8 i.e. utf-16 or utf-32 etc, then the Zerocode framework automatically handles it correctly.
+See [Wiki - Charset in response](https://github.com/authorjapps/zerocode/wiki/Charset-UTF-8-or-UTF-16-or-UTF-32-etc-in-the-http-response) for details on how it handles.
+
+Also the framework enables you to override this behaviour/handling by overriding method `createCharsetResponse` in the class `BasicHttpClient.java`. See an example in the working code example of HelloWorld repo.
 
 #### 21:
 #### Passing environment param via Jenkins and dynamically picking environment specific properties file in CI

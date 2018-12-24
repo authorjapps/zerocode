@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -19,6 +20,7 @@ import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
 import org.jukito.TestModule;
@@ -66,12 +68,13 @@ public class RestEndPointMockerTest {
     @Inject
     private ObjectMapper objectMapper;
 
-    RestEndPointMocker restEndPointMocker;
+    @Rule
+    public WireMockRule rule = new WireMockRule(9073);
 
+    RestEndPointMocker restEndPointMocker;
 
     @Before
     public void beforeMethod() throws Exception {
-
         restEndPointMocker = new RestEndPointMocker();
     }
 
@@ -103,9 +106,6 @@ public class RestEndPointMockerTest {
 
                 true);
     }
-
-    @Rule
-    public WireMockRule rule = new WireMockRule(9073);
 
     @Test
     public void willMockASimpleGetEndPoint() throws Exception{
@@ -246,6 +246,6 @@ public class RestEndPointMockerTest {
         final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 
         assertThat(responseBodyActual, is(soapResponseExpected));
-
     }
+    
 }

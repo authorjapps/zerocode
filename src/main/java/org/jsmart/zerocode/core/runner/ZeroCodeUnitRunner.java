@@ -58,6 +58,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     protected boolean testRunCompleted;
     protected boolean passed;
 
+    private ZeroCodeMultiStepsScenarioRunner multiStepsRunner;
+
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
@@ -70,34 +72,20 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         this.testClass = klass;
         this.smartUtils = getInjectedSmartUtilsClass();
 
-        smartTestCaseNames = getSmartChildrenList();
+        this.smartTestCaseNames = getSmartChildrenList();
 
         /*
          * Read the host, port, context etc from the inline annotation instead of a properties file
          */
-        hostProperties = testClass.getAnnotation(HostProperties.class);
+        this.hostProperties = testClass.getAnnotation(HostProperties.class);
 
-        if (hostProperties != null) {
-            host = hostProperties.host();
-            port = hostProperties.port();
-            context = hostProperties.context();
+        if (this.hostProperties != null) {
+            this.host = hostProperties.host();
+            this.port = hostProperties.port();
+            this.context = hostProperties.context();
         }
-    }
 
-    private List<String> getSmartChildrenList() {
-        List<FrameworkMethod> children = getChildren();
-        children.forEach(
-                frameworkMethod -> {
-                    JsonTestCase annotation = frameworkMethod.getAnnotation(JsonTestCase.class);
-                    if (annotation != null) {
-                        smartTestCaseNames.add(annotation.value());
-                    } else {
-                        smartTestCaseNames.add(frameworkMethod.getName());
-                    }
-                }
-        );
-
-        return smartTestCaseNames;
+        this.multiStepsRunner = createZeroCodeMultiStepRunner();
     }
 
     @Override
@@ -206,17 +194,6 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             LOGGER.debug("### Found currentTestCase : -" + child);
 
-            final ZeroCodeMultiStepsScenarioRunner multiStepsRunner = getInjectedMultiStepsRunner();
-
-            /*
-             * Override the properties file containing hosts and ports with HostProperties
-             * only if the annotation is present on the runner.
-             */
-            if (hostProperties != null) {
-                ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideHost(host);
-                ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overridePort(port);
-                ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideApplicationContext(context);
-            }
             passed = multiStepsRunner.runScenario(child, notifier, description);
 
         } catch (Exception ioEx) {
@@ -233,6 +210,56 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         }
 
         notifier.fireTestFinished(description);
+    }
+
+    private Injector getMainModuleInjector() {
+        // Synchronise this with an object lock e.g. synchronized (ZeroCodeUnitRunner.class) {}
+        synchronized (this) {
+            final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
+            String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
+
+            serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
+
+            final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
+            Class<? extends BasicHttpClient> runtimeHttpClient =
+                    httpClientAnnotated != null ? httpClientAnnotated.value() : SslTrustHttpClient.class;
+
+            injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
+                    .with(new RuntimeHttpClientModule(runtimeHttpClient)));
+
+            return injector;
+        }
+    }
+
+    private List<String> getSmartChildrenList() {
+        List<FrameworkMethod> children = getChildren();
+        children.forEach(
+                frameworkMethod -> {
+                    JsonTestCase annotation = frameworkMethod.getAnnotation(JsonTestCase.class);
+                    if (annotation != null) {
+                        smartTestCaseNames.add(annotation.value());
+                    } else {
+                        smartTestCaseNames.add(frameworkMethod.getName());
+                    }
+                }
+        );
+
+        return smartTestCaseNames;
+    }
+
+    private ZeroCodeMultiStepsScenarioRunner createZeroCodeMultiStepRunner() {
+        final ZeroCodeMultiStepsScenarioRunner multiStepsRunner = getInjectedMultiStepsRunner();
+
+        /*
+         * Override the properties file containing hosts and ports with HostProperties
+         * only if the annotation is present on the runner.
+         */
+        if (hostProperties != null) {
+            ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideHost(host);
+            ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overridePort(port);
+            ((ZeroCodeMultiStepsScenarioRunnerImpl) multiStepsRunner).overrideApplicationContext(context);
+        }
+        return multiStepsRunner;
     }
 
     private final void runLeafJUnitTest(Statement statement, Description description,
@@ -268,7 +295,6 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             eachNotifier.fireTestFinished();
         }
-
     }
 
     private void buildReportAndPrintToFile(Description description) {

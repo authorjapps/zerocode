@@ -1,6 +1,5 @@
 package org.jsmart.zerocode.core.httpclient;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -12,6 +11,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +99,7 @@ public class BasicHttpClient {
      * @param httpUrl     : path to end point
      * @param methodName  : e.g. GET, PUT etc
      * @param headers     : headers, cookies etc
-     * @param queryParams : key-value query params after the '?' in the url
+     * @param queryParams : key-value query params after the ? in the url
      * @param body        : json body
      *
      * @return : Http response consists of status code, entity, headers, cookies etc
@@ -152,11 +153,7 @@ public class BasicHttpClient {
      * @throws IOException
      */
     public Response handleResponse(CloseableHttpResponse httpResponse) throws IOException {
-        HttpEntity entity = httpResponse.getEntity();
-        Response serverResponse = Response
-                .status(httpResponse.getStatusLine().getStatusCode())
-                .entity(entity != null ? IOUtils.toString(entity.getContent()) : null)
-                .build();
+        Response serverResponse = createCharsetResponse(httpResponse);
 
         Header[] allHeaders = httpResponse.getAllHeaders();
         Response.ResponseBuilder responseBuilder = Response.fromResponse(serverResponse);
@@ -168,6 +165,32 @@ public class BasicHttpClient {
         }
 
         return responseBuilder.build();
+    }
+
+    /**
+     * Override this method in case you want to make the Charset response differently for your project.
+     * Otherwise the framework falls back to this implementation by default which means- If the Charset
+     * is not set by the server framework will default to Charset.defaultCharset(), otherwise it will
+     * use the Charset sent by the server e.g. UAT-8 or UTF-16 or UTF-32 etc.
+     *
+     * Note-
+     * See implementation of java.nio.charset.Charset#defaultCharset. Here the default is UTF-8 if the
+     * defaultCharset is not set by the JVM, otherwise it picks the JVM provided defaultCharset
+     *
+     * @param httpResponse
+     * @return  : A http response compatible with Charset received from the http server e.g. UTF-8, UTF-16 etc
+     * @throws IOException
+     *
+     * @author santhoshkumar santhoshTpixler
+     */
+    public Response createCharsetResponse(CloseableHttpResponse httpResponse) throws IOException {
+        HttpEntity entity = httpResponse.getEntity();
+        Charset charset = ContentType.getOrDefault(httpResponse.getEntity()).getCharset();
+        charset = (charset == null) ? Charset.defaultCharset() : charset;
+        return Response
+                .status(httpResponse.getStatusLine().getStatusCode())
+                .entity(entity != null ? IOUtils.toString(entity.getContent(), charset) : null)
+                .build();
     }
 
     /**
@@ -191,27 +214,41 @@ public class BasicHttpClient {
      * @param httpUrl - Url of the target service
      * @param queryParams - Query parameters to pass
      * @return : Effective url
+     *
+     * @author santhoshkumar santhoshTpixler (Fixed empty queryParams map handling)
      */
     public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) throws IOException {
-        if (queryParams != null) {
+        if ((queryParams != null) && (!queryParams.isEmpty())) {
             httpUrl = setQueryParams(httpUrl, queryParams);
         }
         return httpUrl;
     }
 
     /**
-     * Override this method in case you want to handle the headers differently which were passed from the
-     * test-case requests. If there are keys with same name e.g. some headers were populated from
-     * properties file(or via any other way from your java application), then how these should be handled.
-     * The framework will fall back to this default implementation to handle this.
+     * The framework will fall back to this default implementation to handle the headers.
+     * If you want to override any headers, you can do that by overriding the
+     * amendRequestHeaders(headers) method.
      *
      * @param headers
      * @param requestBuilder
      * @return : An effective Apache http request builder object with processed headers.
      */
     public RequestBuilder handleHeaders(Map<String, Object> headers, RequestBuilder requestBuilder) {
-        processFrameworkDefault(headers, requestBuilder);
+        Map<String, Object> amendedHeaders = amendRequestHeaders(headers);
+        processFrameworkDefault(amendedHeaders, requestBuilder);
         return requestBuilder;
+    }
+
+    /**
+     * Override this method only in case you want to
+     * - Add more headers to the http request or
+     * - Amend or modify the headers which were supplied from the JSON test-case request step.
+     *
+     * @param headers : The headers passed from the JSON test step request
+     * @return : An effective headers map.
+     */
+    public Map<String, Object> amendRequestHeaders(Map<String, Object> headers) {
+        return headers;
     }
 
     /**
@@ -307,7 +344,14 @@ public class BasicHttpClient {
 
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 
-        buildAllFilesToUpload(fileFieldsList, multipartEntityBuilder);
+        /*
+	 * Allow fileFieldsList to be null.
+	 * fileFieldsList can be null if multipart/form-data is sent without any files
+	 * Refer Issue #168 - Raised and fixed by santhoshTpixler
+	 */
+        if(fileFieldsList != null) {
+        	buildAllFilesToUpload(fileFieldsList, multipartEntityBuilder);
+	}
 
         buildOtherRequestParams(fileFieldNameValueMap, multipartEntityBuilder);
 
@@ -338,7 +382,7 @@ public class BasicHttpClient {
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
         // Setting cookies:
         // Highly discouraged to use sessions, but in case of any server dependent upon session,
-        // then it's taken care here.
+        // then it is taken care here.
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
         if (COOKIE_JSESSIONID_VALUE != null) {
             uploadRequestBuilder.addHeader("Cookie", (String) COOKIE_JSESSIONID_VALUE);

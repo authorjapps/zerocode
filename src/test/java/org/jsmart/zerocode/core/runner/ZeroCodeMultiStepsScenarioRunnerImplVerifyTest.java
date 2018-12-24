@@ -43,8 +43,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImplVerifyTest {
     @Test
     @JsonTestCase("01_verification_test_cases/20_ignored.json")
     public void willNotRunIf_ignored() throws Exception {
-        
     }
+
 }
 
 

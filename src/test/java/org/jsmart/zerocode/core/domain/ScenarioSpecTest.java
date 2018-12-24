@@ -84,7 +84,6 @@ public class ScenarioSpecTest {
 
         assertThat(flowSpecNode.get("scenarioName").asText(), containsString("Given_When_Then"));
         assertThat(flowSpecNode.get("loop").asInt(), is(5));
-
     }
 
     @Test
@@ -135,4 +134,16 @@ public class ScenarioSpecTest {
         final JsonNode id2 = jsonNode.get("id2");
 
     }
+
+    @Test
+    public void test_ignoreStepFailuresField() throws Exception {
+        String jsonDocumentAsString = smartUtils
+                .getJsonDocumentAsString("01_test_smart_test_cases/04_ignoreStepFailures_in_multistep.json");
+        ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+
+        assertThat(scenarioSpec, notNullValue());
+        assertThat(scenarioSpec.getSteps().size(), is(2));
+        assertThat(scenarioSpec.getIgnoreStepFailures(), is(true));
+    }
+
 }
