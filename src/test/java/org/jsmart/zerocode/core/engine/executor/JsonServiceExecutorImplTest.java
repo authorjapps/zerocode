@@ -5,7 +5,7 @@ import com.google.inject.Injector;
 import com.jayway.jsonpath.JsonPath;
 
 import org.jsmart.simulator.main.SimpleRestJsonSimulatorsMain;
-import org.jsmart.zerocode.core.di.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.After;

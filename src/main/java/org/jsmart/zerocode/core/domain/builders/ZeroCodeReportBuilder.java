@@ -2,7 +2,7 @@ package org.jsmart.zerocode.core.domain.builders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jsmart.zerocode.core.di.ObjectMapperProvider;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeExecResult;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
 

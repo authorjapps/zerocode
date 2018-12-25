@@ -1,9 +1,9 @@
-package org.jsmart.zerocode.core.di;
+package org.jsmart.zerocode.core.di.module;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import org.jsmart.zerocode.core.di.provider.DefaultGuiceHttpClientProvider;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 
 import javax.inject.Singleton;
 

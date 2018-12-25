@@ -1,0 +1,18 @@
+{
+    "scenarioName": "Meta-data - Get topic details",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic://demo",
+            "operation": "any-kafka-command-to-execute against the topic demo",
+            "request": {
+                "name": "demo",
+                "broker-name": "kafka-server.corpbank.com"
+            },
+            "assertions": {
+                "status": "OK"
+            }
+        }
+
+    ]
+}

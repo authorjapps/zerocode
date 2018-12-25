@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.di;
+package org.jsmart.zerocode.core.di.module;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;

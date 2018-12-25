@@ -1,0 +1,17 @@
+{
+    "scenarioName": "Load - publish a message to kafka",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:192.168.99.1:9092:demo",
+            "operation": "load",
+            "request": {
+                "key": "${RANDOM.NUMBER}",
+                "value": "Hello World"
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        }
+    ]
+}

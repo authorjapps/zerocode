@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.di;
+package org.jsmart.zerocode.core.di.provider;
 
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;

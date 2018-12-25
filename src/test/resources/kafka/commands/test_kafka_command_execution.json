@@ -1,0 +1,18 @@
+{
+    "scenarioName": "Meta-data - Execute a command or equivalent Java function",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic://or//kafka-broker//against-what",
+            "operation": "any-kafka-command-to-execute against the topic demo",
+            "request": {
+                "name": "demo",
+                "broker-name": "kafka-server.corpbank.com"
+            },
+            "assertions": {
+                "status": "OK"
+            }
+        }
+
+    ]
+}

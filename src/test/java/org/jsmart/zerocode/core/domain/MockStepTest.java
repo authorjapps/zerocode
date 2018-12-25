@@ -1,7 +1,7 @@
 package org.jsmart.zerocode.core.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jsmart.zerocode.core.di.ObjectMapperProvider;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Test;
 
