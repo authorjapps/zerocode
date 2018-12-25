@@ -3,7 +3,7 @@ package org.jsmart.zerocode.converter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import org.jsmart.zerocode.core.di.ObjectMapperProvider;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.junit.Before;
 import org.junit.Test;
 

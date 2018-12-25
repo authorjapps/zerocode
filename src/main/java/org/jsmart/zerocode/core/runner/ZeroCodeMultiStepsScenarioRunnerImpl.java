@@ -3,7 +3,6 @@ package org.jsmart.zerocode.core.runner;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
@@ -16,7 +15,6 @@ import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
 import org.jsmart.zerocode.core.logbuilder.LogCorrelationshipPrinter;
-import org.jsmart.zerocode.core.utils.ServiceType;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
@@ -25,9 +23,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.jsmart.zerocode.core.domain.ZerocodeConstants.*;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
+import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.serviceType;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -46,17 +45,27 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     @Inject
     private JsonServiceExecutor serviceExecutor;
 
-    @Inject
+    @Inject(optional = true)
     @Named("web.application.endpoint.host")
     private String host;
 
-    @Inject
+    @Inject(optional = true)
     @Named("web.application.endpoint.port")
     private String port;
 
-    @Inject
+    @Inject(optional = true)
     @Named("web.application.endpoint.context")
     private String applicationContext;
+
+    //---------------------------------------------------
+    //kafka bootstrap servers or brokers comma separated
+    //---------------------------------------------------
+    @Inject(optional = true)
+    @Named("kafka.bootstrap.servers")
+    private String kafkaServers;
+
+
+    //guice -ends
 
     private LogCorrelationshipPrinter logCorrelationshipPrinter;
 
@@ -105,7 +114,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     StepExecutionState stepExecutionState = new StepExecutionState();
 
                     /*
-                     * Create the step name as it is for the 1st stepLoopTimes ie i=0.
+                     * Create the step name as it is for the 1st stepLoopTimes i.e. i=0.
                      * Rest of the loops suffix as i ie stepName1, stepName2, stepName3 etc
                      */
                     final String thisStepName = thisStep.getName() + (i == 0 ? "" : i);
@@ -126,7 +135,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         String serviceName = thisStep.getUrl();
                         String operationName = thisStep.getOperation();
 
+                        // --------------------------------
                         // Resolve the URL patterns if any
+                        // --------------------------------
                         serviceName = zeroCodeJsonTestProcesor.resolveStringJson(
                                 serviceName,
                                 scenarioExecutionState.getResolvedScenarioState()
@@ -159,6 +170,24 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                         .request(prettyPrintJson(resolvedRequestJson));
 
                                 executionResult = serviceExecutor.executeJavaService(serviceName, operationName, resolvedRequestJson);
+                                break;
+
+                            case KAFKA_CALL:
+                                if(kafkaServers == null){
+                                    throw new RuntimeException(">>> 'kafka.bootstrap.servers' property can not be null for kafka operations");
+                                }
+                                printBrokerProperties();
+                                logCorrelationshipPrinter.aRequestBuilder()
+                                        .stepLoop(i)
+                                        .relationshipId(logPrefixRelationshipId)
+                                        .requestTimeStamp(requestTimeStamp)
+                                        .step(thisStepName)
+                                        .url(serviceName)
+                                        .method(operationName)
+                                        .request(prettyPrintJson(resolvedRequestJson));
+
+                                String topicName = serviceName.substring(KAFKA_TOPIC.length());
+                                executionResult = serviceExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJson);
                                 break;
 
                             case NONE:
@@ -357,18 +386,28 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         this.applicationContext = applicationContext;
     }
 
-    private ServiceType serviceType(String serviceName, String methodName) {
-        ServiceType serviceType;
+    private String getFullyQualifiedRestUrl(String serviceEndPoint) {
 
-        if (StringUtils.isEmpty(serviceName) || isEmpty(methodName)) {
-            serviceType = ServiceType.NONE;
-        } else if (serviceName != null && serviceName.contains("/")) {
-            serviceType = ServiceType.REST_CALL;
-        } else {
-            serviceType = ServiceType.JAVA_CALL;
+        if(host == null || port == null){
+            throw new RuntimeException("'" + PROPERTY_KEY_HOST + "' or 'port' - can not be null");
         }
 
-        return serviceType;
+        if(applicationContext == null){
+            throw new RuntimeException("'" + PROPERTY_KEY_PORT + "' key must be present even if empty or blank");
+        }
+
+        if (serviceEndPoint.startsWith("http://") || serviceEndPoint.startsWith("https://")) {
+
+            return serviceEndPoint;
+
+        } else {
+            /*
+             * Make sure your property file contains context-path with a front slash like "/google-map".
+             * -OR-
+             * Empty context path is also ok if it requires. In this case do not put a front slash.
+             */
+            return String.format("%s:%s%s%s", host, port, applicationContext, serviceEndPoint);
+        }
     }
 
     private void stopWireMockServer() {
@@ -378,4 +417,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             LOGGER.info("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
         }
     }
+
+    private void printBrokerProperties() {
+
+        System.out.println("---------------------------------------------------------");
+        System.out.println(String.format("kafka.bootstrap.servers - %s", kafkaServers));
+        System.out.println("---------------------------------------------------------");
+
+    }
+
 }

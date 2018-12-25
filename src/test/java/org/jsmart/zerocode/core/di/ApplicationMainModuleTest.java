@@ -2,6 +2,7 @@ package org.jsmart.zerocode.core.di;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
 import org.jukito.TestModule;

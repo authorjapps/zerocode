@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.client.ClientRequest;
-import org.jsmart.zerocode.core.di.ObjectMapperProvider;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;

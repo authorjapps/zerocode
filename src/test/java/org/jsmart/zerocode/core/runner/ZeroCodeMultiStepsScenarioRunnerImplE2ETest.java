@@ -1,7 +1,7 @@
 package org.jsmart.zerocode.core.runner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jsmart.zerocode.core.di.ObjectMapperProvider;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
 import org.jsmart.zerocode.core.runner.e2e.IgnoreTestFailureFlagRunE2E;
 import org.junit.Test;

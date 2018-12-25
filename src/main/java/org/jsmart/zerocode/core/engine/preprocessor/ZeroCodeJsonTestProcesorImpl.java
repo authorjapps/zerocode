@@ -64,6 +64,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     private static final String LOCALDATETIME_NOW = "LOCAL.DATETIME.NOW:";
     private static final String XML_FILE = "XML.FILE:";
     private static final String RANDOM_UU_ID = "RANDOM.UUID";
+    private static final String RECORD_DUMP = "RECORD.DUMP:";
 
     private static final List<String> availableTokens = Arrays.asList(
             PREFIX_ASU,
@@ -73,7 +74,8 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
             LOCALDATE_TODAY,
             LOCALDATETIME_NOW,
             XML_FILE,
-            RANDOM_UU_ID
+            RANDOM_UU_ID,
+            RECORD_DUMP
     );
 
     /*
@@ -129,6 +131,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                         String formatPattern = runTimeToken.substring(LOCALDATETIME_NOW.length());
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
                         parammap.put(runTimeToken, LocalDateTime.now().format(formatter));
+
                     } else if (runTimeToken.startsWith(XML_FILE)) {
                         String xmlFileResource = runTimeToken.substring(XML_FILE.length());
                         final String xmlString = getXmlContent(xmlFileResource);
