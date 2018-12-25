@@ -7,10 +7,10 @@
          "operation": "consume",
          "request": {
             "consumerLocalConfigs": {
-               "commitSync": true,
+               //"commitSync": true,  //Uncomment to test validation
                //"commitAsync": true, //Uncomment to test validation
                "showRecordsInResponse": false,
-               "maxNoOfRetryPollsOrTimeouts": 2
+               "maxNoOfRetryPollsOrTimeouts": 5
             }
          },
          "assertions": {
@@ -40,8 +40,8 @@
                // See step 'unload_and_commit', after which the reading starts fresh from the next offset.
                // Otherwise you get the earlier records form last committed offset.
                "showRecordsInResponse": false,
-               "maxNoOfRetryPollsOrTimeouts": 2,
-               "pollingTime": 200
+               "maxNoOfRetryPollsOrTimeouts": 5,
+               "pollingTime": 1000
             }
          },
          "assertions": {
