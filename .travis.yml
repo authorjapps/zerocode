@@ -1,5 +1,19 @@
-language: java
-sudo: true
+os: linux
+dist: xenial
 
+language: java
 jdk:
-  - oraclejdk8
+	- openjdk8
+
+services:
+  - docker
+
+before_install:
+  - wget https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-single-node.yml
+	- docker-compose -f kafka-single-node.yml up -d
+	
+install:
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
+script:
+  - mvn test -B
