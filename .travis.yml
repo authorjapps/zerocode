@@ -1,9 +1,4 @@
-os: linux
-dist: xenial
-
 language: java
-jdk:
-  - openjdk8
 
 services:
   - docker
