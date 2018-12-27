@@ -1,6 +1,3 @@
-os: linux
-dist: xenial
-
 #specific JDK or multiple JDK can be specified here. There is an issue with mvn surefire and openJDK8. 
 #It is better to switch to openJDK
 language: java
