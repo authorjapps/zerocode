@@ -21,4 +21,7 @@ before_install:
 
 #Just compile and run tests, also print version at the beginning.
 #No need for package or install, as there is no use in creating a jar and putting them into local cache. 
-#making use of the default install and script tag provided by the Travis
+#Making use of the default install and script tag provided by the Travis.
+#Hence the following script is implicit and not needed to be configured.
+#script:
+#   - mvn install -B
