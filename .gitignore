@@ -16,3 +16,9 @@ hs_err_pid*
 *.idea
 /target
 .DS_Store
+
+
+#for eclipse
+.classpath
+.project
+.settings
