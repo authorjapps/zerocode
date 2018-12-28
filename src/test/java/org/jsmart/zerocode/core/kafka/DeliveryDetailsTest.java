@@ -17,34 +17,36 @@ import static org.hamcrest.core.Is.is;
 import static org.skyscreamer.jsonassert.JSONCompareMode.LENIENT;
 
 public class DeliveryDetailsTest {
+    // gson used for serialization purpose-only in the main code.
+    // In the tests it's used for both, ser-deser, but
+    // the framework never deserializes the delivery details
+    // in reality. Even if so, it works for both as tested below.
+    final Gson gson = new GsonSerDeProvider().get();
 
     @Test
     public void testSerDeser() throws IOException {
         DeliveryDetails deliveryDetails = new DeliveryDetails("Ok", "test message", 10, null);
-        ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
-        String json = objectMapper.writeValueAsString(deliveryDetails);
+        String json = gson.toJson(deliveryDetails);
         assertThat(json, is("{\"status\":\"Ok\",\"message\":\"test message\",\"recordCount\":10}"));
 
-        DeliveryDetails javaPojo = objectMapper.readValue(json, DeliveryDetails.class);
+        DeliveryDetails javaPojo = gson.fromJson(json, DeliveryDetails.class);
         assertThat(javaPojo, is(deliveryDetails));
     }
 
     @Test
     public void testSerDeser_statusOnly() throws IOException {
         DeliveryDetails deliveryDetails = new DeliveryDetails("Ok", null, null, null);
-        ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
-        String json = objectMapper.writeValueAsString(deliveryDetails);
+        String json = gson.toJson(deliveryDetails);
         assertThat(json, is("{\"status\":\"Ok\"}"));
 
-        DeliveryDetails javaPojo = objectMapper.readValue(json, DeliveryDetails.class);
+        DeliveryDetails javaPojo = gson.fromJson(json, DeliveryDetails.class);
         assertThat(javaPojo, is(deliveryDetails));
     }
 
     @Test
     public void testSerViaGson() {
-        Gson gson = new GsonSerDeProvider().get();
         DeliveryDetails deliveryDetails = new DeliveryDetails("Ok", null, null, null);
         String jsonMsg = gson.toJson(deliveryDetails);
         assertThat(jsonMsg, is("{\"status\":\"Ok\"}"));
