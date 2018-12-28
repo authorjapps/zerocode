@@ -11,8 +11,13 @@ import org.junit.runner.RunWith;
 public class KafkaProduceTest {
 
     @Test
-    @JsonTestCase("kafka/produce/test_kafka_publish.json")
-    public void testPublish() throws Exception {
+    @JsonTestCase("kafka/produce/test_kafka_produce.json")
+    public void testProduce() throws Exception {
+    }
+
+    @Test
+    @JsonTestCase("kafka/produce/test_kafka_produce_ack_metadata.json")
+    public void testProduceAnd_ack() throws Exception {
     }
 
 }

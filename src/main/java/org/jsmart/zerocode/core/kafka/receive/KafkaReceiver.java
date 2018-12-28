@@ -12,7 +12,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.ConsumedRecords;
-import org.jsmart.zerocode.core.kafka.DeliveryStatus;
+import org.jsmart.zerocode.core.kafka.delivery.DeliveryDetails;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +102,7 @@ public class KafkaReceiver {
     private String prepareResult(ConsumerLocalConfigs consumeLocalTestProps, List<ConsumerRecord> fetchedRecords) throws JsonProcessingException {
         if (consumeLocalTestProps != null && !consumeLocalTestProps.getShowRecordsInResponse()) {
 
-            return objectMapper.writeValueAsString(new DeliveryStatus(OK, fetchedRecords.size()));
+            return objectMapper.writeValueAsString(new DeliveryDetails(OK, fetchedRecords.size()));
 
         } else {
             //TODO - inject this Gson

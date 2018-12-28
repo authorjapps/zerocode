@@ -11,7 +11,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
-import org.jsmart.zerocode.core.kafka.DeliveryStatus;
+import org.jsmart.zerocode.core.kafka.delivery.DeliveryDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,31 +35,28 @@ public class KafkaSender {
 
     public String send(String brokers, String topicName, String requestJson) throws JsonProcessingException {
         Producer<Long, String> producer = createProducer(brokers, producerPropertyFile);
-        String status = objectMapper.writeValueAsString(new DeliveryStatus(OK));
+        String deliveryDetails = null;
 
-        for (int index = 0; index < 1; index++) {
+        // Very basic constructor, use other ones for 'partition' key etc
+        final ProducerRecord<Long, String> record = new ProducerRecord<>(topicName, requestJson);
 
-            // Very basic constructor, use other ones for 'partition' key etc
-            final ProducerRecord<Long, String> record = new ProducerRecord<>(topicName, requestJson);
+        try {
+            RecordMetadata metadata = producer.send(record).get();
+            LOGGER.info("Record sent to partition " + metadata.partition()
+                    + ", with offset " + metadata.offset());
 
-            try {
-                RecordMetadata metadata = producer.send(record).get();
-                LOGGER.info("Record sent with key " + index
-                        + ", to partition " + metadata.partition()
-                        + ", with offset " + metadata.offset());
+            deliveryDetails = gson.toJson(new DeliveryDetails(OK, metadata));
 
+        } catch (Exception e) {
+            LOGGER.info("Error in sending record. Exception - {} ", e);
+            String failedStatus = objectMapper.writeValueAsString(new DeliveryDetails(FAILED, e.getMessage()));
 
-            } catch (Exception e) {
-                LOGGER.info("Error in sending record. Exception - {} ", e);
-                String failedStatus = objectMapper.writeValueAsString(new DeliveryStatus(FAILED, e.getMessage()));
-
-                // TODO- Also send RecordMetadata metadata from above
-                return prettyPrintJson(failedStatus);
-
-            }
+            return prettyPrintJson(failedStatus);
+        } finally {
+            producer.close();
         }
 
-        return prettyPrintJson(status);
+        return prettyPrintJson(deliveryDetails);
 
     }
 

@@ -1,36 +1,42 @@
-package org.jsmart.zerocode.core.kafka;
+package org.jsmart.zerocode.core.kafka.delivery;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.util.Objects;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class DeliveryStatus {
+public class DeliveryDetails {
     private final String status;
     private final String message;
     private final Integer recordCount;
+    private final RecordMetadata recordMetadata;
 
     @JsonCreator
-    public DeliveryStatus(
+    public DeliveryDetails(
             @JsonProperty("status") String status,
             @JsonProperty("message") String message,
-            @JsonProperty("recordCount") Integer recordCount) {
+            @JsonProperty("recordCount") Integer recordCount, RecordMetadata recordMetadata) {
         this.status = status;
         this.message = message;
         this.recordCount = recordCount;
+        this.recordMetadata = recordMetadata;
     }
 
-    public DeliveryStatus(String status, String message) {
-        this(status, message, null);
+    public DeliveryDetails(String status, String message) {
+        this(status, message, null, null);
     }
-    public DeliveryStatus(String status, Integer recordCount) {
-        this(status, null, recordCount);
+    public DeliveryDetails(String status, RecordMetadata recordMetadata) {
+        this(status, null, null, recordMetadata);
+    }
+    public DeliveryDetails(String status, Integer recordCount) {
+        this(status, null, recordCount, null);
     }
 
-    public DeliveryStatus(String status) {
-        this(status, null, null);
+    public DeliveryDetails(String status) {
+        this(status, null, null, null);
     }
 
     public String getStatus() {
@@ -49,24 +55,25 @@ public class DeliveryStatus {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DeliveryStatus that = (DeliveryStatus) o;
+        DeliveryDetails that = (DeliveryDetails) o;
         return Objects.equals(status, that.status) &&
                 Objects.equals(message, that.message) &&
-                Objects.equals(recordCount, that.recordCount);
+                Objects.equals(recordCount, that.recordCount) &&
+                Objects.equals(recordMetadata, that.recordMetadata);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(status, message, recordCount);
+        return Objects.hash(status, message, recordCount, recordMetadata);
     }
 
     @Override
     public String toString() {
-        return "DeliveryStatus{" +
+        return "DeliveryDetails{" +
                 "status='" + status + '\'' +
                 ", message='" + message + '\'' +
-                ", recordCount='" + recordCount + '\'' +
+                ", recordCount=" + recordCount +
+                ", recordMetadata=" + recordMetadata +
                 '}';
     }
 }
