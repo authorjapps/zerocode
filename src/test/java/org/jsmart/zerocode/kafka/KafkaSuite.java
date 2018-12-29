@@ -13,11 +13,11 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         KafkaProduceTest.class,
         KafkaConsumeTest.class,
-        KafkaProduceIntKeyTest.class,
-        KafkaConsumeIntKeyTest.class,
         KafkaProduceCustomClientTest.class,
         KafkaProduceToPartitionTest.class,
         KafkaProduceWithTimeStampTest.class,
+        KafkaProduceIntKeyTest.class,
+        KafkaConsumeIntKeyTest.class,
         //KafkaPublishFailureTest.class,
 })
 @RunWith(Suite.class)

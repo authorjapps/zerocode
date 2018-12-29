@@ -3,7 +3,7 @@
     "steps": [
         {
             "name": "load_kafka",
-            "url": "kafka-topic:demo",
+            "url": "kafka-topic:demo-4",
             "operation": "produce",
             "request": {
                 "records":[
@@ -19,14 +19,14 @@
                 "recordMetadata" : {
                     "topicPartition" : {
                         "partition" : 0,
-                        "topic" : "demo"
+                        "topic" : "demo-4"
                     }
                 }
             }
         },
         {
             "name": "load_kafka_wrong_partition",
-            "url": "kafka-topic:demo",
+            "url": "kafka-topic:demo-4",
             "operation": "produce",
             "request": {
                 "records":[

@@ -3,7 +3,7 @@
     "steps": [
         {
             "name": "load_kafka",
-            "url": "kafka-topic:demo",
+            "url": "kafka-topic:demo-5",
             "operation": "produce",
             "request": {
                 "records": [
@@ -21,14 +21,14 @@
                     "timestamp": 1546065694692, //<--- same timestamp value as it was set while sending.
                     "topicPartition": {
                         "partition": 0,
-                        "topic": "demo"
+                        "topic": "demo-5"
                     }
                 }
             }
         },
         {
             "name": "load_without_timestamp",
-            "url": "kafka-topic:demo",
+            "url": "kafka-topic:demo-5",
             "operation": "produce",
             "request": {
                 "records": [
@@ -44,7 +44,7 @@
                     "timestamp": "$GT.1546065694692", //<-- because assigned by the broker after receiving
                     "topicPartition": {
                         "partition": 0,
-                        "topic": "demo"
+                        "topic": "demo-5"
                     }
                 }
             }

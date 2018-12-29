@@ -3,7 +3,7 @@
     "steps": [
         {
             "name": "load_kafka",
-            "url": "kafka-topic:demo",
+            "url": "kafka-topic:demo-3",
             "operation": "produce",
             "request": {
                 "async": true,

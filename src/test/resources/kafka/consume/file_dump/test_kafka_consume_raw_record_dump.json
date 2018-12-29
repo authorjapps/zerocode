@@ -3,7 +3,7 @@
    "steps": [
       {
          "name": "unload_and_commit",
-         "url": "kafka-topic:demo",
+         "url": "kafka-topic:demo-c2",
          "operation": "consume",
          "request": {
             "consumerLocalConfigs": {
@@ -18,7 +18,7 @@
       },
       {
          "name": "load_kafka",
-         "url": "kafka-topic:demo",
+         "url": "kafka-topic:demo-c2",
          "operation": "produce",
          "request": {
             "records":[
@@ -34,7 +34,7 @@
       },
       {
          "name": "dump_file_record_count",
-         "url": "kafka-topic:demo",
+         "url": "kafka-topic:demo-c2",
          "operation": "consume",
          "request": {
             "consumerLocalConfigs": {

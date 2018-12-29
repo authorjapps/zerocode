@@ -3,7 +3,7 @@
     "steps": [
         {
             "name": "load_kafka",
-            "url": "kafka-topic:demo",
+            "url": "kafka-topic:demo-int-topic-2",
             "operation": "produce",
             "request": {
                 "records":[
@@ -17,6 +17,21 @@
                 "status" : "Ok",
                 "recordMetadata" : "$NOT.NULL"
             }
+        },
+        {
+            "name": "onload_kafka",
+            "url": "kafka-topic:demo-int-topic-2",
+            "operation": "unload",
+            "request": {
+                "consumer_properties": {
+                    "commitSync":true,
+                    "MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS": 5
+                }
+            },
+            "assertions": {
+                "recordCount" : "$GT.0"
+            }
         }
+
     ]
 }

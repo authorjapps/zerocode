@@ -24,7 +24,7 @@
                 }
             },
             "assertions": {
-                "records.SIZE" : 1
+                "recordCount" : 1
             }
         }
     ]
