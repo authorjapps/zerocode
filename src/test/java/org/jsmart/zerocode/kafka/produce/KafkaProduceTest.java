@@ -6,7 +6,7 @@ import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@TargetEnv("hosts_servers/kafka_test_server.properties")
+@TargetEnv("kafka_servers/kafka_test_server.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaProduceTest {
 
