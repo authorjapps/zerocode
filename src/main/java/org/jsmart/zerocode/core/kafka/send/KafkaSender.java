@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -43,20 +44,29 @@ public class KafkaSender {
 
         Records producerRecords = gson.fromJson(requestJson, Records.class);
 
-        List<ProducerRecord> recordsToSend = producerRecords.getRecords();
-        if (recordsToSend == null || recordsToSend.size() == 0) {
-            throw new RuntimeException(NO_RECORD_FOUND_TO_SEND);
-        }
+        List<ProducerRecord> recordsToSend = validateProduceRecord(producerRecords);
+
+
         try {
             for (int i = 0; i < recordsToSend.size(); i++) {
                 ProducerRecord recordToSend = recordsToSend.get(0);
                 ProducerRecord record = prepareRecordToSend(topicName, recordToSend);
 
-                RecordMetadata metadata = (RecordMetadata) producer.send(record).get();
-                LOGGER.info("Record sent to partition- {}, with offset- {}, record- {}  ", metadata.partition(), metadata.offset(), record);
+                RecordMetadata metadata;
+                if (producerRecords.getAsync() != null && producerRecords.getAsync() == true) {
+                    LOGGER.info("Asynchronous Producer sending record - {}", record);
+                    metadata = (RecordMetadata) producer.send(record, new ProducerAsyncCallback()).get();
+                } else {
+                    LOGGER.info("Producer sending record - {}", record);
+                    metadata = (RecordMetadata) producer.send(record).get();
+                }
 
+                LOGGER.info("Record was sent to partition- {}, with offset- {} ", metadata.partition(), metadata.offset());
+
+                // --------------------------------------------------------------
                 // Logs deliveryDetails, which shd be good enough for the caller
                 // TODO- combine deliveryDetails into a list n return (if needed)
+                // --------------------------------------------------------------
                 deliveryDetails = gson.toJson(new DeliveryDetails(OK, metadata));
                 LOGGER.info("deliveryDetails- {}", deliveryDetails);
             }
@@ -84,4 +94,22 @@ public class KafkaSender {
                 recordToSend.value());
     }
 
+    private List<ProducerRecord> validateProduceRecord(Records producerRecords) {
+        List<ProducerRecord> recordsToSend = producerRecords.getRecords();
+        if (recordsToSend == null || recordsToSend.size() == 0) {
+            throw new RuntimeException(NO_RECORD_FOUND_TO_SEND);
+        }
+        return recordsToSend;
+    }
+
+    class ProducerAsyncCallback implements Callback {
+        @Override
+        public void onCompletion(RecordMetadata recordMetadata, Exception ex) {
+            if (ex != null) {
+                LOGGER.error("Asynchronous Producer failed with exception - {} ", ex);
+            } else {
+                LOGGER.info("Asynchronous Producer call was successful");
+            }
+        }
+    }
 }

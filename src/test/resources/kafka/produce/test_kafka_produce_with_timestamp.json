@@ -6,22 +6,22 @@
             "url": "kafka-topic:demo",
             "operation": "produce",
             "request": {
-                "records":[
+                "records": [
                     {
                         "key": "${RANDOM.NUMBER}",
                         "value": "Hello World",
                         "partition": 0,
-                        "timestamp" : 1546065694692
+                        "timestamp": 1546065694692 //<-- set while sending, broker keeps the same, doesn't change it
                     }
                 ]
             },
             "assertions": {
-                "status" : "Ok",
-                "recordMetadata" : {
-                    "timestamp" : 1546065694692,
-                    "topicPartition" : {
-                        "partition" : 0,
-                        "topic" : "demo"
+                "status": "Ok",
+                "recordMetadata": {
+                    "timestamp": 1546065694692, //<--- same timestamp value as it was set while sending.
+                    "topicPartition": {
+                        "partition": 0,
+                        "topic": "demo"
                     }
                 }
             }
@@ -31,7 +31,7 @@
             "url": "kafka-topic:demo",
             "operation": "produce",
             "request": {
-                "records":[
+                "records": [
                     {
                         "key": "${RANDOM.NUMBER}",
                         "value": "Hello World"
@@ -39,14 +39,19 @@
                 ]
             },
             "assertions": {
-                "status" : "Ok",
-                "recordMetadata" : {
-                    "timestamp" : "$GT.1546065694692",
-                    "topicPartition" : {
-                        "partition" : 0,
-                        "topic" : "demo"
+                "status": "Ok",
+                "recordMetadata": {
+                    "timestamp": "$GT.1546065694692", //<-- because assigned by the broker after receiving
+                    "topicPartition": {
+                        "partition": 0,
+                        "topic": "demo"
                     }
                 }
             }
-        }    ]
+        }
+    ]
 }
+
+// Note the difference here-
+// 1. One was set by the producer before hitting the Broker
+// 2. Other one was set by the Broker after receiving the message

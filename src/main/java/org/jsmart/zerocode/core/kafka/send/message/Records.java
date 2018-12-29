@@ -11,19 +11,26 @@ public class Records {
     // TODO- see batch for common headers per batch
     // -------------------------------------------------------
     private final List<ProducerRecord> records;
+    private final Boolean async;
 
-    public Records(List<ProducerRecord> records) {
+    public Records(List<ProducerRecord> records, Boolean async) {
         this.records = records;
+        this.async = async;
     }
 
     public List<ProducerRecord> getRecords() {
         return records;
     }
 
+    public Boolean getAsync() {
+        return async;
+    }
+
     @Override
     public String toString() {
         return "Records{" +
                 "records=" + records +
+                ", async=" + async +
                 '}';
     }
 }
