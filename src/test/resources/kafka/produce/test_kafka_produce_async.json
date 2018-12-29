@@ -22,9 +22,9 @@
                     "serializedKeySize" : 13,
                     "serializedValueSize" : 11,
                     "topicPartition" : {
-                        "hash" : 3080612,
+                        "hash" : "$NOT.NULL",
                         "partition" : 0,
-                        "topic" : "demo"
+                        "topic" : "demo-3"
                     }
                 }
             }
