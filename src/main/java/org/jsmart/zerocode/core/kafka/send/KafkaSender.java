@@ -20,6 +20,7 @@ import java.util.List;
 
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.FAILED;
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.OK;
+import static org.jsmart.zerocode.core.kafka.error.KafkaMessageConstants.NO_RECORD_FOUND_TO_SEND;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.createProducer;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
@@ -42,20 +43,20 @@ public class KafkaSender {
 
         Records producerRecords = gson.fromJson(requestJson, Records.class);
 
-        List<ProducerRecord> records = producerRecords.getRecords();
-        if (records == null || records.size() == 0) {
-            throw new RuntimeException("--------> No record was found or invalid record format was found <--------");
+        List<ProducerRecord> recordsToSend = producerRecords.getRecords();
+        if (recordsToSend == null || recordsToSend.size() == 0) {
+            throw new RuntimeException(NO_RECORD_FOUND_TO_SEND);
         }
         try {
-            for (int i = 0; i < records.size(); i++) {
-                // Very basic constructor, use other ones for 'partition' key etc
-                ProducerRecord record = new ProducerRecord(topicName, records.get(0).key(), records.get(0).value());
+            for (int i = 0; i < recordsToSend.size(); i++) {
+                ProducerRecord recordToSend = recordsToSend.get(0);
+                ProducerRecord record = prepareRecordToSend(topicName, recordToSend);
 
                 RecordMetadata metadata = (RecordMetadata) producer.send(record).get();
                 LOGGER.info("Record sent to partition- {}, with offset- {}, record- {}  ", metadata.partition(), metadata.offset(), record);
 
-                // logs deliveryDetails, but sends the final one to the caller
-                // TODO- combine deliveryDetails into a list n return
+                // Logs deliveryDetails, which shd be good enough for the caller
+                // TODO- combine deliveryDetails into a list n return (if needed)
                 deliveryDetails = gson.toJson(new DeliveryDetails(OK, metadata));
                 LOGGER.info("deliveryDetails- {}", deliveryDetails);
             }
@@ -63,7 +64,8 @@ public class KafkaSender {
         } catch (Exception e) {
             LOGGER.info("Error in sending record. Exception - {} ", e);
             String failedStatus = objectMapper.writeValueAsString(new DeliveryDetails(FAILED, e.getMessage()));
-            //sends the final record delivery status only.
+
+            // Sends the final record delivery status only.
             return prettyPrintJson(failedStatus);
         } finally {
             producer.close();
@@ -71,6 +73,15 @@ public class KafkaSender {
 
         return prettyPrintJson(deliveryDetails);
 
+    }
+
+    private ProducerRecord prepareRecordToSend(String topicName, ProducerRecord recordToSend) {
+
+        return new ProducerRecord(topicName,
+                recordToSend.partition(),
+                recordToSend.timestamp(),
+                recordToSend.key(),
+                recordToSend.value());
     }
 
 }

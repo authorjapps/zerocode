@@ -5,6 +5,8 @@ import org.jsmart.zerocode.kafka.consume.KafkaConsumeTest;
 import org.jsmart.zerocode.kafka.customclient.KafkaProduceCustomClientTest;
 import org.jsmart.zerocode.kafka.produce.KafkaProduceIntKeyTest;
 import org.jsmart.zerocode.kafka.produce.KafkaProduceTest;
+import org.jsmart.zerocode.kafka.produce.KafkaProduceToPartitionTest;
+import org.jsmart.zerocode.kafka.produce.KafkaProduceWithTimeStampTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -14,6 +16,8 @@ import org.junit.runners.Suite;
         KafkaProduceIntKeyTest.class,
         KafkaConsumeIntKeyTest.class,
         KafkaProduceCustomClientTest.class,
+        KafkaProduceToPartitionTest.class,
+        KafkaProduceWithTimeStampTest.class,
         //KafkaPublishFailureTest.class,
 })
 @RunWith(Suite.class)

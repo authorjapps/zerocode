@@ -1,0 +1,52 @@
+{
+    "scenarioName": "Produce a message with timestamp",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo",
+            "operation": "produce",
+            "request": {
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World",
+                        "partition": 0,
+                        "timestamp" : 1546065694692
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Ok",
+                "recordMetadata" : {
+                    "timestamp" : 1546065694692,
+                    "topicPartition" : {
+                        "partition" : 0,
+                        "topic" : "demo"
+                    }
+                }
+            }
+        },
+        {
+            "name": "load_without_timestamp",
+            "url": "kafka-topic:demo",
+            "operation": "produce",
+            "request": {
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World"
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Ok",
+                "recordMetadata" : {
+                    "timestamp" : "$GT.1546065694692",
+                    "topicPartition" : {
+                        "partition" : 0,
+                        "topic" : "demo"
+                    }
+                }
+            }
+        }    ]
+}
