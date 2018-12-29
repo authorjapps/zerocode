@@ -1,0 +1,18 @@
+package org.jsmart.zerocode.kafka.produce;
+
+import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.TargetEnv;
+import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+@TargetEnv("hosts_servers/kafka_test_server_int_key.properties")
+@RunWith(ZeroCodeUnitRunner.class)
+public class KafkaProduceIntKeyTest {
+
+    @Test
+    @JsonTestCase("kafka/produce/test_kafka_produce_int_key.json")
+    public void testProduce_intOrDoubleKey() throws Exception {
+    }
+
+}

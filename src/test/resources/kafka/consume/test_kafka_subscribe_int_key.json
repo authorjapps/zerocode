@@ -8,7 +8,7 @@
             "request": {
                 "records":[
                     {
-                        "key": "${RANDOM.NUMBER}",
+                        "key": 101,
                         "value": "Hello World"
                     }
                 ]

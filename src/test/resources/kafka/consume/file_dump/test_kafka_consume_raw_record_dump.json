@@ -21,8 +21,12 @@
          "url": "kafka-topic:demo",
          "operation": "produce",
          "request": {
-            "key": "${RANDOM.NUMBER}",
-            "value": "Hello World"
+            "records":[
+               {
+                  "key": "${RANDOM.NUMBER}",
+                  "value": "Hello World"
+               }
+            ]
          },
          "assertions": {
             "status": "Ok"

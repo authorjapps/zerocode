@@ -1,5 +1,5 @@
 {
-    "scenarioName": "Produce a message to kafka topic - vanilla",
+    "scenarioName": "Produce a message to kafka topic - int Key",
     "steps": [
         {
             "name": "load_kafka",
@@ -8,7 +8,7 @@
             "request": {
                 "records":[
                     {
-                        "key": "${RANDOM.NUMBER}",
+                        "key": 101,
                         "value": "Hello World"
                     }
                 ]

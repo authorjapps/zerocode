@@ -6,16 +6,20 @@
             "url": "kafka-topic:demo",
             "operation": "produce",
             "request": {
-                "key": "${RANDOM.NUMBER}",
-                "value": "Hello World"
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World"
+                    }
+                ]
             },
             "assertions": {
                 "status" : "Ok",
                 "recordMetadata" : {
                     "offset" : "$NOT.NULL",
                     "timestamp" : "$NOT.NULL",
-                    "serializedKeySize" : -1,
-                    "serializedValueSize" : 45,
+                    "serializedKeySize" : 13,
+                    "serializedValueSize" : 11,
                     "topicPartition" : {
                         "hash" : 3080612,
                         "partition" : 0,
