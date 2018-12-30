@@ -52,7 +52,7 @@ public class KafkaHelperTest {
         assertThat(consumerEffectiveConfigs.getFileDumpType(), is("RAW"));
         assertThat(consumerEffectiveConfigs.getCommitAsync(), is(true));
         assertThat(consumerEffectiveConfigs.getCommitSync(), is(false));
-        assertThat(consumerEffectiveConfigs.getShowRecordsInResponse(), is(false));
+        assertThat(consumerEffectiveConfigs.getShowConsumedRecords(), is(false));
         assertThat(consumerEffectiveConfigs.getMaxNoOfRetryPollsOrTimeouts(), is(3));
         assertThat(consumerEffectiveConfigs.getPollingTime(), is(consumerLocal.getPollingTime()));
     }
@@ -69,7 +69,7 @@ public class KafkaHelperTest {
         assertThat(consumerEffectiveConfigs.getFileDumpType(), is("JSON"));
         assertThat(consumerEffectiveConfigs.getCommitAsync(), is(false));
         assertThat(consumerEffectiveConfigs.getCommitSync(), is(true));
-        assertThat(consumerEffectiveConfigs.getShowRecordsInResponse(), is(true));
+        assertThat(consumerEffectiveConfigs.getShowConsumedRecords(), is(true));
         assertThat(consumerEffectiveConfigs.getPollingTime(), is(consumerCommon.getPollingTime()));
     }
 

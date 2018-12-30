@@ -91,7 +91,7 @@ public class KafkaHelper {
                     consumerCommon.getFileDumpType(),
                     consumerCommon.getCommitAsync(),
                     consumerCommon.getCommitSync(),
-                    consumerCommon.getShowRecordsInResponse(),
+                    consumerCommon.getShowConsumedRecords(),
                     consumerCommon.getMaxNoOfRetryPollsOrTimeouts(),
                     consumerCommon.getPollingTime());
         }
@@ -102,8 +102,8 @@ public class KafkaHelper {
         // Handle fileDumpType
         String effectiveFileDumpType = ofNullable(consumerLocal.getFileDumpType()).orElse(consumerCommon.getFileDumpType());
 
-        // Handle showRecordsInResponse
-        Boolean effectiveShowRecordsInResponse = ofNullable(consumerLocal.getShowRecordsInResponse()).orElse(consumerCommon.getShowRecordsInResponse());
+        // Handle showConsumedRecords
+        Boolean effectiveShowConsumedRecords = ofNullable(consumerLocal.getShowConsumedRecords()).orElse(consumerCommon.getShowConsumedRecords());
 
         // Handle maxNoOfRetryPollsOrTimeouts
         Integer effectiveMaxNoOfRetryPollsOrTimeouts = ofNullable(consumerLocal.getMaxNoOfRetryPollsOrTimeouts()).orElse(consumerCommon.getMaxNoOfRetryPollsOrTimeouts());
@@ -132,7 +132,7 @@ public class KafkaHelper {
                 effectiveFileDumpType,
                 effectiveCommitAsync,
                 effectiveCommitSync,
-                effectiveShowRecordsInResponse,
+                effectiveShowConsumedRecords,
                 effectiveMaxNoOfRetryPollsOrTimeouts,
                 effectivePollingTime);
     }

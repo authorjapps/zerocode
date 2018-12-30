@@ -24,8 +24,8 @@ public class ConsumerCommonConfigs {
     private String fileDumpType;
 
     @Inject(optional = true)
-    @Named("consumer.showRecordsInResponse")
-    private Boolean showRecordsInResponse;
+    @Named("consumer.showConsumedRecords")
+    private Boolean showConsumedRecords;
 
     @Inject(optional = true)
     @Named("consumer.maxNoOfRetryPollsOrTimeouts")
@@ -42,7 +42,7 @@ public class ConsumerCommonConfigs {
                                  Boolean commitAsync,
                                  String fileDumpTo,
                                  String fileDumpType,
-                                 Boolean showRecordsInResponse,
+                                 Boolean showConsumedRecords,
                                  Integer maxNoOfRetryPollsOrTimeouts,
                                  Long pollingTime
 
@@ -51,7 +51,7 @@ public class ConsumerCommonConfigs {
         this.commitAsync = commitAsync;
         this.fileDumpTo = fileDumpTo;
         this.fileDumpType = fileDumpType;
-        this.showRecordsInResponse = showRecordsInResponse;
+        this.showConsumedRecords = showConsumedRecords;
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
         this.pollingTime = pollingTime;
     }
@@ -72,8 +72,8 @@ public class ConsumerCommonConfigs {
         return fileDumpType;
     }
 
-    public Boolean getShowRecordsInResponse() {
-        return showRecordsInResponse;
+    public Boolean getShowConsumedRecords() {
+        return showConsumedRecords;
     }
 
     public Integer getMaxNoOfRetryPollsOrTimeouts() {
@@ -91,7 +91,7 @@ public class ConsumerCommonConfigs {
                 ", commitAsync=" + commitAsync +
                 ", fileDumpTo='" + fileDumpTo + '\'' +
                 ", fileDumpType='" + fileDumpType + '\'' +
-                ", showRecordsInResponse=" + showRecordsInResponse +
+                ", showConsumedRecords=" + showConsumedRecords +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +
                 '}';

@@ -28,7 +28,7 @@ public class DeliveryDetailsTest {
         DeliveryDetails deliveryDetails = new DeliveryDetails("Ok", "test message", 10, null);
 
         String json = gson.toJson(deliveryDetails);
-        assertThat(json, is("{\"status\":\"Ok\",\"message\":\"test message\",\"recordCount\":10}"));
+        assertThat(json, is("{\"status\":\"Ok\",\"message\":\"test message\",\"size\":10}"));
 
         DeliveryDetails javaPojo = gson.fromJson(json, DeliveryDetails.class);
         assertThat(javaPojo, is(deliveryDetails));

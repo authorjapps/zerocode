@@ -9,7 +9,7 @@
             "consumerLocalConfigs": {
                //"commitSync": true,  //Uncomment to test validation
                //"commitAsync": true, //Uncomment to test validation
-               "showRecordsInResponse": false,
+               "showConsumedRecords": false,
                "maxNoOfRetryPollsOrTimeouts": 5
             }
          },
@@ -43,7 +43,7 @@
                //"commitSync":true, // not effective, bacaz it does a commit after consuming the records.
                // See step 'unload_and_commit', after which the reading starts fresh from the next offset.
                // Otherwise you get the earlier records form last committed offset.
-               "showRecordsInResponse": false,
+               "showConsumedRecords": false,
                "maxNoOfRetryPollsOrTimeouts": 5,
                "pollingTime": 1000
             }

@@ -49,7 +49,7 @@ public class KafkaSender {
 
         try {
             for (int i = 0; i < recordsToSend.size(); i++) {
-                ProducerRecord recordToSend = recordsToSend.get(0);
+                ProducerRecord recordToSend = recordsToSend.get(i);
                 ProducerRecord record = prepareRecordToSend(topicName, recordToSend);
 
                 RecordMetadata metadata;

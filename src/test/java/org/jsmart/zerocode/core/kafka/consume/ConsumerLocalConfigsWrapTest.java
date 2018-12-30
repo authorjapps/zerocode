@@ -75,7 +75,7 @@ public class ConsumerLocalConfigsWrapTest {
                 "                    \"fileDumpTo\": \"target/temp/demo.txt\",\n" +
                 "                    \"fileDumpType\": \"RAW\",\n" +
                 "                    \"commitAsync\":true,\n" +
-                "                    \"showRecordsInResponse\":false\n" +
+                "                    \"showConsumedRecords\":false\n" +
                 "                }\n" +
                 "\n" +
                 "            }";
@@ -83,7 +83,7 @@ public class ConsumerLocalConfigsWrapTest {
         ConsumerLocalConfigsWrap javaPojo = objectMapper.readValue(json, ConsumerLocalConfigsWrap.class);
 
         assertThat(javaPojo.getConsumerLocalConfigs().getFileDumpTo(), is("target/temp/demo.txt"));
-        assertThat(javaPojo.getConsumerLocalConfigs().getShowRecordsInResponse(), is(false));
+        assertThat(javaPojo.getConsumerLocalConfigs().getShowConsumedRecords(), is(false));
 
 
     }
@@ -95,7 +95,7 @@ public class ConsumerLocalConfigsWrapTest {
                 "                    \"fileDumpTo\": \"target/temp/demo.txt\",\n" +
                 "                    \"fileDumpType\": \"RAW\",\n" +
                 "                    \"commitAsync\":true,\n" +
-                "                    \"showRecordsInResponse\":false,\n" +
+                "                    \"showConsumedRecords\":false,\n" +
                 "                    \"MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS\": 5\n" +
                 "                }\n" +
                 "\n" +
@@ -104,7 +104,7 @@ public class ConsumerLocalConfigsWrapTest {
         ConsumerLocalConfigsWrap javaPojo = objectMapper.readValue(json, ConsumerLocalConfigsWrap.class);
 
         assertThat(javaPojo.getConsumerLocalConfigs().getFileDumpTo(), is("target/temp/demo.txt"));
-        assertThat(javaPojo.getConsumerLocalConfigs().getShowRecordsInResponse(), is(false));
+        assertThat(javaPojo.getConsumerLocalConfigs().getShowConsumedRecords(), is(false));
 
 
     }

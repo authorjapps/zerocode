@@ -13,7 +13,7 @@ public class ConsumerLocalConfigs {
     private final String fileDumpType;
     private final Boolean commitAsync;
     private final Boolean commitSync;
-    private final Boolean showRecordsInResponse;
+    private final Boolean showConsumedRecords;
     private final Integer maxNoOfRetryPollsOrTimeouts;
     private final Long pollingTime;
 
@@ -23,14 +23,14 @@ public class ConsumerLocalConfigs {
             @JsonProperty("fileDumpType") String fileDumpType,
             @JsonProperty("commitAsync") Boolean commitAsync,
             @JsonProperty("commitSync") Boolean commitSync,
-            @JsonProperty("showRecordsInResponse") Boolean showRecordsInResponse,
+            @JsonProperty("showConsumedRecords") Boolean showConsumedRecords,
             @JsonProperty("maxNoOfRetryPollsOrTimeouts") Integer maxNoOfRetryPollsOrTimeouts,
             @JsonProperty("pollingTime")Long pollingTime) {
         this.fileDumpTo = fileDumpTo;
         this.fileDumpType = fileDumpType;
         this.commitAsync = commitAsync;
         this.commitSync = commitSync;
-        this.showRecordsInResponse = showRecordsInResponse;
+        this.showConsumedRecords = showConsumedRecords;
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
         this.pollingTime = pollingTime;
     }
@@ -51,8 +51,8 @@ public class ConsumerLocalConfigs {
         return commitSync;
     }
 
-    public Boolean getShowRecordsInResponse() {
-        return showRecordsInResponse;
+    public Boolean getShowConsumedRecords() {
+        return showConsumedRecords;
     }
 
     public Integer getMaxNoOfRetryPollsOrTimeouts() {
@@ -72,7 +72,7 @@ public class ConsumerLocalConfigs {
                 Objects.equals(fileDumpType, that.fileDumpType) &&
                 Objects.equals(commitAsync, that.commitAsync) &&
                 Objects.equals(commitSync, that.commitSync) &&
-                Objects.equals(showRecordsInResponse, that.showRecordsInResponse) &&
+                Objects.equals(showConsumedRecords, that.showConsumedRecords) &&
                 Objects.equals(maxNoOfRetryPollsOrTimeouts, that.maxNoOfRetryPollsOrTimeouts) &&
                 Objects.equals(pollingTime, that.pollingTime);
     }
@@ -81,7 +81,7 @@ public class ConsumerLocalConfigs {
     public int hashCode() {
 
         return Objects.hash(fileDumpTo, fileDumpType, commitAsync, commitSync,
-                showRecordsInResponse, maxNoOfRetryPollsOrTimeouts, pollingTime);
+                showConsumedRecords, maxNoOfRetryPollsOrTimeouts, pollingTime);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ConsumerLocalConfigs {
                 ", fileDumpType='" + fileDumpType + '\'' +
                 ", commitAsync=" + commitAsync +
                 ", commitSync=" + commitSync +
-                ", showRecordsInResponse=" + showRecordsInResponse +
+                ", showConsumedRecords=" + showConsumedRecords +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +
                 '}';

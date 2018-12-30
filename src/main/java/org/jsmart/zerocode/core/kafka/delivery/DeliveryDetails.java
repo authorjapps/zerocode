@@ -1,24 +1,27 @@
 package org.jsmart.zerocode.core.kafka.delivery;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.gson.annotations.SerializedName;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.util.Objects;
 
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class DeliveryDetails {
     private final String status;
+
     private final String message;
+
+    @SerializedName("size")
     private final Integer recordCount;
+
     private final RecordMetadata recordMetadata;
 
     @JsonCreator
     public DeliveryDetails(
-            @JsonProperty("status") String status,
-            @JsonProperty("message") String message,
-            @JsonProperty("recordCount") Integer recordCount, RecordMetadata recordMetadata) {
+            String status,
+            String message,
+            Integer recordCount,
+            RecordMetadata recordMetadata) {
         this.status = status;
         this.message = message;
         this.recordCount = recordCount;

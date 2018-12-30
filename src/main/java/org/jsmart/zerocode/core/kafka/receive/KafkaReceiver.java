@@ -100,7 +100,7 @@ public class KafkaReceiver {
     }
 
     private String prepareResult(ConsumerLocalConfigs consumeLocalTestProps, List<ConsumerRecord> fetchedRecords) throws JsonProcessingException {
-        if (consumeLocalTestProps != null && !consumeLocalTestProps.getShowRecordsInResponse()) {
+        if (consumeLocalTestProps != null && !consumeLocalTestProps.getShowConsumedRecords()) {
 
             return objectMapper.writeValueAsString(new DeliveryDetails(OK, fetchedRecords.size()));
 
