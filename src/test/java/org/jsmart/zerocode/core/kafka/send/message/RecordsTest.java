@@ -38,6 +38,11 @@ public class RecordsTest {
         jsonBack = gson.toJson(producerRecord);
         JSONAssert.assertEquals("{\"topic\":\"topic2\",\"key\":\"key-123\",\"value\":\"Hello\"}", jsonBack, LENIENT);
 
+        producerRecord = new ProducerRecord("topic2", "key-123", "{\"name\": \"Nicola\"}");
+        jsonBack = gson.toJson(producerRecord);
+        assertThat(producerRecord.value(), is("{\"name\": \"Nicola\"}"));
+        JSONAssert.assertEquals("{\"topic\":\"topic2\",\"headers\":{\"headers\":[],\"isReadOnly\":false},\"key\":\"key-123\",\"value\":\"{\\\"name\\\": \\\"Nicola\\\"}\"}", jsonBack, LENIENT);
+
     }
 
     @Test

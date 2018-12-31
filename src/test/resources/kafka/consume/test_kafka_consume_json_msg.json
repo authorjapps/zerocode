@@ -1,0 +1,59 @@
+{
+    "scenarioName": "consume a JSON message",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-c1",
+            "operation": "load",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "{\"name\": \"Nicola\"}"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "onload_kafka",
+            "url": "kafka-topic:demo-c1",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "showConsumedRecords": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "records": [
+                    {
+                        // same as produced. Still not a JSON as String serializer was used.
+                        // To produce and consumer a JSON msg, use a customer JSON serializer
+                        // or avro
+                        "value": "{\"name\": \"Nicola\"}",
+
+                        "topic": "demo-c1",
+                        "partition": 0,
+                        "offset": "$NOT.NULL",
+                        "timestamp": "$NOT.NULL",
+                        "timestampType": "CREATE_TIME",
+                        "serializedKeySize": "$NOT.NULL",
+                        "serializedValueSize": "$NOT.NULL",
+                        "headers": {
+                            "headers": [],
+                            "isReadOnly": false
+                        },
+                        "key": "$NOT.NULL",
+                        "leaderEpoch": {
+                            "value": 0
+                        }
+                    }
+                ],
+                "size": 1
+            }
+        }
+    ]
+}

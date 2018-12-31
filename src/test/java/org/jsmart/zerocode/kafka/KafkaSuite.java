@@ -1,6 +1,7 @@
 package org.jsmart.zerocode.kafka;
 
 import org.jsmart.zerocode.kafka.consume.KafkaConsumeIntKeyTest;
+import org.jsmart.zerocode.kafka.consume.KafkaConsumeJsonNotReallyJsonTest;
 import org.jsmart.zerocode.kafka.consume.KafkaConsumeTest;
 import org.jsmart.zerocode.kafka.customclient.KafkaProduceCustomClientTest;
 import org.jsmart.zerocode.kafka.produce.*;
@@ -14,6 +15,7 @@ import org.junit.runners.Suite;
         KafkaProduceToPartitionTest.class,
         KafkaProduceWithTimeStampTest.class,
         KafkaProduceTwoRecordsTest.class,
+        KafkaConsumeJsonNotReallyJsonTest.class,
         KafkaProduceIntKeyTest.class,
         KafkaConsumeIntKeyTest.class,
         KafkaProduceAsyncTest.class

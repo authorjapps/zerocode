@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 public class KafkaConsumeTest {
 
     @Test
-    @JsonTestCase("kafka/consume/test_kafka_subscribe.json")
+    @JsonTestCase("kafka/consume/test_kafka_consume.json")
     public void testKafkaConsume() throws Exception {
     }
 
