@@ -35,18 +35,19 @@ public class KafkaHelper {
         }
     }
 
-    public static Consumer<Long, String> createConsumer(String bootStrapServers, String consumerPropertyFile, String topic) {
+    public static Consumer createConsumer(String bootStrapServers, String consumerPropertyFile, String topic) {
         try (InputStream propsIs = Resources.getResource(consumerPropertyFile).openStream()) {
             Properties properties = new Properties();
             properties.load(propsIs);
             properties.put("bootstrap.servers", bootStrapServers);
 
-            final Consumer<Long, String> consumer = new KafkaConsumer<>(properties);
+            final Consumer consumer = new KafkaConsumer(properties);
             consumer.subscribe(Collections.singletonList(topic));
+
             return consumer;
 
         } catch (IOException e) {
-            throw new RuntimeException("Exception while reading kafka properties" + e);
+            throw new RuntimeException("Exception while reading kafka properties and creating a consumer- " + e);
         }
     }
 

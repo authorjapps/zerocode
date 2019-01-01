@@ -12,13 +12,14 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.ConsumedRecords;
-import org.jsmart.zerocode.core.kafka.delivery.DeliveryDetails;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
+import org.jsmart.zerocode.core.kafka.delivery.DeliveryDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static java.time.Duration.ofMillis;
@@ -51,7 +52,7 @@ public class KafkaReceiver {
 
         LOGGER.info("\n### Consumer Effective configs:{}\n", effectiveLocal);
 
-        Consumer<Long, String> consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
+        Consumer consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
 
         final List<ConsumerRecord> fetchedRecords = new ArrayList<>();
 
@@ -60,10 +61,7 @@ public class KafkaReceiver {
         while (true) {
             LOGGER.info("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
 
-            final ConsumerRecords<Long, String> records = consumer.poll(ofMillis(getPollTime(effectiveLocal)));
-
-            //String jsonRecords = gson.toJson(records);
-            //System.out.println("jsonRecords>>>>>>>>>>\n" + jsonRecords);
+            final ConsumerRecords records = consumer.poll(ofMillis(getPollTime(effectiveLocal)));
 
             if (records.count() == 0) {
                 noOfTimeOuts++;
@@ -81,11 +79,13 @@ public class KafkaReceiver {
             }
 
             if (records != null) {
-                records.forEach(thisRecord -> {
-                    fetchedRecords.add(thisRecord);
+                Iterator recordIterator = records.iterator();
+                while (recordIterator.hasNext()) {
+                    ConsumerRecord thisRecord = (ConsumerRecord)recordIterator.next();
                     LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}",
-                            thisRecord.key(), thisRecord.value(), thisRecord.partition(), thisRecord.offset());
-                });
+                          thisRecord.key(), thisRecord.value(), thisRecord.partition(), thisRecord.offset());
+                    fetchedRecords.add(thisRecord);
+                }
             }
 
             handleCommitSyncAsync(consumer, effectiveLocal);

@@ -70,7 +70,7 @@ public class RecordsTest {
         JSONAssert.assertEquals("{\n" +
                 "    \"records\": [\n" +
                 "        {\n" +
-                "            \"key\": 101.0,\n" + //<----------- Fails if 101 => Bug in skyscreamer
+                "            \"key\": 101.0,\n" + //<----------- Fails if 101 => While gson.fromJson(..), makes the int to Double
                 "            \"value\": \"value1\"\n" +
                 "        },\n" +
                 "        {\n" +
