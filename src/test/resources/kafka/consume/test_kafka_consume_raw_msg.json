@@ -33,6 +33,7 @@
                 "size": 1,
                 "records": [
                     {
+                        "key" : "$NOT.NULL",
                         "value": "{\"name\": \"Linus\"}"
                     }
                 ]

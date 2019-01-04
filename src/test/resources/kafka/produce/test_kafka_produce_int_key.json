@@ -6,7 +6,8 @@
             "url": "kafka-topic:demo-int-topic-2",
             "operation": "produce",
             "request": {
-                "records":[
+                //"recordType" : "RAW",
+                "records": [
                     {
                         "key": 101,
                         "value": "Hello World"
@@ -14,8 +15,8 @@
                 ]
             },
             "assertions": {
-                "status" : "Ok",
-                "recordMetadata" : "$NOT.NULL"
+                "status": "Ok",
+                "recordMetadata": "$NOT.NULL"
             }
         },
         {
@@ -23,15 +24,20 @@
             "url": "kafka-topic:demo-int-topic-2",
             "operation": "unload",
             "request": {
-                "consumer_properties": {
-                    "commitSync":true,
-                    "MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS": 5
+                "consumerLocalConfigs": {
+                    "commitSync": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
                 }
             },
             "assertions": {
-                "size" : "$GT.0"
+                "size": 1,
+                "records": [
+                    {
+                        "key": 101.0,
+                        "value": "Hello World"
+                    }
+                ]
             }
         }
-
     ]
 }
