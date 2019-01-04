@@ -21,8 +21,9 @@ import java.util.List;
 
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.FAILED;
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.OK;
-import static org.jsmart.zerocode.core.kafka.error.KafkaMessageConstants.NO_RECORD_FOUND_TO_SEND;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.createProducer;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.createProducer;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.prepareRecordToSend;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.validateProduceRecord;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 @Singleton
@@ -33,10 +34,8 @@ public class KafkaSender {
     @Named("kafka.producer.properties")
     private String producerPropertyFile;
 
-
     private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
     private final Gson gson = new GsonSerDeProvider().get();
-
 
     public String send(String brokers, String topicName, String requestJson) throws JsonProcessingException {
         Producer<Long, String> producer = createProducer(brokers, producerPropertyFile);
@@ -45,7 +44,6 @@ public class KafkaSender {
         Records producerRecords = gson.fromJson(requestJson, Records.class);
 
         List<ProducerRecord> recordsToSend = validateProduceRecord(producerRecords);
-
 
         try {
             for (int i = 0; i < recordsToSend.size(); i++) {
@@ -83,23 +81,6 @@ public class KafkaSender {
 
         return prettyPrintJson(deliveryDetails);
 
-    }
-
-    private ProducerRecord prepareRecordToSend(String topicName, ProducerRecord recordToSend) {
-
-        return new ProducerRecord(topicName,
-                recordToSend.partition(),
-                recordToSend.timestamp(),
-                recordToSend.key(),
-                recordToSend.value());
-    }
-
-    private List<ProducerRecord> validateProduceRecord(Records producerRecords) {
-        List<ProducerRecord> recordsToSend = producerRecords.getRecords();
-        if (recordsToSend == null || recordsToSend.size() == 0) {
-            throw new RuntimeException(NO_RECORD_FOUND_TO_SEND);
-        }
-        return recordsToSend;
     }
 
     class ProducerAsyncCallback implements Callback {

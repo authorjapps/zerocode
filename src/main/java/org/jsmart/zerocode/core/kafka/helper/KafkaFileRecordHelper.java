@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.validateConsumeProperties;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.validateConsumeProperties;
 
 public class KafkaFileRecordHelper {
     public static void handleRecordsDump(ConsumerLocalConfigs consumeLocalTestProps, List<ConsumerRecord> fetchedRecords) {

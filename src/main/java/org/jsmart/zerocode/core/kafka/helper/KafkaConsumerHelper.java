@@ -8,8 +8,6 @@ import com.google.gson.Gson;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.ConsumedRecords;
@@ -27,27 +25,12 @@ import java.util.*;
 import static java.util.Optional.ofNullable;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
-import static org.jsmart.zerocode.core.kafka.common.CommonConfigs.BOOTSTRAP_SERVERS;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
-public class KafkaHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaHelper.class);
+public class KafkaConsumerHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerHelper.class);
     private static final Gson gson = new GsonSerDeProvider().get();
     private static final ObjectMapper objectMapper = new ObjectMapperProvider().get();
-
-    public static Producer<Long, String> createProducer(String bootStrapServers, String producerPropertyFile) {
-
-        try (InputStream propsIs = Resources.getResource(producerPropertyFile).openStream()) {
-            Properties properties = new Properties();
-            properties.load(propsIs);
-            properties.put(BOOTSTRAP_SERVERS, bootStrapServers);
-
-            return new KafkaProducer(properties);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Exception while reading kafka producer properties" + e);
-        }
-    }
 
     public static Consumer createConsumer(String bootStrapServers, String consumerPropertyFile, String topic) {
         try (InputStream propsIs = Resources.getResource(consumerPropertyFile).openStream()) {
@@ -71,6 +54,12 @@ public class KafkaHelper {
         }
     }
 
+    private static void validateIfBothEnabled(Boolean commitSync, Boolean commitAsync) {
+        if ((commitSync != null && commitAsync != null)  && commitSync == true && commitAsync == true) {
+            throw new RuntimeException("\n********* Both commitSync and commitAsync can not be true *********\n");
+        }
+    }
+
     public static void validateLocalConfigs(ConsumerLocalConfigs consumeLocalTestProps) {
         if (consumeLocalTestProps != null) {
             Boolean localCommitSync = consumeLocalTestProps.getCommitSync();
@@ -84,12 +73,6 @@ public class KafkaHelper {
         validateIfBothEnabled(consumerCommonConfigs.getCommitSync(), consumerCommonConfigs.getCommitAsync());
     }
 
-    private static void validateIfBothEnabled(Boolean commitSync, Boolean commitAsync) {
-        if ((commitSync != null && commitAsync != null)  && commitSync == true && commitAsync == true) {
-            throw new RuntimeException("\n********* Both commitSync and commitAsync can not be true *********\n");
-        }
-    }
-
     public static ConsumerLocalConfigs deriveEffectiveConfigs(ConsumerLocalConfigs consumerLocalTestConfigs, ConsumerCommonConfigs consumerCommonConfigs) {
 
         validateCommonConfigs(consumerCommonConfigs);
@@ -97,7 +80,6 @@ public class KafkaHelper {
 
         return createEffective(consumerCommonConfigs, consumerLocalTestConfigs);
     }
-
 
     public static ConsumerLocalConfigs createEffective(ConsumerCommonConfigs consumerCommon, ConsumerLocalConfigs consumerLocal) {
         if(consumerLocal == null){
@@ -173,7 +155,6 @@ public class KafkaHelper {
         return ofNullable(effectiveLocalTestProps.getMaxNoOfRetryPollsOrTimeouts())
                 .orElse(MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS);
     }
-
 
     public static Long getPollTime(ConsumerLocalConfigs effectiveLocal) {
         return ofNullable(effectiveLocal.getPollingTime())

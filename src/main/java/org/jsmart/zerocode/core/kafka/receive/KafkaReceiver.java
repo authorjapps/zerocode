@@ -21,7 +21,7 @@ import java.util.List;
 import static java.time.Duration.ofMillis;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.*;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaFileRecordHelper.handleRecordsDump;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.*;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.*;
 
 @Singleton
 public class KafkaReceiver {

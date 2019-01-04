@@ -10,9 +10,9 @@ import org.junit.rules.ExpectedException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaHelper.deriveEffectiveConfigs;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.deriveEffectiveConfigs;
 
-public class KafkaHelperTest {
+public class KafkaConsumerHelperTest {
 
     ConsumerCommonConfigs consumerCommon;
     ConsumerLocalConfigs consumerLocal;
