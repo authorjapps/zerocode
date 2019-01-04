@@ -1,26 +1,40 @@
 package org.jsmart.zerocode.core.kafka.helper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
+import com.google.gson.Gson;
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
+import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.jsmart.zerocode.core.kafka.ConsumedRecords;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigsWrap;
 import org.jsmart.zerocode.core.kafka.receive.ConsumerCommonConfigs;
+import org.jsmart.zerocode.core.kafka.receive.message.JsonRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Properties;
+import java.util.*;
 
 import static java.util.Optional.ofNullable;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
 import static org.jsmart.zerocode.core.kafka.common.CommonConfigs.BOOTSTRAP_SERVERS;
+import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 public class KafkaHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaHelper.class);
+    private static final Gson gson = new GsonSerDeProvider().get();
+    private static final ObjectMapper objectMapper = new ObjectMapperProvider().get();
+
     public static Producer<Long, String> createProducer(String bootStrapServers, String producerPropertyFile) {
 
         try (InputStream propsIs = Resources.getResource(producerPropertyFile).openStream()) {
@@ -166,4 +180,76 @@ public class KafkaHelper {
                 .orElse(DEFAULT_POLLING_TIME_MILLI_SEC);
     }
 
+    public static void readRaw(ArrayList<ConsumerRecord> rawRecords, Iterator recordIterator) {
+        while (recordIterator.hasNext()) {
+            ConsumerRecord thisRecord = (ConsumerRecord)recordIterator.next();
+            LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}",
+                    thisRecord.key(), thisRecord.value(), thisRecord.partition(), thisRecord.offset());
+            rawRecords.add(thisRecord);
+        }
+    }
+
+    public static void readJson(List<JsonRecord> jsonRecords,
+                          Iterator recordIterator ) throws IOException {
+        while (recordIterator.hasNext()) {
+            ConsumerRecord thisRecord = (ConsumerRecord)recordIterator.next();
+
+            Object key = thisRecord.key();
+            Object value = thisRecord.value();
+            LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}",
+                    key, value, thisRecord.partition(), thisRecord.offset());
+
+            JsonNode valueNode = objectMapper.readTree(value.toString());
+            JsonRecord jsonRecord = new JsonRecord(thisRecord.key(), null, valueNode);
+            jsonRecords.add(jsonRecord);
+        }
+    }
+
+    public static void readRawAndJson(ArrayList<ConsumerRecord> rawRecords,
+                                      List<JsonRecord> jsonRecords,
+                                      Iterator recordIterator) throws IOException {
+        while (recordIterator.hasNext()) {
+            ConsumerRecord thisRecord = (ConsumerRecord)recordIterator.next();
+
+            // ----------------------
+            // Add to raw record list
+            // ----------------------
+            LOGGER.info("Consumed - JSON record >> " + thisRecord);
+            rawRecords.add(thisRecord);
+
+            Object key = thisRecord.key();
+            Object value = thisRecord.value();
+            LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}",
+                    key, value, thisRecord.partition(), thisRecord.offset());
+
+            JsonNode valueNode = objectMapper.readTree(value.toString());
+            JsonRecord jsonRecord = new JsonRecord(thisRecord.key(), null, valueNode);
+            // -----------------------
+            // Add to json record list
+            // -----------------------
+            jsonRecords.add(jsonRecord);
+        }
+    }
+
+    public static String prepareResult(ConsumerLocalConfigs consumeLocalTestProps,
+                                 List<JsonRecord> jsonRecords,
+                                 ArrayList<ConsumerRecord> rawRecords) throws JsonProcessingException {
+
+        if (consumeLocalTestProps != null && consumeLocalTestProps.getShowConsumedRecords() == false) {
+            return prettyPrintJson(gson.toJson(new ConsumedRecords(jsonRecords.size() == 0 ? rawRecords.size() : 0)));
+
+        } else if (consumeLocalTestProps != null && "RAW".equals(consumeLocalTestProps.getRecordType())) {
+            return prettyPrintJson(gson.toJson(new ConsumedRecords(rawRecords)));
+
+        } else if (consumeLocalTestProps != null && "JSON".equals(consumeLocalTestProps.getRecordType())) {
+            return prettyPrintJson(objectMapper.writeValueAsString(new ConsumedRecords(jsonRecords)));
+
+        } else {
+            // -------------------------------------------------
+            // read type as "RAW, JSON" : Show both RAW and JSON
+            // -------------------------------------------------
+            return prettyPrintJson(gson.toJson(new ConsumedRecords(jsonRecords, rawRecords, null)));
+
+        }
+    }
 }

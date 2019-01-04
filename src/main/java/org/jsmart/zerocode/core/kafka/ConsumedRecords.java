@@ -14,7 +14,7 @@ public class ConsumedRecords {
     public ConsumedRecords(List<JsonRecord> jsonRecords, List<ConsumerRecord> records, Integer size) {
         this.jsonRecords = jsonRecords;
         this.records = records;
-        this.size = size != null? size : records.size();
+         this.size = size;
     }
 
     public ConsumedRecords(List<JsonRecord> jsonRecords) {
