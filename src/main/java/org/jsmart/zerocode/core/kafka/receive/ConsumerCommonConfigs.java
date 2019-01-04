@@ -20,6 +20,10 @@ public class ConsumerCommonConfigs {
     private String fileDumpTo;
 
     @Inject(optional = true)
+    @Named("consumer.recordType")
+    private String recordType;
+
+    @Inject(optional = true)
     @Named("consumer.fileDumpType")
     private String fileDumpType;
 
@@ -42,6 +46,7 @@ public class ConsumerCommonConfigs {
                                  Boolean commitAsync,
                                  String fileDumpTo,
                                  String fileDumpType,
+                                 String recordType,
                                  Boolean showConsumedRecords,
                                  Integer maxNoOfRetryPollsOrTimeouts,
                                  Long pollingTime
@@ -51,6 +56,7 @@ public class ConsumerCommonConfigs {
         this.commitAsync = commitAsync;
         this.fileDumpTo = fileDumpTo;
         this.fileDumpType = fileDumpType;
+        this.recordType = recordType;
         this.showConsumedRecords = showConsumedRecords;
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
         this.pollingTime = pollingTime;
@@ -84,6 +90,10 @@ public class ConsumerCommonConfigs {
         return pollingTime;
     }
 
+    public String getRecordType() {
+        return recordType;
+    }
+
     @Override
     public String toString() {
         return "ConsumerCommonConfigs{" +
@@ -91,6 +101,7 @@ public class ConsumerCommonConfigs {
                 ", commitAsync=" + commitAsync +
                 ", fileDumpTo='" + fileDumpTo + '\'' +
                 ", fileDumpType='" + fileDumpType + '\'' +
+                ", recordType='" + recordType + '\'' +
                 ", showConsumedRecords=" + showConsumedRecords +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +

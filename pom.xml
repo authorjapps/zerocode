@@ -82,6 +82,13 @@
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>http://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -92,6 +99,17 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>${version.kafka-clients}</version>
+            <!--<exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>-->
+        </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>5.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>

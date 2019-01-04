@@ -29,7 +29,7 @@
                 }
             },
             "assertions": {
-                "recordCount" : "$GT.0"
+                "size" : "$GT.0"
             }
         }
 

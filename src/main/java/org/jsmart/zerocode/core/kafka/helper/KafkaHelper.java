@@ -88,6 +88,7 @@ public class KafkaHelper {
     public static ConsumerLocalConfigs createEffective(ConsumerCommonConfigs consumerCommon, ConsumerLocalConfigs consumerLocal) {
         if(consumerLocal == null){
             return new ConsumerLocalConfigs(
+                    consumerCommon.getRecordType(),
                     consumerCommon.getFileDumpTo(),
                     consumerCommon.getFileDumpType(),
                     consumerCommon.getCommitAsync(),
@@ -96,6 +97,9 @@ public class KafkaHelper {
                     consumerCommon.getMaxNoOfRetryPollsOrTimeouts(),
                     consumerCommon.getPollingTime());
         }
+
+        // Handle recordType
+        String effectiveRecordType = ofNullable(consumerLocal.getRecordType()).orElse(consumerCommon.getRecordType());
 
         // Handle fileDumpTo
         String effectiveFileDumpTo = ofNullable(consumerLocal.getFileDumpTo()).orElse(consumerCommon.getFileDumpTo());
@@ -129,6 +133,7 @@ public class KafkaHelper {
         }
 
         return new ConsumerLocalConfigs(
+                effectiveRecordType,
                 effectiveFileDumpTo,
                 effectiveFileDumpType,
                 effectiveCommitAsync,

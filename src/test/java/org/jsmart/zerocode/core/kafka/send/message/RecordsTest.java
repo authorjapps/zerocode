@@ -1,10 +1,13 @@
 package org.jsmart.zerocode.core.kafka.send.message;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+
+import java.lang.reflect.Type;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -94,4 +97,16 @@ public class RecordsTest {
                         "        }\n",
                 jsonBack, LENIENT);
     }
+
+
+    public static Type getType(String typeName) {
+        try {
+            Class<?> clazz = Class.forName(typeName);
+            TypeToken<?> typeToken = TypeToken.get(clazz);
+            return typeToken.getType();
+        } catch (ClassNotFoundException ce) {
+            throw new IllegalArgumentException("Unsupported type: " + typeName + " - " + ce);
+        }
+    }
+
 }

@@ -27,7 +27,7 @@
                 // this will be 1  only when consumer does a commit i.e. commitAsync or sync,
                 // otherwise 3 or more as earler messages will still be there
                 // TODO- commitAsync - sometimes delayed as it is async(provide a helloworld example).
-                "recordCount" : "$GT.0"
+                "size" : "$GT.0"
             }
         }
     ]

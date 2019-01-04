@@ -18,11 +18,12 @@ public class ConsumerLocalConfigsWrapTest {
     @Test
     public void testSerDeser() throws IOException {
         ConsumerLocalConfigsWrap javaObject = new ConsumerLocalConfigsWrap(
-                new ConsumerLocalConfigs("RAW:/target/ttt",
+                new ConsumerLocalConfigs("RAW",
+                        "RAW:/target/ttt",
                         "RAW",
                         true,
                         null,
-                        null,
+                        true,
                         3,
                         50L));
         ObjectMapper objectMapper = new ObjectMapperProvider().get();
@@ -46,11 +47,11 @@ public class ConsumerLocalConfigsWrapTest {
     @Test
     public void testSerDeser_oneFieldOnly() throws IOException {
         ConsumerLocalConfigsWrap javaObject = new ConsumerLocalConfigsWrap(
-                new ConsumerLocalConfigs("JSON:/target/ttt",
+                new ConsumerLocalConfigs("RAW", "JSON:/target/ttt",
                         "RAW",
                         null,
                         null,
-                        null,
+                        false,
                         3,
                         null));
 
@@ -59,6 +60,7 @@ public class ConsumerLocalConfigsWrapTest {
                         "   \"consumerLocalConfigs\": {\n" +
                         "      \"fileDumpTo\": \"JSON:/target/ttt\",\n" +
                         "      \"fileDumpType\": \"RAW\",\n" +
+                        "      \"showConsumedRecords\": false,\n" +
                         "      \"maxNoOfRetryPollsOrTimeouts\": 3\n" +
                         "   }\n" +
                         "}",

@@ -6,9 +6,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Objects;
 
-//@JsonIgnoreProperties(ignoreUnknown = true) //<--- Do not enable this. All properties to be aware of and processed
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
+
+//@JsonIgnoreProperties(ignoreUnknown = true) //<--- Do not enable this. All properties need to be aware of and processed
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ConsumerLocalConfigs {
+    private final String recordType;
     private final String fileDumpTo;
     private final String fileDumpType;
     private final Boolean commitAsync;
@@ -19,13 +22,15 @@ public class ConsumerLocalConfigs {
 
     @JsonCreator
     public ConsumerLocalConfigs(
+            @JsonProperty("recordType") String recordType,
             @JsonProperty("fileDumpTo") String fileDumpTo,
             @JsonProperty("fileDumpType") String fileDumpType,
             @JsonProperty("commitAsync") Boolean commitAsync,
             @JsonProperty("commitSync") Boolean commitSync,
             @JsonProperty("showConsumedRecords") Boolean showConsumedRecords,
             @JsonProperty("maxNoOfRetryPollsOrTimeouts") Integer maxNoOfRetryPollsOrTimeouts,
-            @JsonProperty("pollingTime")Long pollingTime) {
+            @JsonProperty("pollingTime") Long pollingTime) {
+        this.recordType = recordType;
         this.fileDumpTo = fileDumpTo;
         this.fileDumpType = fileDumpType;
         this.commitAsync = commitAsync;
@@ -34,6 +39,11 @@ public class ConsumerLocalConfigs {
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
         this.pollingTime = pollingTime;
     }
+
+    public String getRecordType() {
+        return recordType != null ? recordType : RAW;
+    }
+
 
     public String getFileDumpTo() {
         return fileDumpTo;
@@ -52,7 +62,7 @@ public class ConsumerLocalConfigs {
     }
 
     public Boolean getShowConsumedRecords() {
-        return showConsumedRecords;
+        return showConsumedRecords != null ? showConsumedRecords : true;
     }
 
     public Integer getMaxNoOfRetryPollsOrTimeouts() {
@@ -68,7 +78,8 @@ public class ConsumerLocalConfigs {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ConsumerLocalConfigs that = (ConsumerLocalConfigs) o;
-        return Objects.equals(fileDumpTo, that.fileDumpTo) &&
+        return Objects.equals(recordType, that.recordType) &&
+                Objects.equals(fileDumpTo, that.fileDumpTo) &&
                 Objects.equals(fileDumpType, that.fileDumpType) &&
                 Objects.equals(commitAsync, that.commitAsync) &&
                 Objects.equals(commitSync, that.commitSync) &&
@@ -80,14 +91,14 @@ public class ConsumerLocalConfigs {
     @Override
     public int hashCode() {
 
-        return Objects.hash(fileDumpTo, fileDumpType, commitAsync, commitSync,
-                showConsumedRecords, maxNoOfRetryPollsOrTimeouts, pollingTime);
+        return Objects.hash(recordType, fileDumpTo, fileDumpType, commitAsync, commitSync, showConsumedRecords, maxNoOfRetryPollsOrTimeouts, pollingTime);
     }
 
     @Override
     public String toString() {
         return "ConsumerLocalConfigs{" +
-                "fileDumpTo='" + fileDumpTo + '\'' +
+                "recordType='" + recordType + '\'' +
+                ", fileDumpTo='" + fileDumpTo + '\'' +
                 ", fileDumpType='" + fileDumpType + '\'' +
                 ", commitAsync=" + commitAsync +
                 ", commitSync=" + commitSync +
