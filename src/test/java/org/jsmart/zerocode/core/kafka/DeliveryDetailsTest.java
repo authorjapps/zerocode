@@ -1,12 +1,10 @@
 package org.jsmart.zerocode.core.kafka;
 
 import com.google.gson.Gson;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.kafka.delivery.DeliveryDetails;
-import org.jsmart.zerocode.core.kafka.send.message.Records;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 

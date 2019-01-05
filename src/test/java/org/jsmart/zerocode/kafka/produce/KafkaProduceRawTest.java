@@ -8,11 +8,11 @@ import org.junit.runner.RunWith;
 
 @TargetEnv("kafka_servers/kafka_test_server_double_key.properties")
 @RunWith(ZeroCodeUnitRunner.class)
-public class KafkaProduceIntKeyTest {
+public class KafkaProduceRawTest {
 
     @Test
-    @JsonTestCase("kafka/produce/test_kafka_produce_int_key.json")
-    public void testProduce_intOrDoubleKey() throws Exception {
+    @JsonTestCase("kafka/produce/test_kafka_produce_raw.json")
+    public void testProduce_raw() throws Exception {
     }
 
 }

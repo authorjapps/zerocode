@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.kafka.helper;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
@@ -8,7 +9,8 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
-import org.jsmart.zerocode.core.kafka.send.message.Records;
+import org.jsmart.zerocode.core.kafka.send.message.JsonRecord;
+import org.jsmart.zerocode.core.kafka.send.message.RawRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +41,11 @@ public class KafkaProducerHelper {
         }
     }
 
-    public static List<ProducerRecord> validateProduceRecord(Records producerRecords) {
-        List<ProducerRecord> recordsToSend = producerRecords.getRecords();
-        if (recordsToSend == null || recordsToSend.size() == 0) {
+    public static void validateProduceRecord(List producerRecords) {
+
+        if (producerRecords == null || producerRecords.size() == 0) {
             throw new RuntimeException(NO_RECORD_FOUND_TO_SEND);
         }
-        return recordsToSend;
     }
 
     public static ProducerRecord prepareRecordToSend(String topicName, ProducerRecord recordToSend) {
@@ -55,4 +56,19 @@ public class KafkaProducerHelper {
                 recordToSend.key(),
                 recordToSend.value());
     }
+
+    public static ProducerRecord prepareJsonRecordToSend(String topicName, JsonRecord recordToSend) {
+
+        return new ProducerRecord(topicName,
+                //recordToSend.partition(),
+                //recordToSend.timestamp(),
+                recordToSend.getKey(),
+                // --------------------------------------------
+                // It's JSON as String.
+                // Kafka StringSerializer needs in this format.
+                // --------------------------------------------
+                recordToSend.getValue().toString()
+        );
+    }
+
 }

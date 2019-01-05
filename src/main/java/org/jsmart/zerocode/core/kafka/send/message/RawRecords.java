@@ -4,7 +4,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.List;
 
-public class Records {
+public class RawRecords {
     // -------------------------------------------------------
     // A single ProducerRecord can wrap header information too
     // for individual messages.
@@ -12,10 +12,12 @@ public class Records {
     // -------------------------------------------------------
     private final List<ProducerRecord> records;
     private final Boolean async;
+    private final String recordType;
 
-    public Records(List<ProducerRecord> records, Boolean async) {
+    public RawRecords(List<ProducerRecord> records, Boolean async, String recordType) {
         this.records = records;
         this.async = async;
+        this.recordType = recordType;
     }
 
     public List<ProducerRecord> getRecords() {
@@ -26,11 +28,16 @@ public class Records {
         return async;
     }
 
+    public String getRecordType() {
+        return recordType;
+    }
+
     @Override
     public String toString() {
-        return "Records{" +
+        return "RawRecords{" +
                 "records=" + records +
                 ", async=" + async +
+                ", recordType='" + recordType + '\'' +
                 '}';
     }
 }

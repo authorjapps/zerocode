@@ -2,6 +2,7 @@ package org.jsmart.zerocode.core.kafka.send.message;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jayway.jsonpath.JsonPath;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.junit.Test;
@@ -13,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.skyscreamer.jsonassert.JSONCompareMode.LENIENT;
 
-public class RecordsTest {
+public class RawRecordsTest {
     final Gson gson = new GsonSerDeProvider().get();
 
     @Test
@@ -51,6 +52,7 @@ public class RecordsTest {
     @Test
     public void test_ProducerRecords() {
         final String json = "{\n" +
+                "\"recordType\": \"RAW\"," +
                 "\"async\": true," +
                 "    \"records\": [\n" +
                 "        {\n" +
@@ -64,12 +66,15 @@ public class RecordsTest {
                 "    ]\n" +
                 "}";
 
-        Records producerRecords = gson.fromJson(json, Records.class);
-        assertThat(producerRecords.getRecords().size(), is(2));
-        assertThat(producerRecords.getRecords().get(0).key(), is(101.0)); //<-- convertes to double. But no harm
-        assertThat(producerRecords.getAsync(), is(true));
+        Object recordType = JsonPath.read(json, "$.recordType");
+        assertThat(recordType.toString(), is("RAW"));
 
-        String jsonBack = gson.toJson(producerRecords);
+        RawRecords producerRawRecords = gson.fromJson(json, RawRecords.class);
+        assertThat(producerRawRecords.getRecords().size(), is(2));
+        assertThat(producerRawRecords.getRecords().get(0).key(), is(101.0)); //<-- convertes to double. But no harm
+        assertThat(producerRawRecords.getAsync(), is(true));
+
+        String jsonBack = gson.toJson(producerRawRecords);
         JSONAssert.assertEquals("{\n" +
                 "    \"records\": [\n" +
                 "        {\n" +
@@ -83,14 +88,14 @@ public class RecordsTest {
                 "    ]\n" +
                 "}", jsonBack, LENIENT);
 
-        jsonBack = gson.toJson(producerRecords.getRecords().get(0));
+        jsonBack = gson.toJson(producerRawRecords.getRecords().get(0));
         JSONAssert.assertEquals("        {\n" +
                         "            \"key\": 101,\n" + //<----------- Green even if 101, not 101.0 => Bug in skyscreamer
                         "            \"value\": \"value1\"\n" +
                         "        },\n",
                 jsonBack, LENIENT);
 
-        jsonBack = gson.toJson(producerRecords.getRecords().get(1));
+        jsonBack = gson.toJson(producerRawRecords.getRecords().get(1));
         JSONAssert.assertEquals("        {\n" +
                         "            \"key\": 102.0,\n" +
                         "            \"value\": \"value2\"\n" +

@@ -1,6 +1,7 @@
 package org.jsmart.zerocode.core.kafka.send.message;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
 // TODO - add timestamp, partition key etc
@@ -11,9 +12,9 @@ public class JsonRecord<K> {
 
     @JsonCreator
     public JsonRecord(
-            K key,
-            JsonNode jsonKey,
-            JsonNode value) {
+            @JsonProperty("key") K key,
+            @JsonProperty("jsonKey") JsonNode jsonKey,
+            @JsonProperty("value") JsonNode value) {
         this.key = key;
         this.jsonKey = jsonKey;
         this.value = value;

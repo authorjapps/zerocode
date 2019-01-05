@@ -12,7 +12,7 @@ public class JsonRecordTest {
     ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
     @Test
-    public void testSerDe() throws IOException {
+    public void testSer() throws IOException {
         String key = "key1";
         JsonNode value = objectMapper.readTree("\"val1\"");
 

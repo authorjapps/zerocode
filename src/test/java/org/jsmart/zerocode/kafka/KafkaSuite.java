@@ -16,8 +16,10 @@ import org.junit.runners.Suite;
         KafkaProduceToPartitionTest.class,
         KafkaProduceWithTimeStampTest.class,
         KafkaProduceTwoRecordsTest.class,
-        KafkaConsumeJsonTest.class,
+        KafkaProduceRawTest.class,
+        KafkaProduceJsonTest.class,
         KafkaConsumeRawTest.class,
+        KafkaConsumeJsonTest.class,
         KafkaProduceIntKeyTest.class,
         KafkaConsumeIntKeyTest.class,
         KafkaProduceAsyncTest.class
