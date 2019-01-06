@@ -9,19 +9,19 @@ import java.util.List;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JsonRecords {
-    private final List<JsonRecord> records;
+public class ProducerJsonRecords {
+    private final List<ProducerJsonRecord> records;
     private final Boolean async;
 
     @JsonCreator
-    public JsonRecords(
-            @JsonProperty("records") List<JsonRecord> records,
+    public ProducerJsonRecords(
+            @JsonProperty("records") List<ProducerJsonRecord> records,
             @JsonProperty("async") Boolean async) {
         this.records = records;
         this.async = async;
     }
 
-    public List<JsonRecord> getRecords() {
+    public List<ProducerJsonRecord> getRecords() {
         return records;
     }
 

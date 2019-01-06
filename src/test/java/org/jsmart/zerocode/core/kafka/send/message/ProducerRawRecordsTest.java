@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.skyscreamer.jsonassert.JSONCompareMode.LENIENT;
 
-public class RawRecordsTest {
+public class ProducerRawRecordsTest {
     final Gson gson = new GsonSerDeProvider().get();
 
     @Test
@@ -69,12 +69,12 @@ public class RawRecordsTest {
         Object recordType = JsonPath.read(json, "$.recordType");
         assertThat(recordType.toString(), is("RAW"));
 
-        RawRecords producerRawRecords = gson.fromJson(json, RawRecords.class);
-        assertThat(producerRawRecords.getRecords().size(), is(2));
-        assertThat(producerRawRecords.getRecords().get(0).key(), is(101.0)); //<-- convertes to double. But no harm
-        assertThat(producerRawRecords.getAsync(), is(true));
+        ProducerRawRecords producerProducerRawRecords = gson.fromJson(json, ProducerRawRecords.class);
+        assertThat(producerProducerRawRecords.getRecords().size(), is(2));
+        assertThat(producerProducerRawRecords.getRecords().get(0).key(), is(101.0)); //<-- convertes to double. But no harm
+        assertThat(producerProducerRawRecords.getAsync(), is(true));
 
-        String jsonBack = gson.toJson(producerRawRecords);
+        String jsonBack = gson.toJson(producerProducerRawRecords);
         JSONAssert.assertEquals("{\n" +
                 "    \"records\": [\n" +
                 "        {\n" +
@@ -88,14 +88,14 @@ public class RawRecordsTest {
                 "    ]\n" +
                 "}", jsonBack, LENIENT);
 
-        jsonBack = gson.toJson(producerRawRecords.getRecords().get(0));
+        jsonBack = gson.toJson(producerProducerRawRecords.getRecords().get(0));
         JSONAssert.assertEquals("        {\n" +
                         "            \"key\": 101,\n" + //<----------- Green even if 101, not 101.0 => Bug in skyscreamer
                         "            \"value\": \"value1\"\n" +
                         "        },\n",
                 jsonBack, LENIENT);
 
-        jsonBack = gson.toJson(producerRawRecords.getRecords().get(1));
+        jsonBack = gson.toJson(producerProducerRawRecords.getRecords().get(1));
         JSONAssert.assertEquals("        {\n" +
                         "            \"key\": 102.0,\n" +
                         "            \"value\": \"value2\"\n" +

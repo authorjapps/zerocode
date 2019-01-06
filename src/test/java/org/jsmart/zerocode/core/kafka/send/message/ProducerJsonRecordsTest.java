@@ -10,7 +10,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class JsonRecordsTest {
+public class ProducerJsonRecordsTest {
 
     ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
@@ -22,7 +22,7 @@ public class JsonRecordsTest {
                 "                        }\n" +
                 "                    }";
 
-        JsonRecord jsonRecord = objectMapper.readValue(json, JsonRecord.class);
+        ProducerJsonRecord jsonRecord = objectMapper.readValue(json, ProducerJsonRecord.class);
         assertThat(jsonRecord.getValue().toString(), is("{\"name\":\"Nicola\"}"));
     }
 
@@ -43,7 +43,7 @@ public class JsonRecordsTest {
         Object recordType = JsonPath.read(json, "$.recordType");
         assertThat(recordType.toString(), is("JSON"));
 
-        JsonRecords producerRawRecords = objectMapper.readValue(json, JsonRecords.class);
+        ProducerJsonRecords producerRawRecords = objectMapper.readValue(json, ProducerJsonRecords.class);
         assertThat(producerRawRecords.getRecords().size(), is(1));
         assertThat(producerRawRecords.getRecords().get(0).getKey(), is(101));
     }

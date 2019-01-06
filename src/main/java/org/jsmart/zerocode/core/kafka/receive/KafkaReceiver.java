@@ -9,7 +9,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
-import org.jsmart.zerocode.core.kafka.receive.message.JsonRecord;
+import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ public class KafkaReceiver {
         Consumer consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
 
         final ArrayList<ConsumerRecord> rawRecords = new ArrayList<>();
-        final List<JsonRecord> jsonRecords = new ArrayList<>();
+        final List<ConsumerJsonRecord> jsonRecords = new ArrayList<>();
 
         int noOfTimeOuts = 0;
 

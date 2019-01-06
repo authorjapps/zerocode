@@ -6,8 +6,6 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.PathNotFoundException;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -15,13 +13,12 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.delivery.DeliveryDetails;
-import org.jsmart.zerocode.core.kafka.send.message.JsonRecord;
-import org.jsmart.zerocode.core.kafka.send.message.JsonRecords;
-import org.jsmart.zerocode.core.kafka.send.message.RawRecords;
+import org.jsmart.zerocode.core.kafka.send.message.ProducerJsonRecord;
+import org.jsmart.zerocode.core.kafka.send.message.ProducerJsonRecords;
+import org.jsmart.zerocode.core.kafka.send.message.ProducerRawRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.FAILED;
@@ -46,23 +43,23 @@ public class KafkaSender {
         Producer<Long, String> producer = createProducer(brokers, producerPropertyFile);
         String deliveryDetails = null;
 
-        RawRecords producerRawRecords = null;
+        ProducerRawRecords producerProducerRawRecords = null;
         String recordType = readRecordType(requestJson, "$.recordType");
 
-        JsonRecords producerJsonRecords = null;
+        ProducerJsonRecords producerJsonRecords;
 
         try {
             switch (recordType) {
                 case RAW:
-                    producerRawRecords = gson.fromJson(requestJson, RawRecords.class);
-                    validateProduceRecord(producerRawRecords.getRecords());
-                    for (int i = 0; i < producerRawRecords.getRecords().size(); i++) {
-                        deliveryDetails = sendRaw(topicName, producer, producerRawRecords, i);
+                    producerProducerRawRecords = gson.fromJson(requestJson, ProducerRawRecords.class);
+                    validateProduceRecord(producerProducerRawRecords.getRecords());
+                    for (int i = 0; i < producerProducerRawRecords.getRecords().size(); i++) {
+                        deliveryDetails = sendRaw(topicName, producer, producerProducerRawRecords, i);
                     }
                     break;
 
                 case JSON:
-                    producerJsonRecords = objectMapper.readValue(requestJson, JsonRecords.class);
+                    producerJsonRecords = objectMapper.readValue(requestJson, ProducerJsonRecords.class);
                     validateProduceRecord(producerJsonRecords.getRecords());
                     for (int i = 0; i < producerJsonRecords.getRecords().size(); i++) {
                         deliveryDetails = sendJson(topicName, producer, producerJsonRecords, i);
@@ -86,14 +83,14 @@ public class KafkaSender {
 
     }
 
-    private String sendRaw(String topicName, Producer<Long, String> producer, RawRecords rawRecords, int i) throws InterruptedException, java.util.concurrent.ExecutionException {
+    private String sendRaw(String topicName, Producer<Long, String> producer, ProducerRawRecords producerRawRecords, int recNum) throws InterruptedException, java.util.concurrent.ExecutionException {
         String deliveryDetails;
-        List<ProducerRecord> rawRecordsToSend = rawRecords.getRecords();
-        ProducerRecord recordToSend = rawRecordsToSend.get(i);
+        List<ProducerRecord> rawRecordsToSend = producerRawRecords.getRecords();
+        ProducerRecord recordToSend = rawRecordsToSend.get(recNum);
         ProducerRecord record = prepareRecordToSend(topicName, recordToSend);
 
         RecordMetadata metadata;
-        if (rawRecords.getAsync() != null && rawRecords.getAsync() == true) {
+        if (producerRawRecords.getAsync() != null && producerRawRecords.getAsync() == true) {
             LOGGER.info("Asynchronous Producer sending record - {}", record);
             metadata = (RecordMetadata) producer.send(record, new ProducerAsyncCallback()).get();
         } else {
@@ -112,14 +109,14 @@ public class KafkaSender {
         return deliveryDetails;
     }
 
-    private String sendJson(String topicName, Producer<Long, String> producer, JsonRecords jsonRecords, int i) throws InterruptedException, java.util.concurrent.ExecutionException {
+    private String sendJson(String topicName, Producer<Long, String> producer, ProducerJsonRecords producerJsonRecords, int i) throws InterruptedException, java.util.concurrent.ExecutionException {
         String deliveryDetails;
-        List<JsonRecord> rawRecordsToSend = jsonRecords.getRecords();
-        JsonRecord recordToSend = rawRecordsToSend.get(i);
+        List<ProducerJsonRecord> rawRecordsToSend = producerJsonRecords.getRecords();
+        ProducerJsonRecord recordToSend = rawRecordsToSend.get(i);
         ProducerRecord record = prepareJsonRecordToSend(topicName, recordToSend);
 
         RecordMetadata metadata;
-        if (jsonRecords.getAsync() != null && jsonRecords.getAsync() == true) {
+        if (producerJsonRecords.getAsync() != null && producerJsonRecords.getAsync() == true) {
             LOGGER.info("Asynchronous - Producer sending JSON record - {}", record);
             metadata = (RecordMetadata) producer.send(record, new ProducerAsyncCallback()).get();
         } else {

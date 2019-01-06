@@ -10,11 +10,11 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
-import org.jsmart.zerocode.core.kafka.ConsumedRecords;
+import org.jsmart.zerocode.core.kafka.receive.message.ConsumerRawRecords;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigsWrap;
 import org.jsmart.zerocode.core.kafka.receive.ConsumerCommonConfigs;
-import org.jsmart.zerocode.core.kafka.receive.message.JsonRecord;
+import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,7 +170,7 @@ public class KafkaConsumerHelper {
         }
     }
 
-    public static void readJson(List<JsonRecord> jsonRecords,
+    public static void readJson(List<ConsumerJsonRecord> jsonRecords,
                           Iterator recordIterator ) throws IOException {
         while (recordIterator.hasNext()) {
             ConsumerRecord thisRecord = (ConsumerRecord)recordIterator.next();
@@ -181,13 +181,13 @@ public class KafkaConsumerHelper {
                     key, value, thisRecord.partition(), thisRecord.offset());
 
             JsonNode valueNode = objectMapper.readTree(value.toString());
-            JsonRecord jsonRecord = new JsonRecord(thisRecord.key(), null, valueNode);
+            ConsumerJsonRecord jsonRecord = new ConsumerJsonRecord(thisRecord.key(), null, valueNode);
             jsonRecords.add(jsonRecord);
         }
     }
 
     public static void readRawAndJson(ArrayList<ConsumerRecord> rawRecords,
-                                      List<JsonRecord> jsonRecords,
+                                      List<ConsumerJsonRecord> jsonRecords,
                                       Iterator recordIterator) throws IOException {
         while (recordIterator.hasNext()) {
             ConsumerRecord thisRecord = (ConsumerRecord)recordIterator.next();
@@ -204,7 +204,7 @@ public class KafkaConsumerHelper {
                     key, value, thisRecord.partition(), thisRecord.offset());
 
             JsonNode valueNode = objectMapper.readTree(value.toString());
-            JsonRecord jsonRecord = new JsonRecord(thisRecord.key(), null, valueNode);
+            ConsumerJsonRecord jsonRecord = new ConsumerJsonRecord(thisRecord.key(), null, valueNode);
             // -----------------------
             // Add to json record list
             // -----------------------
@@ -213,23 +213,23 @@ public class KafkaConsumerHelper {
     }
 
     public static String prepareResult(ConsumerLocalConfigs consumeLocalTestProps,
-                                 List<JsonRecord> jsonRecords,
+                                 List<ConsumerJsonRecord> jsonRecords,
                                  ArrayList<ConsumerRecord> rawRecords) throws JsonProcessingException {
 
         if (consumeLocalTestProps != null && consumeLocalTestProps.getShowConsumedRecords() == false) {
-            return prettyPrintJson(gson.toJson(new ConsumedRecords(jsonRecords.size() == 0 ? rawRecords.size() : 0)));
+            return prettyPrintJson(gson.toJson(new ConsumerRawRecords(jsonRecords.size() == 0 ? rawRecords.size() : 0)));
 
         } else if (consumeLocalTestProps != null && "RAW".equals(consumeLocalTestProps.getRecordType())) {
-            return prettyPrintJson(gson.toJson(new ConsumedRecords(rawRecords)));
+            return prettyPrintJson(gson.toJson(new ConsumerRawRecords(rawRecords)));
 
         } else if (consumeLocalTestProps != null && "JSON".equals(consumeLocalTestProps.getRecordType())) {
-            return prettyPrintJson(objectMapper.writeValueAsString(new ConsumedRecords(jsonRecords)));
+            return prettyPrintJson(objectMapper.writeValueAsString(new ConsumerRawRecords(jsonRecords)));
 
         } else {
             // -------------------------------------------------
             // read type as "RAW, JSON" : Show both RAW and JSON
             // -------------------------------------------------
-            return prettyPrintJson(gson.toJson(new ConsumedRecords(jsonRecords, rawRecords, null)));
+            return prettyPrintJson(gson.toJson(new ConsumerRawRecords(jsonRecords, rawRecords, null)));
 
         }
     }

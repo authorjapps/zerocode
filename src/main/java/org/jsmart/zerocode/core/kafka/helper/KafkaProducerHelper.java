@@ -1,6 +1,5 @@
 package org.jsmart.zerocode.core.kafka.helper;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
@@ -11,8 +10,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
-import org.jsmart.zerocode.core.kafka.send.message.JsonRecord;
-import org.jsmart.zerocode.core.kafka.send.message.RawRecords;
+import org.jsmart.zerocode.core.kafka.send.message.ProducerJsonRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +58,7 @@ public class KafkaProducerHelper {
                 recordToSend.value());
     }
 
-    public static ProducerRecord prepareJsonRecordToSend(String topicName, JsonRecord recordToSend) {
+    public static ProducerRecord prepareJsonRecordToSend(String topicName, ProducerJsonRecord recordToSend) {
 
         return new ProducerRecord(topicName,
                 //recordToSend.partition(),

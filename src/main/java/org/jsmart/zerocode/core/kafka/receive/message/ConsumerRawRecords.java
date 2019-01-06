@@ -1,31 +1,30 @@
-package org.jsmart.zerocode.core.kafka;
+package org.jsmart.zerocode.core.kafka.receive.message;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.jsmart.zerocode.core.kafka.receive.message.JsonRecord;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConsumedRecords {
+public class ConsumerRawRecords {
     private final List<ConsumerRecord> records;
-    private final List<JsonRecord> jsonRecords;
+    private final List<ConsumerJsonRecord> jsonRecords;
     private final Integer size;
 
-    public ConsumedRecords(List<JsonRecord> jsonRecords, List<ConsumerRecord> records, Integer size) {
+    public ConsumerRawRecords(List<ConsumerJsonRecord> jsonRecords, List<ConsumerRecord> records, Integer size) {
         this.jsonRecords = jsonRecords;
         this.records = records;
          this.size = size;
     }
 
-    public ConsumedRecords(List<JsonRecord> jsonRecords) {
+    public ConsumerRawRecords(List<ConsumerJsonRecord> jsonRecords) {
         this(jsonRecords, null, jsonRecords.size());
     }
 
-    public ConsumedRecords(ArrayList<ConsumerRecord> rawConsumedRecords) {
+    public ConsumerRawRecords(ArrayList<ConsumerRecord> rawConsumedRecords) {
         this(null, rawConsumedRecords, rawConsumedRecords.size());
     }
 
-    public ConsumedRecords(Integer size) {
+    public ConsumerRawRecords(Integer size) {
         this(null, null, size);
     }
 
@@ -37,7 +36,7 @@ public class ConsumedRecords {
         return records != null || jsonRecords != null? size : 0;
     }
 
-    public List<JsonRecord> getJsonRecords() {
+    public List<ConsumerJsonRecord> getJsonRecords() {
         return jsonRecords;
     }
 
