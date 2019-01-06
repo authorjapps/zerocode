@@ -3,7 +3,7 @@
     "steps": [
         {
             "name": "rest_produce_avro_raw",
-            "url": "/topics/demo-avro-2",
+            "url": "/topics/demo-avro-4",
             "operation": "POST",
             "request": {
                 "headers": {
@@ -30,7 +30,7 @@
         },
         {
             "name": "load_kafka",
-            "url": "kafka-topic:demo-avro-2",
+            "url": "kafka-topic:demo-avro-4",
             "operation": "load",
             "request": {
                 "records": [
@@ -46,7 +46,7 @@
         },
         {
             "name": "load_kafka_schema_id",
-            "url": "kafka-topic:demo-avro-2",
+            "url": "kafka-topic:demo-avro-4",
             "operation": "load",
             "request": {
                 "records": [
@@ -63,7 +63,7 @@
         },
         {
             "name": "load_kafka_valid_data",
-            "url": "kafka-topic:demo-avro-2",
+            "url": "kafka-topic:demo-avro-4",
             "operation": "load",
             "request": {
                 "records": [
@@ -79,7 +79,7 @@
         },
         {
             "name": "consume_avro_msg_as_raw",
-            "url": "kafka-topic:demo-avro-2",
+            "url": "kafka-topic:demo-avro-4",
             "operation": "unload",
             "request": {
                 "consumerLocalConfigs": {
@@ -93,11 +93,11 @@
                 "size": 2,
                 "records": [
                     {
-                        "topic": "demo-avro-2",
+                        "topic": "demo-avro-4",
                         "value": "$EQ.${$.rest_produce_avro_raw.request.body.records[0].value}"
                     },
                     {
-                        "topic": "demo-avro-2",
+                        "topic": "demo-avro-4",
                         "value": "$EQ.${$.load_kafka_valid_data.request.records[0].value}"
                     }
                 ]

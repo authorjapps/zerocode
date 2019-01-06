@@ -3,7 +3,7 @@
     "steps": [
         {
             "name": "produce_avro_raw",
-            "url": "/topics/bar",
+            "url": "/topics/demo-avro-3",
             "operation": "POST",
             "request": {
                 "headers": {
