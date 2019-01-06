@@ -10,6 +10,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecords;
 import org.jsmart.zerocode.core.kafka.receive.message.ConsumerRawRecords;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigsWrap;
@@ -186,51 +187,64 @@ public class KafkaConsumerHelper {
         }
     }
 
-    public static void readRawAndJson(ArrayList<ConsumerRecord> rawRecords,
-                                      List<ConsumerJsonRecord> jsonRecords,
-                                      Iterator recordIterator) throws IOException {
-        while (recordIterator.hasNext()) {
-            ConsumerRecord thisRecord = (ConsumerRecord)recordIterator.next();
-
-            // ----------------------
-            // Add to raw record list
-            // ----------------------
-            LOGGER.info("Consumed - JSON record >> " + thisRecord);
-            rawRecords.add(thisRecord);
-
-            Object key = thisRecord.key();
-            Object value = thisRecord.value();
-            LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}",
-                    key, value, thisRecord.partition(), thisRecord.offset());
-
-            JsonNode valueNode = objectMapper.readTree(value.toString());
-            ConsumerJsonRecord jsonRecord = new ConsumerJsonRecord(thisRecord.key(), null, valueNode);
-            // -----------------------
-            // Add to json record list
-            // -----------------------
-            jsonRecords.add(jsonRecord);
-        }
-    }
-
-    public static String prepareResult(ConsumerLocalConfigs consumeLocalTestProps,
+    public static String prepareResult(ConsumerLocalConfigs testConfigs,
                                  List<ConsumerJsonRecord> jsonRecords,
                                  ArrayList<ConsumerRecord> rawRecords) throws JsonProcessingException {
 
-        if (consumeLocalTestProps != null && consumeLocalTestProps.getShowConsumedRecords() == false) {
+        if (testConfigs != null && testConfigs.getShowConsumedRecords() == false) {
             return prettyPrintJson(gson.toJson(new ConsumerRawRecords(jsonRecords.size() == 0 ? rawRecords.size() : 0)));
 
-        } else if (consumeLocalTestProps != null && "RAW".equals(consumeLocalTestProps.getRecordType())) {
+        } else if (testConfigs != null && "RAW".equals(testConfigs.getRecordType())) {
             return prettyPrintJson(gson.toJson(new ConsumerRawRecords(rawRecords)));
 
-        } else if (consumeLocalTestProps != null && "JSON".equals(consumeLocalTestProps.getRecordType())) {
-            return prettyPrintJson(objectMapper.writeValueAsString(new ConsumerRawRecords(jsonRecords)));
+        } else if (testConfigs != null && "JSON".equals(testConfigs.getRecordType())) {
+            return prettyPrintJson(objectMapper.writeValueAsString(new ConsumerJsonRecords(jsonRecords)));
 
         } else {
             // -------------------------------------------------
-            // read type as "RAW, JSON" : Show both RAW and JSON
+            //               Show the default i.e. RAW
             // -------------------------------------------------
-            return prettyPrintJson(gson.toJson(new ConsumerRawRecords(jsonRecords, rawRecords, null)));
+            return prettyPrintJson(gson.toJson(new ConsumerRawRecords(rawRecords)));
 
         }
     }
+
+    public static void handleCommitSyncAsync(Consumer<Long, String> consumer,
+                                             ConsumerCommonConfigs consumerCommonConfigs,
+                                             ConsumerLocalConfigs consumeLocalTestProps) {
+        if(consumeLocalTestProps == null){
+            LOGGER.warn("[No local test configs]-Kafka client neither did `commitAsync()` nor `commitSync()`");
+            return;
+        }
+
+        Boolean effectiveCommitSync;
+        Boolean effectiveCommitAsync;
+
+        Boolean localCommitSync = consumeLocalTestProps.getCommitSync();
+        Boolean localCommitAsync = consumeLocalTestProps.getCommitAsync();
+
+        if (localCommitSync == null && localCommitAsync == null) {
+            effectiveCommitSync = consumerCommonConfigs.getCommitSync();
+            effectiveCommitAsync = consumerCommonConfigs.getCommitAsync();
+
+        } else {
+            effectiveCommitSync = localCommitSync;
+            effectiveCommitAsync = localCommitAsync;
+        }
+
+        if (effectiveCommitSync != null && effectiveCommitSync == true) {
+            consumer.commitSync();
+
+        } else if (effectiveCommitAsync != null && effectiveCommitAsync == true) {
+            consumer.commitAsync();
+
+        } else {
+            LOGGER.warn("Kafka client neither configured for `commitAsync()` nor `commitSync()`");
+        }
+
+        // --------------------------------------------------------
+        // Leave this to the user to "commit" the offset explicitly
+        // --------------------------------------------------------
+    }
+
 }

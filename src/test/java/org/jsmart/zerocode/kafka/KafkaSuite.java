@@ -23,10 +23,7 @@ import org.junit.runners.Suite;
         KafkaConsumeAvroTest.class,
         KafkaConsumeAvroNegativeTest.class,
         KafkaProduceAsyncTest.class
-        //KafkaPublishFailureTest.class,
 })
 @RunWith(Suite.class)
 public class KafkaSuite {
 }
-
-

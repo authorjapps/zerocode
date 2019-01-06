@@ -45,7 +45,7 @@
             },
             "assertions": {
                 "size": 1,
-                "jsonRecords": [
+                "records": [
                     {
                         "key": null,
                         "jsonKey": null,

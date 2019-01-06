@@ -27,6 +27,4 @@ public interface KafkaConstants {
 
     String JSON = "JSON";
 
-    String RAW_AND_JSON = "RAW,JSON";
-
 }

@@ -1,6 +1,7 @@
 package org.jsmart.zerocode.core.kafka.receive.message;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class ConsumerJsonRecord<K> {
@@ -10,9 +11,9 @@ public class ConsumerJsonRecord<K> {
 
     @JsonCreator
     public ConsumerJsonRecord(
-            K key,
-            JsonNode jsonKey,
-            JsonNode value) {
+            @JsonProperty("key") K key,
+            @JsonProperty("jsonKey") JsonNode jsonKey,
+            @JsonProperty("value") JsonNode value) {
         this.key = key;
         this.jsonKey = jsonKey;
         this.value = value;

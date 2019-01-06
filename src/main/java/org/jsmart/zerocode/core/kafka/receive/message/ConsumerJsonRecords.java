@@ -21,6 +21,10 @@ public class ConsumerJsonRecords {
         this.size = size;
     }
 
+    public ConsumerJsonRecords(List<ConsumerJsonRecord> records) {
+        this(records, records != null ? records.size() : 0);
+    }
+
     public List<ConsumerJsonRecord> getRecords() {
         return records;
     }

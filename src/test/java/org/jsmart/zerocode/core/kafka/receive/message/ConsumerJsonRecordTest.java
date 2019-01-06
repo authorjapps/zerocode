@@ -3,9 +3,13 @@ package org.jsmart.zerocode.core.kafka.receive.message;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.jsmart.zerocode.core.kafka.send.message.ProducerJsonRecord;
 import org.junit.Test;
 
 import java.io.IOException;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class ConsumerJsonRecordTest {
 
@@ -31,6 +35,17 @@ public class ConsumerJsonRecordTest {
         record = new ConsumerJsonRecord(key2, null, value);
         json = objectMapper.writeValueAsString(record);
         System.out.println("2 json >> " + json);
+    }
 
+    @Test
+    public void testDeser_singleJsonRecord() throws IOException {
+        String json = "{\n" +
+                "                        \"value\": {\n" +
+                "                            \"name\": \"Nicola\"\n" +
+                "                        }\n" +
+                "                    }";
+
+        ConsumerJsonRecord jsonRecord = objectMapper.readValue(json, ConsumerJsonRecord.class);
+        assertThat(jsonRecord.getValue().toString(), is("{\"name\":\"Nicola\"}"));
     }
 }

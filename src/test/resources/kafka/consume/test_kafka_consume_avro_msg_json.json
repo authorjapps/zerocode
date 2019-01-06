@@ -49,7 +49,7 @@
             },
             "assertions": {
                 "size": 2,
-                "jsonRecords": [
+                "records": [
                     {
                         "value": {
                             "f1": "val1"

@@ -86,17 +86,13 @@ public class KafkaReceiver {
                         readJson(jsonRecords, recordIterator);
                         break;
 
-                    case RAW_AND_JSON:
-                        readRawAndJson(rawRecords, jsonRecords, recordIterator);
-                        break;
-
                     default:
                         throw new RuntimeException("Unsupported record type - " + effectiveLocal.getRecordType());
                 }
 
             }
 
-            handleCommitSyncAsync(consumer, effectiveLocal);
+            handleCommitSyncAsync(consumer, consumerCommonConfigs, effectiveLocal);
         }
 
         consumer.close();
@@ -107,41 +103,6 @@ public class KafkaReceiver {
 
     }
 
-    private void handleCommitSyncAsync(Consumer<Long, String> consumer, ConsumerLocalConfigs consumeLocalTestProps) {
-        if(consumeLocalTestProps == null){
-            LOGGER.warn("[No local test configs]-Kafka client neither did `commitAsync()` nor `commitSync()`");
-            return;
-        }
-
-        Boolean effectiveCommitSync;
-        Boolean effectiveCommitAsync;
-
-        Boolean localCommitSync = consumeLocalTestProps.getCommitSync();
-        Boolean localCommitAsync = consumeLocalTestProps.getCommitAsync();
-
-        if (localCommitSync == null && localCommitAsync == null) {
-            effectiveCommitSync = consumerCommonConfigs.getCommitSync();
-            effectiveCommitAsync = consumerCommonConfigs.getCommitAsync();
-
-        } else {
-            effectiveCommitSync = localCommitSync;
-            effectiveCommitAsync = localCommitAsync;
-        }
-
-        if (effectiveCommitSync != null && effectiveCommitSync == true) {
-            consumer.commitSync();
-
-        } else if (effectiveCommitAsync != null && effectiveCommitAsync == true) {
-            consumer.commitAsync();
-
-        } else {
-            LOGGER.warn("Kafka client neither configured for `commitAsync()` nor `commitSync()`");
-        }
-
-        // --------------------------------------------------------
-        // Leave this to the user to "commit" the offset explicitly
-        // --------------------------------------------------------
-    }
 
 
 }

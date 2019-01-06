@@ -7,43 +7,36 @@ import java.util.List;
 
 public class ConsumerRawRecords {
     private final List<ConsumerRecord> records;
-    private final List<ConsumerJsonRecord> jsonRecords;
-    private final Integer size;
+    private final int size;
 
-    public ConsumerRawRecords(List<ConsumerJsonRecord> jsonRecords, List<ConsumerRecord> records, Integer size) {
-        this.jsonRecords = jsonRecords;
+    public ConsumerRawRecords(List<ConsumerRecord> records, int size) {
         this.records = records;
-         this.size = size;
+        this.size = size;
     }
 
     public ConsumerRawRecords(List<ConsumerJsonRecord> jsonRecords) {
-        this(jsonRecords, null, jsonRecords.size());
+        this(null, jsonRecords.size());
     }
 
     public ConsumerRawRecords(ArrayList<ConsumerRecord> rawConsumedRecords) {
-        this(null, rawConsumedRecords, rawConsumedRecords.size());
+        this(rawConsumedRecords, rawConsumedRecords.size());
     }
 
     public ConsumerRawRecords(Integer size) {
-        this(null, null, size);
+        this(null, size);
     }
 
     public List<ConsumerRecord> getRecords() {
         return records;
     }
 
-    public Integer getSize() {
-        return records != null || jsonRecords != null? size : 0;
-    }
-
-    public List<ConsumerJsonRecord> getJsonRecords() {
-        return jsonRecords;
+    public int getSize() {
+        return size;
     }
 
     @Override
     public String toString() {
         return "ConsumedRecords{" +
-                "jsonRecords=" + jsonRecords +
                 ", records=" + records +
                 ", size=" + size +
                 '}';
