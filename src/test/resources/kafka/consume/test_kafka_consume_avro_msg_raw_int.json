@@ -1,5 +1,5 @@
 {
-    "scenarioName": "consume a AVRO msg message as RAW",
+    "scenarioName": "Produce an Inetger via REST proxy and consume a AVRO msg message as RAW",
     "steps": [
         //        The following consume steps works, Tested -Green
         //        but not yet CI enabled due to avro registration is done manually
@@ -11,12 +11,12 @@
         //        because message is not updated with an avro ID, hence not understood by avro deserializer
         //        Error - {"error_code":50002,"message":"Kafka error: Error deserializing Avro message for id -1"}
         //        2019-01-04 09:46:29,371 [main] ERROR org.jsmart.zerocode.core.kafka.client.BasicKafkaClient -
-        //        Exception during operation:unload, topicName:bar, error:Error deserializing key/value for partition bar-0 at offset 1.
+        //        Exception during operation:unload, topicName:demo-avro-2, error:Error deserializing key/value for partition demo-avro-2-0 at offset 1.
         //        If needed, please seek past the record to continue consumption.
 
         {
-            "name": "create_new_employee",
-            "url": "/topics/bar",
+            "name": "produce_avro_raw",
+            "url": "/topics/demo-avro-2",
             "operation": "POST",
             "request": {
                 "headers": {
@@ -37,12 +37,16 @@
                 }
             },
             "assertions": {
-                "status": 200
+                "status": 200,
+                "body" : {
+                    "offsets.SIZE" : 2,
+                    "value_schema_id" : "$NOT.NULL"
+                }
             }
         },
         {
             "name": "consume_avro_msg_as_raw",
-            "url": "kafka-topic:bar",
+            "url": "kafka-topic:demo-avro-2",
             "operation": "unload",
             "request": {
                 "consumerLocalConfigs": {
@@ -56,12 +60,12 @@
                 "size": 2,
                 "records": [
                     {
-                        "topic": "bar",
-                        "value": 12
+                        "topic": "demo-avro-2",
+                        "value": "$EQ.${$.produce_avro_raw.request.body.records[0].value}"
                     },
                     {
-                        "topic": "bar",
-                        "value": 24
+                        "topic": "demo-avro-2",
+                        "value": "$EQ.${$.produce_avro_raw.request.body.records[1].value}"
                     }
                 ]
             }
