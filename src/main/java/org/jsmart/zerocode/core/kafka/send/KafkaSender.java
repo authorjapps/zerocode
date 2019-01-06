@@ -47,25 +47,29 @@ public class KafkaSender {
         String deliveryDetails = null;
 
         RawRecords producerRawRecords = null;
-        Object recordType = readRecordType(requestJson, "$.recordType");
+        String recordType = readRecordType(requestJson, "$.recordType");
 
         JsonRecords producerJsonRecords = null;
 
         try {
-            if (RAW.equals(recordType)) {
-                producerRawRecords = gson.fromJson(requestJson, RawRecords.class);
-                validateProduceRecord(producerRawRecords.getRecords());
-                for (int i = 0; i < producerRawRecords.getRecords().size(); i++) {
-                    deliveryDetails = sendRaw(topicName, producer, producerRawRecords, i);
-                }
-            }
+            switch (recordType) {
+                case RAW:
+                    producerRawRecords = gson.fromJson(requestJson, RawRecords.class);
+                    validateProduceRecord(producerRawRecords.getRecords());
+                    for (int i = 0; i < producerRawRecords.getRecords().size(); i++) {
+                        deliveryDetails = sendRaw(topicName, producer, producerRawRecords, i);
+                    }
+                    break;
 
-            if (JSON.equals(recordType)) {
-                producerJsonRecords = objectMapper.readValue(requestJson, JsonRecords.class);
-                validateProduceRecord(producerJsonRecords.getRecords());
-                for (int i = 0; i < producerJsonRecords.getRecords().size(); i++) {
-                    deliveryDetails = sendJson(topicName, producer, producerJsonRecords, i);
-                }
+                case JSON:
+                    producerJsonRecords = objectMapper.readValue(requestJson, JsonRecords.class);
+                    validateProduceRecord(producerJsonRecords.getRecords());
+                    for (int i = 0; i < producerJsonRecords.getRecords().size(); i++) {
+                        deliveryDetails = sendJson(topicName, producer, producerJsonRecords, i);
+                    }
+                    break;
+                default:
+                    throw new RuntimeException("Unsupported recordType '" + recordType + "'. Chose RAW or JSON");
             }
 
         } catch (Exception e) {
@@ -134,14 +138,6 @@ public class KafkaSender {
         return deliveryDetails;
     }
 
-    private Object readRecordType(String requestJson, String jsonPath) {
-        try {
-            return JsonPath.read(requestJson, jsonPath);
-        } catch (PathNotFoundException pEx) {
-            LOGGER.error("Could not find path '" + jsonPath + "' in the request. returned default type 'RAW'.");
-            return RAW;
-        }
-    }
 
     class ProducerAsyncCallback implements Callback {
         @Override

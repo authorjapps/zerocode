@@ -11,9 +11,16 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaConsumeAvroTest {
 
+    @Test
+    @JsonTestCase("kafka/consume/test_kafka_consume_avro_msg_raw.json")
+    public void testKafkaConsume_avroRaw() throws Exception {
+    }
+
     @Ignore
     @Test
-    @JsonTestCase("kafka/consume/WIP_CI_test_kafka_consume_avro_msg.json")
-    public void testKafkaConsume_avro() throws Exception {
+    @JsonTestCase("kafka/consume/WIP_CI_test_kafka_consume_avro_msg_json.json")
+    public void testKafkaConsume_avroJson() throws Exception {
     }
+
+
 }
