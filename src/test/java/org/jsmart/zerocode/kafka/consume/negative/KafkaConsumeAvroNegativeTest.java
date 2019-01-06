@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.kafka.consume;
+package org.jsmart.zerocode.kafka.consume.negative;
 
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.TargetEnv;
@@ -11,8 +11,13 @@ import org.junit.runner.RunWith;
 public class KafkaConsumeAvroNegativeTest {
 
     @Test
-    @JsonTestCase("kafka/consume/negative/test_kafka_consume_avro_msg_wrong_value.json")
+    @JsonTestCase("kafka/consume/negative/test_kafka_rest_proxy_avro_msg_wrong_value.json")
     public void testKafkaConsume_avroWrongValue() throws Exception {
+    }
+
+    @Test
+    @JsonTestCase("kafka/consume/negative/test_load_kafka_direct_invalid_avro_msg.json")
+    public void testKafkaWrongData_loadDirectTopic() throws Exception {
     }
 
 }

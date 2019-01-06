@@ -1,6 +1,7 @@
 package org.jsmart.zerocode.kafka;
 
 import org.jsmart.zerocode.kafka.consume.*;
+import org.jsmart.zerocode.kafka.consume.negative.KafkaConsumeAvroNegativeTest;
 import org.jsmart.zerocode.kafka.customclient.KafkaProduceCustomClientTest;
 import org.jsmart.zerocode.kafka.produce.*;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import org.junit.runners.Suite;
         KafkaProduceIntKeyTest.class,
         KafkaConsumeIntKeyTest.class,
         KafkaConsumeAvroTest.class,
+        KafkaConsumeAvroNegativeTest.class,
         KafkaProduceAsyncTest.class
         //KafkaPublishFailureTest.class,
 })
