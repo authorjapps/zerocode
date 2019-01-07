@@ -14,6 +14,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.validateConsumeProperties;
 
 public class KafkaFileRecordHelper {
@@ -23,47 +25,65 @@ public class KafkaFileRecordHelper {
     public static void handleRecordsDump(ConsumerLocalConfigs consumeLocalTestProps,
                                          List<ConsumerRecord> rawRecords,
                                          List<ConsumerJsonRecord> jsonRecords) {
-        String fileDumpType = consumeLocalTestProps != null ? consumeLocalTestProps.getFileDumpType() : null;
+        String recordType = consumeLocalTestProps != null ? consumeLocalTestProps.getRecordType() : null;
 
-        if (fileDumpType != null) {
+        if (recordType != null) {
 
             validateConsumeProperties(consumeLocalTestProps);
 
-            switch (fileDumpType) {
-                case "RAW":
-                    dumpRawRecords(consumeLocalTestProps.getFileDumpTo(), rawRecords);
+            switch (recordType) {
+                case RAW:
+                    dumpRawRecordsIfEnabled(consumeLocalTestProps.getFileDumpTo(), rawRecords);
+                    break;
+
+                case JSON:
+                    dumpJsonRecordsIfEnabled(consumeLocalTestProps.getFileDumpTo(), jsonRecords);
                     break;
 
                 case "BIN":
                     //TODO - Handle image data etc.
                     break;
 
-                case "JSON":
-                    //dumpRawRecords(consumeLocalTestProps.getFileDumpTo(), jsonRecords);
-                    break;
 
                 default:
-                    throw new RuntimeException("Unsupported fileDumpType - '" + fileDumpType + "'");
+                    throw new RuntimeException("Unsupported recordType - '" + recordType + "'");
             }
         }
     }
 
-    protected static void dumpRawRecords(String fileName, List<ConsumerRecord> fetchedRecords) {
+    public static void dumpRawRecordsIfEnabled(String fileName, List<ConsumerRecord> fetchedRecords) {
 
-        File file = createCascadeIfNotExisting(fileName);
+        if (fileName != null) {
+            File file = createCascadeIfNotExisting(fileName);
+            try {
+                FileWriter writer = new FileWriter(file.getAbsoluteFile());
+                for (ConsumerRecord thisRecord : fetchedRecords) {
+                    writer.write(gson.toJson(thisRecord) + osIndependentNewLine());
+                }
 
-        try {
-            FileWriter writer = new FileWriter(file.getAbsoluteFile());
+                writer.close();
 
-            for (ConsumerRecord thisRecord : fetchedRecords) {
-//                String key = aRecord.key() != null ? aRecord.key().toString() : "";
-//                String value = aRecord.value() != null ? aRecord.value().toString() : "";
-
-                writer.write(gson.toJson(thisRecord) + osIndependentNewLine());
+            } catch (IOException exx) {
+                throw new RuntimeException("Could not write to file '" + fileName + "' exception >> " + exx);
             }
-            writer.close();
-        } catch (IOException exx) {
-            throw new RuntimeException("Could not write to file '" + fileName + "' exception >> " + exx);
+        }
+    }
+
+    public static void dumpJsonRecordsIfEnabled(String fileName, List<ConsumerJsonRecord> fetchedRecords) {
+
+        if (fileName != null) {
+            File file = createCascadeIfNotExisting(fileName);
+            try {
+                FileWriter writer = new FileWriter(file.getAbsoluteFile());
+                for (ConsumerJsonRecord thisRecord : fetchedRecords) {
+                    writer.write(gson.toJson(thisRecord) + osIndependentNewLine());
+                }
+
+                writer.close();
+
+            } catch (IOException exx) {
+                throw new RuntimeException("Could not write to file '" + fileName + "', exception was >> " + exx);
+            }
         }
     }
 

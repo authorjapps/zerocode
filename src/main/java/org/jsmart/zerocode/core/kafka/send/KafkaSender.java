@@ -10,6 +10,7 @@ import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.errors.SerializationException;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.delivery.DeliveryDetails;
@@ -70,11 +71,10 @@ public class KafkaSender {
             }
 
         } catch (Exception e) {
-            LOGGER.info("Error in sending record. Exception - {} ", e);
+            LOGGER.info("Error in sending record. Exception - {} ", e.getMessage());
             String failedStatus = objectMapper.writeValueAsString(new DeliveryDetails(FAILED, e.getMessage()));
-
-            // Sends the final record delivery status only.
             return prettyPrintJson(failedStatus);
+
         } finally {
             producer.close();
         }

@@ -12,12 +12,17 @@ public class KafkaConsumeDumpToFileTest {
 
     @Test
     @JsonTestCase("kafka/consume/file_dump/test_kafka_consume_record_dump_raw_raw.json")
-    public void testKafkaRawRecordDump() throws Exception {
+    public void testKafka_RawRecordDump() throws Exception {
     }
 
     @Test
     @JsonTestCase("kafka/consume/file_dump/test_kafka_consume_record_dump_raw_json.json")
-    public void testKafkaRawDumpOfJsonRecord() throws Exception {
+    public void testKafka_RawDumpOfJsonRecord() throws Exception {
+    }
+
+    @Test
+    @JsonTestCase("kafka/consume/file_dump/test_kafka_consume_record_dump_json_json.json")
+    public void testKafka_JsonDumpOfJsonRecord() throws Exception {
     }
 
 }

@@ -19,9 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import static java.time.Duration.ofMillis;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.*;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaFileRecordHelper.handleRecordsDump;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.*;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaFileRecordHelper.handleRecordsDump;
 
 @Singleton
 public class KafkaReceiver {
@@ -47,7 +48,7 @@ public class KafkaReceiver {
 
         Consumer consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
 
-        final ArrayList<ConsumerRecord> rawRecords = new ArrayList<>();
+        final List<ConsumerRecord> rawRecords = new ArrayList<>();
         final List<ConsumerJsonRecord> jsonRecords = new ArrayList<>();
 
         int noOfTimeOuts = 0;
@@ -87,7 +88,8 @@ public class KafkaReceiver {
                         break;
 
                     default:
-                        throw new RuntimeException("Unsupported record type - " + effectiveLocal.getRecordType());
+                        throw new RuntimeException("Unsupported record type - '" + effectiveLocal.getRecordType()
+                                + "'. Supported values are 'JSON','RAW'");
                 }
 
             }
@@ -102,7 +104,5 @@ public class KafkaReceiver {
         return prepareResult(effectiveLocal, jsonRecords, rawRecords);
 
     }
-
-
 
 }

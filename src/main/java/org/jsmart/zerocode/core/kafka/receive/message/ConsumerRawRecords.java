@@ -2,7 +2,6 @@ package org.jsmart.zerocode.core.kafka.receive.message;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConsumerRawRecords {
@@ -14,11 +13,7 @@ public class ConsumerRawRecords {
         this.size = size;
     }
 
-    public ConsumerRawRecords(List<ConsumerJsonRecord> jsonRecords) {
-        this(null, jsonRecords.size());
-    }
-
-    public ConsumerRawRecords(ArrayList<ConsumerRecord> rawConsumedRecords) {
+    public ConsumerRawRecords(List<ConsumerRecord> rawConsumedRecords) {
         this(rawConsumedRecords, rawConsumedRecords.size());
     }
 

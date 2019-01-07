@@ -13,6 +13,10 @@ import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
 public class ConsumerLocalConfigs {
     private final String recordType;
     private final String fileDumpTo;
+    // --------------------------------------------------------
+    // Now it is unused as recordType decides the record format
+    // TODO- remove this
+    // --------------------------------------------------------
     private final String fileDumpType;
     private final Boolean commitAsync;
     private final Boolean commitSync;
@@ -49,6 +53,9 @@ public class ConsumerLocalConfigs {
         return fileDumpTo;
     }
 
+    // --------------------------------------------------------
+    // Now it is unused as recordType decides the record format
+    // --------------------------------------------------------
     public String getFileDumpType() {
         return fileDumpType;
     }

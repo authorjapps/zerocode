@@ -24,8 +24,7 @@ import java.io.InputStream;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.*;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 public class KafkaConsumerHelper {
@@ -56,7 +55,7 @@ public class KafkaConsumerHelper {
     }
 
     private static void validateIfBothEnabled(Boolean commitSync, Boolean commitAsync) {
-        if ((commitSync != null && commitAsync != null)  && commitSync == true && commitAsync == true) {
+        if ((commitSync != null && commitAsync != null) && commitSync == true && commitAsync == true) {
             throw new RuntimeException("\n********* Both commitSync and commitAsync can not be true *********\n");
         }
     }
@@ -83,7 +82,7 @@ public class KafkaConsumerHelper {
     }
 
     public static ConsumerLocalConfigs createEffective(ConsumerCommonConfigs consumerCommon, ConsumerLocalConfigs consumerLocal) {
-        if(consumerLocal == null){
+        if (consumerLocal == null) {
             return new ConsumerLocalConfigs(
                     consumerCommon.getRecordType(),
                     consumerCommon.getFileDumpTo(),
@@ -162,9 +161,9 @@ public class KafkaConsumerHelper {
                 .orElse(DEFAULT_POLLING_TIME_MILLI_SEC);
     }
 
-    public static void readRaw(ArrayList<ConsumerRecord> rawRecords, Iterator recordIterator) {
+    public static void readRaw(List<ConsumerRecord> rawRecords, Iterator recordIterator) {
         while (recordIterator.hasNext()) {
-            ConsumerRecord thisRecord = (ConsumerRecord)recordIterator.next();
+            ConsumerRecord thisRecord = (ConsumerRecord) recordIterator.next();
             LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}",
                     thisRecord.key(), thisRecord.value(), thisRecord.partition(), thisRecord.offset());
             rawRecords.add(thisRecord);
@@ -172,9 +171,9 @@ public class KafkaConsumerHelper {
     }
 
     public static void readJson(List<ConsumerJsonRecord> jsonRecords,
-                          Iterator recordIterator ) throws IOException {
+                                Iterator recordIterator) throws IOException {
         while (recordIterator.hasNext()) {
-            ConsumerRecord thisRecord = (ConsumerRecord)recordIterator.next();
+            ConsumerRecord thisRecord = (ConsumerRecord) recordIterator.next();
 
             Object key = thisRecord.key();
             Object value = thisRecord.value();
@@ -188,31 +187,32 @@ public class KafkaConsumerHelper {
     }
 
     public static String prepareResult(ConsumerLocalConfigs testConfigs,
-                                 List<ConsumerJsonRecord> jsonRecords,
-                                 ArrayList<ConsumerRecord> rawRecords) throws JsonProcessingException {
+                                       List<ConsumerJsonRecord> jsonRecords,
+                                       List<ConsumerRecord> rawRecords) throws JsonProcessingException {
+
+        String result;
 
         if (testConfigs != null && testConfigs.getShowConsumedRecords() == false) {
-            return prettyPrintJson(gson.toJson(new ConsumerRawRecords(jsonRecords.size() == 0 ? rawRecords.size() : 0)));
+            int size = jsonRecords.size();
+            result = prettyPrintJson(gson.toJson(new ConsumerRawRecords(size == 0 ? rawRecords.size() : size)));
 
-        } else if (testConfigs != null && "RAW".equals(testConfigs.getRecordType())) {
-            return prettyPrintJson(gson.toJson(new ConsumerRawRecords(rawRecords)));
+        } else if (testConfigs != null && RAW.equals(testConfigs.getRecordType())) {
+            result = prettyPrintJson(gson.toJson(new ConsumerRawRecords(rawRecords)));
 
-        } else if (testConfigs != null && "JSON".equals(testConfigs.getRecordType())) {
-            return prettyPrintJson(objectMapper.writeValueAsString(new ConsumerJsonRecords(jsonRecords)));
+        } else if (testConfigs != null && JSON.equals(testConfigs.getRecordType())) {
+            result = prettyPrintJson(objectMapper.writeValueAsString(new ConsumerJsonRecords(jsonRecords)));
 
         } else {
-            // -------------------------------------------------
-            //               Show the default i.e. RAW
-            // -------------------------------------------------
-            return prettyPrintJson(gson.toJson(new ConsumerRawRecords(rawRecords)));
-
+            result = "{\"error\" : \"recordType Undecided, Please chose recordType as JSON or RAW\"}";
         }
+
+        return result;
     }
 
     public static void handleCommitSyncAsync(Consumer<Long, String> consumer,
                                              ConsumerCommonConfigs consumerCommonConfigs,
                                              ConsumerLocalConfigs consumeLocalTestProps) {
-        if(consumeLocalTestProps == null){
+        if (consumeLocalTestProps == null) {
             LOGGER.warn("[No local test configs]-Kafka client neither did `commitAsync()` nor `commitSync()`");
             return;
         }
