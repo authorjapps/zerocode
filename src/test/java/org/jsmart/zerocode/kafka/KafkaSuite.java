@@ -22,6 +22,7 @@ import org.junit.runners.Suite;
         KafkaConsumeIntKeyTest.class,
         KafkaConsumeAvroTest.class,
         KafkaConsumeAvroNegativeTest.class,
+        KafkaConsumeDumpToFileTest.class,
         KafkaProduceAsyncTest.class
 })
 @RunWith(Suite.class)
