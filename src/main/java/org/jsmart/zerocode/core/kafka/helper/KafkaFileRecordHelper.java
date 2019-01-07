@@ -1,7 +1,10 @@
 package org.jsmart.zerocode.core.kafka.helper;
 
+import com.google.gson.Gson;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
+import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecord;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,7 +17,12 @@ import java.util.List;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.validateConsumeProperties;
 
 public class KafkaFileRecordHelper {
-    public static void handleRecordsDump(ConsumerLocalConfigs consumeLocalTestProps, List<ConsumerRecord> fetchedRecords) {
+
+    private static final Gson gson = new GsonSerDeProvider().get();
+
+    public static void handleRecordsDump(ConsumerLocalConfigs consumeLocalTestProps,
+                                         List<ConsumerRecord> rawRecords,
+                                         List<ConsumerJsonRecord> jsonRecords) {
         String fileDumpType = consumeLocalTestProps != null ? consumeLocalTestProps.getFileDumpType() : null;
 
         if (fileDumpType != null) {
@@ -23,7 +31,7 @@ public class KafkaFileRecordHelper {
 
             switch (fileDumpType) {
                 case "RAW":
-                    dumpRecords(consumeLocalTestProps.getFileDumpTo(), fetchedRecords);
+                    dumpRawRecords(consumeLocalTestProps.getFileDumpTo(), rawRecords);
                     break;
 
                 case "BIN":
@@ -31,7 +39,7 @@ public class KafkaFileRecordHelper {
                     break;
 
                 case "JSON":
-                    // TODO - dump JSON data to a file
+                    //dumpRawRecords(consumeLocalTestProps.getFileDumpTo(), jsonRecords);
                     break;
 
                 default:
@@ -40,17 +48,18 @@ public class KafkaFileRecordHelper {
         }
     }
 
-    public static void dumpRecords(String fileName, List<ConsumerRecord> fetchedRecords) {
+    protected static void dumpRawRecords(String fileName, List<ConsumerRecord> fetchedRecords) {
 
         File file = createCascadeIfNotExisting(fileName);
 
         try {
             FileWriter writer = new FileWriter(file.getAbsoluteFile());
 
-            for (ConsumerRecord aRecord : fetchedRecords) {
-                String key = aRecord.key() != null ? aRecord.key().toString() : "";
-                String value = aRecord.value() != null ? aRecord.value().toString() : "";
-                writer.write(key + value + osIndependentNewLine());
+            for (ConsumerRecord thisRecord : fetchedRecords) {
+//                String key = aRecord.key() != null ? aRecord.key().toString() : "";
+//                String value = aRecord.value() != null ? aRecord.value().toString() : "";
+
+                writer.write(gson.toJson(thisRecord) + osIndependentNewLine());
             }
             writer.close();
         } catch (IOException exx) {

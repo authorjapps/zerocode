@@ -16,11 +16,6 @@ public class KafkaConsumeTest {
     public void testKafkaConsume() throws Exception {
     }
 
-    @Test
-    @JsonTestCase("kafka/consume/file_dump/test_kafka_consume_raw_record_dump.json")
-    public void testKafkaRawRecordDump() throws Exception {
-    }
-
     @Ignore("TODO wip_")
     @Test
     @JsonTestCase("kafka/consume/WIP_test_kafka_consume_with_properties.json")

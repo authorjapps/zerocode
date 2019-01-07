@@ -97,7 +97,7 @@ public class KafkaReceiver {
 
         consumer.close();
 
-        handleRecordsDump(effectiveLocal, rawRecords);
+        handleRecordsDump(effectiveLocal, rawRecords, jsonRecords);
 
         return prepareResult(effectiveLocal, jsonRecords, rawRecords);
 

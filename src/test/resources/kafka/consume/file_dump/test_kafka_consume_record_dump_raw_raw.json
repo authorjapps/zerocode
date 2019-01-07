@@ -2,21 +2,6 @@
    "scenarioName": "Unload - consume a message from kafka - raw dump to file",
    "steps": [
       {
-         "name": "unload_and_commit",
-         "url": "kafka-topic:demo-c2",
-         "operation": "consume",
-         "request": {
-            "consumerLocalConfigs": {
-               //"commitSync": true,  //Uncomment to test validation
-               //"commitAsync": true, //Uncomment to test validation
-               "showConsumedRecords": false,
-               "maxNoOfRetryPollsOrTimeouts": 5
-            }
-         },
-         "assertions": {
-         }
-      },
-      {
          "name": "load_kafka",
          "url": "kafka-topic:demo-c2",
          "operation": "produce",
@@ -40,9 +25,7 @@
             "consumerLocalConfigs": {
                "fileDumpTo": "target/temp/demo.txt",
                "fileDumpType": "RAW",
-               //"commitSync":true, // not effective, bacaz it does a commit after consuming the records.
-               // See step 'unload_and_commit', after which the reading starts fresh from the next offset.
-               // Otherwise you get the earlier records form last committed offset.
+               "commitSync":true,
                "showConsumedRecords": false,
                "maxNoOfRetryPollsOrTimeouts": 5,
                "pollingTime": 1000

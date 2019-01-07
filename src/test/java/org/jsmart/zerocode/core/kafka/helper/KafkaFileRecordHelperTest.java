@@ -25,7 +25,7 @@ public class KafkaFileRecordHelperTest {
 
         String relativeFileName = "target/tempX/ttt/demo1.txt";
         //String absoluteFileName = "also works for full path - Tested Ok";
-        KafkaFileRecordHelper.dumpRecords(relativeFileName, records);
+        KafkaFileRecordHelper.dumpRawRecords(relativeFileName, records);
 
         long lineCount = Files.lines(Paths.get(relativeFileName)).count();
         assertThat(lineCount, is(2L));
@@ -36,6 +36,6 @@ public class KafkaFileRecordHelperTest {
     @Test(expected = RuntimeException.class)
     public void test_dodgyFile() throws IOException {
         String badAbsoluteFileName = "//////zerocode/target/temp/demo2.txt";
-        KafkaFileRecordHelper.dumpRecords(badAbsoluteFileName, new ArrayList<>());
+        KafkaFileRecordHelper.dumpRawRecords(badAbsoluteFileName, new ArrayList<>());
     }
 }
