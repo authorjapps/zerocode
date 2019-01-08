@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.kafka.consume;
+package org.jsmart.zerocode.kafka.consume.file;
 
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.TargetEnv;

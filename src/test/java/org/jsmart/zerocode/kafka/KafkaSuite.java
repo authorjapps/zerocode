@@ -1,6 +1,7 @@
 package org.jsmart.zerocode.kafka;
 
 import org.jsmart.zerocode.kafka.consume.*;
+import org.jsmart.zerocode.kafka.consume.file.KafkaConsumeDumpToFileTest;
 import org.jsmart.zerocode.kafka.consume.negative.KafkaConsumeAvroNegativeTest;
 import org.jsmart.zerocode.kafka.customclient.KafkaProduceCustomClientTest;
 import org.jsmart.zerocode.kafka.produce.*;
