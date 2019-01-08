@@ -10,7 +10,6 @@ import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.errors.SerializationException;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.delivery.DeliveryDetails;
@@ -20,12 +19,14 @@ import org.jsmart.zerocode.core.kafka.send.message.ProducerRawRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.List;
 
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.FAILED;
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.OK;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.*;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.*;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
@@ -44,19 +45,33 @@ public class KafkaSender {
         Producer<Long, String> producer = createProducer(brokers, producerPropertyFile);
         String deliveryDetails = null;
 
-        ProducerRawRecords producerProducerRawRecords = null;
-        String recordType = readRecordType(requestJson, "$.recordType");
+        ProducerRawRecords rawRecords;
+        String recordType = readRecordType(requestJson, RECORD_TYPE_JSON_PATH);
 
         ProducerJsonRecords producerJsonRecords;
 
         try {
             switch (recordType) {
                 case RAW:
-                    producerProducerRawRecords = gson.fromJson(requestJson, ProducerRawRecords.class);
-                    validateProduceRecord(producerProducerRawRecords.getRecords());
-                    for (int i = 0; i < producerProducerRawRecords.getRecords().size(); i++) {
-                        deliveryDetails = sendRaw(topicName, producer, producerProducerRawRecords, i);
+                    rawRecords = gson.fromJson(requestJson, ProducerRawRecords.class);
+
+                    String fileName = rawRecords.getFile();
+                    if (fileName != null) {
+                        File file = new File(getClass().getClassLoader().getResource(fileName).getFile());
+                        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                            String line;
+                            for(int i = 0; (line = br.readLine()) != null; i++) {
+                                ProducerRecord record = gson.fromJson(line, ProducerRecord.class);
+                                deliveryDetails = sendRaw(topicName, producer, record, rawRecords.getAsync());
+                            }
+                        }
+                    } else {
+                        validateProduceRecord(rawRecords.getRecords());
+                        for (int i = 0; i < rawRecords.getRecords().size(); i++) {
+                            deliveryDetails = sendRaw(topicName, producer, rawRecords.getRecords().get(i), rawRecords.getAsync());
+                        }
                     }
+
                     break;
 
                 case JSON:
@@ -71,7 +86,7 @@ public class KafkaSender {
             }
 
         } catch (Exception e) {
-            LOGGER.info("Error in sending record. Exception - {} ", e.getMessage());
+            LOGGER.error("Error in sending record. Exception - {} ", e.getMessage());
             String failedStatus = objectMapper.writeValueAsString(new DeliveryDetails(FAILED, e.getMessage()));
             return prettyPrintJson(failedStatus);
 
@@ -83,14 +98,18 @@ public class KafkaSender {
 
     }
 
-    private String sendRaw(String topicName, Producer<Long, String> producer, ProducerRawRecords producerRawRecords, int recNum) throws InterruptedException, java.util.concurrent.ExecutionException {
+    private String sendRaw(String topicName,
+                           Producer<Long, String> producer,
+                           ProducerRecord recordToSend,
+                           //ProducerRawRecords producerRawRecords,
+                           Boolean isAsync) throws InterruptedException, java.util.concurrent.ExecutionException {
         String deliveryDetails;
-        List<ProducerRecord> rawRecordsToSend = producerRawRecords.getRecords();
-        ProducerRecord recordToSend = rawRecordsToSend.get(recNum);
+//        List<ProducerRecord> rawRecordsToSend = producerRawRecords.getRecords();
+//        ProducerRecord recordToSend = rawRecordsToSend.get(recordNum);
         ProducerRecord record = prepareRecordToSend(topicName, recordToSend);
 
         RecordMetadata metadata;
-        if (producerRawRecords.getAsync() != null && producerRawRecords.getAsync() == true) {
+        if (isAsync != null && isAsync == true) {
             LOGGER.info("Asynchronous Producer sending record - {}", record);
             metadata = (RecordMetadata) producer.send(record, new ProducerAsyncCallback()).get();
         } else {
@@ -109,10 +128,12 @@ public class KafkaSender {
         return deliveryDetails;
     }
 
-    private String sendJson(String topicName, Producer<Long, String> producer, ProducerJsonRecords producerJsonRecords, int i) throws InterruptedException, java.util.concurrent.ExecutionException {
+    private String sendJson(String topicName, Producer<Long, String> producer,
+                            ProducerJsonRecords producerJsonRecords,
+                            int recordNum) throws InterruptedException, java.util.concurrent.ExecutionException {
         String deliveryDetails;
         List<ProducerJsonRecord> rawRecordsToSend = producerJsonRecords.getRecords();
-        ProducerJsonRecord recordToSend = rawRecordsToSend.get(i);
+        ProducerJsonRecord recordToSend = rawRecordsToSend.get(recordNum);
         ProducerRecord record = prepareJsonRecordToSend(topicName, recordToSend);
 
         RecordMetadata metadata;

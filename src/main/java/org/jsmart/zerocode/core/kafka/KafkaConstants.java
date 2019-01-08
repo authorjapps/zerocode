@@ -11,8 +11,6 @@ public interface KafkaConstants {
 
     String GROUP_ID_CONFIG = "consumerGroup10";
 
-    Integer MAX_NO_MESSAGE_FOUND_COUNT = 5;
-
     Integer MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS = 5;
 
     Long DEFAULT_POLLING_TIME_MILLI_SEC = 100L;
@@ -26,5 +24,7 @@ public interface KafkaConstants {
     String RAW = "RAW";
 
     String JSON = "JSON";
+
+    String RECORD_TYPE_JSON_PATH = "$.recordType";
 
 }

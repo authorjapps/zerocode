@@ -4,6 +4,8 @@ import org.jsmart.zerocode.kafka.consume.*;
 import org.jsmart.zerocode.kafka.consume.negative.KafkaConsumeAvroNegativeTest;
 import org.jsmart.zerocode.kafka.customclient.KafkaProduceCustomClientTest;
 import org.jsmart.zerocode.kafka.produce.*;
+import org.jsmart.zerocode.kafka.produce.file.KafkaProduceAsyncFromFileTest;
+import org.jsmart.zerocode.kafka.produce.file.KafkaProduceSyncFromFileTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -23,7 +25,9 @@ import org.junit.runners.Suite;
         KafkaConsumeAvroTest.class,
         KafkaConsumeAvroNegativeTest.class,
         KafkaConsumeDumpToFileTest.class,
-        KafkaProduceAsyncTest.class
+        KafkaProduceAsyncTest.class,
+        KafkaProduceAsyncFromFileTest.class,
+        KafkaProduceSyncFromFileTest.class
 })
 @RunWith(Suite.class)
 public class KafkaSuite {

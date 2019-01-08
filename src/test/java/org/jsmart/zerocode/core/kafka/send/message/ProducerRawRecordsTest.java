@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -103,6 +104,36 @@ public class ProducerRawRecordsTest {
                 jsonBack, LENIENT);
     }
 
+    @Test
+    public void test_ProducerRecordsNull() {
+        final String json = "{\n" +
+                "\"recordType\": \"RAW\"," +
+                "\"file\": \"abc.txt\"," +
+                "\"async\": true" +
+                "}";
+
+        Object recordType = JsonPath.read(json, "$.recordType");
+        assertThat(recordType.toString(), is("RAW"));
+
+        ProducerRawRecords rawRecords = gson.fromJson(json, ProducerRawRecords.class);
+        assertThat(rawRecords.getFile(), is("abc.txt"));
+        assertThat(rawRecords.getRecords().size(), is(0));
+        assertThat(rawRecords.getAsync(), is(true));
+
+        ProducerRecord record = new ProducerRecord("topic1", 1, 2);
+
+        boolean added = rawRecords.getRecords().add(record);
+        assertThat(added, is(true));
+        assertThat(rawRecords.getRecords().size(), is(0));
+        rawRecords.setRecords(Arrays.asList(record));
+        assertThat(rawRecords.getRecords().size(), is(1));
+
+
+        ProducerRawRecords rawRecords2 = new ProducerRawRecords(null, true, "RAW", "abc.txt");
+        assertThat(rawRecords2.getRecords().size(), is(0));
+        rawRecords2.getRecords().add(record);
+        assertThat(rawRecords2.getRecords().size(), is(1));
+    }
 
     public static Type getType(String typeName) {
         try {
