@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 
 @TargetEnv("kafka_servers/kafka_test_server.properties")
 @RunWith(ZeroCodeUnitRunner.class)
-public class KafkaProduceSyncFromFileTest {
+public class KafkaProduceSyncFromFileRawTest {
 
     @Test
     @JsonTestCase("kafka/produce/file_produce/test_kafka_produce_sync_from_file.json")

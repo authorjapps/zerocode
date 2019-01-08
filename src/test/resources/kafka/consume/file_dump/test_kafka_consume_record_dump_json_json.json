@@ -30,7 +30,7 @@
                "fileDumpTo": "target/temp/demo.txt",
                "recordType": "JSON",
                "commitSync":true,
-               "showConsumedRecords": false,
+               "showConsumedRecords": true,
                "maxNoOfRetryPollsOrTimeouts": 5,
                "pollingTime": 1000
             }

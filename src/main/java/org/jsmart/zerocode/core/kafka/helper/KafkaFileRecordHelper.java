@@ -1,8 +1,10 @@
 package org.jsmart.zerocode.core.kafka.helper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecord;
 
@@ -21,6 +23,7 @@ import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.validate
 public class KafkaFileRecordHelper {
 
     private static final Gson gson = new GsonSerDeProvider().get();
+    private static final ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
     public static void handleRecordsDump(ConsumerLocalConfigs consumeLocalTestProps,
                                          List<ConsumerRecord> rawRecords,
@@ -76,7 +79,7 @@ public class KafkaFileRecordHelper {
             try {
                 FileWriter writer = new FileWriter(file.getAbsoluteFile());
                 for (ConsumerJsonRecord thisRecord : fetchedRecords) {
-                    writer.write(gson.toJson(thisRecord) + osIndependentNewLine());
+                    writer.write(objectMapper.writeValueAsString(thisRecord) + osIndependentNewLine());
                 }
 
                 writer.close();

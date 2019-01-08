@@ -12,13 +12,16 @@ import java.util.List;
 public class ProducerJsonRecords {
     private final List<ProducerJsonRecord> records;
     private final Boolean async;
+    private final String file;
 
     @JsonCreator
     public ProducerJsonRecords(
             @JsonProperty("records") List<ProducerJsonRecord> records,
-            @JsonProperty("async") Boolean async) {
+            @JsonProperty("async") Boolean async,
+            @JsonProperty("file") String file) {
         this.records = records;
         this.async = async;
+        this.file = file;
     }
 
     public List<ProducerJsonRecord> getRecords() {
@@ -29,11 +32,16 @@ public class ProducerJsonRecords {
         return async;
     }
 
+    public String getFile() {
+        return file;
+    }
+
     @Override
     public String toString() {
-        return "JsonRecords{" +
+        return "ProducerJsonRecords{" +
                 "records=" + records +
                 ", async=" + async +
+                ", file='" + file + '\'' +
                 '}';
     }
 }

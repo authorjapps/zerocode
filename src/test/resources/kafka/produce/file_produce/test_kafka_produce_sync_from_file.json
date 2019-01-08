@@ -8,7 +8,7 @@
             "request": {
                 "async": false,
                 "recordType" : "RAW",
-                "file": "kafka/pfiles/test_data_01.json"
+                "file": "kafka/pfiles/test_data_raw.json"
             },
             "assertions": {
                 "status" : "Ok",
