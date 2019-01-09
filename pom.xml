@@ -73,6 +73,7 @@
         <h2.db.version>1.4.191</h2.db.version>
         <extentreports.version>3.1.3</extentreports.version>
         <version.kafka-clients>2.1.0</version.kafka-clients>
+        <version.kafka-avro-serializer>5.1.0</version.kafka-avro-serializer>
         <!-- maven plugin, build properties  -->
         <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
         <java-compiler-source.version>1.8</java-compiler-source.version>
@@ -109,7 +110,7 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
-            <version>5.1.0</version>
+            <version>${version.kafka-avro-serializer}</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>

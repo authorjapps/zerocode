@@ -47,6 +47,10 @@ public class KafkaFileRecordHelper {
                     //TODO - Handle image data etc.
                     break;
 
+                case "HEX":
+                    //TODO - Handle hex-fied stream/msg.
+                    break;
+
 
                 default:
                     throw new RuntimeException("Unsupported recordType - '" + recordType + "'");
