@@ -1,0 +1,74 @@
+{
+    "scenarioName": "Produce an Inetger via REST proxy and consume a AVRO msg message as RAW",
+    "steps": [
+        //        The following consume steps works, Tested -Green
+        //        but not yet CI enabled due to avro registration is done manually
+
+        // Note-
+        //        Do not put directly to the topic without avro registry ie schema registry.
+        //        When you put via Avro it updates the message with an ID(call it as avro ID) from the registry
+        //        If you put directly(by passing Avro), then it can not be consumed via AvroDeserialzer,
+        //        because message is not updated with an avro ID, hence not understood by avro deserializer
+        //        Error - {"error_code":50002,"message":"Kafka error: Error deserializing Avro message for id -1"}
+        //        2019-01-04 09:46:29,371 [main] ERROR org.jsmart.zerocode.core.kafka.client.BasicKafkaClient -
+        //        Exception during operation:unload, topicName:demo-avro-2, error:Error deserializing key/value for partition demo-avro-2-0 at offset 1.
+        //        If needed, please seek past the record to continue consumption.
+
+        {
+            "name": "produce_avro_raw",
+            "url": "/topics/demo-avro-2",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/vnd.kafka.avro.v1+json",
+                    "Accept": "application/vnd.kafka.v1+json, application/vnd.kafka+json, application/json"
+                },
+                "body": {
+                    "value_schema": "{\"name\":\"int\",\"type\": \"int\"}",
+                    "records": [
+                        {
+                            "value": 12
+                        },
+                        {
+                            "value": 24,
+                            "partition": 0
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body" : {
+                    "offsets.SIZE" : 2,
+                    "value_schema_id" : "$NOT.NULL"
+                }
+            }
+        },
+        {
+            "name": "consume_avro_msg_as_raw",
+            "url": "kafka-topic:demo-avro-2",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType": "RAW",
+                    "commitSync": true,
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 5
+                }
+            },
+            "assertions": {
+                "size": 2,
+                "records": [
+                    {
+                        "topic": "demo-avro-2",
+                        "value": "$EQ.${$.produce_avro_raw.request.body.records[0].value}"
+                    },
+                    {
+                        "topic": "demo-avro-2",
+                        "value": "$EQ.${$.produce_avro_raw.request.body.records[1].value}"
+                    }
+                ]
+            }
+        }
+    ]
+}

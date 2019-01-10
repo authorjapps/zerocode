@@ -1,0 +1,19 @@
+{
+    "scenarioName": "Produce a message - Wrong file name",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-file-2",
+            "operation": "produce",
+            "request": {
+                "async": false,
+                "recordType" : "RAW",
+                "file": "kafka/pfiles/test_data_rawXX.json"
+            },
+            "assertions": {
+                "status" : "Failed",
+                "message" : "Error accessing file: `kafka/pfiles/test_data_rawXX.json' - java.lang.NullPointerException"
+            }
+        }
+    ]
+}

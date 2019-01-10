@@ -1,0 +1,40 @@
+{
+    "scenarioName": "Produce a message - Sync - From File",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-file-2",
+            "operation": "produce",
+            "request": {
+                "async": false,
+                "recordType" : "RAW",
+                "file": "kafka/pfiles/test_data_raw.json"
+            },
+            "assertions": {
+                "status" : "Ok",
+                "recordMetadata" : {
+                    "topicPartition" : {
+                        "topic" : "demo-file-2"
+                    }
+                }
+            }
+        },
+        {
+            "name": "consume_raw",
+            "url": "kafka-topic:demo-file-2",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType" : "RAW",
+                    "commitSync": true,
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 5
+                }
+            },
+            "assertions": {
+                "size": 2
+            }
+        }
+
+    ]
+}

@@ -45,7 +45,7 @@ public class BasicKafkaClient {
 
         } catch (Throwable exx) {
 
-            LOGGER.error("Exception during operation:{}, topicName:{}, error:{}", operation, topicName, exx);
+            LOGGER.error("Exception during operation:{}, topicName:{}, error:{}", operation, topicName, exx.getMessage());
 
             throw new RuntimeException(exx);
         }

@@ -1,0 +1,43 @@
+{
+    "scenarioName": "consume as RAW message",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-raw1",
+            "operation": "load",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "{\"name\": \"Linus\"}"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "onload_kafka",
+            "url": "kafka-topic:demo-raw1",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType": "RAW",
+                    "commitSync": true,
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "size": 1,
+                "records": [
+                    {
+                        "key" : "$NOT.NULL",
+                        "value": "{\"name\": \"Linus\"}"
+                    }
+                ]
+            }
+        }
+    ]
+}

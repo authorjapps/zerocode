@@ -1,0 +1,46 @@
+{
+    "scenarioName": "Produce a message to a partition",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-4",
+            "operation": "produce",
+            "request": {
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World",
+                        "partition": 0
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Ok",
+                "recordMetadata" : {
+                    "topicPartition" : {
+                        "partition" : 0,
+                        "topic" : "demo-4"
+                    }
+                }
+            }
+        },
+        {
+            "name": "load_kafka_wrong_partition",
+            "url": "kafka-topic:demo-4",
+            "operation": "produce",
+            "request": {
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World",
+                        "partition": 9
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Failed",
+                "message" : "Invalid partition given with record: 9 is not in the range [0...1)."
+            }
+        }
+    ]
+}

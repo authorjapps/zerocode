@@ -1,0 +1,51 @@
+{
+    "scenarioName": "Produce - 2 records and consume both",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-p6",
+            "operation": "load",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World 1"
+                    },
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World 2"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "onload_kafka",
+            "url": "kafka-topic:demo-p6",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "records": [
+                    {
+                        "topic": "demo-p6",
+                        "key": "${$.load_kafka.request.records[0].key}",
+                        "value": "Hello World 1"
+                    },
+                    {
+                        "topic": "demo-p6",
+                        "key": "${$.load_kafka.request.records[1].key}",
+                        "value": "Hello World 2"
+                    }
+                ],
+                "size": 2
+            }
+        }
+    ]
+}

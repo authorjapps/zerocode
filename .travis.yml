@@ -16,8 +16,8 @@ services:
 #Kafka is not available as a service, So we are doing it our own way.
 #Still docker images are pulled every time. We need to cahche it for best practice.
 before_install:
-  - wget https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-single-node.yml
-  - docker-compose -f kafka-single-node.yml up -d
+  - wget https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml
+  - docker-compose -f kafka-schema-registry.yml up -d
 
 #Just compile and run tests, also print version at the beginning.
 #No need for package or install, as there is no use in creating a jar and putting them into local cache. 

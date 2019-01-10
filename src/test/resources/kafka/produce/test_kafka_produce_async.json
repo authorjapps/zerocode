@@ -1,0 +1,33 @@
+{
+    "scenarioName": "Produce a message - Async with Callback",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-3",
+            "operation": "produce",
+            "request": {
+                "async": true,
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World"
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Ok",
+                "recordMetadata" : {
+                    "offset" : "$NOT.NULL",
+                    "timestamp" : "$NOT.NULL",
+                    "serializedKeySize" : 13,
+                    "serializedValueSize" : 11,
+                    "topicPartition" : {
+                        "hash" : "$NOT.NULL",
+                        "partition" : 0,
+                        "topic" : "demo-3"
+                    }
+                }
+            }
+        }
+    ]
+}

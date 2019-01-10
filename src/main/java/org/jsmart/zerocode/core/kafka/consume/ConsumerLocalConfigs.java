@@ -6,41 +6,44 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Objects;
 
-//@JsonIgnoreProperties(ignoreUnknown = true) //<--- Do not enable this. All properties to be aware of and processed
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
+
+//@JsonIgnoreProperties(ignoreUnknown = true) //<--- Do not enable this. All properties need to be aware of and processed
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ConsumerLocalConfigs {
+    private final String recordType;
     private final String fileDumpTo;
-    private final String fileDumpType;
     private final Boolean commitAsync;
     private final Boolean commitSync;
-    private final Boolean showRecordsInResponse;
+    private final Boolean showRecordsConsumed;
     private final Integer maxNoOfRetryPollsOrTimeouts;
     private final Long pollingTime;
 
     @JsonCreator
     public ConsumerLocalConfigs(
+            @JsonProperty("recordType") String recordType,
             @JsonProperty("fileDumpTo") String fileDumpTo,
-            @JsonProperty("fileDumpType") String fileDumpType,
             @JsonProperty("commitAsync") Boolean commitAsync,
             @JsonProperty("commitSync") Boolean commitSync,
-            @JsonProperty("showRecordsInResponse") Boolean showRecordsInResponse,
+            @JsonProperty("showRecordsConsumed") Boolean showRecordsConsumed,
             @JsonProperty("maxNoOfRetryPollsOrTimeouts") Integer maxNoOfRetryPollsOrTimeouts,
-            @JsonProperty("pollingTime")Long pollingTime) {
+            @JsonProperty("pollingTime") Long pollingTime) {
+        this.recordType = recordType;
         this.fileDumpTo = fileDumpTo;
-        this.fileDumpType = fileDumpType;
         this.commitAsync = commitAsync;
         this.commitSync = commitSync;
-        this.showRecordsInResponse = showRecordsInResponse;
+        this.showRecordsConsumed = showRecordsConsumed;
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
         this.pollingTime = pollingTime;
     }
 
-    public String getFileDumpTo() {
-        return fileDumpTo;
+    public String getRecordType() {
+        return recordType != null ? recordType : RAW;
     }
 
-    public String getFileDumpType() {
-        return fileDumpType;
+
+    public String getFileDumpTo() {
+        return fileDumpTo;
     }
 
     public Boolean getCommitAsync() {
@@ -51,8 +54,8 @@ public class ConsumerLocalConfigs {
         return commitSync;
     }
 
-    public Boolean getShowRecordsInResponse() {
-        return showRecordsInResponse;
+    public Boolean getShowRecordsConsumed() {
+        return showRecordsConsumed != null ? showRecordsConsumed : true;
     }
 
     public Integer getMaxNoOfRetryPollsOrTimeouts() {
@@ -68,11 +71,11 @@ public class ConsumerLocalConfigs {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ConsumerLocalConfigs that = (ConsumerLocalConfigs) o;
-        return Objects.equals(fileDumpTo, that.fileDumpTo) &&
-                Objects.equals(fileDumpType, that.fileDumpType) &&
+        return Objects.equals(recordType, that.recordType) &&
+                Objects.equals(fileDumpTo, that.fileDumpTo) &&
                 Objects.equals(commitAsync, that.commitAsync) &&
                 Objects.equals(commitSync, that.commitSync) &&
-                Objects.equals(showRecordsInResponse, that.showRecordsInResponse) &&
+                Objects.equals(showRecordsConsumed, that.showRecordsConsumed) &&
                 Objects.equals(maxNoOfRetryPollsOrTimeouts, that.maxNoOfRetryPollsOrTimeouts) &&
                 Objects.equals(pollingTime, that.pollingTime);
     }
@@ -80,18 +83,17 @@ public class ConsumerLocalConfigs {
     @Override
     public int hashCode() {
 
-        return Objects.hash(fileDumpTo, fileDumpType, commitAsync, commitSync,
-                showRecordsInResponse, maxNoOfRetryPollsOrTimeouts, pollingTime);
+        return Objects.hash(recordType, fileDumpTo, commitAsync, commitSync, showRecordsConsumed, maxNoOfRetryPollsOrTimeouts, pollingTime);
     }
 
     @Override
     public String toString() {
         return "ConsumerLocalConfigs{" +
-                "fileDumpTo='" + fileDumpTo + '\'' +
-                ", fileDumpType='" + fileDumpType + '\'' +
+                "recordType='" + recordType + '\'' +
+                ", fileDumpTo='" + fileDumpTo + '\'' +
                 ", commitAsync=" + commitAsync +
                 ", commitSync=" + commitSync +
-                ", showRecordsInResponse=" + showRecordsInResponse +
+                ", showRecordsConsumed=" + showRecordsConsumed +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +
                 '}';

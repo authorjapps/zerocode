@@ -20,12 +20,12 @@ public class ConsumerCommonConfigs {
     private String fileDumpTo;
 
     @Inject(optional = true)
-    @Named("consumer.fileDumpType")
-    private String fileDumpType;
+    @Named("consumer.recordType")
+    private String recordType;
 
     @Inject(optional = true)
-    @Named("consumer.showRecordsInResponse")
-    private Boolean showRecordsInResponse;
+    @Named("consumer.showRecordsConsumed")
+    private Boolean showRecordsConsumed;
 
     @Inject(optional = true)
     @Named("consumer.maxNoOfRetryPollsOrTimeouts")
@@ -41,8 +41,8 @@ public class ConsumerCommonConfigs {
     public ConsumerCommonConfigs(Boolean commitSync,
                                  Boolean commitAsync,
                                  String fileDumpTo,
-                                 String fileDumpType,
-                                 Boolean showRecordsInResponse,
+                                 String recordType,
+                                 Boolean showRecordsConsumed,
                                  Integer maxNoOfRetryPollsOrTimeouts,
                                  Long pollingTime
 
@@ -50,8 +50,8 @@ public class ConsumerCommonConfigs {
         this.commitSync = commitSync;
         this.commitAsync = commitAsync;
         this.fileDumpTo = fileDumpTo;
-        this.fileDumpType = fileDumpType;
-        this.showRecordsInResponse = showRecordsInResponse;
+        this.recordType = recordType;
+        this.showRecordsConsumed = showRecordsConsumed;
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
         this.pollingTime = pollingTime;
     }
@@ -68,12 +68,8 @@ public class ConsumerCommonConfigs {
         return fileDumpTo;
     }
 
-    public String getFileDumpType() {
-        return fileDumpType;
-    }
-
-    public Boolean getShowRecordsInResponse() {
-        return showRecordsInResponse;
+    public Boolean getShowRecordsConsumed() {
+        return showRecordsConsumed;
     }
 
     public Integer getMaxNoOfRetryPollsOrTimeouts() {
@@ -84,14 +80,18 @@ public class ConsumerCommonConfigs {
         return pollingTime;
     }
 
+    public String getRecordType() {
+        return recordType;
+    }
+
     @Override
     public String toString() {
         return "ConsumerCommonConfigs{" +
                 "commitSync=" + commitSync +
                 ", commitAsync=" + commitAsync +
                 ", fileDumpTo='" + fileDumpTo + '\'' +
-                ", fileDumpType='" + fileDumpType + '\'' +
-                ", showRecordsInResponse=" + showRecordsInResponse +
+                ", recordType='" + recordType + '\'' +
+                ", showRecordsConsumed=" + showRecordsConsumed +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +
                 '}';
