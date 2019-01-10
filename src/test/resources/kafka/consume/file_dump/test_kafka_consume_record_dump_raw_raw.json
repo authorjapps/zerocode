@@ -25,7 +25,7 @@
             "consumerLocalConfigs": {
                "fileDumpTo": "target/temp/demo.txt",
                "commitSync":true,
-               "showConsumedRecords": false,
+               "showRecordsConsumed": false,
                "maxNoOfRetryPollsOrTimeouts": 5,
                "pollingTime": 1000
             }

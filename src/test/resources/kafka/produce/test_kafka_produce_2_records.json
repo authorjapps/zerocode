@@ -27,7 +27,7 @@
             "operation": "unload",
             "request": {
                 "consumerLocalConfigs": {
-                    "showConsumedRecords": true,
+                    "showRecordsConsumed": true,
                     "maxNoOfRetryPollsOrTimeouts": 3
                 }
             },

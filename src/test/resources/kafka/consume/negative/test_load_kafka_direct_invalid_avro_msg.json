@@ -85,7 +85,7 @@
                 "consumerLocalConfigs": {
                     "recordType": "RAW",
                     "commitSync": true,
-                    "showConsumedRecords": true,
+                    "showRecordsConsumed": true,
                     "maxNoOfRetryPollsOrTimeouts": 5
                 }
             },

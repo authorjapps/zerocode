@@ -56,7 +56,7 @@ public class ConsumerLocalConfigsWrapTest {
         assertEquals("{\n" +
                         "   \"consumerLocalConfigs\": {\n" +
                         "      \"fileDumpTo\": \"JSON:/target/ttt\",\n" +
-                        "      \"showConsumedRecords\": false,\n" +
+                        "      \"showRecordsConsumed\": false,\n" +
                         "      \"maxNoOfRetryPollsOrTimeouts\": 3\n" +
                         "   }\n" +
                         "}",
@@ -72,7 +72,7 @@ public class ConsumerLocalConfigsWrapTest {
                 "                \"consumerLocalConfigs\": {\n" +
                 "                    \"fileDumpTo\": \"target/temp/demo.txt\",\n" +
                 "                    \"commitAsync\":true,\n" +
-                "                    \"showConsumedRecords\":false\n" +
+                "                    \"showRecordsConsumed\":false\n" +
                 "                }\n" +
                 "\n" +
                 "            }";
@@ -80,7 +80,7 @@ public class ConsumerLocalConfigsWrapTest {
         ConsumerLocalConfigsWrap javaPojo = objectMapper.readValue(json, ConsumerLocalConfigsWrap.class);
 
         assertThat(javaPojo.getConsumerLocalConfigs().getFileDumpTo(), is("target/temp/demo.txt"));
-        assertThat(javaPojo.getConsumerLocalConfigs().getShowConsumedRecords(), is(false));
+        assertThat(javaPojo.getConsumerLocalConfigs().getShowRecordsConsumed(), is(false));
 
 
     }
@@ -91,7 +91,7 @@ public class ConsumerLocalConfigsWrapTest {
                 "                \"consumerLocalConfigs\": {\n" +
                 "                    \"fileDumpTo\": \"target/temp/demo.txt\",\n" +
                 "                    \"commitAsync\":true,\n" +
-                "                    \"showConsumedRecords\":false,\n" +
+                "                    \"showRecordsConsumed\":false,\n" +
                 "                    \"MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS\": 5\n" +
                 "                }\n" +
                 "\n" +
@@ -100,7 +100,7 @@ public class ConsumerLocalConfigsWrapTest {
         ConsumerLocalConfigsWrap javaPojo = objectMapper.readValue(json, ConsumerLocalConfigsWrap.class);
 
         assertThat(javaPojo.getConsumerLocalConfigs().getFileDumpTo(), is("target/temp/demo.txt"));
-        assertThat(javaPojo.getConsumerLocalConfigs().getShowConsumedRecords(), is(false));
+        assertThat(javaPojo.getConsumerLocalConfigs().getShowRecordsConsumed(), is(false));
 
 
     }

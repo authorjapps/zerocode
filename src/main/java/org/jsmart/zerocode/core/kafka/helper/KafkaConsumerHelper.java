@@ -82,7 +82,7 @@ public class KafkaConsumerHelper {
                     consumerCommon.getFileDumpTo(),
                     consumerCommon.getCommitAsync(),
                     consumerCommon.getCommitSync(),
-                    consumerCommon.getShowConsumedRecords(),
+                    consumerCommon.getShowRecordsConsumed(),
                     consumerCommon.getMaxNoOfRetryPollsOrTimeouts(),
                     consumerCommon.getPollingTime());
         }
@@ -93,8 +93,8 @@ public class KafkaConsumerHelper {
         // Handle fileDumpTo
         String effectiveFileDumpTo = ofNullable(consumerLocal.getFileDumpTo()).orElse(consumerCommon.getFileDumpTo());
 
-        // Handle showConsumedRecords
-        Boolean effectiveShowConsumedRecords = ofNullable(consumerLocal.getShowConsumedRecords()).orElse(consumerCommon.getShowConsumedRecords());
+        // Handle showRecordsConsumed
+        Boolean effectiveShowRecordsConsumed = ofNullable(consumerLocal.getShowRecordsConsumed()).orElse(consumerCommon.getShowRecordsConsumed());
 
         // Handle maxNoOfRetryPollsOrTimeouts
         Integer effectiveMaxNoOfRetryPollsOrTimeouts = ofNullable(consumerLocal.getMaxNoOfRetryPollsOrTimeouts()).orElse(consumerCommon.getMaxNoOfRetryPollsOrTimeouts());
@@ -123,7 +123,7 @@ public class KafkaConsumerHelper {
                 effectiveFileDumpTo,
                 effectiveCommitAsync,
                 effectiveCommitSync,
-                effectiveShowConsumedRecords,
+                effectiveShowRecordsConsumed,
                 effectiveMaxNoOfRetryPollsOrTimeouts,
                 effectivePollingTime);
     }
@@ -181,7 +181,7 @@ public class KafkaConsumerHelper {
 
         String result;
 
-        if (testConfigs != null && testConfigs.getShowConsumedRecords() == false) {
+        if (testConfigs != null && testConfigs.getShowRecordsConsumed() == false) {
             int size = jsonRecords.size();
             result = prettyPrintJson(gson.toJson(new ConsumerRawRecords(size == 0 ? rawRecords.size() : size)));
 

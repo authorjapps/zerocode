@@ -51,7 +51,7 @@ public class KafkaConsumerHelperTest {
         assertThat(consumerEffectiveConfigs.getFileDumpTo(), is("sTestLocalFile"));
         assertThat(consumerEffectiveConfigs.getCommitAsync(), is(true));
         assertThat(consumerEffectiveConfigs.getCommitSync(), is(false));
-        assertThat(consumerEffectiveConfigs.getShowConsumedRecords(), is(false));
+        assertThat(consumerEffectiveConfigs.getShowRecordsConsumed(), is(false));
         assertThat(consumerEffectiveConfigs.getMaxNoOfRetryPollsOrTimeouts(), is(3));
         assertThat(consumerEffectiveConfigs.getPollingTime(), is(consumerLocal.getPollingTime()));
     }
@@ -67,7 +67,7 @@ public class KafkaConsumerHelperTest {
         assertThat(consumerEffectiveConfigs.getFileDumpTo(), is("aTestFile"));
         assertThat(consumerEffectiveConfigs.getCommitAsync(), is(false));
         assertThat(consumerEffectiveConfigs.getCommitSync(), is(true));
-        assertThat(consumerEffectiveConfigs.getShowConsumedRecords(), is(true));
+        assertThat(consumerEffectiveConfigs.getShowRecordsConsumed(), is(true));
         assertThat(consumerEffectiveConfigs.getPollingTime(), is(consumerCommon.getPollingTime()));
     }
 

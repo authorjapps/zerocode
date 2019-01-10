@@ -24,8 +24,8 @@ public class ConsumerCommonConfigs {
     private String recordType;
 
     @Inject(optional = true)
-    @Named("consumer.showConsumedRecords")
-    private Boolean showConsumedRecords;
+    @Named("consumer.showRecordsConsumed")
+    private Boolean showRecordsConsumed;
 
     @Inject(optional = true)
     @Named("consumer.maxNoOfRetryPollsOrTimeouts")
@@ -42,7 +42,7 @@ public class ConsumerCommonConfigs {
                                  Boolean commitAsync,
                                  String fileDumpTo,
                                  String recordType,
-                                 Boolean showConsumedRecords,
+                                 Boolean showRecordsConsumed,
                                  Integer maxNoOfRetryPollsOrTimeouts,
                                  Long pollingTime
 
@@ -51,7 +51,7 @@ public class ConsumerCommonConfigs {
         this.commitAsync = commitAsync;
         this.fileDumpTo = fileDumpTo;
         this.recordType = recordType;
-        this.showConsumedRecords = showConsumedRecords;
+        this.showRecordsConsumed = showRecordsConsumed;
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
         this.pollingTime = pollingTime;
     }
@@ -68,8 +68,8 @@ public class ConsumerCommonConfigs {
         return fileDumpTo;
     }
 
-    public Boolean getShowConsumedRecords() {
-        return showConsumedRecords;
+    public Boolean getShowRecordsConsumed() {
+        return showRecordsConsumed;
     }
 
     public Integer getMaxNoOfRetryPollsOrTimeouts() {
@@ -91,7 +91,7 @@ public class ConsumerCommonConfigs {
                 ", commitAsync=" + commitAsync +
                 ", fileDumpTo='" + fileDumpTo + '\'' +
                 ", recordType='" + recordType + '\'' +
-                ", showConsumedRecords=" + showConsumedRecords +
+                ", showRecordsConsumed=" + showRecordsConsumed +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +
                 '}';
