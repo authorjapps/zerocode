@@ -53,6 +53,8 @@ public class KafkaReceiver {
 
         int noOfTimeOuts = 0;
 
+        handleSeekOffset(effectiveLocal, consumer);
+
         while (true) {
             LOGGER.info("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
 
@@ -78,7 +80,7 @@ public class KafkaReceiver {
 
                 LOGGER.info("Consumer chosen recordType: " + effectiveLocal.getRecordType());
 
-                switch (effectiveLocal.getRecordType()){
+                switch (effectiveLocal.getRecordType()) {
                     case RAW:
                         readRaw(rawRecords, recordIterator);
                         break;
