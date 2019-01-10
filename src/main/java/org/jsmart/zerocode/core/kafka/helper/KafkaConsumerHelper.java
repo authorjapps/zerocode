@@ -48,12 +48,6 @@ public class KafkaConsumerHelper {
         }
     }
 
-    public static void validateConsumeProperties(ConsumerLocalConfigs consumeLocalTestProps) {
-        if (null != consumeLocalTestProps.getFileDumpType() && consumeLocalTestProps.getFileDumpTo() == null) {
-            throw new RuntimeException("Found type, but no fileName. Try e.g. 'fileDumpTo':'target/temp/abc.txt' ");
-        }
-    }
-
     private static void validateIfBothEnabled(Boolean commitSync, Boolean commitAsync) {
         if ((commitSync != null && commitAsync != null) && commitSync == true && commitAsync == true) {
             throw new RuntimeException("\n********* Both commitSync and commitAsync can not be true *********\n");
@@ -86,7 +80,6 @@ public class KafkaConsumerHelper {
             return new ConsumerLocalConfigs(
                     consumerCommon.getRecordType(),
                     consumerCommon.getFileDumpTo(),
-                    consumerCommon.getFileDumpType(),
                     consumerCommon.getCommitAsync(),
                     consumerCommon.getCommitSync(),
                     consumerCommon.getShowConsumedRecords(),
@@ -99,9 +92,6 @@ public class KafkaConsumerHelper {
 
         // Handle fileDumpTo
         String effectiveFileDumpTo = ofNullable(consumerLocal.getFileDumpTo()).orElse(consumerCommon.getFileDumpTo());
-
-        // Handle fileDumpType
-        String effectiveFileDumpType = ofNullable(consumerLocal.getFileDumpType()).orElse(consumerCommon.getFileDumpType());
 
         // Handle showConsumedRecords
         Boolean effectiveShowConsumedRecords = ofNullable(consumerLocal.getShowConsumedRecords()).orElse(consumerCommon.getShowConsumedRecords());
@@ -131,7 +121,6 @@ public class KafkaConsumerHelper {
         return new ConsumerLocalConfigs(
                 effectiveRecordType,
                 effectiveFileDumpTo,
-                effectiveFileDumpType,
                 effectiveCommitAsync,
                 effectiveCommitSync,
                 effectiveShowConsumedRecords,

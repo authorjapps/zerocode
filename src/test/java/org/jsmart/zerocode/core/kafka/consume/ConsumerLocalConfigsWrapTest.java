@@ -20,7 +20,6 @@ public class ConsumerLocalConfigsWrapTest {
         ConsumerLocalConfigsWrap javaObject = new ConsumerLocalConfigsWrap(
                 new ConsumerLocalConfigs("RAW",
                         "RAW:/target/ttt",
-                        "RAW",
                         true,
                         null,
                         true,
@@ -32,7 +31,6 @@ public class ConsumerLocalConfigsWrapTest {
         assertEquals("{\n" +
                 "   \"consumerLocalConfigs\": {\n" +
                 "      \"fileDumpTo\": \"RAW:/target/ttt\",\n" +
-                "      \"fileDumpType\": \"RAW\",\n" +
                 "      \"commitAsync\": true,\n" +
                 "      \"maxNoOfRetryPollsOrTimeouts\": 3,\n" +
                 "      \"pollingTime\": 50\n" +
@@ -48,7 +46,6 @@ public class ConsumerLocalConfigsWrapTest {
     public void testSerDeser_oneFieldOnly() throws IOException {
         ConsumerLocalConfigsWrap javaObject = new ConsumerLocalConfigsWrap(
                 new ConsumerLocalConfigs("RAW", "JSON:/target/ttt",
-                        "RAW",
                         null,
                         null,
                         false,
@@ -59,7 +56,6 @@ public class ConsumerLocalConfigsWrapTest {
         assertEquals("{\n" +
                         "   \"consumerLocalConfigs\": {\n" +
                         "      \"fileDumpTo\": \"JSON:/target/ttt\",\n" +
-                        "      \"fileDumpType\": \"RAW\",\n" +
                         "      \"showConsumedRecords\": false,\n" +
                         "      \"maxNoOfRetryPollsOrTimeouts\": 3\n" +
                         "   }\n" +
@@ -75,7 +71,6 @@ public class ConsumerLocalConfigsWrapTest {
         String json = "{\n" +
                 "                \"consumerLocalConfigs\": {\n" +
                 "                    \"fileDumpTo\": \"target/temp/demo.txt\",\n" +
-                "                    \"fileDumpType\": \"RAW\",\n" +
                 "                    \"commitAsync\":true,\n" +
                 "                    \"showConsumedRecords\":false\n" +
                 "                }\n" +
@@ -95,7 +90,6 @@ public class ConsumerLocalConfigsWrapTest {
         String json = "{\n" +
                 "                \"consumerLocalConfigs\": {\n" +
                 "                    \"fileDumpTo\": \"target/temp/demo.txt\",\n" +
-                "                    \"fileDumpType\": \"RAW\",\n" +
                 "                    \"commitAsync\":true,\n" +
                 "                    \"showConsumedRecords\":false,\n" +
                 "                    \"MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS\": 5\n" +

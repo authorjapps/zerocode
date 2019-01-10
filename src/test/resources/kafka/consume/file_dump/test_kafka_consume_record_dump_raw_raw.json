@@ -24,7 +24,6 @@
          "request": {
             "consumerLocalConfigs": {
                "fileDumpTo": "target/temp/demo.txt",
-               "fileDumpType": "RAW",
                "commitSync":true,
                "showConsumedRecords": false,
                "maxNoOfRetryPollsOrTimeouts": 5,

@@ -24,7 +24,7 @@ public class KafkaConsumerHelperTest {
 
     @Test
     public void test_syncAsyncTrueCommon() throws Exception{
-        consumerCommon = new ConsumerCommonConfigs(true, true, "aTestFile", "JSON", "JSON", true, 3, 50L);
+        consumerCommon = new ConsumerCommonConfigs(true, true, "aTestFile", "JSON", true, 3, 50L);
 
         expectedException.expectMessage("Both commitSync and commitAsync can not be true");
         ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(null, consumerCommon);
@@ -32,8 +32,8 @@ public class KafkaConsumerHelperTest {
 
     @Test
     public void test_syncAsyncTrueLocal() throws Exception{
-        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", "JSON", true, 3, 50L);
-        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", "RAW", true, true, false, 3, 50L);
+        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true, 3, 50L);
+        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", true, true, false, 3, 50L);
         ConsumerLocalConfigsWrap localConfigsWrap = new ConsumerLocalConfigsWrap(consumerLocal);
 
         expectedException.expectMessage("Both commitSync and commitAsync can not be true");
@@ -43,13 +43,12 @@ public class KafkaConsumerHelperTest {
     @Test
     public void test_effectiveConfigsIsLocal() throws Exception{
 
-        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", "JSON", true, 3, 50L);
-        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", "RAW", true, false, false, 3, 150L);
+        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true, 3, 50L);
+        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", true, false, false, 3, 150L);
 
         ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
 
         assertThat(consumerEffectiveConfigs.getFileDumpTo(), is("sTestLocalFile"));
-        assertThat(consumerEffectiveConfigs.getFileDumpType(), is("RAW"));
         assertThat(consumerEffectiveConfigs.getCommitAsync(), is(true));
         assertThat(consumerEffectiveConfigs.getCommitSync(), is(false));
         assertThat(consumerEffectiveConfigs.getShowConsumedRecords(), is(false));
@@ -60,13 +59,12 @@ public class KafkaConsumerHelperTest {
     @Test
     public void test_effectiveConfigsIsCentrall() throws Exception{
 
-        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", "JSON", true, 3, 50L);
+        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true, 3, 50L);
         consumerLocal = null;
 
         ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
 
         assertThat(consumerEffectiveConfigs.getFileDumpTo(), is("aTestFile"));
-        assertThat(consumerEffectiveConfigs.getFileDumpType(), is("JSON"));
         assertThat(consumerEffectiveConfigs.getCommitAsync(), is(false));
         assertThat(consumerEffectiveConfigs.getCommitSync(), is(true));
         assertThat(consumerEffectiveConfigs.getShowConsumedRecords(), is(true));
@@ -76,8 +74,8 @@ public class KafkaConsumerHelperTest {
     @Test
     public void test_effectiveCommitAsync_true() throws Exception{
 
-        consumerCommon = new ConsumerCommonConfigs(true, null, "aTestFile", "JSON", "JSON", true, 3, 50L);
-        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", "RAW", true, false, false, 3, 50L);
+        consumerCommon = new ConsumerCommonConfigs(true, null, "aTestFile", "JSON", true, 3, 50L);
+        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile",  true, false, false, 3, 50L);
 
         ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
 
@@ -88,8 +86,8 @@ public class KafkaConsumerHelperTest {
     @Test
     public void test_effectiveCommitSync_true() throws Exception{
 
-        consumerCommon = new ConsumerCommonConfigs(null, true, "aTestFile", "JSON", "JSON", true, 3, 50L);
-        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", "RAW", null, true, false, 3, 50L);
+        consumerCommon = new ConsumerCommonConfigs(null, true, "aTestFile", "JSON", true, 3, 50L);
+        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", null, true, false, 3, 50L);
 
         ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
 
@@ -100,8 +98,8 @@ public class KafkaConsumerHelperTest {
     @Test
     public void test_effectiveCommitSyncFromCommon_true() throws Exception{
 
-        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", "JSON", true, 3, 50L);
-        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", "RAW", null, null, false, 3, 50L);
+        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true, 3, 50L);
+        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", null, null, false, 3, 50L);
 
         ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
 
@@ -112,8 +110,8 @@ public class KafkaConsumerHelperTest {
     @Test
     public void test_effectiveCommitAsyncFromCommon_true() throws Exception{
 
-        consumerCommon = new ConsumerCommonConfigs(null, true, "aTestFile", "JSON", "JSON", true, 3,50L);
-        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", "RAW", true, false, false, 3, 150L);
+        consumerCommon = new ConsumerCommonConfigs(null, true, "aTestFile", "JSON", true, 3,50L);
+        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", true, false, false, 3, 150L);
 
         ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
 

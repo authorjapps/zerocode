@@ -18,7 +18,6 @@ import java.util.List;
 
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.validateConsumeProperties;
 
 public class KafkaFileRecordHelper {
 
@@ -31,8 +30,6 @@ public class KafkaFileRecordHelper {
         String recordType = consumeLocalTestProps != null ? consumeLocalTestProps.getRecordType() : null;
 
         if (recordType != null) {
-
-            validateConsumeProperties(consumeLocalTestProps);
 
             switch (recordType) {
                 case RAW:

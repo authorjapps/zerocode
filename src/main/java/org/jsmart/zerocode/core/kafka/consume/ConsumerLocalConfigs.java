@@ -13,11 +13,6 @@ import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
 public class ConsumerLocalConfigs {
     private final String recordType;
     private final String fileDumpTo;
-    // --------------------------------------------------------
-    // Now it is unused as recordType decides the record format
-    // TODO- remove this
-    // --------------------------------------------------------
-    private final String fileDumpType;
     private final Boolean commitAsync;
     private final Boolean commitSync;
     private final Boolean showConsumedRecords;
@@ -28,7 +23,6 @@ public class ConsumerLocalConfigs {
     public ConsumerLocalConfigs(
             @JsonProperty("recordType") String recordType,
             @JsonProperty("fileDumpTo") String fileDumpTo,
-            @JsonProperty("fileDumpType") String fileDumpType,
             @JsonProperty("commitAsync") Boolean commitAsync,
             @JsonProperty("commitSync") Boolean commitSync,
             @JsonProperty("showConsumedRecords") Boolean showConsumedRecords,
@@ -36,7 +30,6 @@ public class ConsumerLocalConfigs {
             @JsonProperty("pollingTime") Long pollingTime) {
         this.recordType = recordType;
         this.fileDumpTo = fileDumpTo;
-        this.fileDumpType = fileDumpType;
         this.commitAsync = commitAsync;
         this.commitSync = commitSync;
         this.showConsumedRecords = showConsumedRecords;
@@ -51,13 +44,6 @@ public class ConsumerLocalConfigs {
 
     public String getFileDumpTo() {
         return fileDumpTo;
-    }
-
-    // --------------------------------------------------------
-    // Now it is unused as recordType decides the record format
-    // --------------------------------------------------------
-    public String getFileDumpType() {
-        return fileDumpType;
     }
 
     public Boolean getCommitAsync() {
@@ -87,7 +73,6 @@ public class ConsumerLocalConfigs {
         ConsumerLocalConfigs that = (ConsumerLocalConfigs) o;
         return Objects.equals(recordType, that.recordType) &&
                 Objects.equals(fileDumpTo, that.fileDumpTo) &&
-                Objects.equals(fileDumpType, that.fileDumpType) &&
                 Objects.equals(commitAsync, that.commitAsync) &&
                 Objects.equals(commitSync, that.commitSync) &&
                 Objects.equals(showConsumedRecords, that.showConsumedRecords) &&
@@ -98,7 +83,7 @@ public class ConsumerLocalConfigs {
     @Override
     public int hashCode() {
 
-        return Objects.hash(recordType, fileDumpTo, fileDumpType, commitAsync, commitSync, showConsumedRecords, maxNoOfRetryPollsOrTimeouts, pollingTime);
+        return Objects.hash(recordType, fileDumpTo, commitAsync, commitSync, showConsumedRecords, maxNoOfRetryPollsOrTimeouts, pollingTime);
     }
 
     @Override
@@ -106,7 +91,6 @@ public class ConsumerLocalConfigs {
         return "ConsumerLocalConfigs{" +
                 "recordType='" + recordType + '\'' +
                 ", fileDumpTo='" + fileDumpTo + '\'' +
-                ", fileDumpType='" + fileDumpType + '\'' +
                 ", commitAsync=" + commitAsync +
                 ", commitSync=" + commitSync +
                 ", showConsumedRecords=" + showConsumedRecords +
