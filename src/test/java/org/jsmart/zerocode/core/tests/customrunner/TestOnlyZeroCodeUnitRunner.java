@@ -13,7 +13,10 @@ public class TestOnlyZeroCodeUnitRunner extends ZeroCodeUnitRunner {
         System.setProperty("env_property_key_name", "ci"); //<--- See log n verify
 
         simulator = new SimpleRestJsonSimulatorsMain(PORT);
-        simulator.start();
+        if(!SimulatorState.hasStarted()){
+            simulator.start();
+            SimulatorState.setStarted(true);
+        }
     }
 
     public TestOnlyZeroCodeUnitRunner(Class<?> klass) throws InitializationError {
