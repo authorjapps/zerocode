@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.module.PropertiesInjectorModule;
 import org.jsmart.zerocode.core.di.module.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.di.module.RuntimeKafkaClientModule;
 import org.jsmart.zerocode.core.domain.*;
@@ -93,7 +94,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         ZeroCodeTestReportListener reportListener = new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator());
 
         LOGGER.info("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
-        if(!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))){
+        if (!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
             notifier.addListener(reportListener);
         }
 
@@ -313,7 +314,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     private void handleNoRunListenerReport(ZeroCodeTestReportListener reportListener) {
-        if(CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))){
+        if (CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
             /**
              * Gradle does not support JUnit RunListener. Hence Zerocode gracefully handled this
              * upon request from Gradle users. But this is not limited to Gradle, anywhere you
