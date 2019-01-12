@@ -54,15 +54,15 @@ WHEN- I invoke the API,
 THEN- I will receive the 200(Ok) status with body(user details) and headers
 AND- I will assert the response
 ```
-translates to the below executable JSON in `Zerocode` - Simple and clean ! <br/>
+translates to the below executable JSON steps in `Zerocode` - Simple and clean ! <br/>
 _(See here [a full blown CRUD operation scenario](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) with POST, PUT, GET, DELETE example.)_ <br/>
 
 <img width="624" alt="post_get_user" src="https://user-images.githubusercontent.com/12598420/47145467-bc089400-d2c1-11e8-8707-8e2d2e8c3127.png">
 
-Keep in mind: It's simple JSON. <br/>
+That's it, the simple JSON steps. No other step definition coding needed. <br/>
 ~~_No feature files, no extra plugins, no assertThat(...), no statements or grammar syntax overhead._~~ 
 
-And it is **declarative** JSON DSL, with the `request/response` fields available for the next steps via the `JSON Path`.
+And it is **declarative** JSON DSL, with the `request/response` fields available for the step chaining via the `JSON Path`.
 
 See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) for usages and examples.
 
