@@ -76,8 +76,16 @@ Maven and CI 🔨
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 
-
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
+
+Maven dependency xml:
+```xml
+<dependency>
+    <groupId>org.jsmart</groupId>
+    <artifactId>zerocode-rest-bdd</artifactId>
+    <version>1.2.x</version> 
+</dependency>
+```
 
 Hello World 🙌
 ====
@@ -116,22 +124,13 @@ Upcoming Releases ⏳
 + SAML,JWT - Examples in the HelloWorld repo 🔜 <br/>
 
 #### Latest news/releases/features 📰
-
-#### Follow us(Twitter) - 
+Follow us(Twitter) - 
 <a href="https://twitter.com/ZerocodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
 
-Supported testing frameworks:
+#### Supported testing frameworks:
  * [JUnit](http://junit.org)
 
-Latest maven release:
-```xml
-<dependency>
-    <groupId>org.jsmart</groupId>
-    <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.2.x</version> 
-</dependency>
-```
-Check here for the latest release- 
+#### Check here for the latest release- 
 [Search in the Maven Portal](https://search.maven.org/search?q=zerocode-rest-bdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
 
 Zerocode helps you to design better Test Cases for your business features, maintain and update them easily, avoiding sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests, as well optionally you can use`Suite` Runner for the CI builds. 
