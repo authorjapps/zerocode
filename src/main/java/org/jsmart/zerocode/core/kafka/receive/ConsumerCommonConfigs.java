@@ -35,6 +35,11 @@ public class ConsumerCommonConfigs {
     @Named("consumer.pollingTime")
     private Long pollingTime;
 
+    // TODO- Remove this from Global properties, as it doesn't make sense
+    @Inject(optional = true)
+    @Named("consumer.seek")
+    private String seek;
+
     public ConsumerCommonConfigs() {
     }
 
@@ -44,7 +49,8 @@ public class ConsumerCommonConfigs {
                                  String recordType,
                                  Boolean showRecordsConsumed,
                                  Integer maxNoOfRetryPollsOrTimeouts,
-                                 Long pollingTime
+                                 Long pollingTime,
+                                 String seek
 
     ) {
         this.commitSync = commitSync;
@@ -54,6 +60,7 @@ public class ConsumerCommonConfigs {
         this.showRecordsConsumed = showRecordsConsumed;
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
         this.pollingTime = pollingTime;
+        this.seek = seek;
     }
 
     public Boolean getCommitSync() {
@@ -84,6 +91,10 @@ public class ConsumerCommonConfigs {
         return recordType;
     }
 
+    public String getSeek() {
+        return seek;
+    }
+
     @Override
     public String toString() {
         return "ConsumerCommonConfigs{" +
@@ -94,6 +105,7 @@ public class ConsumerCommonConfigs {
                 ", showRecordsConsumed=" + showRecordsConsumed +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +
+                ", seek=" + seek +
                 '}';
     }
 }

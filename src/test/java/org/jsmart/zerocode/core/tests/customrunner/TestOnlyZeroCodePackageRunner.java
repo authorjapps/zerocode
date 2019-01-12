@@ -12,7 +12,10 @@ public class TestOnlyZeroCodePackageRunner extends ZeroCodePackageRunner {
     public TestOnlyZeroCodePackageRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
         simulator = new SimpleRestJsonSimulatorsMain(PORT);
-        simulator.start();
+        if(!SimulatorState.hasStarted()){
+            simulator.start();
+            SimulatorState.setStarted(true);
+        }
     }
 
     public TestOnlyZeroCodePackageRunner(Class<?> testClass, SmartUtils smartUtils) throws InitializationError {

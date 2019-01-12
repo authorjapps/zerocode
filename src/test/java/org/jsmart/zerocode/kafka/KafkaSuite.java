@@ -33,6 +33,7 @@ import org.junit.runners.Suite;
         KafkaProduceSyncFromFileRawTest.class,
         KafkaProduceSyncFromFileJsonTest.class,
         KafkaProduceSyncWrongFileNameTest.class,
+        KafkaConsumeSeekOffsetTest.class
 })
 @RunWith(Suite.class)
 public class KafkaSuite {

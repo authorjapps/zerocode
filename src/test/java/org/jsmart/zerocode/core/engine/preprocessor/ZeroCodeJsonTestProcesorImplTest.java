@@ -16,16 +16,11 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
 public class ZeroCodeJsonTestProcesorImplTest {
-    public static final int PORT = 9998;
-    public static final String HOST_WITH_CONTEXT = "http://localhost:" + PORT;
-
     JsonServiceExecutorImpl jsonServiceExecutor;
     Injector injector;
     SmartUtils smartUtils;
@@ -35,19 +30,10 @@ public class ZeroCodeJsonTestProcesorImplTest {
 
     @Before
     public void setUpStuff() throws Exception {
-        injector = Guice.createInjector(new ApplicationMainModule("config_hosts_test.properties"));
+        String serverEnvFileName = "config_hosts_test.properties";
+        injector = Guice.createInjector(new ApplicationMainModule(serverEnvFileName));
         smartUtils = injector.getInstance(SmartUtils.class);
-        jsonPreProcessor = new ZeroCodeJsonTestProcesorImpl(smartUtils.getMapper());
-
-        /*
-         * See: All simulated end points: test/resources/simulators/test_purpose_end_points.json
-         */
-        //simulator = new SimpleRestJsonSimulatorsMain(PORT);
-        //simulator.start();
-
-        //jsonServiceExecutor = new JsonServiceExecutorImpl();
-        //jsonServiceExecutor.setHttpClientExecutor(new ApacheHttpClientExecutor());
-
+        jsonPreProcessor = new ZeroCodeJsonTestProcesorImpl(smartUtils.getMapper(), serverEnvFileName);
     }
 
     @Test

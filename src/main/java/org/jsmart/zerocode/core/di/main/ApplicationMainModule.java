@@ -6,6 +6,7 @@ import com.google.inject.name.Names;
 import org.jsmart.zerocode.core.di.module.GsonModule;
 import org.jsmart.zerocode.core.di.module.HttpClientModule;
 import org.jsmart.zerocode.core.di.module.ObjectMapperModule;
+import org.jsmart.zerocode.core.di.module.PropertiesInjectorModule;
 import org.jsmart.zerocode.core.engine.executor.JavaExecutor;
 import org.jsmart.zerocode.core.engine.executor.JavaExecutorImpl;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
@@ -41,6 +42,7 @@ public class ApplicationMainModule extends AbstractModule {
         install(new ObjectMapperModule());
         install(new HttpClientModule());
         install(new GsonModule());
+        install(new PropertiesInjectorModule(serverEnv));
         //install(new KafkaModule());
 
         /*

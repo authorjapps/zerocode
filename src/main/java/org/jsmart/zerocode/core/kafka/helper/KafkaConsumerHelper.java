@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecords;
@@ -23,7 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.*;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
@@ -48,23 +52,18 @@ public class KafkaConsumerHelper {
         }
     }
 
-    private static void validateIfBothEnabled(Boolean commitSync, Boolean commitAsync) {
-        if ((commitSync != null && commitAsync != null) && commitSync == true && commitAsync == true) {
-            throw new RuntimeException("\n********* Both commitSync and commitAsync can not be true *********\n");
-        }
-    }
+    public static void validateLocalConfigs(ConsumerLocalConfigs localConfigs) {
+        if (localConfigs != null) {
+            Boolean localCommitSync = localConfigs.getCommitSync();
+            Boolean localCommitAsync = localConfigs.getCommitAsync();
+            validateCommitFlags(localCommitSync, localCommitAsync);
 
-    public static void validateLocalConfigs(ConsumerLocalConfigs consumeLocalTestProps) {
-        if (consumeLocalTestProps != null) {
-            Boolean localCommitSync = consumeLocalTestProps.getCommitSync();
-            Boolean localCommitAsync = consumeLocalTestProps.getCommitAsync();
-
-            validateIfBothEnabled(localCommitSync, localCommitAsync);
+            validateSeekConfig(localConfigs);
         }
     }
 
     public static void validateCommonConfigs(ConsumerCommonConfigs consumerCommonConfigs) {
-        validateIfBothEnabled(consumerCommonConfigs.getCommitSync(), consumerCommonConfigs.getCommitAsync());
+        validateCommitFlags(consumerCommonConfigs.getCommitSync(), consumerCommonConfigs.getCommitAsync());
     }
 
     public static ConsumerLocalConfigs deriveEffectiveConfigs(ConsumerLocalConfigs consumerLocalTestConfigs, ConsumerCommonConfigs consumerCommonConfigs) {
@@ -84,7 +83,8 @@ public class KafkaConsumerHelper {
                     consumerCommon.getCommitSync(),
                     consumerCommon.getShowRecordsConsumed(),
                     consumerCommon.getMaxNoOfRetryPollsOrTimeouts(),
-                    consumerCommon.getPollingTime());
+                    consumerCommon.getPollingTime(),
+                    consumerCommon.getSeek());
         }
 
         // Handle recordType
@@ -101,6 +101,9 @@ public class KafkaConsumerHelper {
 
         // Handle pollingTime
         Long effectivePollingTime = ofNullable(consumerLocal.getPollingTime()).orElse(consumerCommon.getPollingTime());
+
+        // Handle pollingTime
+        String effectiveSeek = ofNullable(consumerLocal.getSeek()).orElse(consumerCommon.getSeek());
 
         // Handle commitSync and commitAsync -START
         Boolean effectiveCommitSync;
@@ -125,7 +128,8 @@ public class KafkaConsumerHelper {
                 effectiveCommitSync,
                 effectiveShowRecordsConsumed,
                 effectiveMaxNoOfRetryPollsOrTimeouts,
-                effectivePollingTime);
+                effectivePollingTime,
+                effectiveSeek);
     }
 
     public static ConsumerLocalConfigs readConsumerLocalTestProperties(String requestJsonWithConfigWrapped) {
@@ -236,4 +240,34 @@ public class KafkaConsumerHelper {
         // --------------------------------------------------------
     }
 
+    public static void handleSeekOffset(ConsumerLocalConfigs effectiveLocal, Consumer consumer) {
+        String seek = effectiveLocal.getSeek();
+        if (!isEmpty(seek)) {
+            String[] seekPosition = effectiveLocal.getSeekTopicPartitionOffset();
+            TopicPartition topicPartition = new TopicPartition(seekPosition[0], parseInt(seekPosition[1]));
+
+            Set<TopicPartition> topicPartitions = new HashSet<>();
+            topicPartitions.add(topicPartition);
+
+            consumer.unsubscribe();
+            consumer.assign(topicPartitions);
+            consumer.seek(topicPartition, parseLong(seekPosition[2]));
+        }
+    }
+
+    private static void validateCommitFlags(Boolean commitSync, Boolean commitAsync) {
+        if ((commitSync != null && commitAsync != null) && commitSync == true && commitAsync == true) {
+            throw new RuntimeException("\n********* Both commitSync and commitAsync can not be true *********\n");
+        }
+    }
+
+    private static void validateSeekConfig(ConsumerLocalConfigs localConfigs) {
+        String seek = localConfigs.getSeek();
+        if(!isEmpty(seek)) {
+            String[] split = seek.split(",");
+            if(split == null || split.length < 3) {
+                throw new RuntimeException("\n------> 'seek' should contain 'topic,partition,offset' e.g. 'topic1,0,2' ");
+            }
+        }
+    }
 }

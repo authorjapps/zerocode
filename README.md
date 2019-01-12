@@ -2,10 +2,10 @@
 
 An open source lib enables API testing via simple declarative JSON steps - REST, SOAP and DB services
 
-> Enables to use the JSON payload structure without manipulating it.
+> Enables to use the JSON payload structure with no manipulation needed.
 
 ```javaScript
-A single step looks like below doing a 'GET' call to '/users/octocat' and asserting the 'GET' response.
+e.g. a single step below doing a 'GET' call to '/users/octocat' and asserting the 'GET' response.
 
 {
    "name": "get_user_step", 
@@ -18,7 +18,7 @@ A single step looks like below doing a 'GET' call to '/users/octocat' and assert
           "id": 583231,
           "login": "octocat",
           "addresses": [
-             ...
+             //more...
           ]
       }
    }
@@ -54,21 +54,21 @@ WHEN- I invoke the API,
 THEN- I will receive the 200(Ok) status with body(user details) and headers
 AND- I will assert the response
 ```
-translates to the below executable JSON in `Zerocode` - Simple and clean ! <br/>
+translates to the below executable JSON steps in `Zerocode` - Simple and clean ! <br/>
 _(See here [a full blown CRUD operation scenario](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) with POST, PUT, GET, DELETE example.)_ <br/>
 
 <img width="624" alt="post_get_user" src="https://user-images.githubusercontent.com/12598420/47145467-bc089400-d2c1-11e8-8707-8e2d2e8c3127.png">
 
-Keep in mind: It's simple JSON. <br/>
+That's it, the simple JSON steps. No other step definition coding needed. <br/>
 ~~_No feature files, no extra plugins, no assertThat(...), no statements or grammar syntax overhead._~~ 
 
-And it is **declarative** JSON DSL, with the `request/response` fields available for the next steps via the `JSON Path`.
+And it is **declarative** JSON DSL, with the `request/response` fields available for the step chaining via the `JSON Path`.
 
 See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) for usages and examples.
 
-Maven and CI
+Maven and CI 🔨
 ====
-**Latest release: [1.2.x](https://search.maven.org/search?q=zerocode-rest-bdd)**
+**Latest release: [1.2.x](https://search.maven.org/search?q=zerocode-rest-bdd)** 🏹
 
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
 **HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
@@ -76,10 +76,18 @@ Maven and CI
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 
-
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
 
-Hello World
+Maven dependency xml:
+```xml
+<dependency>
+    <groupId>org.jsmart</groupId>
+    <artifactId>zerocode-rest-bdd</artifactId>
+    <version>1.2.x</version> 
+</dependency>
+```
+
+Hello World 🙌
 ====
 
 #### Clone or download the below quick-start repos to run them in local IDE or maven command. 
@@ -104,23 +112,25 @@ To build any of the above projects, you can use the following command
 mvn clean install -DskipTests
 ```
 
-#### Latest news/releases/features
+Upcoming Releases ⏳
+====
++ Kafka - Testing Distributed Data Stream application (Easy and fun) 🔜 <br/>
+  + Simple `produce` and `consume`
+  + `produce` and `consume` RAW messages
+  + `produce` and `consume` JSON messages
+  + Test `avro` schema registry along with REST Proxy
++ Kafka - HelloWorld examples and Wiki on dockerized testinng 🔜 <br/>
++ OAuth2 - In Action - HelloWorld repo 🔜 <br/>
++ SAML,JWT - Examples in the HelloWorld repo 🔜 <br/>
 
-#### Follow us(Twitter) - 
+#### Latest news/releases/features 📰
+Follow us(Twitter) - 
 <a href="https://twitter.com/ZerocodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
 
-Supported testing frameworks:
+#### Supported testing frameworks:
  * [JUnit](http://junit.org)
 
-Latest maven release:
-```xml
-<dependency>
-    <groupId>org.jsmart</groupId>
-    <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.2.x</version> 
-</dependency>
-```
-Check here for the latest release- 
+#### Check here for the latest release- 
 [Search in the Maven Portal](https://search.maven.org/search?q=zerocode-rest-bdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
 
 Zerocode helps you to design better Test Cases for your business features, maintain and update them easily, avoiding sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests, as well optionally you can use`Suite` Runner for the CI builds. 
@@ -149,7 +159,7 @@ Execute your complex business scenario steps with simple declarative jsons which
 
 See the [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) and [more](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldmore/JustHelloWorldMoreTest.java)
 
-## Getting started
+## Getting started ⛹‍♂
 
 Add these `two` maven dependencies:
 ```xml
@@ -215,7 +225,7 @@ web.application.endpoint.port=443
 web.application.endpoint.context=
 ```
 
-And you need not have to deal with any assertThat(...), GIVEN-WHEN-THEN etc like below. <br/>
+And the assertThat(...), GIVEN-WHEN-THEN steps become implicit. You don't have to deal with them explicitly as the framework takes care of these complexities and makes the testing very very easy <br/>
 
 ~~GIVEN- the GitHub REST api GET end point,~~ <br/>
 ~~WHEN- I invoke the API,~~ <br/>
@@ -265,6 +275,7 @@ See more usages and examples below.
 - [Help and usage](#1)
 - [Overriding with Custom HttpClient with Project demand, See also SSL Trusted Http Client](#16)
 - [Externalize host and port to properties files](#17)
+- [Using any properties file key-value in the steps](#17.1)
 - [Single Scenario with single step](#2)
 - [Generating Load or stress for performance testing](#27)
 - [Step with more assertions](#3)
@@ -1226,6 +1237,57 @@ public class ContractTestSuite {
 }
 ```
 
+#### 17.1:
+#### Using any properties file key-value in the steps
+
+You can directly use the existing properties or introduce new common properties to be used in the test steps.
+Usage: `${my_new_url}`, `${web.application.endpoint.host}`, `${X-APP-SAML-TOKEN}` etc
+
+This is particularly useful when you want to introduce one or more common properties to use across the test suite. :+1:
+(Clone [HelloWorld repo](https://github.com/authorjapps/zerocode-hello-world) to run this from your IDE)
+
+e.g.
+
+"config_hosts_sample.properties"
+
+```
+web.application.endpoint.host=http://{host-name-or-ip}
+web.application.endpoint.port=9998
+web.application.endpoint.context=/google-emp-services
+# or e.g. some new properties you introduced
+my_new_url=http://localhost:9998
+X-APP-SAML-TOKEN=<SAML>token-xyz</SAML>
+```
+
+Then, you can simply use the properties as below.
+```json
+{
+    "scenarioName": "New property keys from host config file",
+    "steps": [
+        {
+            "name": "get_api_call",
+            "url": "${web.application.endpoint.host}:${web.application.endpoint.port}/home/bathroom/1",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200
+            }
+        },
+        {
+            "name": "get_call_via_new_url",
+            "url": "${my_new_url}/home/bathroom/1",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+
+    ]
+}
+```
 
 
 #### 18:

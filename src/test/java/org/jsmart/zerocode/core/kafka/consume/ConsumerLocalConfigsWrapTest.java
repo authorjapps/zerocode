@@ -24,7 +24,8 @@ public class ConsumerLocalConfigsWrapTest {
                         null,
                         true,
                         3,
-                        50L));
+                        50L,
+                        "1,0,test-topic"));
         ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
         String json = objectMapper.writeValueAsString(javaObject);
@@ -33,7 +34,8 @@ public class ConsumerLocalConfigsWrapTest {
                 "      \"fileDumpTo\": \"RAW:/target/ttt\",\n" +
                 "      \"commitAsync\": true,\n" +
                 "      \"maxNoOfRetryPollsOrTimeouts\": 3,\n" +
-                "      \"pollingTime\": 50\n" +
+                "      \"pollingTime\": 50,\n" +
+                "      \"seek\": \"1,0,test-topic\"\n" +
                 "   }\n" +
                 "}",
                 json, LENIENT);
@@ -50,7 +52,8 @@ public class ConsumerLocalConfigsWrapTest {
                         null,
                         false,
                         3,
-                        null));
+                        null,
+                        "1,0,test-topic"));
 
         String json = objectMapper.writeValueAsString(javaObject);
         assertEquals("{\n" +
