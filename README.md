@@ -215,7 +215,7 @@ web.application.endpoint.port=443
 web.application.endpoint.context=
 ```
 
-And the assertThat(...), GIVEN-WHEN-THEN steps become implicit. <br/>
+And the assertThat(...), GIVEN-WHEN-THEN steps become implicit. You don't have to deal with them explicitly as the framework takes care of these complexities and makes the testing very very easy <br/>
 
 ~~GIVEN- the GitHub REST api GET end point,~~ <br/>
 ~~WHEN- I invoke the API,~~ <br/>
