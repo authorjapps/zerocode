@@ -2,10 +2,10 @@
 
 An open source lib enables API testing via simple declarative JSON steps - REST, SOAP and DB services
 
-> Enables to use the JSON payload structure without manipulating it.
+> Enables to use the JSON payload structure with no manipulation needed.
 
 ```javaScript
-A single step looks like below doing a 'GET' call to '/users/octocat' and asserting the 'GET' response.
+e.g. a single step below doing a 'GET' call to '/users/octocat' and asserting the 'GET' response.
 
 {
    "name": "get_user_step", 
@@ -18,7 +18,7 @@ A single step looks like below doing a 'GET' call to '/users/octocat' and assert
           "id": 583231,
           "login": "octocat",
           "addresses": [
-             ...
+             //more...
           ]
       }
    }
@@ -66,9 +66,9 @@ And it is **declarative** JSON DSL, with the `request/response` fields available
 
 See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) for usages and examples.
 
-Maven and CI
+Maven and CI 🔨
 ====
-**Latest release: [1.2.x](https://search.maven.org/search?q=zerocode-rest-bdd)**
+**Latest release: [1.2.x](https://search.maven.org/search?q=zerocode-rest-bdd)** 🏹
 
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
 **HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
@@ -79,7 +79,7 @@ Maven and CI
 
 > The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
 
-Hello World
+Hello World 🙌
 ====
 
 #### Clone or download the below quick-start repos to run them in local IDE or maven command. 
@@ -104,7 +104,18 @@ To build any of the above projects, you can use the following command
 mvn clean install -DskipTests
 ```
 
-#### Latest news/releases/features
+Upcoming Releases ⏳
+====
++ Kafka - Testing Distributed Data Stream application (Easy and fun) 🔜 <br/>
+  + Simple `produce` and `consume`
+  + `produce` and `consume` RAW messages
+  + `produce` and `consume` JSON messages
+  + Test `avro` schema registry along with REST Proxy
++ Kafka - HelloWorld examples and Wiki on dockerized testinng 🔜 <br/>
++ OAuth2 - In Action - HelloWorld repo 🔜 <br/>
++ SAML,JWT - Examples in the HelloWorld repo 🔜 <br/>
+
+#### Latest news/releases/features 📰
 
 #### Follow us(Twitter) - 
 <a href="https://twitter.com/ZerocodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
@@ -149,7 +160,7 @@ Execute your complex business scenario steps with simple declarative jsons which
 
 See the [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) and [more](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldmore/JustHelloWorldMoreTest.java)
 
-## Getting started
+## Getting started ⛹‍♂
 
 Add these `two` maven dependencies:
 ```xml
