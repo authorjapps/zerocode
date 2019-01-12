@@ -215,7 +215,7 @@ web.application.endpoint.port=443
 web.application.endpoint.context=
 ```
 
-And you need not have to deal with any assertThat(...), GIVEN-WHEN-THEN etc like below. <br/>
+And the assertThat(...), GIVEN-WHEN-THEN steps become implicit. <br/>
 
 ~~GIVEN- the GitHub REST api GET end point,~~ <br/>
 ~~WHEN- I invoke the API,~~ <br/>
@@ -265,6 +265,7 @@ See more usages and examples below.
 - [Help and usage](#1)
 - [Overriding with Custom HttpClient with Project demand, See also SSL Trusted Http Client](#16)
 - [Externalize host and port to properties files](#17)
+- [Using any properties file key-value in the steps](#17.1)
 - [Single Scenario with single step](#2)
 - [Generating Load or stress for performance testing](#27)
 - [Step with more assertions](#3)
@@ -1226,6 +1227,57 @@ public class ContractTestSuite {
 }
 ```
 
+#### 17.1:
+#### Using any properties file key-value in the steps
+
+You can directly use the existing properties or introduce new common properties to be used in the test steps.
+Usage: `${my_new_url}`, `${web.application.endpoint.host}`, `${X-APP-SAML-TOKEN}` etc
+
+This is particularly useful when you want to introduce one or more common properties to use across the test suite. :+1:
+(Clone [HelloWorld repo](https://github.com/authorjapps/zerocode-hello-world) to run this from your IDE)
+
+e.g.
+
+"config_hosts_sample.properties"
+
+```
+web.application.endpoint.host=http://{host-name-or-ip}
+web.application.endpoint.port=9998
+web.application.endpoint.context=/google-emp-services
+# or e.g. some new properties you introduced
+my_new_url=http://localhost:9998
+X-APP-SAML-TOKEN=<SAML>token-xyz</SAML>
+```
+
+Then, you can simply use the properties as below.
+```json
+{
+    "scenarioName": "New property keys from host config file",
+    "steps": [
+        {
+            "name": "get_api_call",
+            "url": "${web.application.endpoint.host}:${web.application.endpoint.port}/home/bathroom/1",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200
+            }
+        },
+        {
+            "name": "get_call_via_new_url",
+            "url": "${my_new_url}/home/bathroom/1",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+
+    ]
+}
+```
 
 
 #### 18:
