@@ -1,0 +1,24 @@
+{
+    "name": "Mock the Get Person With Request Body",
+    "operation": "GET",
+    "url": "/google-guys/persons/p001",
+    "request": {
+        "body": {
+            "name": "Emma",
+            "age": 33,
+            "address": {
+                "line1": "address line 1",
+                "line2": "address line 2"
+            }
+        }
+    },
+    "response": {
+        "status": 200,
+        "body": {
+            "id": "p001",
+            "source": {
+                "code": "GOOGLE.UK"
+            }
+        }
+    }
+}

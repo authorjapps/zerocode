@@ -1,0 +1,31 @@
+{
+    "scenarioName": "Unload - consume a message from kafka -wtih local optional properties",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo",
+            "operation": "load",
+            "request": {
+                "key": "${RANDOM.NUMBER}",
+                "value": "Hello World"
+            },
+            "assertions": {
+                "status" : "Ok"
+            }
+        },
+        {
+            "name": "onload_kafka",
+            "url": "kafka-topic:demo",
+            "operation": "unload",
+            "request": {
+                "consumer_properties": {
+                    "commitAsync":true,
+                    "MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS": 5
+                }
+            },
+            "assertions": {
+                "recordCount" : 1
+            }
+        }
+    ]
+}

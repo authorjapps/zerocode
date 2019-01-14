@@ -1,0 +1,107 @@
+{
+    "scenarioName": "Register Int via REST proxy and produce a String - Expect error",
+    "steps": [
+        {
+            "name": "rest_produce_avro_raw",
+            "url": "/topics/demo-avro-4",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/vnd.kafka.avro.v1+json",
+                    "Accept": "application/vnd.kafka.v1+json, application/vnd.kafka+json, application/json"
+                },
+                "body": {
+                    "value_schema": "{\"name\":\"int\",\"type\": \"int\"}",
+                    "records": [
+                        {
+                            //optional sample value
+                            "value": 12
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "offsets.SIZE": 1,
+                    "value_schema_id": "$NOT.NULL"
+                }
+            }
+        },
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-avro-4",
+            "operation": "load",
+            "request": {
+                "records": [
+                    {
+                        "value": "hello"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Failed",
+                "message": "Error registering Avro schema: \"string\""
+            }
+        },
+        {
+            "name": "load_kafka_schema_id",
+            "url": "kafka-topic:demo-avro-4",
+            "operation": "load",
+            "request": {
+                "records": [
+                    {
+                        "value": "hello",
+                        "value_schema_id": "${$.rest_produce_avro_raw.response.body.value_schema_id}"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Failed",
+                "message": "Error registering Avro schema: \"string\""
+            }
+        },
+        {
+            "name": "load_kafka_valid_data",
+            "url": "kafka-topic:demo-avro-4",
+            "operation": "load",
+            "request": {
+                "records": [
+                    {
+                        "value": 333.33,
+                        "value_schema_id": "${$.rest_produce_avro_raw.response.body.value_schema_id}"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "consume_avro_msg_as_raw",
+            "url": "kafka-topic:demo-avro-4",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType": "RAW",
+                    "commitSync": true,
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 5
+                }
+            },
+            "assertions": {
+                "size": 2,
+                "records": [
+                    {
+                        "topic": "demo-avro-4",
+                        "value": "$EQ.${$.rest_produce_avro_raw.request.body.records[0].value}"
+                    },
+                    {
+                        "topic": "demo-avro-4",
+                        "value": "$EQ.${$.load_kafka_valid_data.request.records[0].value}"
+                    }
+                ]
+            }
+        }
+    ]
+}

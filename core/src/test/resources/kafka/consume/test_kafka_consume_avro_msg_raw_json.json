@@ -1,0 +1,78 @@
+{
+    "scenarioName": "Produce a JSON via REST Proxy and consume a AVRO msg message as JSON",
+    "steps": [
+        {
+            "name": "produce_avro_raw",
+            "url": "/topics/demo-avro-1",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/vnd.kafka.avro.v1+json",
+                    "Accept": "application/vnd.kafka.v1+json, application/vnd.kafka+json, application/json"
+                },
+                "body": {
+                    "value_schema": "{\"type\":\"record\",\"name\":\"myrecord\",\"fields\":[{\"name\":\"f1\",\"type\":\"string\"}]}",
+                    "records": [
+                        {
+                            "value": {
+                                "f1": "val1"
+                            }
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body" : {
+                    "offsets.SIZE" : 1,
+                    "value_schema_id" : "$NOT.NULL"
+                }
+            }
+        },
+        {
+            "name": "consume_avro_msg_as_raw",
+            "url": "kafka-topic:demo-avro-1",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType": "RAW",
+                    "commitSync": true,
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "size": 1,
+                "records": [
+                    {
+                        "topic": "demo-avro-1",
+                        "partition": 0,
+                        "value": {
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "name": "f1",
+                                        "position": 0,
+                                        "schema": {
+                                            "type": "STRING"
+                                        }
+                                    }
+                                ],
+                                "name": {
+                                    "name": "myrecord",
+                                    "full": "myrecord"
+                                }
+                            },
+                            "values": [
+                                {
+                                    "string": "val1"
+                                }
+                            ]
+                        }
+                    }
+
+                ]
+            }
+        }
+    ]
+}

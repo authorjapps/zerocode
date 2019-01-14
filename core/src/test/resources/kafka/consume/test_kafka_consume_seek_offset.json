@@ -1,0 +1,74 @@
+{
+    "scenarioName": "Unload - consume a message from kafka offset via seek",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-c3",
+            "operation": "load",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World1"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "load_kafka2",
+            "url": "kafka-topic:demo-c3",
+            "operation": "load",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World2"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "onload_kafka",
+            "url": "kafka-topic:demo-c3",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "commitSync": false,
+                    "recordType": "RAW",
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "size": 2
+            }
+        },
+        {
+            "name": "onload_kafka_seek",
+            "url": "kafka-topic:demo-c3",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "seek": "demo-c3,0,1",
+                    "commitSync": true,
+                    "recordType": "RAW",
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                // Locally paases per run i.e. once . Fails if runs again as offset increases.
+                // docker-compose down to reset the offset to 0.
+                // "seek": "demo-c3,0,1", "demo-c3,0,3", "demo-c3,0,5" manually to see it passing
+                // Note- it will always pass in CI, due to fresh container spin up.
+                "size": 1
+            }
+        }
+    ]
+}

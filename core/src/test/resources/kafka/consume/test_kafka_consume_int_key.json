@@ -1,0 +1,34 @@
+{
+    "scenarioName": "Unload - consume a message from kafka",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-int-topic-1",
+            "operation": "load",
+            "request": {
+                "records":[
+                    {
+                        "key": 101,
+                        "value": "Hello World"
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Ok"
+            }
+        },
+        {
+            "name": "onload_kafka",
+            "url": "kafka-topic:demo-int-topic-1",
+            "operation": "unload",
+            "request": {
+            },
+            "assertions": {
+                // this will be 1  only when consumer does a commit i.e. commitAsync or sync,
+                // otherwise 3 or more as earler messages will still be there
+                // TODO- commitAsync - sometimes delayed as it is async(provide a helloworld example).
+                "size" : "$GT.0"
+            }
+        }
+    ]
+}

@@ -1,0 +1,31 @@
+{
+    "scenarioName": "Create employee by authenticating via Oauth2 token",
+    "steps": [
+        {
+            "name": "new_oauth_token",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.utils.OauthTokenGenerator",
+            "operation": "generateToken",
+            "request": "",
+            "assertions": {
+                "token": "$NOT.NULL"
+            }
+        },
+        {
+            "name": "create_emp",
+            "url": "/api/v1/google-uk/employees", // Start the REST simulator for this test to pass.
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "token": "${$.new_oauth_token.response.token}"
+                },
+                "body": {
+                    "id": 1000,
+                    "name": "Larry Pg"
+                }
+            },
+            "assertions": {
+                "status": 201
+            }
+        }
+    ]
+}

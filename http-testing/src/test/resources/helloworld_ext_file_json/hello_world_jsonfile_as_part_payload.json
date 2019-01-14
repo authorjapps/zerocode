@@ -1,0 +1,37 @@
+{
+    "scenarioName": "POST API - File json as part payload - Reuse in body",
+    "steps": [
+        {
+            "name": "create_scr",
+            "url": "/api/v1/employees/screening",
+            "operation": "POST",
+            "request": {
+                "body": {
+                    "empId": "EMP39001",
+                    "originAddress": "${JSON.FILE:reusable_content/request/office_address.json}"
+                }
+            },
+            "assertions": {
+                "status": 201,
+                "body": {
+                    "id": "SCRUNIQUEID5003"
+                }
+            }
+        },
+        {
+            "name": "get_user_details",
+            "url": "/api/v1/employees/screening/${$.create_scr.response.body.id}",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": "${$.create_scr.response.body.id}",
+                    "empId": "${$.create_scr.request.body.empId}",
+                    "originAddress": "${JSON.FILE:reusable_content/request/office_address.json}"
+                }
+            }
+        }
+    ]
+}

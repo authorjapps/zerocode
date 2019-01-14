@@ -1,0 +1,36 @@
+{
+    "scenarioName": "Produce an Inetger via REST proxy - A wrong Value",
+    "steps": [
+        {
+            "name": "produce_avro_raw",
+            "url": "/topics/demo-avro-3",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/vnd.kafka.avro.v1+json",
+                    "Accept": "application/vnd.kafka.v1+json, application/vnd.kafka+json, application/json"
+                },
+                "body": {
+                    "value_schema": "{\"name\":\"int\",\"type\": \"int\"}",
+                    "records": [
+                        {
+                            "value": "a wrong value"
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "status": 422,
+                "headers": {
+                    "Content-Type": [
+                        "application/vnd.kafka.v1+json"
+                    ]
+                },
+                "body": {
+                    "error_code": 42203,
+                    "message": "Conversion of JSON to Avro failed: Failed to convert JSON to Avro: Expected int. Got VALUE_STRING"
+                }
+            }
+        }
+    ]
+}

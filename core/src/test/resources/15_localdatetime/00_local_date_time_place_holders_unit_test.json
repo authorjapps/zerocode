@@ -1,0 +1,30 @@
+{
+    "scenarioName": "Given_When_Then-Flow name",
+    "steps": [
+        {
+            "name": "StepNameWithoutSpaceEgCREATESD",
+            "url": "/persons",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/json;charset=UTF-8"
+                },
+                "queryParams": {
+                    "param1": "value1"
+                },
+                "body": {
+                    "persons": {
+                        "dateOfBirth": "${LOCAL.DATE.TODAY:yyyy-MM-dd}",
+                        "birthDateOnly": "${LOCAL.DATETIME.NOW:yyyy}"
+                    }
+                }
+            },
+            "assertions": {
+                "status": 201,
+                "body": {
+                    "id": 1001
+                }
+            }
+        }
+    ]
+}

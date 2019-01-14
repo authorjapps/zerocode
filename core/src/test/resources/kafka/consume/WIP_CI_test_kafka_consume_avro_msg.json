@@ -1,0 +1,105 @@
+{
+    "scenarioName": "consume a AVRO msg message",
+    "steps": [
+
+//        The following consume steps works, Tested -Green
+//        but not yet CI enabled due to avro registration is done manually
+
+// Note-
+//        Do not put directly to the topic without avro registry ie schema registry.
+//        When you put via Avro it updates the message with an ID(call it as avro ID) from the registry
+//        If you put directly(by passing Avro), then it can not be consumed via AvroDeserialzer,
+//        because message is not updated with an avro ID, hence not understood by avro deserializer
+//        Error - {"error_code":50002,"message":"Kafka error: Error deserializing Avro message for id -1"}
+//        2019-01-04 09:46:29,371 [main] ERROR org.jsmart.zerocode.core.kafka.client.BasicKafkaClient -
+//        Exception during operation:unload, topicName:bar, error:Error deserializing key/value for partition bar-0 at offset 1.
+//        If needed, please seek past the record to continue consumption.
+
+//        {
+//            "name": "load_kafka",
+//            "url": "kafka-topic:bar",
+//            "operation": "load",
+//            "request": {
+//                "records": [
+//                    {
+//                        "key": "${RANDOM.NUMBER}",
+//                        "value": "{\"f1\": \"Linus\"}"
+//                    }
+//                ]
+//            },
+//            "assertions": {
+//                "status": "Ok"
+//            }
+//        },
+        {
+            "name": "consume_avro_msg_as_json",
+            "url": "kafka-topic:bar",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType": "JSON",
+                    "commitSync": false,
+                    //"showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "size": 1,
+                "records": [
+                    {
+                        "key": null,
+                        "jsonKey": null,
+                        "value": {
+                            "f1": "value1"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "consume_avro_msg_as_raw",
+            "url": "kafka-topic:bar",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType": "RAW",
+                    "commitSync": false,
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "size": 1,
+                "records": [
+                    {
+                        "topic": "bar",
+                        "partition": 0,
+                        "offset": 0,
+                        "value": {
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "name": "f1",
+                                        "position": 0,
+                                        "schema": {
+                                            "type": "STRING"
+                                        }
+                                    }
+                                ],
+                                "name": {
+                                    "name": "myrecord",
+                                    "full": "myrecord"
+                                }
+                            },
+                            "values": [
+                                {
+                                    "string": "value1"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "scenarioName": "Testing string comparable with ignoring case",
+    "steps": [
+        {
+            "name": "StepNameWithoutSpaceEgCREATESD",
+            "url": "/persons",
+            "operation": "POST",
+            "request": {
+                "body": {
+                    "persons": {
+                        "firstName": "Oliver Creasy"
+                    }
+                }
+            },
+            "assertions": {
+                "status": 201,
+                "body": {
+                    "name": "$CONTAINS.STRING.IGNORECASE:CReASY"
+                }
+            }
+        }
+    ]
+}

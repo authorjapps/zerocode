@@ -1,0 +1,49 @@
+{
+  "flow": "Given_When_Then-Flow name which involves multiple REST calls eg CREATE then UPDATE",
+  "loop": 5,
+  "steps": [
+    {
+      "name": "StepNameWithoutSpaceEgCREATE",
+      "service": "/persons",
+      "operation": "POST",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Cookie": "iPlanetDirectoryPro=AQIC5wM2LY4SfcwhX7zhwjaFqOw8yuX0wdhJAT70MOgeMoY.*AAJTSQACMDEAAlNLABQtNjUyNDQ0MDg1NzM2MTA1OTUzNg..*"
+        },
+        "queryParams": {
+          "param1": "value1",
+          "param2": "value2"
+        },
+        "body": {
+          "Customer": {
+            "firstName": "FIRST_NAME",
+            "externalHandleValue": "test-pre-enrich-002",
+            "CustomerType": {
+              "refDataValueId": 10302,
+              "refDataValueCode": "ASYC-Something"
+            },
+            "processInstances": [
+              {
+                "id": 1,
+                "processId": 104,
+                "processStatusId": 11603,
+                "processStatusCode": "COMPLETE",
+                "stageId": 3,
+                "startDateTime": "2015-09-14T09:49:34Z",
+                "endDateTime": "2015-09-15T09:49:34Z"
+              }
+            ],
+            "createdDate": "2016-02-09T09:24:22Z",
+            "lastUpdated": "2016-02-09T09:24:22Z",
+            "created": "2016-03-10T16:51:23.620"
+          }
+        }
+      },
+      "assert": {
+        "status": 201
+      },
+      "loop": 3
+    }
+  ]
+}

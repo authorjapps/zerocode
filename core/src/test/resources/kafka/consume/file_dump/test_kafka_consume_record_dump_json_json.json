@@ -1,0 +1,43 @@
+{
+   "scenarioName": "Unload to file - json record as RAW dump",
+   "steps": [
+      {
+         "name": "load_topic",
+         "url": "kafka-topic:demo-json2",
+         "operation": "load",
+         "request": {
+            "recordType":"JSON",
+            "records": [
+               {
+                  "key": "${RANDOM.NUMBER}",
+                  "value": {
+                     "id" : 121,
+                     "name" : "Jey"
+                  }
+               }
+            ]
+         },
+         "assertions": {
+            "status": "Ok"
+         }
+      },
+      {
+         "name": "onload_to_file",
+         "url": "kafka-topic:demo-json2",
+         "operation": "unload",
+         "request": {
+            "consumerLocalConfigs": {
+               "fileDumpTo": "target/temp/demo.txt",
+               "recordType": "JSON",
+               "commitSync":true,
+               "showRecordsConsumed": true,
+               "maxNoOfRetryPollsOrTimeouts": 5,
+               "pollingTime": 1000
+            }
+         },
+         "assertions": {
+            "size": 1
+         }
+      }
+   ]
+}

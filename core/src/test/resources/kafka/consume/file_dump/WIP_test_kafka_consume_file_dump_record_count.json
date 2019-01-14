@@ -1,0 +1,27 @@
+{
+    "scenarioName": "Unload - consume a message from kafka -fileDumpTo record count",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo",
+            "operation": "produce",
+            "request": {
+                "key": "${RANDOM.NUMBER}",
+                "value": "Hello World"
+            },
+            "assertions": {
+                "status" : "Ok"
+            }
+        },
+        {
+            "name": "record_count_from_file",
+            "url": "file:target/filename",
+            "operation": "countRecord",
+            "request": {
+            },
+            "assertions": {
+                "record_count": 1
+            }
+        }
+    ]
+}

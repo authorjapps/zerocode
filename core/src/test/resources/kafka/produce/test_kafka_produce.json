@@ -1,0 +1,22 @@
+{
+    "scenarioName": "Produce a message to kafka topic - vanilla",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-1",
+            "operation": "produce",
+            "request": {
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World"
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Ok",
+                "recordMetadata" : "$NOT.NULL"
+            }
+        }
+    ]
+}

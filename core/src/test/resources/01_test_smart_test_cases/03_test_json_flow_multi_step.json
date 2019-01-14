@@ -1,0 +1,63 @@
+{
+  "scenarioName": "Given_When_Then-Flow name which involves multiple REST calls eg CREATE then UPDATE",
+  "loop": 5,
+  "steps": [
+    {
+      "loop": 3,
+      "name": "StepNameWithoutSpaceEgCREATESD",
+      "url": "/persons",
+      "operation": "POST",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Cookie": "cookie_123"
+        },
+        "queryParams": {
+          "param1": "value1",
+          "param2": "value2"
+        },
+        "body": {
+          "Customer": {
+            "firstName": "FIRST_NAME"
+          }
+        }
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": 1001
+        }
+      }
+    },
+    {
+      "loop": 3,
+      "name": "StepNameWithoutSpaceEgCREATESD",
+      "url": "/url2/path",
+      "operation": "POST",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Cookie": "cookie_123"
+        },
+        "queryParams": {
+          "param1": "value1",
+          "param2": "value2"
+        },
+        "body": {
+          "Customer": {
+            "firstName": "FIRST_NAME"
+          }
+        }
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": 1001
+        }
+      }
+    }
+
+  ]
+}
+
+

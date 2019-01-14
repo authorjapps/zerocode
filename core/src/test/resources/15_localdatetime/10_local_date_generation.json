@@ -1,0 +1,32 @@
+{
+  "scenarioName": "10_response_with_headers",
+  "steps": [
+    {
+      "name": "get_call",
+      "url": "/api/response/with/headers",
+      "operation": "GET",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8",
+          "date_today": "${LOCAL.DATE.TODAY:yyyy-MM-dd}",
+          "birth_year": "${LOCAL.DATE.TODAY:yyyy}",
+          "created_date_time": "${LOCAL.DATETIME.NOW:uuuu-MM-dd'T'HH:mm:ss.nnnnnnnnn}"
+        },
+        "body": {
+        }
+      },
+      "assertions": {
+        "status": 200,
+        "headers": {
+          "Content-Type" : [ "application/json" ],
+          "Connection" : [ "keep-alive" ],
+          "client_secret" : [ "secret_00001" ],
+          "client_id" : [ "cid_00001" ]
+        },
+        "body": {
+          "zeroKey": "zeroValue"
+        }
+      }
+    }
+  ]
+}

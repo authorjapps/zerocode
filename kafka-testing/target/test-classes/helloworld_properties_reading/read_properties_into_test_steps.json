@@ -1,0 +1,31 @@
+{
+    "scenarioName": "Read properties in Test Steps - So easy",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "${new_api_host}/users/octocat",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat"
+                }
+            }
+        },
+        {
+            "name": "get_user_details_way2",
+            "url": "${another.new.endpoint.host}/users/octocat",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat"
+                }
+            }
+        }
+    ]
+}

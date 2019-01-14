@@ -1,0 +1,50 @@
+{
+    "scenarioName": "Will Mock some End Points via WireMock and Test the end points using Zerocode",
+    "steps": [
+        {
+            "name": "setup_mocks",
+            "url": "/$MOCK",
+            "operation": "$USE.WIREMOCK",
+            "request": {
+                "mocks": [
+                    {
+                        "name": "mocking_a_GET_endpoint",
+                        "operation": "POST",
+                        "url": "/soap/CurrencyConvertor",
+                        "response": {
+                            "status": 200,
+                            "headers": {
+                                "Content-Type": "text/xml; charset=utf-8"
+                            },
+                            "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <GetCurrencyRate xmlns=\"http://tempuri.org/\">\n      <Currency>string</Currency>\n      <RateDate>dateTime</RateDate>\n    </GetCurrencyRate>\n  </soap:Body>\n</soap:Envelope>"
+                        }
+                    }
+                ]
+            },
+            "assertions": {
+                "status": 200
+            }
+        },
+        //------------- All mocking done at this point via WireMock ---------------
+
+        //------------- Let's verify the end points by writing the following small tests ------------
+        {
+            "name": "invoke_currency_conversion",
+            "url": "/soap/CurrencyConvertor",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "text/xml; charset=utf-8",
+                    //"SOAPAction": "\"http://www.webserviceX.NET/ConversionRate\""
+                    "SOAPAction": "http://www.webserviceX.NET/ConversionRate"
+                },
+                "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <ConversionRate xmlns=\"http://www.webserviceX.NET/\">\n      <FromCurrency>AFA</FromCurrency>\n      <ToCurrency>GBP</ToCurrency>\n    </ConversionRate>\n  </soap:Body>\n</soap:Envelope>"
+            },
+            "assertions": {
+                "status": 200
+                //"rawBody": "$CONTAINS.STRING:<ConversionRateResult>-1</ConversionRateResult>"
+            }
+        }
+
+    ]
+}

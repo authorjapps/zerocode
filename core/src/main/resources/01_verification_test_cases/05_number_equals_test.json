@@ -1,0 +1,45 @@
+{
+    "scenarioName": "05_number_equals_test",
+    "steps": [
+        {
+            "name": "get_call",
+            "url": "http://localhost:9998/home/bathroom/1",
+            "operation": "GET",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/json;charset=UTF-8",
+                    "Cookie": "cookie_123"
+                },
+                "body": {
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": [
+                        "application/json"
+                    ]
+                },
+                "body": {
+                    "id": "$EQ.1",
+                    "name": "Shower",
+                    "availability": true
+                }
+            }
+        },
+        {
+            "name": "another_get_call",
+            "url": "http://localhost:9998/home/bathroom/1",
+            "operation": "GET",
+            "request": {},
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": "$EQ.${$.another_get_call.response.body.id}",
+                    "name": "Shower",
+                    "availability": true
+                }
+            }
+        }
+    ]
+}

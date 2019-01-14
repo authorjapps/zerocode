@@ -1,0 +1,29 @@
+{
+    "scenarioName": "Unload - consume a message from kafka -json dump to file",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo",
+            "operation": "produce",
+            "request": {
+                "key": "${RANDOM.NUMBER}",
+                "value": "Hello World"
+            },
+            "assertions": {
+                "status" : "Ok"
+            }
+        },
+        {
+            "name": "unload_kafka",
+            "url": "kafka-topic:demo",
+            "operation": "consume",
+            "request": {
+                "action": "$JSON.DUMP:target/filename"
+            },
+            "assertions": {
+                "status" : "Ok",
+                "record_count": 1
+            }
+        }
+    ]
+}

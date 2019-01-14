@@ -1,0 +1,26 @@
+{
+    "scenarioName": "New property keys from host config file",
+    "steps": [
+        {
+            "name": "get_api_call",
+            "url": "${web.application.endpoint.host}:${web.application.endpoint.port}/home/bathroom/1",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200
+            }
+        },
+        {
+            "name": "get_call_via_new_url",
+            "url": "${my_new_url}/home/bathroom/1",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+
+    ]
+}

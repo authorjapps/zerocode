@@ -1,0 +1,87 @@
+{
+  "scenarioName": "see assertion section",
+  "loop": 5,
+  "steps": [
+    {
+      "name": "step1",
+      "loop": 3,
+      "url": "/persons/${STATIC.ALPHABET:3}",
+      "operation": "POST",
+      "request": {
+        "body": {
+          "customer": {
+            "firstName": "FIRST_NAME",
+            "staticName": "${STATIC.ALPHABET:5}",
+            "addresses": [
+              "office-1",
+              "home-2"
+            ]
+          }
+        }
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": 1001,
+          "actualName": "ACTUAL NAME",
+          "actualNameSize": 5
+        }
+      }
+    },
+    {
+      "name": "step2",
+      "loop": 3,
+      "url": "/persons/${STATIC.ALPHABET:3}",
+      "operation": "POST",
+      "request": {
+        "body": {
+          "Customer": {
+            "firstName2": "${$.step1.request.body.customer.firstName}",
+            "nickName": "${RANDOM.NUMBER}",
+            "noOfAddresses": "${$.step1.request.body.customer.addresses.length()}"
+          }
+        }
+      },
+      "assertions": {
+        "status": 201,
+        "status": "$GT.499", //<-- cant have presence more thna once, as jackson only reads the latest value ie "$LT.199"
+        "absentField": "$GT.388",
+        //"status": "$LT.199", //<-- cant have presence more thna once, as jackson only reads the latest value ie "$LT.199"
+        "body": {
+          "id": "$NOT.NULL",
+          "salary": "$LT.1300",
+          "actualName": "${$.step1.request.body.customer.staticName}",
+          "addresses.SIZE": 5,
+          "job": {
+            "rate": 700,
+            "type": "contract"
+          },
+          "allNames": [
+            "Rose, Call me by Any Name would Smell Sweet",
+            {
+              "firstName": "R Payal",
+              "when": "Initiation",
+              "citizenship": [
+                {
+                  "country": "Italy"
+                },
+                {
+                  "country": "Noorway"
+                }
+              ],
+              "citizenship": "$[]",
+              "citizenship.SIZE": 4,
+              "personalities": "$[]",
+              "pastActivities": "$[]"
+
+            },
+            {
+              "firstName": "$CONTAINS.STRING:DaddyWithMac",
+              "when": "$NULL"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

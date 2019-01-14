@@ -1,0 +1,32 @@
+{
+    "scenarioName": "Load - publish a message to kafka - valid-ip format, but no kafka",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-x",
+            "operation": "load",
+            "request": {
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World"
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Failed",
+                "message" : "org.apache.kafka.common.errors.TimeoutException: Failed to update metadata after 60000 ms."
+            }
+        }
+    ]
+}
+
+// When you provide localhost:9092 : Then it means, the host is valid n able to ping localhost, if there is no kafka,
+// then only, it keeps on trying with below message-
+
+// 2018-09-28 13:07:03,628 [kafka-producer-network-thread | client1] WARN org.apache.kafka.clients.NetworkClient - [Producer clientId=client1] Error while fetching metadata with correlation id 559 : {kafka-topic:demo=INVALID_TOPIC_EXCEPTION}
+// 2018-09-28 13:07:03,735 [kafka-producer-network-thread | client1] WARN org.apache.kafka.clients.NetworkClient - [Producer clientId=client1] Error while fetching metadata with correlation id 560 : {kafka-topic:demo=INVALID_TOPIC_EXCEPTION}
+// Error in sending record
+// java.util.concurrent.ExecutionException: org.apache.kafka.common.errors.TimeoutException: Failed to update metadata after 60000 ms.
+
+// Note - the final exception message is the same, hence asserted.

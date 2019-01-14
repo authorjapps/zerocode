@@ -1,0 +1,72 @@
+{
+    "scenarioName": "Will Mock some End Points via WireMock and Test the end points using Zerocode",
+    "steps": [
+        {
+            "name": "setup_mocks",
+            "url": "/$MOCK",
+            "operation": "$USE.WIREMOCK",
+            "request": {
+                "mocks": [
+                    {
+                        "name": "mocking_a_GET_endpoint_with_headers",
+                        "operation": "GET",
+                        "url": "/api/v1/amazon/customers/cust-007",
+                        "request": {
+                            "headers": {
+                                "api_key": "key-01-01",
+                                "api_secret": "secret-01-01"
+                            }
+                        },
+                        "response": {
+                            "status": 200,
+                            "body": {
+                                "id": "cust-007",
+                                "type": "Premium"
+                            }
+                        }
+                    }
+                ]
+            },
+            "assertions": {
+                "status": 200
+            }
+        },
+        //------------- Mocking done at this point via WireMock ---------------
+
+        //------------- Let's verify the end points by writing the following small tests ------------
+        {
+            "name": "verify_get_customer_with_headers",
+            "url": "/api/v1/amazon/customers/cust-007",
+            "operation": "GET",
+            "request": {
+                "headers": {
+                    "api_key": "key-01-01", //<--- Please try with a wrong key. The test should fail.
+                    "api_secret": "secret-01-01"
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": "cust-007",
+                    "type": "Premium"
+                }
+            }
+        },
+        {
+            "name": "verify_get_customer_without_headers",
+            "url": "/api/v1/amazon/customers/cust-007",
+            "operation": "GET",
+            "request": {
+                "headers": {
+                    //"api_key": "key-01-01", //<--- Please try with a wrong key. The test should fail.
+                    "api_secret": "secret-01-01"
+                }
+            },
+            "assertions": {
+                "status" : 404,
+                "rawBody" : "$CONTAINS.STRING:Request was not matched"
+            }
+        }
+
+    ]
+}

@@ -1,0 +1,44 @@
+{
+    "scenarioName": "Produce a message to kafka topic - int Key",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-int-topic-2",
+            "operation": "produce",
+            "request": {
+                "recordType" : "RAW",
+                "records": [
+                    {
+                        "key": 101,
+                        "value": "Hello World"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok",
+                "recordMetadata": "$NOT.NULL"
+            }
+        },
+        {
+            "name": "onload_kafka",
+            "url": "kafka-topic:demo-int-topic-2",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    //"recordType" : "JSON",
+                    "commitSync": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "size": 1,
+                "records": [
+                    {
+                        "key": 101.0,
+                        "value": "Hello World"
+                    }
+                ]
+            }
+        }
+    ]
+}

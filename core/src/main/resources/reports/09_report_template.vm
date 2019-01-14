@@ -1,0 +1,27 @@
+{
+"timestamp": "$report.timestamp",
+"results": [
+{
+#foreach( $result in $report.results )
+"scenarioName": "$result.scenarioName",
+"loop": "$result.loop",
+"steps": [
+    #foreach($step in $result.steps )
+    {
+    "loop": "$step.loop",
+    "name": "$step.name",
+    "url": "/services/service-delivery/sd_id_3030_90",
+    "correlationId": "d6e2601c-5072-4bcf-a0dc-97e09c159cb6",
+    "operation": "PUT",
+    "requestTimeStamp": "2016-07-22T11:51:13.480",
+    "responseTimeStamp": "2016-07-22T11:51:13.587",
+    "Response delay": "107.0",
+    "result": "pass"
+    }
+    #end
+]
+}
+#end
+]
+}
+

@@ -1,0 +1,26 @@
+{
+  "scenarioName": "06_number_not_equals_test",
+  "steps": [
+    {
+      "name": "get_call",
+      "url": "http://localhost:9998/home/bathroom/1",
+      "operation": "GET",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Cookie": "cookie_123"
+        },
+        "body": {
+        }
+      },
+      "assertions": {
+        "status": 200,
+        "body": {
+          "id": "$NOT.EQ.11",
+          "name": "Shower",
+          "availability": true
+        }
+      }
+    }
+  ]
+}

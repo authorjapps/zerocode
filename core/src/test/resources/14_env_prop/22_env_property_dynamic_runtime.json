@@ -1,0 +1,20 @@
+{
+    "scenarioName": "22_env_property_dynamic_runtime",
+    "steps": [
+        {
+            "name": "get_hotel_resource for ci jenkins",
+            "url": "/home/bathroom/google_id_01",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": 1,
+                    "name": "G Hotel Shower",
+                    "availability": true
+                }
+            }
+        }
+    ]
+}

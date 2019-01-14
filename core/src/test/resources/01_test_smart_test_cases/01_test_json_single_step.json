@@ -1,0 +1,27 @@
+{
+  "loop": 3,
+  "name": "StepNameWithoutSpaceEgCREATE",
+  "url": "/persons",
+  "operation": "POST",
+  "request": {
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Cookie": "cookie_123"
+    },
+    "queryParams": {
+      "param1": "value1",
+      "invId": 10101
+    },
+    "body": {
+      "Customer": {
+        "firstName": "FIRST_NAME"
+      }
+    }
+  },
+  "assertions": {
+    "status": 201,
+    "body": {
+      "id" : 1001
+    }
+  }
+}

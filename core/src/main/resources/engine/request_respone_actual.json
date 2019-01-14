@@ -1,0 +1,23 @@
+{
+  "createPerson": {
+    "request":{
+      "id" : "10101"
+    },
+    "response": {
+      "status" : 201,
+      "addresses":[
+        {
+          "houseNo": "9"
+        },
+        {
+          "houseNo": "11"
+        }
+      ],
+      "names":[
+        "Rose",
+        "Rosalin",
+        "Rosy"
+      ]
+    }
+  }
+}

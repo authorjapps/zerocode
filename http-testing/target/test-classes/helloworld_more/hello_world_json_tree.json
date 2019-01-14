@@ -1,0 +1,56 @@
+{
+    "scenarioName": "GIVEN- the REST end points, WHEN- I invoke GET by ID, THEN- I will aget the full details",
+    "steps": [
+        {
+            "name": "get_emp_details",
+            "url": "/api/v1/employees/emp1001",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": "emp1001",
+                    "name": "Jeff Bezos",
+                    "empType": "Self Employed",
+                    "addresses": [
+                        {
+                            "type": "Office",
+                            "line1": "39 NewYork Street"
+                        },
+                        {
+                            "type": "Home",
+                            "line1": "99 Piscataway"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "get_address_details",
+            "url": "/api/v1/addresses/empoyee/${$.get_emp_details.response.body.id}",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "empId": "${$.get_emp_details.response.body.id}",
+                    "addresses": [
+                        {
+                            "addressId": "addr-001",
+                            "type": "Office",
+                            "line1": "39 NewYork Street"
+                        },
+                        {
+                            "addressId": "addr-002",
+                            "type": "Home",
+                            "line1": "99 Piscataway"
+                        }
+                    ]
+                }
+            }
+        }
+
+    ]
+}

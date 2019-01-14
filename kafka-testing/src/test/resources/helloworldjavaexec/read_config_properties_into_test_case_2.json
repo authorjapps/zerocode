@@ -1,0 +1,55 @@
+{
+    "scenarioName": "Make the host config properties available into the test case json",
+    "steps": [
+        {
+            "name": "config",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.utils.PropertyUtils",
+            "operation": "readProperties",
+            "request": "",
+            "assertions": {
+                "new_api_host" : "https://api.github.com",
+                "['restful.application.endpoint.host']" : "http://localhost", //<--- Wrapped in braces due to dots in the key
+                "['restful.application.endpoint.port']" : 9999,
+                "['another.new.endpoint.host']" : "https://api.github.com"
+            }
+        },
+        {
+            "name": "get_user_details",
+            "url": "${$.config.response['another.new.endpoint.host']}/users/octocat",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat",
+                    "type" : "User"
+                }
+            }
+        },
+        {
+            "name": "get_user_details_way2",
+            "url": "${$.config.response.new_api_host}/users/octocat",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat",
+                    "type" : "User"
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------------------------------------
+        //          Then these values are available to you all your steps as JSON Path
+        //              e.g. ${$.config.response.value} etc
+        //
+        //          An example usage could be-
+        //              "link" : "${$.config.response.value}:${$.config.response.value}/api/path"
+        //              will resolve to the below value-
+        //              "link" : "https://api.github.com:443/api/path"
+        // -------------------------------------------------------------------------------------------------
+    ]
+}

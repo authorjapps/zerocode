@@ -1,0 +1,21 @@
+{
+  "scenarioName": "Java Service",
+  "loop": 5,
+  "steps": [
+    {
+      "name": "javaMethodExecution", //<-- with comments
+      "loop": 3,
+      "url": "org.jsmart.zerocode.core.AddService",
+      "operation": "squareMyNumber",
+      "request": {
+        "number": 30
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": 1001
+        }
+      }
+    }
+  ]
+}

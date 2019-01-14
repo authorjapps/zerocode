@@ -1,0 +1,43 @@
+{
+    "scenarioName": "Given xml input Give me json output",
+    "steps": [
+        {
+            "name": "xml_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "xmlToJson",
+            "request": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <ConversionRate xmlns=\"http://www.webserviceX.NET/\">\n      <FromCurrency>AFA</FromCurrency>\n      <ToCurrency>GBP</ToCurrency>\n    </ConversionRate>\n  </soap:Body>\n</soap:Envelope>",
+            "assertions": {
+                "soap:Envelope": {
+                    "xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+                    "xmlns:soap": "http://schemas.xmlsoap.org/soap/envelope/",
+                    "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                    "soap:Body": {
+                        "ConversionRate": {
+                            "xmlns": "http://www.webserviceX.NET/",
+                            "FromCurrency": "AFA",
+                            "ToCurrency": "GBP"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "xml_to_json_json_path",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "xmlToJson",
+            "request": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <ConversionRate xmlns=\"http://www.webserviceX.NET/\">\n      <FromCurrency>AFA</FromCurrency>\n      <ToCurrency>GBP</ToCurrency>\n    </ConversionRate>\n  </soap:Body>\n</soap:Envelope>",
+            "assertions": {
+                "soap:Envelope": {
+                    "xmlns:xsd": "${$.xml_to_json.response.soap:Envelope.xmlns:xsd}",
+                    "xmlns:soap": "http://schemas.xmlsoap.org/soap/envelope/",
+                    "soap:Body": {
+                        "ConversionRate": {
+                            "FromCurrency": "${$.xml_to_json.response.soap:Envelope.soap:Body.ConversionRate.FromCurrency}",
+                            "ToCurrency": "GBP"
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

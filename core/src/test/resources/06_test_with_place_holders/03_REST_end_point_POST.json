@@ -1,0 +1,26 @@
+{
+  "scenarioName": "Will Simulate POST",
+  "loop": 5, //comments -- Allowed
+  "steps": [
+    {
+      "loop": 3,
+      "name": "Create", //<-- with comments
+      "url": "/home/bathroom",
+      "operation": "POST",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Cookie": "cookie_123"
+        },
+        "body": "" //<--can be / works for: null, "", 100, "alpha100", {"id" : "2"}
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": 2
+        }
+      }
+    }
+
+  ]
+}

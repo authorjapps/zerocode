@@ -1,0 +1,31 @@
+{
+    "scenarioName": "GIVEN a SOAP end point WHEN I invoke a method with a xml input file, THEN I will get the response",
+    "steps": [
+        {
+            "name": "invoke_currency_conversion",
+            "url": "/CurrencyConvertor.asmx",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "text/xml; charset=utf-8",
+                    "SOAPAction": "http://www.webserviceX.NET/ConversionRate"
+                },
+                "body": "${XML.FILE:16_soap/xml_files/soap_request.xml}"
+            },
+            "assertions": {
+                "status": 200,
+                "rawBody": "$CONTAINS.STRING:<ConversionRateResult>-1</ConversionRateResult>"
+            }
+        },
+        {
+            "name": "response_xml_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "prettyXml",
+            "request": "${$.invoke_currency_conversion.response.rawBody}",
+            "assertions": {
+
+            }
+        }
+
+    ]
+}

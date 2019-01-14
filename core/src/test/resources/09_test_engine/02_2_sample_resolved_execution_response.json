@@ -1,0 +1,41 @@
+{
+  "status": 201,
+  "body": {
+    "id": null,
+    "salary": 1400,
+    "times": null,
+    "actualName": "ACTUAL NAME",
+    "addresses": [
+      {
+        "line1": "165 Fleet St"
+      },
+      {
+        "line1": "175 Off Fleet St"
+      }
+    ],
+    "job": {
+      "rate": 700,
+      "type": "contract"
+    },
+    "allNames": [
+      "Rose, Call me by Any Name would Smell Sweet",
+      {
+        "firstName": "R Payal",
+        "when": "Initiation",
+        "citizenship": [
+          {
+            "country": "Italy"
+          },
+          {
+            "country": "Noorway"
+          }
+        ],
+        "pastActivities": []
+      },
+      {
+        "firstName": "Daddy Ro",
+        "when": "After 1 year"
+      }
+    ]
+  }
+}

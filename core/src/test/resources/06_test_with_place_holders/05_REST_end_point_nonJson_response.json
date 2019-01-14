@@ -1,0 +1,22 @@
+{
+  "scenarioName": "Testing text-node-json content",
+  "steps": [
+    {
+      "loop": 3,
+      "name": "get_nonjson",
+      "url": "/api/nonjson",
+      "operation": "GET",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Cookie": "cookie_123"
+        }
+      },
+      "assertions": {
+        "status": 201,
+        "rawBody": "non-jsonX"
+      }
+    }
+
+  ]
+}

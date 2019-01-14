@@ -1,0 +1,27 @@
+{
+    "results": [
+        {
+            "scenarioName": "Loop Scenario - Will Get A bath Room",
+            "steps": [
+                {
+                    "name": "get_shower_room"
+                },
+                {
+                    "name": "get_another_shower_room"
+                }
+            ]
+        },
+        {
+            "scenarioName": "Loop Scenario - Will Get A bath Room",
+            "loop": 1,
+            "steps": [
+                {
+                    "name": "get_shower_room"
+                },
+                {
+                    "name": "get_another_shower_room"
+                }
+            ]
+        }
+    ]
+}

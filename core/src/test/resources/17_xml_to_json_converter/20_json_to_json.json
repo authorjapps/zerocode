@@ -1,0 +1,99 @@
+{
+    "scenarioName": "Given a json string or json block, convert to equivalent json block",
+    "steps": [
+        {
+            "name": "json_block_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "jsonBlockToJson",
+            "request": {
+                "headers": {
+                    "hdrX": "valueX"
+                },
+                "body": {
+                    "id": 1001,
+                    "addresses": [
+                        {
+                            "postCode": "PXY"
+                        },
+                        {
+                            "postCode": "LMZ DDD"
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "headers": {
+                    "hdrX": "valueX"
+                },
+                "body": {
+                    "id": 1001,
+                    "addresses": [
+                        {
+                            "postCode": "PXY"
+                        },
+                        {
+                            "postCode": "${$.json_block_to_json.request.body.addresses[1].postCode}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "json_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "jsonToJson",
+            "request": "${$.json_block_to_json.request.headers}",
+            "assertions": {
+                "hdrX": "valueX"
+            }
+        },
+        {
+            "name": "body_json_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "jsonToJson",
+            "request": "${$.json_block_to_json.request.body}",
+            "assertions": {
+                "id": 1001,
+                "addresses": [
+                    {
+                        "postCode": "PXY"
+                    },
+                    {
+                        "postCode": "LMZ DDD"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "json_node_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "jsonBlockToJson",
+            "request": {
+                "headers": {
+                    "hdrX": "valueX"
+                },
+                "body": {
+                    "id": 1001,
+                    "addresses": [
+                        {
+                            "postCode": "PXY"
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "headers": {
+                    "hdrX": "valueX"
+                },
+                "body": {
+                    "id": 1001,
+                    "addresses": [
+                        {
+                            "postCode": "${$.json_block_to_json.request.body.addresses[0].postCode}"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

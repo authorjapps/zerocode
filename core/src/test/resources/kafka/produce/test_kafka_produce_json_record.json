@@ -1,0 +1,49 @@
+{
+    "scenarioName": "Produce a JSON message to a kafka topic",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-json-topic-1",
+            "operation": "produce",
+            "request": {
+                "recordType" : "JSON",
+                "records": [
+                    {
+                        "key": 101,
+                        "value": {
+                            "name" : "Jey"
+                        }
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok",
+                "recordMetadata": "$NOT.NULL"
+            }
+        },
+        {
+            "name": "onload_kafka",
+            "url": "kafka-topic:demo-json-topic-1",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType" : "JSON",
+                    "commitSync": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "size": 1,
+                "records": [
+                    {
+                        "key": 101,
+                        "value": {
+                            "name" : "Jey"
+                        }
+                    }
+
+                ]
+            }
+        }
+    ]
+}

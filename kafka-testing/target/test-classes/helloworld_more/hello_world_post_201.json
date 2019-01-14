@@ -1,0 +1,39 @@
+{
+    "scenarioName": "GIVEN- the REST end point, WHEN- I invoke POST, THEN- I will receive the 201 status with an ID",
+    "steps": [
+        {
+            "name": "create_emp",
+            "url": "/api/v1/google-uk/employees",
+            "operation": "POST",
+            "request": {
+                "body": {
+                    "id": 1000,
+                    "name": "Larry Pg",
+                    "addresses": [
+                        {
+                            "gpsLocation": "x9000-y9000z-9000-home"
+                        },
+                        {
+                            "gpsLocation": "x9000-y9000z-9000-home-off"
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "status": 201,
+                "body": {
+                    "id": 1000,
+                    "name": "Larry Pg",
+                    "addresses": [
+                        {
+                            "gpsLocation": "x9000-y9000z-9000-home"
+                        },
+                        {
+                            "gpsLocation": "x9000-y9000z-9000-home-off"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

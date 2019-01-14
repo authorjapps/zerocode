@@ -1,0 +1,41 @@
+{
+    "scenarioName": "Prouce - messages to kafka - from file(s)",
+    "steps": [
+        {
+            "name": "load_kafka_from_files",
+            "url": "kafka-topic:demo",
+            "operation": "produce",
+            "request": {
+                "produce_local_conf": {
+                    "files": [
+                        {
+                            "fileName":"kafka/pfiles/data_1of2.json"
+                            //"fileType":"RAW"
+                        }
+                    ]
+                }
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "dump_file_record_count",
+            "url": "kafka-topic:demo",
+            "operation": "consume",
+            "request": {
+                "consumerLocalConfigs": {
+                    "fileDumpTo": "target/temp/demo.txt",
+                    "commitAsync":true,
+                    "showRecordsConsumed":false,
+                    "MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS": 5
+                }
+
+            },
+            "assertions": {
+                "status": "Ok",
+                "recordCount": 1
+            }
+        }
+    ]
+}

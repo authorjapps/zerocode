@@ -1,0 +1,18 @@
+{
+  "scenarioName": "20_non_json_assert_part_string",
+  "steps": [
+    {
+      "name": "get_call",
+      "url": "/api/nonjson",
+      "operation": "GET",
+      "request": {
+
+      },
+      "assertions": {
+        "status": 200,
+        "body": "$NULL",
+        "rawBody": "$CONTAINS.STRING:non-j"
+      }
+    }
+  ]
+}

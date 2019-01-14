@@ -1,0 +1,47 @@
+{
+  "scenarioName": "Given_When_Then-Flow name",
+  "loop": 5,
+  "steps": [
+    {
+      "loop": 3,
+      "name": "StepNameWithoutSpaceEgCREATESD",
+      "url": "/persons/${STATIC.ALPHABET:3}",
+      "operation": "POST",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Cookie": "cookie_123"
+        },
+        "queryParams": {
+          "param1": "value1",
+          "param3": "${RANDOM.STRING:5}"
+        },
+        "body": {
+          "Customer": {
+            "firstName": "FIRST_NAME",
+            "lastName": "${RANDOM.STRING:3}",
+            "nickName": "${RANDOM.NUMBER}",
+            "staticName": "${STATIC.ALPHABET:5}",
+            "addresses" : [
+              {
+                 "addressLine1" : "19 Pm Road"
+              },
+              {
+                 "addressLine1" : "20 Pm Road"
+              }
+            ]
+          }
+        }
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": 1001,
+          "actualName": "${$.steps[0].request.body.Customer.staticName}",
+          "actualNameSize": "${$.steps[0].request.body.Customer.addresses.length()}"
+        }
+      }
+    }
+
+  ]
+}

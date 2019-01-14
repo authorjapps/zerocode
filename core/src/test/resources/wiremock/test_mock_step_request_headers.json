@@ -1,0 +1,20 @@
+{
+    "name": "Mock the Get Person With Request Headers",
+    "operation": "GET",
+    "url": "/google-guys/persons/p001",
+    "request" : {
+        "headers":{
+            "key": "key-001",
+            "secret": "secret-001"
+        }
+    },
+    "response": {
+        "status": 200,
+        "body": {
+            "id": "p001",
+            "source": {
+                "code": "GOOGLE.UK"
+            }
+        }
+    }
+}

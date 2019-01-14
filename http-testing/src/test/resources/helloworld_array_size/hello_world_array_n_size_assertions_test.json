@@ -1,0 +1,84 @@
+{
+    "scenarioName": "Assert array or the size in the response - so many simple ways",
+    "steps": [
+        {
+            "name": "check_array_size_way1",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "operation": "fetchDbCustomers",
+            "request": "select id, name from customers",
+            "assertions": {
+                "results.SIZE": 2
+            }
+        },
+        {
+            "name": "check_array_size_way2",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "operation": "fetchDbCustomers",
+            "request": "select id, name from customers",
+            "assertions": {
+                "results": [
+                    {
+                        "id": 1,
+                        "name": "Elon Musk"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "check_array_size_way21",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "operation": "fetchDbCustomers",
+            "request": "select id, name from customers",
+            "assertions": {
+                "results[1].name": "Jeff Bezos"
+            }
+        },
+        {
+            "name": "check_array_size_way22",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "operation": "fetchDbCustomers",
+            "request": "select id, name from customers",
+            "assertions": {
+                "results": [
+                    {
+                        "name": "Elon Musk"
+                    },
+                    {
+                        "name": "Jeff Bezos"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "check_array_size_way3",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "operation": "fetchDbCustomers",
+            "request": "select id, name from customers",
+            "assertions": {
+                "results.SIZE": "$GT.1"
+            }
+        },
+        {
+            "name": "check_array_size_way4",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "operation": "fetchDbCustomers",
+            "request": "select id, name from customers",
+            "assertions": {
+                "results.SIZE": "$LT.3"
+            }
+        },
+        {
+            "name": "check_array_size_way5",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "operation": "fetchDbCustomers",
+            "request": "select id, name from customers",
+            "assertions": {
+                "results.SIZE": "$NOT.EQ.0"
+            }
+        }
+    ]
+}

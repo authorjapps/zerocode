@@ -1,0 +1,28 @@
+{
+    "scenarioName": "Another endpoint host from properties file available in the url",
+    "steps": [
+        {
+            "name": "config",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.utils.HostConfigs",
+            "operation": "readProperties",
+            "request": "",
+            "assertions": {
+                "new_api_host": "https://api.github.com"
+            }
+        },
+        {
+            "name": "get_user_details_way2",
+            "url": "${$.config.response.new_api_host}/users/octocat",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login": "octocat",
+                    "type": "User"
+                }
+            }
+        }
+    ]
+}

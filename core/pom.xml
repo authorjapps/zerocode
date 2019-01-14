@@ -2,18 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
+        <artifactId>zerocode-tdd-parent</artifactId>
+        <groupId>org.jsmart</groupId>
+        <version>1.2.18-SNAPSHOT</version>
     </parent>
 
-    <artifactId>zerocode-tdd-parent</artifactId>
+    <artifactId>zerocode-tdd</artifactId>
     <groupId>org.jsmart</groupId>
-    <version>1.2.18-SNAPSHOT</version>
 
-    <packaging>pom</packaging>
-    <name>ZeroCode TDD Parent</name>
-    <description>zerocode tdd parent</description>
+    <packaging>jar</packaging>
+    <name>Zerocode TDD Core</name>
+    <description>Zerocode TDD framework for API test automation</description>
     <url>http://www.jsmart.org</url>
     <licenses>
         <license>
@@ -27,12 +26,6 @@
         <connection>scm:git:git@github.com:authorjapps/zerocode.git</connection>
         <developerConnection>scm:git:git@github.com:authorjapps/zerocode.git</developerConnection>
     </scm>
-
-    <modules>
-        <module>core</module>
-        <module>http-testing</module>
-        <module>kafka-testing</module>
-    </modules>
 
     <developers>
         <developer>

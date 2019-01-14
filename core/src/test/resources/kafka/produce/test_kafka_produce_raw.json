@@ -1,0 +1,66 @@
+{
+    "scenarioName": "Produce a RAW message i.e. RAW string and RAW json",
+    "steps": [
+        {
+            "name": "produce_raw_string",
+            "url": "kafka-topic:demo-raw-topic-1",
+            "operation": "produce",
+            "request": {
+                "recordType" : "RAW",
+                "records": [
+                    {
+                        "key": 101,
+                        "value": "Hello World"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok",
+                "recordMetadata": "$NOT.NULL"
+            }
+        },
+        {
+            "name": "produce_raw_json",
+            "url": "kafka-topic:demo-raw-topic-1",
+            "operation": "produce",
+            "request": {
+                "recordType" : "RAW",
+                "records": [
+                    {
+                        "key": 102,
+                        "value": "{\"name\": \"Jay Kreps\"}"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok",
+                "recordMetadata": "$NOT.NULL"
+            }
+        },
+        {
+            "name": "consume_raw",
+            "url": "kafka-topic:demo-raw-topic-1",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType" : "RAW",
+                    "commitSync": true,
+                    "maxNoOfRetryPollsOrTimeouts": 5
+                }
+            },
+            "assertions": {
+                "size": 2,
+                "records": [
+                    {
+                        "key": 101,
+                        "value": "Hello World"
+                    },
+                    {
+                        "key": 102,
+                        "value": "{\"name\": \"Jay Kreps\"}"
+                    }
+                ]
+            }
+        }
+    ]
+}

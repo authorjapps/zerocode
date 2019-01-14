@@ -1,0 +1,226 @@
+{
+    "name": "Localhost mocked aka stubbed aka fake REST Endpoints - GET POST PUT apis",
+    "apis": [
+        {
+            "name": "Sample_POST_Employee_Create",
+            "operation": "POST",
+            "url": "/api/v1/google-uk/employees",
+            "ignoreBody": true,
+            "response": {
+                "status": 201,
+                "body": {
+                    "id": 1000,
+                    "name": "Larry Pg",
+                    "addresses": [
+                        {
+                            "gpsLocation": "x9000-y9000z-9000-home"
+                        },
+                        {
+                            "gpsLocation": "x9000-y9000z-9000-home-off"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "sample POST with matching body",
+            "operation": "POST",
+            "url": "/api/v1/employees",
+            "ignoreBody": false,
+            "body": {
+                "name": "Emma",
+                "surName": "Norton"
+            },
+            "response": {
+                "status": 201,
+                "body": {
+                    "id": 39001,
+                    "ldapId": "emmanorton"
+                }
+            }
+        },
+        {
+            "name": "sample GET for Emma Norton",
+            "operation": "GET",
+            "url": "/api/v1/employees/39001",
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": 39001,
+                    "ldapId": "emmanorton",
+                    "name": "Emma",
+                    "surName": "Norton"
+                }
+            }
+        },
+        {
+            "name": "Sample_Get_Employee_by_Id",
+            "operation": "GET",
+            "url": "/api/v1/google-uk/employees/999",
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": 999,
+                    "name": "Larry P",
+                    "addresses": [
+                        {
+                            "gpsLocation": "x1000-25000-z30000"
+                        },
+                        {
+                            "gpsLocation": "x3000-y5000-z70000"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Screening - sample POST with matching body",
+            "operation": "POST",
+            "url": "/api/v1/employees/screening",
+            "ignoreBody": false,
+            "body": {
+                "empId": "EMP39001",
+                "originAddress": {
+                    "addressId":"lon-hsbc-5432",
+                    "countryOfOrigin":"UK"
+                }
+            },
+            "response": {
+                "status": 201,
+                "body": {
+                    "id": "SCRUNIQUEID5003"
+                }
+            }
+        },
+        {
+            "name": "Screening - sample GET",
+            "operation": "GET",
+            "url": "/api/v1/employees/screening/SCRUNIQUEID5003",
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": "SCRUNIQUEID5003",
+                    "empId": "EMP39001",
+                    "originAddress": {
+                        "addressId":"lon-hsbc-5432",
+                        "countryOfOrigin":"UK"
+                    }
+                }
+            }
+        },
+        {
+            "name": "Sample_Get_Created_Employee_by_Id",
+            "operation": "GET",
+            "url": "/api/v1/google-uk/employees/1000",
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": 1000,
+                    "name": "Larry Pg",
+                    "addresses": [
+                        {
+                            "gpsLocation": "x9000-y9000z-9000-home"
+                        },
+                        {
+                            "gpsLocation": "x9000-y9000z-9000-home-off"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "sample_get_api",
+            "operation": "GET",
+            "url": "/api/v1/google-uk/employees/UK1001",
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": "UK1001",
+                    "name": "Bobby Lion",
+                    "addresses": [
+                        {
+                            "line1": "HOME, London, PostCode - IG1 5TX"
+                        },
+                        {
+                            "line1": "OFFICE, Newark, ZIP-730290"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "bare_string_get",
+            "operation": "GET",
+            "url": "/api/v1/google-uk/employees/101",
+            "response": {
+                "status": 200,
+                "body": "I am emp No 101. Nothing more than this I can respond"
+            }
+        },
+        {
+            "name": "Sample_Get_Full_Employee_by_Id",
+            "operation": "GET",
+            "url": "/api/v1/employees/emp1001",
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": "emp1001",
+                    "name": "Jeff Bezos",
+                    "achievements": "Amazon",
+                    "empType": "Self Employed",
+                    "addresses": [
+                        {
+                            "type": "Office",
+                            "line1": "39 NewYork Street",
+                            "zip": "560 390"
+                        },
+                        {
+                            "type": "Home",
+                            "line1": "99 Piscataway",
+                            "zip": "560 001"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Sample_Get_Address_by_emp_id",
+            "operation": "GET",
+            "url": "/api/v1/addresses/empoyee/emp1001",
+            "response": {
+                "status": 200,
+                "body": {
+                    "empId": "emp1001",
+                    "addresses": [
+                        {
+                            "addressId": "addr-001",
+                            "type": "Office",
+                            "line1": "39 NewYork Street",
+                            "zip": "560 390"
+                        },
+                        {
+                            "addressId": "addr-002",
+                            "type": "Home",
+                            "line1": "99 Piscataway",
+                            "zip": "560 001"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Mock GET employee details including DOB",
+            "operation": "GET",
+            "url": "/api/v1/google-uk/employees/UK-LON-1002",
+            "response": {
+                "status": 200,
+                "body": {
+                    "empId": "UK-LON-1002",
+                    "city": "UK-London",
+                    "dob": "1989-07-09"
+                }
+            }
+        }
+
+    ]
+}

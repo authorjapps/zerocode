@@ -1,0 +1,41 @@
+{
+    "scenarioName": "GIVEN a SOAP end point WHEN I invoke a method with a request XML, THEN I will get the SOAP response in XML",
+    "steps": [
+        {
+            "name": "invoke_currency_conversion",
+            "url": "/CurrencyConvertor.asmx",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "text/xml; charset=utf-8",
+                    //"SOAPAction": "\"http://www.webserviceX.NET/ConversionRate\""
+                    "SOAPAction": "http://www.webserviceX.NET/ConversionRate"
+                },
+                "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <ConversionRate xmlns=\"http://www.webserviceX.NET/\">\n      <FromCurrency>AFA</FromCurrency>\n      <ToCurrency>GBP</ToCurrency>\n    </ConversionRate>\n  </soap:Body>\n</soap:Envelope>"
+            },
+            "assertions": {
+                "status": 200,
+                "rawBody": "$CONTAINS.STRING:<ConversionRateResult>-1</ConversionRateResult>"
+            }
+        },
+        {
+            "name": "response_xml_to_json",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "xmlToJson",
+            "request": "${$.invoke_currency_conversion.response.rawBody}",
+            "assertions": {
+                "soap:Envelope": {
+                    "xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+                    "xmlns:soap": "http://schemas.xmlsoap.org/soap/envelope/",
+                    "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                    "soap:Body": {
+                        "ConversionRateResponse": {
+                            "xmlns": "http://www.webserviceX.NET/",
+                            "ConversionRateResult": -1
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

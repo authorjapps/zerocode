@@ -1,0 +1,77 @@
+{
+  "scenarioName": "06_will_mock_using_wiremock_and_run_other_steps",
+  "loop": 5, //comments -- Allowed
+  "steps": [
+    {
+      "name": "GetBathRoomDetails",
+      "url": "/$MOCK",
+      "operation": "$USE.WIREMOCK", //<--- can be $USE.VIRTUOSO
+      "request": {
+        "mocks": [
+          {
+            "name": "Mock the Get Person",
+            "operation": "GET",
+            "url": "/google-guys/persons/p001",
+            "response": {
+              "status": 200,
+              "body": {
+                "id": "p001",
+                "source": {
+                  "code": "GOOGLE.UK"
+                }
+              }
+            }
+          },
+          {
+            "name": "Mock the POST Person",
+            "operation": "POST",
+            "url": "/google-guys/persons/p002",
+            "response": {
+              "status": 201,
+              "body": {
+                "id": "p002",
+                "source": {
+                  "code": "GOOGLE.IN"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "assertions": {
+        "status": 200 //<--- when all mocks have been successfully created.
+      }
+    },
+    {
+      "name": "get_person",
+      "url": "http://localhost:8888/google-guys/persons/p001",
+      "operation": "GET",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "body": {
+        }
+      },
+      "assertions": {
+        "status": 200
+      }
+    },
+    {
+      "name": "POST_Create_Person",
+      "url": "http://localhost:8888/google-guys/persons/p002",
+      "operation": "POST",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "body": {
+        }
+      },
+      "assertions": {
+        "status": 201
+      }
+    }
+
+  ]
+}

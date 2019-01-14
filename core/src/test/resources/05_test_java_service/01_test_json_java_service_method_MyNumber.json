@@ -1,0 +1,22 @@
+{
+  "scenarioName": "Given_When_Then-Flow name For Java Service",
+  "loop": 5,
+  //comments -- Allowed
+  "steps": [
+    {
+      "loop": 3,
+      "name": "javaMethodExecution", //<-- with comments
+      "url": "org.jsmart.zerocode.core.AddService",
+      "operation": "squareMyNumber",
+      "request": {
+        "number": 30
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": 1001
+        }
+      }
+    }
+  ]
+}
