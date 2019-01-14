@@ -21,7 +21,7 @@ public class KafkaSenderTest {
     public void testReadLineByLine() throws FileNotFoundException {
         List<String> lines = new ArrayList<>();
 
-        File file = new File(getClass().getClassLoader().getResource("kafka/pfiles/test_data_raw.json").getFile());
+        File file = new File(getClass().getClassLoader().getResource("kafka/pfiles/unit_test_data_raw.json").getFile());
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             //while ((line = br.readLine()) != null) {
@@ -43,7 +43,7 @@ public class KafkaSenderTest {
 
         ProducerRawRecords producerRawRecords = new ProducerRawRecords(null, null, null, "hello/test_file_raw_recs.txt");
 
-        File file = new File(getClass().getClassLoader().getResource("kafka/pfiles/test_data_raw.json").getFile());
+        File file = new File(getClass().getClassLoader().getResource("kafka/pfiles/unit_test_data_raw.json").getFile());
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             for(int i = 0; (line = br.readLine()) != null; i++) {
