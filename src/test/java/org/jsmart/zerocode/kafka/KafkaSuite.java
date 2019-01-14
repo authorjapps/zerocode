@@ -2,6 +2,7 @@ package org.jsmart.zerocode.kafka;
 
 import org.jsmart.zerocode.kafka.consume.*;
 import org.jsmart.zerocode.kafka.consume.file.KafkaConsumeDumpToFileTest;
+import org.jsmart.zerocode.kafka.consume.ksql.KafkaKsqlTest;
 import org.jsmart.zerocode.kafka.consume.negative.KafkaConsumeAvroNegativeTest;
 import org.jsmart.zerocode.kafka.customclient.KafkaProduceCustomClientTest;
 import org.jsmart.zerocode.kafka.produce.*;
@@ -33,7 +34,8 @@ import org.junit.runners.Suite;
         KafkaProduceSyncFromFileRawTest.class,
         KafkaProduceSyncFromFileJsonTest.class,
         KafkaProduceSyncWrongFileNameTest.class,
-        KafkaConsumeSeekOffsetTest.class
+        KafkaConsumeSeekOffsetTest.class,
+        KafkaKsqlTest.class
 })
 @RunWith(Suite.class)
 public class KafkaSuite {
