@@ -1,0 +1,20 @@
+# Use postgres/example user/password credentials
+# Then visit http://localhost:8080, or http://swarm-ip:8080, or http://host-ip:8080 (as appropriate).
+# Tested with adminer:4.7.0
+# How to Wiki : https://github.com/authorjapps/zerocode-docker-factory/wiki/Docker-container-for-a-Postgres-DB
+version: '3.1'
+
+services:
+  db:
+    image: postgres:9.3
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - 35432:5432
+
+  adminer:
+    image: adminer:4.7.0
+    restart: always
+    ports:
+      - 8080:8080
