@@ -59,7 +59,8 @@
                 <version>2.19.1</version>
                 <configuration>
                     <includes>
-                        <include>org.jsmart.zerocode.testhelp.tests.HelloWorldGitHubSuite.class</include>
+                        <!-- <include>org.jsmart.zerocode.testhelp.tests.HelloWorldGitHubSuite</include> -->
+                        <include>org.jsmart.zerocode.zerocodejavaexec.pojo.OrderTest</include>
                     </includes>
                 </configuration>
             </plugin>

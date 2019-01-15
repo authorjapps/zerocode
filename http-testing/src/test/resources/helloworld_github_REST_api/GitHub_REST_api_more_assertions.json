@@ -13,7 +13,7 @@
                 "body": {
                     "login" : "albertosipov",
                     "id" : 36400587
-                    //and more field or JSON object assertions can go here...
+                    // and more fields, arrays assertions etc to go here.
                 }
             }
         }
