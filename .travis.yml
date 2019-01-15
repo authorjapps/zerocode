@@ -3,12 +3,19 @@
 language: java
 
 
+
+addons:
+  sonarcloud:
+    organization: "santhoshtpixler-github" # the key of the org you chose at step #3
+    token:
+      secure: "vNyPdq6f9iswDinWFqOSEc+3awIOrt53Pr3B03Vd0qIQsMePz4/SglaPSsR+pBiPJ6l96xI+A+E70VJxPfCk0m+nWWHXUsOn72J3U1KRgTBfKrQL1AlmCgbB9MdAcRr6bsGVNFgaDz6m4bdaRhFTF5YNocGQX6XN2c+O/1C4Eb9+hheujJyb2bP+KlSzt5SGkuZzMjh463HQjLzbzDi1AZR4I7VledyYfUCnv80BSWxXn9K9yYgO+jEC9qEguduLS/KdwqnhFX2MbLRTwoqNjxV4D7ZykRc1IEp58r7/kD1HxClHFn6CN7nTCYQSyGB4Pks7FGa17t5WGPN85FdsBK+O27uqTATFsttWJx/4L7yYmEBbfRLfXwP+8H7ys03NIW4PUp+VzFy8CKDaw5gskB3xVJffJCrBuq+cVmYuZBp0grTR+CJEHRKvEpZB487Y1RrfuXInS1lU2oc1cTShIRqtMnvfsNb6NMXGWJDYf8siYLq1d9xkwCRorUQ2JtxrNQVt0fRzJua0DdSfBhLTQ3lt/Xaa5K/nOoG4zP2kSYytY0Vo+8xXz1F+SFWculMZbHq6Nek8tAv6tK7YXiVaTL9OEukxrvVI8EKUhOZ8JRMo4SXJyBKAXEMUOhFXz7oGOnaZatIxGvb5dR1Hx6BoqW45n9oJ3rCSB21UolHQr7g="
+
 #This helps to avoid downloading artefacts every time from MVN central. 
 #If you find any CI build failing due to unreflected dependency changes, kindly clear the CI cache
 cache:
   directories:
-  - $HOME/.m2
-
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
 #Mandatory for using docker and docker-compose
 services:
   - docker
@@ -19,9 +26,7 @@ before_install:
   - wget https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml
   - docker-compose -f kafka-schema-registry.yml up -d
 
-#Just compile and run tests, also print version at the beginning.
-#No need for package or install, as there is no use in creating a jar and putting them into local cache. 
-#Making use of the default install and script tag provided by the Travis.
-#Hence the following script is implicit and not needed to be configured.
-#script:
-#   - mvn install -B
+
+script:
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
