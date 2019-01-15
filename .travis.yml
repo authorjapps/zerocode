@@ -27,6 +27,10 @@ before_install:
   - docker-compose -f kafka-schema-registry.yml up -d
 
 
+env:
+  global:
+    secure: WxD/nZFQr2nM9hn+0iqam+6xwhTZfR9ZoqUCwWi9Mz5NpblXVEFelSasB5dJXUfp4CnpIaTOwTnRXarHCbIoX2btWH45W/sLR58Ye9Odd9BoR7QmiZbkD2gbJcozTgs9L0OyKqubUpgsQq17tmCAV7ZGq2KAS6gpoUe2MWjY3jes8oZUTfY0bWrYNSrk0EdlD61UQ86zy79sixL5wKL5N1IEQQ8Ys0own8IVos7tfwE7nAyS93rwgBy4C9B8k0AgPrNvFpYY7TYpvKdwncFmRE5p8PEqUe1hgMp/9g2MyTlDc5B/zphxHdlnifowoBiqv9iQ2QLSzMEO//tHIPwzRYVv6k5jwrhX33/blzu2jVOCPy3D6vnoZrFdDOa/u2ZHVyG6BnckxHI73rjguihT53uI8ATCE8rmGJ2JGuNP5yKKMLt7WODa8PQ3etn64zvp8R0+wJXiRg0sdhQAwLV0fbIDQIsUVG82cXr0sJEzCsqSkLK3LwGSuj1t2Pd+FYJ7bqpv+49gDi9LmwaPewOcHsnAy50iJx1tmHmCndy2mb9f7zX7PVcICW3JMoG02Nm3KM6dB07t1DEA6THm+0/KYjqBNyga/ESEIHfWTKusN0ddTZ6a65EfO9pDhf2A3U8V2riMQ7R9o08NT8jkpX+u7TEaYkf1iDFdozaiSx7Lz0k=
+
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
