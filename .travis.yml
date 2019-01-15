@@ -8,7 +8,7 @@ addons:
   sonarcloud:
     organization: "santhoshtpixler-github" # the key of the org you chose at step #3
     token:
-      secure: "vNyPdq6f9iswDinWFqOSEc+3awIOrt53Pr3B03Vd0qIQsMePz4/SglaPSsR+pBiPJ6l96xI+A+E70VJxPfCk0m+nWWHXUsOn72J3U1KRgTBfKrQL1AlmCgbB9MdAcRr6bsGVNFgaDz6m4bdaRhFTF5YNocGQX6XN2c+O/1C4Eb9+hheujJyb2bP+KlSzt5SGkuZzMjh463HQjLzbzDi1AZR4I7VledyYfUCnv80BSWxXn9K9yYgO+jEC9qEguduLS/KdwqnhFX2MbLRTwoqNjxV4D7ZykRc1IEp58r7/kD1HxClHFn6CN7nTCYQSyGB4Pks7FGa17t5WGPN85FdsBK+O27uqTATFsttWJx/4L7yYmEBbfRLfXwP+8H7ys03NIW4PUp+VzFy8CKDaw5gskB3xVJffJCrBuq+cVmYuZBp0grTR+CJEHRKvEpZB487Y1RrfuXInS1lU2oc1cTShIRqtMnvfsNb6NMXGWJDYf8siYLq1d9xkwCRorUQ2JtxrNQVt0fRzJua0DdSfBhLTQ3lt/Xaa5K/nOoG4zP2kSYytY0Vo+8xXz1F+SFWculMZbHq6Nek8tAv6tK7YXiVaTL9OEukxrvVI8EKUhOZ8JRMo4SXJyBKAXEMUOhFXz7oGOnaZatIxGvb5dR1Hx6BoqW45n9oJ3rCSB21UolHQr7g="
+      secure: "15jT4sLzm7cBi8zp3B7CwS7u6wb1mE4SZTqtzmkRL0CMQJJtxS5K/OAiHXs9FV26BnV75+TES8l6ytewA8CMo7eyDeGaLoWYoozoQTo9oB+5TDPc8FleL4AnIFmrHCxa+fLxXsSzs9KuztuPPaLJjpH84jsIfGc5xrwELIDUxNaKUI9TTxV92ZnnhAnayX9MQEV6ubKm2mxexpux7Xf32H48wnXtHzQ6W49hYGQjUeQkcyv9uG8PfDny8LwM8YBe32owyzyUF/JEqraoKqp6gnsRsq3FvT6nG3Zb+7nwDQ8pnqTxnwyivP+b0mpszMUGfsysRkiA7+6k8YCWee9n3sPjNqb7rSSrxyV/mvJJ7tIDRgODrdXyC3advg73Bu/WvFFdo8q7xchwvZBWK3qN4Cgvsn4JgCJxaIe1j8cqwugnvUX2TsQhqlG73KKsl2wz4P7emBPpX+nteGPKyLCl903ottQUzytE+EWMoM2bKbX6Ad0GfDBxzyBUbN6fXyYY2cWwMA+eTj0CZvP3nRQinGydjwZcbReGekT97lcjuateJeVSH81puGeLxevERbRrhwBBmYMfCbknNB4nmiuC4nWb2WxL8bsMcJVQKJBX5adDI68LJDiEJa+EWRuWQDnSAj5ZIHhXQDCTaXLhtJPufRcVfy2IQJhNIxA34pMibo0="
 
 #This helps to avoid downloading artefacts every time from MVN central. 
 #If you find any CI build failing due to unreflected dependency changes, kindly clear the CI cache
@@ -26,11 +26,6 @@ before_install:
   - wget https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml
   - docker-compose -f kafka-schema-registry.yml up -d
 
-
-env:
-  global:
-    secure: WxD/nZFQr2nM9hn+0iqam+6xwhTZfR9ZoqUCwWi9Mz5NpblXVEFelSasB5dJXUfp4CnpIaTOwTnRXarHCbIoX2btWH45W/sLR58Ye9Odd9BoR7QmiZbkD2gbJcozTgs9L0OyKqubUpgsQq17tmCAV7ZGq2KAS6gpoUe2MWjY3jes8oZUTfY0bWrYNSrk0EdlD61UQ86zy79sixL5wKL5N1IEQQ8Ys0own8IVos7tfwE7nAyS93rwgBy4C9B8k0AgPrNvFpYY7TYpvKdwncFmRE5p8PEqUe1hgMp/9g2MyTlDc5B/zphxHdlnifowoBiqv9iQ2QLSzMEO//tHIPwzRYVv6k5jwrhX33/blzu2jVOCPy3D6vnoZrFdDOa/u2ZHVyG6BnckxHI73rjguihT53uI8ATCE8rmGJ2JGuNP5yKKMLt7WODa8PQ3etn64zvp8R0+wJXiRg0sdhQAwLV0fbIDQIsUVG82cXr0sJEzCsqSkLK3LwGSuj1t2Pd+FYJ7bqpv+49gDi9LmwaPewOcHsnAy50iJx1tmHmCndy2mb9f7zX7PVcICW3JMoG02Nm3KM6dB07t1DEA6THm+0/KYjqBNyga/ESEIHfWTKusN0ddTZ6a65EfO9pDhf2A3U8V2riMQ7R9o08NT8jkpX+u7TEaYkf1iDFdozaiSx7Lz0k=
-
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar 
