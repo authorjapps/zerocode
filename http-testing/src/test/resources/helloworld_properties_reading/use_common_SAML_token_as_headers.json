@@ -1,0 +1,21 @@
+{
+    "scenarioName": "Use any common value or token or SAML token example",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "${another.new.endpoint.host}/users/octocat",
+            "operation": "GET",
+            "request": {
+                "headers":{
+                    "X-SAML": "${X-APP-SAML-TOKEN}"
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat"
+                }
+            }
+        }
+    ]
+}

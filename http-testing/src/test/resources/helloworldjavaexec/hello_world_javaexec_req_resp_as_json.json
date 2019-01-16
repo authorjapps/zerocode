@@ -1,0 +1,19 @@
+{
+    "scenarioName": "Java method request, response as JSON",
+    "steps": [
+        {
+            "name": "execute_java_method",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.OrderCreator",
+            "operation": "createOrder",
+            "request": {
+                "itemName" : "Mango",
+                "quantity" : 15000
+            },
+            "assertions": {
+                "orderId" : 1020301,
+                "itemName" : "Mango",
+                "quantity" : 15000
+            }
+        }
+    ]
+}

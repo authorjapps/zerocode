@@ -1,0 +1,47 @@
+{
+    "scenarioName": "Assert date field format and not its content etc",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/api/v1/google-uk/employees/UK-LON-1002",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "empId" : "UK-LON-1002",
+                    "city" : "UK-London",
+                    "dob" : "1989-07-09"
+                }
+            }
+        },
+        {
+            "name": "get_user_for_dob_match",
+            "url": "/api/v1/google-uk/employees/UK-LON-1002",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "dob": "$MATCHES.STRING:\\d{4}-\\d{2}-\\d{2}"
+                }
+            }
+        },
+        {
+            "name": "get_user_for_city_match",
+            "url": "/api/v1/google-uk/employees/UK-LON-1002",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "city": "$MATCHES.STRING:UK-(.*)"
+                }
+            }
+        }
+
+    ]
+}
