@@ -1,6 +1,6 @@
 ## Zerocode - TDD and BDD <img width="84"  height="103" alt="logo BnW" src="https://user-images.githubusercontent.com/12598420/46505720-e2dabb00-c829-11e8-943d-f967fa1f2a98.png"> 
 
-An open source lib enables API testing via simple declarative JSON steps - REST, SOAP and DB services
+An open source lib enables API testing via simple declarative JSON steps - REST, SOAP, Kafka and DB services
 
 > Enables to use the JSON payload structure with no manipulation needed.
 
@@ -2080,5 +2080,6 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 [json compare]: https://github.com/authorjapps/zerocode
 [spring boot integration test]: https://github.com/authorjapps/zerocode
 [json assertion]: https://github.com/authorjapps/zerocode
-[mulesoft api]: https://github.com/authorjapps/zerocode
+[mulesoft api testing]: https://github.com/authorjapps/zerocode
+[kafka stream ksql testing]: https://github.com/authorjapps/zerocode
 
