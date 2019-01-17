@@ -1,0 +1,87 @@
+{
+    "scenarioName": "Consume via KSQL query",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-ksql",
+            "operation": "load",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello, Created for KSQL demo"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "ksql_show_topics",
+            "url": "${kafka-ksql-server-fqdn}/ksql",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/vnd.ksql.v1+json; charset=utf-8",
+                    "Accept": "application/vnd.ksql.v1+json"
+                },
+                "body": {
+                    "ksql": "SHOW TOPICS;",
+                    "streamsProperties": {}
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body": [
+                    {
+                        "topics.SIZE": "$GT.0",
+                        "topics[?(@.name=='demo-ksql')].registered.SIZE": 1
+                    }
+                ]
+            }
+        },
+        {
+            "name": "ksql_list_streams",
+            "url": "${kafka-ksql-server-fqdn}/ksql",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/vnd.ksql.v1+json; charset=utf-8",
+                    "Accept": "application/vnd.ksql.v1+json"
+                },
+                "body": {
+                    "ksql": "LIST STREAMS;",
+                    "streamsProperties": {}
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body": [
+                    {
+                        "@type": "streams",
+                        "statementText": "LIST STREAMS;",
+                        "streams": []
+                    }
+                ]
+            }
+        },
+        {
+            "name": "ksql_server_info",
+            "url": "${kafka-ksql-server-fqdn}/info",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "KsqlServerInfo": {
+                        "version": "5.1.0",
+                        "kafkaClusterId": "$NOT.NULL",
+                        "ksqlServiceId": "default_"
+                    }
+                }
+            }
+        }
+    ]
+}

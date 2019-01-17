@@ -1,0 +1,31 @@
+{
+    "scenarioName": "Generate new Security Token and pass as custom header",
+    "steps": [
+        {
+            "name": "token_brewer",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.utils.TokenGenerator",
+            "operation": "generateNew",
+            "request": "any_param_or_empty",
+            "assertions": {
+                "newToken" : "$NOT.NULL"
+            }
+        },
+        {
+            "name": "get_user_with_new_token",
+            "url": "/users/octocat",
+            "operation": "GET",
+            "request": {
+                "headers":{
+                    "security_token":"${$.token_brewer.response.newToken}"
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat"
+                }
+            }
+        }
+
+    ]
+}
