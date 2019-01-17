@@ -30,12 +30,14 @@ Zerocode brings the simplicity in testing and validating APIs by eliminating rep
 It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - It goes a step further enabling you to simply reuse the test(s) from your regression pack.
 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
-[![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://user-images.githubusercontent.com/12598420/51129522-98061180-1822-11e9-914a-6ff08b8ac103.png)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.jsmart%3Azerocode-tdd-parent&metric=coverage)](https://sonarcloud.io/dashboard?id=org.jsmart%3Azerocode-tdd-parent)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=org.jsmart%3Azerocode-tdd-parent&metric=ncloc)](https://sonarcloud.io/dashboard?id=org.jsmart%3Azerocode-tdd-parent)
 [![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
 [![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 [![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeEasyTDD)
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-orange.svg)](https://sonarcloud.io/dashboard?id=org.jsmart%3Azerocode-tdd-parent)
 
 
 >Testing was _never_ so easy before.
