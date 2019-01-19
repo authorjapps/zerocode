@@ -71,7 +71,7 @@ See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-con
 
 Maven and CI 🔨
 ====
-**Latest release: [1.2.x](https://search.maven.org/search?q=zerocode-rest-bdd)** 🏹
+**Latest release: [1.2.x](https://search.maven.org/search?q=zerocode-tdd)** 🏹
 
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
 **HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
@@ -85,7 +85,7 @@ Maven dependency xml:
 ```xml
 <dependency>
     <groupId>org.jsmart</groupId>
-    <artifactId>zerocode-rest-bdd</artifactId>
+    <artifactId>zerocode-tdd</artifactId>
     <version>1.2.x</version> 
 </dependency>
 ```
@@ -137,7 +137,7 @@ Supported testing frameworks:
 
 Latest release 
 ===
-[Search in the Maven Portal](https://search.maven.org/search?q=zerocode-rest-bdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
+[Search in the Maven Portal](https://search.maven.org/search?q=zerocode-tdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-tdd)
 
 
 [More (Wiki) >>](https://github.com/authorjapps/zerocode/wiki)
@@ -174,7 +174,7 @@ Add these `two` maven dependencies:
 ```xml
 <dependency>
     <groupId>org.jsmart</groupId>
-    <artifactId>zerocode-rest-bdd</artifactId>
+    <artifactId>zerocode-tdd</artifactId>
     <version>1.2.x</version> 
     <scope>test</scope>
 </dependency>
