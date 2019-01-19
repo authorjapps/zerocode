@@ -1,6 +1,6 @@
 ## Zerocode - TDD and BDD <img width="84"  height="103" alt="logo BnW" src="https://user-images.githubusercontent.com/12598420/46505720-e2dabb00-c829-11e8-943d-f967fa1f2a98.png"> 
 
-An open source lib enables API testing via simple declarative JSON steps - REST, SOAP and DB services
+An open source lib enables API testing via simple declarative JSON steps - REST, SOAP, Kafka and DB services
 
 > Enables to use the JSON payload structure with no manipulation needed.
 
@@ -18,14 +18,17 @@ e.g. a single step below doing a 'GET' call to '/users/octocat' and asserting th
           "id": 583231,
           "login": "octocat",
           "addresses": [
-             //more...
+             // more...
           ]
       }
    }
 }
 ```
+Zerocode is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The framework manages the request payload handling and response assertions at the same time, same place. 
 
-Zerocode brings the simplicity in testing and validating APIs by eliminating repetitive code for test assertions, http calls and payload parsing. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
+It eliminates the repetitive code such as step definitions, test assertions, payload parsing and API calls such as Http, Kafka, DB Services and more. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
+
+It has got best of best ideas and practices from the community to keep it super simple and the adoption is rapidly growing among the developer/tester community. It alleviates pain and brings the simplicity in validating the APIs.
 
 It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - It goes a step further enabling you to simply reuse the test(s) from your regression pack.
 
@@ -112,7 +115,7 @@ To build any of the above projects, you can use the following command
 mvn clean install -DskipTests
 ```
 
-Upcoming Releases ⏳
+Upcoming Releases :panda_face:
 ====
 + Kafka - Testing Distributed Data Stream application (Easy and fun) 🔜 <br/>
   + Simple `produce` and `consume`
@@ -123,43 +126,49 @@ Upcoming Releases ⏳
 + OAuth2 - In Action - HelloWorld repo 🔜 <br/>
 + SAML,JWT - Examples in the HelloWorld repo 🔜 <br/>
 
-#### Latest news/releases/features 📰
-Follow us(Twitter) - 
-<a href="https://twitter.com/ZerocodeEasyTDD"><img width="57" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
+Latest news/releases/features 📰
+===
+Follow us(Twitter) 
+<a href="https://twitter.com/ZerocodeEasyTDD"><img width="52" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
 
-#### Supported testing frameworks:
+Supported testing frameworks:
+===
  * [JUnit](http://junit.org)
 
-#### Check here for the latest release- 
+Latest release 
+===
 [Search in the Maven Portal](https://search.maven.org/search?q=zerocode-rest-bdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
 
-Zerocode helps you to design better Test Cases for your business features, maintain and update them easily, avoiding sleepless nights. It is built on extending the **Junit core runners**. You simply annotate your test method with JUnit **@Test** and run like unit tests, as well optionally you can use`Suite` Runner for the CI builds. 
 
-Testing becomes an easy and effortless job due to the **simplicity** nature of JSON and the native support by popular IDEs e.g. Eclipse /IntelliJ /NetBeans etc with no extra plugin need. Your tests will not be cumbersome and complex anymore. Zerocode makes your tests independent, complete and structured, and easily maintainable by the team or the new comers. It enables you to write your `API End Point tests`, `Consumer Contract tests`, `End to End tests` as well as `Performance tests` etc, at the **speed** of writing **JUnit** tests.
-
-- Browse or clone `contract tests` examples from [here](https://github.com/authorjapps/consumer-contract-tests)
-- Browse or clone `performance tests`(load, stress) examples [here]()
+[More (Wiki) >>](https://github.com/authorjapps/zerocode/wiki)
 
 
-[More >>](https://github.com/authorjapps/zerocode/wiki)
-
-Who uses Zerocode?
---------------------
+Smart Projects using Zerocode
+===
  + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
  + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
  + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Authentication testing
 
-## REST BDD Testing Framework
+REST AND SOAP
+===
 
 Develop and test applications with TDD and BDD approach while easily building up your regression suites. 
-
-Execute your complex business scenario steps with simple declarative jsons which defines your RESTful service behaviour.
 
 ~~Testing no more a harder, slower and sleepless task~~
 
 See the [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) and [more](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldmore/JustHelloWorldMoreTest.java)
 
-## Getting started ⛹‍♂
+Kafka
+===
+Visit the page [Kafka Testing Introduction](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) for step-by-step approach.
+
+DB
+===
+Visit the page [Database Validation](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) for step-by-step approach.
+
+
+Getting started ⛹‍♂
+===
 
 Add these `two` maven dependencies:
 ```xml
