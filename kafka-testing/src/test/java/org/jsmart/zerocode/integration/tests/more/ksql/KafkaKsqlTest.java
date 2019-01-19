@@ -3,6 +3,7 @@ package org.jsmart.zerocode.integration.tests.more.ksql;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -13,6 +14,12 @@ public class KafkaKsqlTest {
     @Test
     @JsonTestCase("kafka/consume/ksql/test_ksql_query.json")
     public void testKafkaConsume_ksql() throws Exception {
+    }
+
+    @Ignore
+    @Test
+    @JsonTestCase("kafka/consume/ksql/WIP_ISSUE_test_ksql_print_records.json")
+    public void testKafkaConsume_printTopic() throws Exception {
     }
 
 }
