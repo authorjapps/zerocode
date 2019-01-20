@@ -71,7 +71,7 @@ See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-con
 
 Maven and CI 🔨
 ====
-**Latest release: [1.2.x](https://search.maven.org/search?q=zerocode-tdd)** 🏹
+**Latest release: [1.3.x](https://search.maven.org/search?q=zerocode-tdd)** 🏹
 
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
 **HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
@@ -86,7 +86,7 @@ Maven dependency xml:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-tdd</artifactId>
-    <version>1.2.x</version> 
+    <version>1.3.x</version> 
 </dependency>
 ```
 
@@ -97,6 +97,8 @@ Hello World 🙌
 
  * Quick start - [**Hello World** examples](https://github.com/authorjapps/zerocode-hello-world) <br/> 
   
+ * Quick start - [**Hello World Kafka Testing** examples](https://github.com/authorjapps/hello-kafka-stream-testing) <br/> 
+
  * Quick start - [**API Contracts testing** - Interfacing applications](https://github.com/authorjapps/consumer-contract-tests) <br/> 
  
  *  Quick start - [**Performance** testing -  Varying **Load/Stress** generation](https://github.com/authorjapps/performance-tests) <br/> 
@@ -175,7 +177,7 @@ Add these `two` maven dependencies:
 <dependency>
     <groupId>org.jsmart</groupId>
     <artifactId>zerocode-tdd</artifactId>
-    <version>1.2.x</version> 
+    <version>1.3.x</version> 
     <scope>test</scope>
 </dependency>
 
