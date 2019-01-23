@@ -62,5 +62,7 @@ services:
 
   ksql-cli:
       image: confluentinc/cp-ksql-cli:5.1.0
+      depends_on:
+        - ksql-server
       entrypoint: /bin/sh
       tty: true
