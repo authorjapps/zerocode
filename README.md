@@ -1,6 +1,19 @@
-## Zerocode - TDD and BDD <img width="84"  height="103" alt="logo BnW" src="https://user-images.githubusercontent.com/12598420/46505720-e2dabb00-c829-11e8-943d-f967fa1f2a98.png"> 
+Zerocode - TDD and BDD <img width="84"  height="103" alt="logo BnW" src="https://user-images.githubusercontent.com/12598420/46505720-e2dabb00-c829-11e8-943d-f967fa1f2a98.png"> 
+===
 
 An open source lib enables API testing via simple declarative JSON steps - REST, SOAP, Kafka and DB services
+
+Zerocode is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The framework manages the request payload handling and response assertions at the same time, same place. 
+
+Declarative Test
+===
+![landing_img_v1](https://user-images.githubusercontent.com/12598420/51731188-1b6d0180-2072-11e9-9b0c-891515d6f63b.png)
+
+It eliminates the repetitive code such as step definitions, test assertions, payload parsing and API calls such as Http, Kafka, DB Services and more. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
+
+It has got best of best ideas and practices from the community to keep it super simple and the adoption is rapidly growing among the developer/tester community. It alleviates pain and brings the simplicity in validating the APIs.
+
+It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - It goes a step further enabling you to simply reuse the test(s) from your regression pack.
 
 > Enables to use the JSON payload structure with no manipulation needed.
 
@@ -24,13 +37,6 @@ e.g. a single step below doing a 'GET' call to '/users/octocat' and asserting th
    }
 }
 ```
-Zerocode is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The framework manages the request payload handling and response assertions at the same time, same place. 
-
-It eliminates the repetitive code such as step definitions, test assertions, payload parsing and API calls such as Http, Kafka, DB Services and more. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
-
-It has got best of best ideas and practices from the community to keep it super simple and the adoption is rapidly growing among the developer/tester community. It alleviates pain and brings the simplicity in validating the APIs.
-
-It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - It goes a step further enabling you to simply reuse the test(s) from your regression pack.
 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
 [![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://user-images.githubusercontent.com/12598420/51129522-98061180-1822-11e9-914a-6ff08b8ac103.png)
@@ -128,7 +134,7 @@ Upcoming Releases :panda_face:
 + OAuth2 - In Action - HelloWorld repo 🔜 <br/>
 + SAML,JWT - Examples in the HelloWorld repo 🔜 <br/>
 
-Latest news/releases/features 📰
+Latest news/releases/features
 ===
 Follow us(Twitter) 
 <a href="https://twitter.com/ZerocodeEasyTDD"><img width="52" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
