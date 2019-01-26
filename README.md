@@ -77,7 +77,7 @@ See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-con
 
 Maven and CI 🔨
 ====
-**Latest release: [1.2.x](https://search.maven.org/search?q=zerocode-rest-bdd)** 🏹
+**Latest release: [1.3.x](https://search.maven.org/search?q=zerocode-tdd)** 🏹
 
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
 **HelloWorld:** [Calling a GitHub api](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld/hello_world_status_ok_assertions.json) step and executing [Test](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) code. <br/>
@@ -91,8 +91,8 @@ Maven dependency xml:
 ```xml
 <dependency>
     <groupId>org.jsmart</groupId>
-    <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.2.x</version> 
+    <artifactId>zerocode-tdd</artifactId>
+    <version>1.3.x</version> 
 </dependency>
 ```
 
@@ -103,6 +103,8 @@ Hello World 🙌
 
  * Quick start - [**Hello World** examples](https://github.com/authorjapps/zerocode-hello-world) <br/> 
   
+ * Quick start - [**Hello World Kafka Testing** examples](https://github.com/authorjapps/hello-kafka-stream-testing) <br/> 
+
  * Quick start - [**API Contracts testing** - Interfacing applications](https://github.com/authorjapps/consumer-contract-tests) <br/> 
  
  *  Quick start - [**Performance** testing -  Varying **Load/Stress** generation](https://github.com/authorjapps/performance-tests) <br/> 
@@ -143,7 +145,7 @@ Supported testing frameworks:
 
 Latest release 
 ===
-[Search in the Maven Portal](https://search.maven.org/search?q=zerocode-rest-bdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-rest-bdd)
+[Search in the Maven Portal](https://search.maven.org/search?q=zerocode-tdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-tdd)
 
 
 [More (Wiki) >>](https://github.com/authorjapps/zerocode/wiki)
@@ -180,8 +182,8 @@ Add these `two` maven dependencies:
 ```xml
 <dependency>
     <groupId>org.jsmart</groupId>
-    <artifactId>zerocode-rest-bdd</artifactId>
-    <version>1.2.x</version> 
+    <artifactId>zerocode-tdd</artifactId>
+    <version>1.3.x</version> 
     <scope>test</scope>
 </dependency>
 
@@ -2095,5 +2097,6 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 [json compare]: https://github.com/authorjapps/zerocode
 [spring boot integration test]: https://github.com/authorjapps/zerocode
 [json assertion]: https://github.com/authorjapps/zerocode
-[mulesoft api]: https://github.com/authorjapps/zerocode
+[mulesoft api testing]: https://github.com/authorjapps/zerocode
+[kafka stream ksql testing]: https://github.com/authorjapps/zerocode
 

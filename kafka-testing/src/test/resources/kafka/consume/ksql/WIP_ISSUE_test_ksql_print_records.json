@@ -1,0 +1,40 @@
+{
+    "scenarioName": "Print Topic Records via KSQL query",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-ksql",
+            "operation": "produce",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello, Created for KSQL demo"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "ksql_print_records",
+            "url": "${kafka-ksql-server-fqdn}/query",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/vnd.ksql.v1+json; charset=utf-8",
+                    "Accept": "application/vnd.ksql.v1+json"
+                },
+                "body": {
+                    "ksql": "print 'demo-ksql' from beginning;",
+                    "streamsProperties": {}
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body": "$NOT.NULL"
+            }
+        }
+    ]
+}
