@@ -16,6 +16,7 @@ public class KafkaKsqlTest {
     public void testKafkaConsume_ksql() throws Exception {
     }
 
+    @Ignore ("Hangs indefinitely, Raised issue in Confluent Repo - ksql#2386")
     @Test
     @JsonTestCase("kafka/consume/ksql/WIP_ISSUE_no_comma_test_ksql_print_topic_records.json")
     public void testKafkaConsume_printTopicRawNoComma() throws Exception {
