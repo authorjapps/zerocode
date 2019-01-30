@@ -1,4 +1,4 @@
-Zerocode - TDD and BDD <img width="118"  height="107" alt="logo BnW" src="https://user-images.githubusercontent.com/12598420/51963858-bbed6800-245c-11e9-9c8b-86ac5dec07de.png"> 
+<img width="118"  height="106" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode - TDD and BDD 
 ===
 
 An open source lib enables API testing via simple declarative JSON steps - REST, SOAP, Kafka and DB services
