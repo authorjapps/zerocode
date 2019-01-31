@@ -5,7 +5,7 @@ An open source lib enables API testing via simple declarative JSON steps - REST,
 
 Zerocode is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The framework manages the request payload handling and response assertions at the same time, same place. 
 
-![zcode_v3](https://user-images.githubusercontent.com/12598420/51785366-b804d180-214e-11e9-8b97-ab2e55b2dcfc.png)
+![zcode_v3](https://user-images.githubusercontent.com/12598420/52038211-68951b80-2529-11e9-8fbb-f35f2f3b43d5.png)
 
 
 It eliminates the repetitive code such as step definitions, test assertions, payload parsing and API calls such as Http, Kafka, DB Services and more. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
