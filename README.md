@@ -1,20 +1,23 @@
-<img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode TDD
+<img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
 ===
 
 An open source lib enables API testing via simple declarative JSON steps - REST, SOAP, Kafka and DB services
 
 Zerocode is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The framework manages the request payload handling and response assertions at the same time, same place. 
 
-![zcode_v3](https://user-images.githubusercontent.com/12598420/52038211-68951b80-2529-11e9-8fbb-f35f2f3b43d5.png)
+Declarative Test - TDD and BDD
+===
+
+<img width="810"  height="639" alt="ZerocodeLand" src="https://user-images.githubusercontent.com/12598420/52103949-15ca6b00-25e0-11e9-9d7b-b809a24f3659.png">
 
 
 It eliminates the repetitive code such as step definitions, test assertions, payload parsing and API calls such as Http, Kafka, DB Services and more. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
 
 It has got best of best ideas and practices from the community to keep it super simple and the adoption is rapidly growing among the developer/tester community. It alleviates pain and brings the simplicity in validating the APIs.
 
-It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - It goes a step further enabling you to simply reuse the test(s) from your regression pack.
+It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - enabling us to simply reuse the test(s) from our regression pack.
 
-> Enables to use the JSON payload structure with no manipulation needed.
+> Enables us to use the JSON payload structure with no manipulation needed.
 
 ```javaScript
 e.g. a single step below doing a 'GET' call to '/users/octocat' and asserting the 'GET' response.
@@ -48,7 +51,7 @@ e.g. a single step below doing a 'GET' call to '/users/octocat' and asserting th
 
 >Testing was _never_ so easy before.
 
-e.g. Your below User-Journey or ACs(Acceptance Criterias) or a scenario,
+e.g. Our below User-Journey or ACs(Acceptance Criterias) or a scenario,
 ```java
 AC1:
 GIVEN- the POST api end point '/api/v1/users' to create an user,     
@@ -84,7 +87,7 @@ Maven and CI 🔨
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 
-> The purpose of Zerocode lib is to make your API tests easy to **write**, easy to **change**, easy to **share**.
+> The purpose of Zerocode lib is to make our API tests easy to **write**, easy to **change**, easy to **share**.
 
 Maven dependency xml:
 ```xml
@@ -117,7 +120,7 @@ Hello World 🙌
  * Quick start - [**Kotlin Integration** - A Simple Kotlin Application - Dev and Test Best Practice](https://github.com/BeTheCodeWithYou/SpringBoot-Kotlin) <br/>
 
 
-To build any of the above projects, you can use the following command
+To build any of the above projects, we can use the following command
 ```
 mvn clean install -DskipTests
 ```
@@ -159,7 +162,7 @@ Smart Projects using Zerocode
 REST AND SOAP
 ===
 
-Develop and test applications with TDD and BDD approach while easily building up your regression suites. 
+Develop and test applications with TDD and BDD approach while easily building up our regression suites. 
 
 ~~Testing no more a harder, slower and sleepless task~~
 
@@ -194,7 +197,7 @@ Add these `two` maven dependencies:
 </dependency>
 ```
 
-Then annotate your `JUnit` test method pointing to the JSON file as below and `run` as a unit test. 
+Then annotate our `JUnit` test method pointing to the JSON file as below and `run` as a unit test. 
 That's it. Done.
 
 ```java
@@ -209,7 +212,7 @@ public class JustHelloWorldTest {
     }
 }
 ```
-Where, You just need the below `hello_world_status_ok_assertions.json`.
+Where, We just need the below `hello_world_status_ok_assertions.json`.
 
 ```javaScript
 {
@@ -241,7 +244,7 @@ web.application.endpoint.port=443
 web.application.endpoint.context=
 ```
 
-And the assertThat(...), GIVEN-WHEN-THEN steps become implicit. You don't have to deal with them explicitly as the framework takes care of these complexities and makes the testing very very easy <br/>
+And the assertThat(...), GIVEN-WHEN-THEN steps become implicit. We don't have to deal with them explicitly as the framework handles these complexities and makes the testing very very easy <br/>
 
 ~~GIVEN- the GitHub REST api GET end point,~~ <br/>
 ~~WHEN- I invoke the API,~~ <br/>
