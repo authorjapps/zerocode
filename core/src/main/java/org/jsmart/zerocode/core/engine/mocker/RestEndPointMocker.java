@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.engine.mocker;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -33,7 +34,10 @@ public class RestEndPointMocker {
         restartWireMock(mockPort);
 
         mockSteps.getMocks().forEach(mockStep -> {
-            String jsonBodyRequest = mockStep.getResponse().get("body").toString();
+            JsonNode jsonNodeResponse = mockStep.getResponse();
+            JsonNode jsonNodeBody = jsonNodeResponse.get("body");
+            String jsonBodyRequest = (jsonNodeBody != null)?jsonNodeBody.toString():jsonNodeResponse.get("xmlBody").asText();
+
 
             if("GET".equals(mockStep.getOperation())){
                 LOGGER.info("*****WireMock- Mocking the GET endpoint");
