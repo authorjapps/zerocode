@@ -7,7 +7,6 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -20,7 +19,6 @@ import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
-import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
 import org.jukito.TestModule;
@@ -48,6 +46,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithWireMock;
+import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.getWireMockServer;
 
 @RunWith(JukitoRunner.class)
 public class RestEndPointMockerTest {
@@ -80,7 +80,7 @@ public class RestEndPointMockerTest {
 
     @Test
     public void willDeserializeA_VanilaFlow() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/01_wire_mock_end_point_will_respond_to_get_call.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/wiremock_end_point_json_body.json");
         ScenarioSpec flowDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         assertThat(flowDeserialized, notNullValue());
@@ -113,7 +113,7 @@ public class RestEndPointMockerTest {
         // WireMock wireMock = new WireMock(9073);
         // WireMock.configureFor(9073);
 
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/01_wire_mock_end_point_will_respond_to_get_call.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/wiremock_end_point_json_body.json");
         ScenarioSpec flowDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
         MockSteps mockSteps = smartUtils.getMapper().readValue(flowDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
 
@@ -144,7 +144,7 @@ public class RestEndPointMockerTest {
 
         WireMock.configureFor(9073);
 
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/01_wire_mock_end_point_will_respond_to_get_call.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/wiremock_end_point_json_body.json");
         ScenarioSpec flowDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
         MockSteps mockSteps = smartUtils.getMapper().readValue(flowDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
 
@@ -175,11 +175,74 @@ public class RestEndPointMockerTest {
     }
 
     @Test
+    public void willMockRequest_jsonBody() throws Exception{
+
+        int WIRE_MOCK_TEST_PORT = 9077;
+
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/wiremock_end_point_json_body.json");
+        ScenarioSpec flowDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+        MockSteps mockSteps = smartUtils.getMapper().readValue(flowDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
+
+        final MockStep mockPost = mockSteps.getMocks().get(1);
+        final String reqBody = mockPost.getRequest().get("body").toString(); //"{ \"id\" : \"p002\" }";
+        String respBody = mockPost.getResponse().get("body").toString();
+
+        createWithWireMock(mockSteps, WIRE_MOCK_TEST_PORT);
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost request = new HttpPost("http://localhost:" + WIRE_MOCK_TEST_PORT + mockPost.getUrl());
+        request.addHeader("Content-Type", "application/json");
+        StringEntity entity = new StringEntity(reqBody);
+        request.setEntity(entity);
+        HttpResponse response = httpClient.execute(request);
+
+        final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        System.out.println("### response: \n" + responseBodyActual);
+
+        assertThat(response.getStatusLine().getStatusCode(), is(201));
+        JSONAssert.assertEquals(respBody, responseBodyActual, true);
+
+        getWireMockServer().stop();
+    }
+    // --------------------------------------------------------------
+    // ISSUE-202 - https://github.com/authorjapps/zerocode/issues/202
+    // - xmlBody for SOAP mocking
+    // - Fixed by - arunvelusamyd
+    // --------------------------------------------------------------
+    @Test
+    public void willMockRequest_xmlBody() throws Exception{
+        int WIRE_MOCK_TEST_PORT = 9077;
+
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/wiremock_end_point_soap_xml_body.json");
+        ScenarioSpec flowDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+        MockSteps mockSteps = smartUtils.getMapper().readValue(flowDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
+
+        final MockStep mockPost = mockSteps.getMocks().get(0);
+        //final String reqBody = mockPost.getRequest().get("body").toString();
+        String mockedXmlBody = mockPost.getResponse().get("xmlBody").toString();
+
+        createWithWireMock(mockSteps, WIRE_MOCK_TEST_PORT);
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost request = new HttpPost("http://localhost:" + WIRE_MOCK_TEST_PORT + mockPost.getUrl());
+        HttpResponse response = httpClient.execute(request);
+
+        final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        System.out.println("### response: \n" + responseBodyActual);
+
+        assertThat(response.getStatusLine().getStatusCode(), is(200));
+        assertThat(responseBodyActual, containsString("<SOAP-ENV:Envelope xmlns:SOAP-ENV"));
+        assertThat(responseBodyActual, containsString("<ns2:description>It is a tablet computers designed, developed and marketed by Apple.</ns2:description>"));
+
+        getWireMockServer().stop();
+    }
+
+    @Test
     public void willMockAGetRequestWith_headers() throws Exception{
 
         WireMock.configureFor(9073);
 
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/01_wire_mock_end_point_will_respond_to_get_call.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/wiremock_end_point_json_body.json");
         ScenarioSpec flowDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
         MockSteps mockSteps = smartUtils.getMapper().readValue(flowDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
 
