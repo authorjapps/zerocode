@@ -1,0 +1,28 @@
+{
+    "scenarioName": "soap xmlBody mocking",
+    "steps": [
+        {
+            "name": "mock_soap_xml_response",
+            "url": "/$MOCK",
+            "operation": "$USE.WIREMOCK",
+            "request": {
+                "mocks": [
+                    {
+                        "name": "mocking_SOAP_to_get_device_details",
+                        "operation": "POST",
+                        "url": "/ws",
+                        "request": {
+                        },
+                        "response": {
+                            "status": 200,
+                            "xmlBody": "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><ns2:GetDeviceDetailsResponse xmlns:ns2=\"http://flexy.com/device\"><ns2:DeviceDetails><ns2:id>1</ns2:id><ns2:name>iPad</ns2:name><ns2:description>It is a tablet computers designed, developed and marketed by Apple.</ns2:description></ns2:DeviceDetails></ns2:GetDeviceDetailsResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>"
+                        }
+                    }
+                ]
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+    ]
+}
