@@ -98,6 +98,10 @@ Maven dependency xml:
 </dependency>
 ```
 
+> _Jump to [Getting Started](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-)_
+
+<br/>
+
 Hello World 🙌
 ====
 
@@ -125,41 +129,26 @@ To build any of the above projects, we can use the following command
 mvn clean install -DskipTests
 ```
 
+<br/>
+
 Upcoming Releases :panda_face:
 ====
 + Kafka - Testing Distributed Data Stream application (Easy and fun) 🔜 <br/>
-  + Simple `produce` and `consume`
-  + `produce` and `consume` RAW messages
+  + Multi Topic `produce` and `consume` 🔜 <br/>
+  + KSQL Integration 🔜 <br/>
   + `produce` and `consume` JSON messages
   + Test `avro` schema registry along with REST Proxy
-+ Kafka - HelloWorld examples and Wiki on dockerized testinng 🔜 <br/>
-+ OAuth2 - In Action - HelloWorld repo 🔜 <br/>
-+ SAML,JWT - Examples in the HelloWorld repo 🔜 <br/>
++ WebHook and WebSocket HelloWord Examples
 
-Latest news/releases/features
-===
-Follow us(Twitter) 
-<a href="https://twitter.com/ZerocodeEasyTDD"><img width="52" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
+<br/>
 
 Supported testing frameworks:
 ===
  * [JUnit](http://junit.org)
 
-Latest release 
-===
-[Search in the Maven Portal](https://search.maven.org/search?q=zerocode-tdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-tdd)
+<br/>
 
-
-[More (Wiki) >>](https://github.com/authorjapps/zerocode/wiki)
-
-
-Smart Projects using Zerocode
-===
- + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
- + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Authentication testing
-
-REST AND SOAP
+REST AND SOAP Testing
 ===
 
 Develop and test applications with TDD and BDD approach while easily building up our regression suites. 
@@ -168,14 +157,50 @@ Develop and test applications with TDD and BDD approach while easily building up
 
 See the [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) and [more](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldmore/JustHelloWorldMoreTest.java)
 
-Kafka
+<br/>
+
+Kafka Testing
 ===
 Visit the page [Kafka Testing Introduction](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) for step-by-step approach.
 
-DB
+#### Current Release Covers
++ Kafka - Testing Distributed Data Stream application (Easy and fun) <br/>
+  + Simple `produce` and `consume`
+  + `produce` and `consume` RAW messages
+  + `produce` and `consume` JSON messages
+  + Test `avro` schema registry along with REST Proxy
++ Kafka - HelloWorld examples and Wiki on dockerized testinng  <br/>
+
+<br/>
+
+DataBase(DB) Testing
 ===
 Visit the page [Database Validation](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) for step-by-step approach.
 
+<br/>
+
+Smart Projects using Zerocode
+===
+ + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
+ + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Authentication testing
+
+<br/>
+
+Latest release 
+===
+[Search in the Maven Portal](https://search.maven.org/search?q=zerocode-tdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-tdd)
+
+[More (Wiki) >>](https://github.com/authorjapps/zerocode/wiki)
+
+<br/>
+
+Latest news/releases/features
+===
+Follow us(Twitter) 
+<a href="https://twitter.com/ZerocodeEasyTDD"><img width="52" alt="download" src="https://user-images.githubusercontent.com/5318345/45001240-22bf4000-afe9-11e8-8695-f6791b69e07c.png"></a>
+
+<br/>
 
 Getting started ⛹‍♂
 ===
