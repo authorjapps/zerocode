@@ -3,6 +3,8 @@ package org.jsmart.zerocode.core.report;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.markuputils.CodeLanguage;
+import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -93,7 +95,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         treeReports.forEach(thisReport -> {
 
             thisReport.getResults().forEach(thisScenario -> {
-                ExtentTest test = extentReports.createTest(thisScenario.getScenarioName());
+                ExtentTest test = extentReports.createTest(onlyScenarioName(thisScenario.getScenarioName()));
                 test.assignCategory(DEFAULT_REGRESSION_CATEGORY);
 
                 test.assignAuthor(optionalAuthor(thisScenario.getScenarioName()));
@@ -103,16 +105,17 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     test.getModel().setEndTime(utilDateOf(thisStep.getResponseTimeStamp()));
 
                     final Status testStatus = thisStep.getResult().equals(RESULT_PASS) ? Status.PASS : Status.FAIL;
-                    test.createNode(thisStep.getName(), TEST_STEP_CORRELATION_ID + " "
-                            + thisStep.getCorrelationId()).log(testStatus, thisStep.getName()
-                            + " has " + thisStep.getResult()
-                            + ". \n Search in the log file in 'target/logs' folder for-  " + TEST_STEP_CORRELATION_ID + "  \n"
-                            + thisStep.getCorrelationId() + "\n"
-                            + ", url:" + thisStep.getUrl() + "\n"
-                            + "\n .See the entire Request, Response and Assertions at a single place. "
-                            + "Copy paste this content into an email and share with the interested stakeholders."
-                    );
-
+					
+                    ExtentTest step = test.createNode(thisStep.getName(), TEST_STEP_CORRELATION_ID + " " + thisStep.getCorrelationId());
+                 
+                    if(testStatus.equals(Status.PASS)) {
+                    	step.pass(thisStep.getResult());
+                    }else {
+                    	step.info(MarkupHelper.createCodeBlock(thisStep.getOperation() + "\t" + thisStep.getUrl()));
+                    	step.info(MarkupHelper.createCodeBlock(thisStep.getRequest(), CodeLanguage.JSON));
+                        step.info(MarkupHelper.createCodeBlock(thisStep.getResponse(), CodeLanguage.JSON));
+                    	step.fail(MarkupHelper.createCodeBlock(thisStep.getResult()));
+                    }
                     extentReports.flush();
                 });
 
@@ -135,7 +138,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
             String linkCodeToTargetSpikeChartHtml =
                     String.format("<code>&nbsp;&nbsp;<a href='%s' style=\"color: #006; background: #ff6;\"> %s </a></code>",
                     spikeChartFileName,
-                    LINK_LABEL_NAME);;
+                    LINK_LABEL_NAME);
 
             ExtentReportsFactory.reportName(reportName + linkCodeToTargetSpikeChartHtml);
         }
@@ -161,6 +164,16 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         }
 
         return authorName;
+    }
+    
+    protected String onlyScenarioName(String scenarioName) {
+    	
+    	int index = scenarioName.indexOf(AUTHOR_MARKER);
+    	if(index == -1) {
+    		return scenarioName;
+    	}else {
+    		return scenarioName.substring(0, index -1); 
+    	}
     }
 
     @Override

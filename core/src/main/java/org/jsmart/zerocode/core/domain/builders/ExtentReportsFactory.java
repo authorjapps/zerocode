@@ -2,9 +2,6 @@ package org.jsmart.zerocode.core.domain.builders;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
-import com.aventstack.extentreports.reporter.configuration.ChartLocation;
-import com.aventstack.extentreports.reporter.configuration.Theme;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -36,7 +33,7 @@ public class ExtentReportsFactory {
         return extentReports;
     }
 
-    public static void attachSystemInfo() {
+    public static void attachSystemInfo() {	
         systemProperties = getSystemProperties();
         final String osName = systemProperties.get("os.name");
         final String osArchitecture = systemProperties.get("os.arch");
@@ -53,12 +50,9 @@ public class ExtentReportsFactory {
     public static ExtentHtmlReporter createExtentHtmlReporter(String reportFileName) {
         extentHtmlReporter = new ExtentHtmlReporter(reportFileName);
 
-        extentHtmlReporter.config().setChartVisibilityOnOpen(false);
-        extentHtmlReporter.config().setTheme(Theme.STANDARD);
 
         extentHtmlReporter.config().setDocumentTitle(REPORT_TITLE_DEFAULT);
         extentHtmlReporter.config().setReportName(REPORT_DISPLAY_NAME_DEFAULT);
-        extentHtmlReporter.config().setTestViewChartLocation(ChartLocation.TOP);
 
         return extentHtmlReporter;
     }
@@ -96,11 +90,4 @@ public class ExtentReportsFactory {
         return extentHtmlReporter.config().getReportName();
     }
 
-    public static void chartVisibilityOnOpen(boolean chartVisibilityOnOpen) {
-        extentHtmlReporter.config().setChartVisibilityOnOpen(chartVisibilityOnOpen);
-    }
-
-    public static void getChartVisibilityOnOpen(boolean chartVisibilityOnOpen) {
-        extentHtmlReporter.config().getChartVisibilityOnOpen();
-    }
 }

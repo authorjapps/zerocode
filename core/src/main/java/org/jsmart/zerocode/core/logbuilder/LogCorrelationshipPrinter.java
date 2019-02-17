@@ -57,7 +57,7 @@ public class LogCorrelationshipPrinter {
 
         result = result != null ? result : false;
 
-        ZeroCodeReportStep zeroCodeReportStep = ZeroCodeReportStepBuilder.newInstance()
+        ZeroCodeReportStepBuilder zeroCodeReportStep = ZeroCodeReportStepBuilder.newInstance()
                 //.request(requestLogBuilder.request) //TODO
                 //.response(responseLogBuilder.response) //TODO
                 //.assertions()
@@ -67,12 +67,18 @@ public class LogCorrelationshipPrinter {
                 .result(result == true? RESULT_PASS : RESULT_FAIL)
                 .url(requestLogBuilder.getUrl())
                 .operation(requestLogBuilder.getMethod())
+                .result(responseLogBuilder.getAssertion())
                 .requestTimeStamp(requestLogBuilder.getRequestTimeStamp())
                 .responseTimeStamp(responseLogBuilder.responseTimeStamp)
-                .responseDelay(responseDelay)
-                .build();
+                .responseDelay(responseDelay);
+        if (this.result) {
+        	zeroCodeReportStep.result(RESULT_PASS);
+		}else{
+			zeroCodeReportStep.response(responseLogBuilder.getResponse());
+			zeroCodeReportStep.request(requestLogBuilder.getRequest());
+		}
 
-        return zeroCodeReportStep;
+        return zeroCodeReportStep.build();
     }
 
     public ResponseLogBuilder aResponseBuilder() {
