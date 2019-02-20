@@ -59,8 +59,18 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
         List<Class<?>> argumentTypes = javaExecutor.argumentTypes(serviceName, methodName);
 
         try {
-            Object request = objectMapper.readValue(requestJson, argumentTypes.get(0));
-            Object result = javaExecutor.execute(serviceName, methodName, request);
+            Object result;
+
+            if (argumentTypes == null || argumentTypes.size() == 0) {
+
+                result = javaExecutor.execute(serviceName, methodName);
+
+            } else {
+
+                Object request = objectMapper.readValue(requestJson, argumentTypes.get(0));
+                result = javaExecutor.execute(serviceName, methodName, request);
+
+            }
 
             final String resultJson = objectMapper.writeValueAsString(result);
 
