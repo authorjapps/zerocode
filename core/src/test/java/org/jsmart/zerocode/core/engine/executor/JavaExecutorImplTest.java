@@ -52,6 +52,19 @@ public class JavaExecutorImplTest {
     }
 
     @Test
+    public void willExecuteJsonRequestForJavaMethod_noParam() throws Exception {
+        String scenariosJsonAsString = SmartUtils.readJsonAsString("05_test_java_service/02_test_json_java_service_method_no_param.json");
+        final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
+
+        String serviceName = scenarioSpec.getSteps().get(0).getUrl();
+        String methodName = scenarioSpec.getSteps().get(0).getOperation();
+
+        Object result = defaultJavaExecutor.execute(serviceName, methodName, null);
+
+        assertThat(result, is(30));
+    }
+
+    @Test
     public void willExecuteJsonRequestFor_java_method() throws Exception {
         String scenariosJsonAsString = SmartUtils.readJsonAsString("05_test_java_service/01_test_json_java_service_method_Integer.json");
         final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
@@ -66,6 +79,7 @@ public class JavaExecutorImplTest {
 
         assertThat(result, is(65025));
     }
+
     @Test
     public void willExecuteJsonRequestFor_CustomObject_java_method() throws Exception {
         String scenariosJsonAsString = SmartUtils.readJsonAsString("05_test_java_service/01_test_json_java_service_method_MyNumber.json");

@@ -11,19 +11,25 @@ public class AddService {
         return i + i1;
     }
 
-    public Integer square(Integer number){
+    public Integer square(Integer number) {
 
         return number * number;
     }
 
-    public Integer squareMyNumber(MyNumber myNumber){
+    public Integer squareMyNumber(MyNumber myNumber) {
         logger.info("Calculating Square of " + myNumber.getNumber());
         return myNumber.getNumber() * myNumber.getNumber();
     }
 
+    public Integer anInteger() {
+        logger.info("Returning a number ");
+
+        return 30;
+    }
+
 }
 
-class MyNumber{
+class MyNumber {
     Integer number;
 
     public Integer getNumber() {

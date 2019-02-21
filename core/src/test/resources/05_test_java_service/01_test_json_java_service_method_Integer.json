@@ -10,10 +10,6 @@
       "operation": "square",
       "request": "255", //<-- Because this is as good as premitive, not an Object type
       "assertions": {
-        "status": 201,
-        "body": {
-          "id": 1001
-        }
       }
     }
   ]
