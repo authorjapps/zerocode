@@ -1,5 +1,5 @@
 {
-    "scenarioName": "Will Mock some End Points via WireMock and Test the end points using Zerocode",
+    "scenarioName": "@@Santhosh - Will Mock some End Points via WireMock and Test the end points using Zerocode",
     "steps": [
         {
             "name": "setup_mocks",
@@ -27,7 +27,7 @@
         },
         //------------- All mocking done at this point via WireMock ---------------
 
-        //------------- Let's verify the end points by writing the following small tests ------------
+        //------------- Let's verify the end points by writing the following step ------------
         {
             "name": "invoke_currency_conversion",
             "url": "/soap/CurrencyConvertor",
