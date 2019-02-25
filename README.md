@@ -1,5 +1,6 @@
 <img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
 ===
+> _Test automation was never so easy before._
 
 An open source lib enables API testing via simple declarative JSON steps - REST, SOAP, Kafka and DB services
 
@@ -48,8 +49,6 @@ e.g. a single step below doing a 'GET' call to '/users/octocat' and asserting th
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 [![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeEasyTDD)
 
-
->Testing was _never_ so easy before.
 
 e.g. Our below User-Journey or ACs(Acceptance Criterias) or a scenario,
 ```java
