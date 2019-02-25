@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
 
@@ -52,7 +53,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImplE2ETest {
             assertThat(rawJsonReport.getResults().get(0).getSteps().size(), is(2));
 
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getName(), is("step1"));
-            assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getResult(), is("FAILED"));
+            assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getResult(), is(not("PASSED")));
 
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(1).getName(), is("step2"));
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(1).getResult(), is("PASSED"));

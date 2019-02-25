@@ -227,11 +227,18 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         );
 
                         // logging assertion
-                        logCorrelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
 
                         List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createAssertersFrom(resolvedAssertionJson);
                         List<AssertionReport> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
 
+                        if(!failureResults.isEmpty()) {
+                        	StringBuilder builder = new StringBuilder();
+                        	failureResults.forEach(f -> { builder.append(f.toString() + "\n"); });
+                        	logCorrelationshipPrinter.assertion(builder.toString());
+                        }else {
+                        	
+                        	logCorrelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
+                        }
                         // --------------------------------------------------------------------------------
                         // Non dependent requests into a single JSON file (Issue-167 - Feature Implemented)
                         // --------------------------------------------------------------------------------
