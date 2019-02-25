@@ -95,7 +95,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         treeReports.forEach(thisReport -> {
 
             thisReport.getResults().forEach(thisScenario -> {
-                ExtentTest test = extentReports.createTest(onlyScenarioName(thisScenario.getScenarioName()));
+                ExtentTest test = extentReports.createTest(thisScenario.getScenarioName());
                 test.assignCategory(DEFAULT_REGRESSION_CATEGORY);
 
                 test.assignAuthor(optionalAuthor(thisScenario.getScenarioName()));
