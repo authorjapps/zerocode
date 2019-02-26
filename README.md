@@ -2,14 +2,14 @@
 ===
 > _Test automation was never so easy before._
 
-An open source lib enables API testing via simple declarative JSON steps - REST, SOAP, Kafka and DB services
+An open source lib enables API testing via simple declarative JSON steps - [REST, SOAP](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) and [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor)
 
-Zerocode is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The framework manages the request payload handling and response assertions at the same time, same place. 
+Zerocode is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the request payload handling and response assertions at the same time, same place. 
 
 Declarative Test - TDD and BDD
 ===
 
-<img width="810"  height="639" alt="ZerocodeLand" src="https://user-images.githubusercontent.com/12598420/52103949-15ca6b00-25e0-11e9-9d7b-b809a24f3659.png">
+![declarative_reduced](https://user-images.githubusercontent.com/12598420/53393304-ee26b280-3993-11e9-8522-983635c054d7.png)
 
 
 It eliminates the repetitive code such as step definitions, test assertions, payload parsing and API calls such as Http, Kafka, DB Services and more. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
