@@ -22,6 +22,7 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
 import org.jukito.TestModule;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -201,6 +202,38 @@ public class RestEndPointMockerTest {
 
         assertThat(response.getStatusLine().getStatusCode(), is(201));
         JSONAssert.assertEquals(respBody, responseBodyActual, true);
+
+        getWireMockServer().stop();
+    }
+
+    @Test
+    public void willMockRequest_respond_with_contentType() throws Exception{
+
+        int WIRE_MOCK_TEST_PORT = 9077;
+
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("wiremock_integration/wiremock_end_point_json_body.json");
+        ScenarioSpec flowDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+        MockSteps mockSteps = smartUtils.getMapper().readValue(flowDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
+
+        final MockStep mockGetRequest = mockSteps.getMocks().get(0);
+        String respBody = mockGetRequest.getResponse().get("body").toString();
+
+        createWithWireMock(mockSteps, WIRE_MOCK_TEST_PORT);
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet request = new HttpGet("http://localhost:" + WIRE_MOCK_TEST_PORT + mockGetRequest.getUrl());
+        request.addHeader("key", "key-007");
+        request.addHeader("secret", "secret-007");
+        HttpResponse response = httpClient.execute(request);
+
+        final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        System.out.println("### response: \n" + responseBodyActual);
+
+        assertThat(response.getStatusLine().getStatusCode(), is(200));
+        JSONAssert.assertEquals(respBody, responseBodyActual, true);
+
+        Assert.assertEquals("Content-Type", response.getEntity().getContentType().getName());
+        Assert.assertEquals("\"application/json\"", response.getEntity().getContentType().getValue());
 
         getWireMockServer().stop();
     }
