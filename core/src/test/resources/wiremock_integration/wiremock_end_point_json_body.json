@@ -19,6 +19,9 @@
                         },
                         "response": {
                             "status": 200,
+                            "headers" : {
+                                "Content-Type" : "application/json"
+                            },
                             "body": {
                                 "id": "p001",
                                 "source": {

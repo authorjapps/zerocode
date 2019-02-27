@@ -109,10 +109,13 @@ public class RestEndPointMocker {
     }
 
     private static ResponseDefinitionBuilder responseBuilder(MockStep mockStep, String jsonBodyRequest) {
-        final ResponseDefinitionBuilder responseBuilder = aResponse()
-                .withStatus(mockStep.getResponse().get("status").asInt())
-                //.withHeader("Content-Type", APPLICATION_JSON) //Can be XMl also for SOAP end points
-                .withBody(jsonBodyRequest);
+        ResponseDefinitionBuilder responseBuilder = aResponse()
+                .withStatus(mockStep.getResponse().get("status").asInt());
+        JsonNode headers = mockStep.getResponse().get("headers");
+        JsonNode contentType = headers != null?headers.get("Content-Type"):null;
+        responseBuilder = contentType != null?
+                responseBuilder.withHeader("Content-Type", contentType.toString()).withBody(jsonBodyRequest):
+                responseBuilder.withBody(jsonBodyRequest);
 
         return responseBuilder;
     }
