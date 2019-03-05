@@ -1,12 +1,12 @@
 <img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
 ===
-> _Test automation was never so easy before._
+> _Automated API testing was never so easy before._
 
-An open source lib enables API testing via simple declarative JSON steps - [REST, SOAP](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) and [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor)
+Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST, SOAP](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) and [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor). It solves the fuss with simple declarative JSON steps.
 
-Zerocode is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the request payload handling and response assertions at the same time, same place. 
+It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath#path-examples). 
 
-Declarative Test - TDD and BDD
+Declarative Test - TDD and BDD 
 ===
 
 ![declarative_reduced](https://user-images.githubusercontent.com/12598420/53393304-ee26b280-3993-11e9-8522-983635c054d7.png)
