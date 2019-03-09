@@ -6,7 +6,6 @@
   * [Scope](#scope)
   * [Enforcement](#enforcement)
   * [Attribution](#attribution)
-# Contributor Covenant Code of Conduct
 
 # Contributor Covenant Code of Conduct
 
