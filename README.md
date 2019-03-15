@@ -2,15 +2,41 @@
 ===
 > _Automated API testing was never so easy before._
 
-Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST, SOAP](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) and [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor). It solves the fuss with simple declarative JSON steps.
+Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more.
 
 It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath#path-examples). 
+
+@UseHttpClient
+===
+`@UseHttpClient` enables us to use any project specific custom Http client. But this is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
+
+@ZeroCodeUnitRunner
+===
+`ZeroCodeUnitRunner` is an extended JUnit runner which enables us to run a single or more test-case from a test class.
+e.g.
+```java
+@RunWith(ZeroCodeUnitRunner.class)
+public class GitHubHelloWorldTest {
+   ...
+}   
+```
+
+@ZeroCodePackageRunner
+===
+`ZeroCodePackageRunner` is an extended JUnit runner which enables us to run a pack/suite of tests from a root package level.
+e.g.
+```java
+@RunWith(ZeroCodePackageRunner.class)
+@TestPackageRoot("helloworld_github_REST_api") //<--- Root of the package to pick all tests including sub-folders
+public class HelloWorldGitHubSuite {
+}
+
+```
 
 Declarative Test - TDD and BDD 
 ===
 
 ![declarative_reduced](https://user-images.githubusercontent.com/12598420/53393304-ee26b280-3993-11e9-8522-983635c054d7.png)
-
 
 It eliminates the repetitive code such as step definitions, test assertions, payload parsing and API calls such as Http, Kafka, DB Services and more. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
 
