@@ -9,6 +9,13 @@ It is a light-weight, simple and extensible open-source framework for writing te
 @UseHttpClient
 ===
 `@UseHttpClient` enables us to use any project specific custom Http client. But this is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
+e.g.
+```java
+@UseHttpClient(CustomHttpClient.class)
+public class HelloWorldGitHubSuite {
+   ...
+}
+```
 
 @ZeroCodeUnitRunner
 ===
