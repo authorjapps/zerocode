@@ -2,13 +2,13 @@
 ===
 > _Automated API testing was never so easy before._
 
-Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more.
+Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. Jump to the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section to explore more.
 
-It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath#path-examples). 
+It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
-@UseHttpClient
+Using Custom Http Client
 ===
-`@UseHttpClient` enables us to use any project specific custom Http client. But this is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
+`@UseHttpClient` enables us to use any project specific custom Http client. See an example [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldCustomHttpClientSuite.java).
 e.g.
 ```java
 @UseHttpClient(CustomHttpClient.class)
@@ -16,48 +16,55 @@ public class HelloWorldGitHubSuite {
    ...
 }
 ```
+But this is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
 
-@ZeroCodeUnitRunner
+Running a Single Scenario Test
 ===
-`ZeroCodeUnitRunner` is an extended JUnit runner which enables us to run a single or more test-case from a test class.
+`ZeroCodeUnitRunner` is the JUnit runner which enables us to run a single or more test-cases from a Java test-class.
 e.g.
 ```java
 @RunWith(ZeroCodeUnitRunner.class)
 public class GitHubHelloWorldTest {
-   ...
+
+   @Test
+   @JsonTestCase("screening_tests/test_happy_flow.json")
+   public void testCrudOperation(){
+   }
+   
 }   
 ```
 
-@ZeroCodePackageRunner
+Running a Suite of Tests
 ===
-`ZeroCodePackageRunner` is an extended JUnit runner which enables us to run a pack/suite of tests from a root package level.
+`ZeroCodePackageRunner` is the JUnit runner which enables us to run a pack/suite of tests from the test resources folder.
 e.g.
 ```java
+@TestPackageRoot("screening_tests") //<--- Root of the package to pick all tests including sub-folders
 @RunWith(ZeroCodePackageRunner.class)
-@TestPackageRoot("helloworld_github_REST_api") //<--- Root of the package to pick all tests including sub-folders
-public class HelloWorldGitHubSuite {
+public class ScreeningTestSuite {
+   ...
 }
 
 ```
 
-Declarative Test - TDD and BDD 
+Declarative Test-Case - Hooking BDD Scenario Steps
 ===
 
 ![declarative_reduced](https://user-images.githubusercontent.com/12598420/53393304-ee26b280-3993-11e9-8522-983635c054d7.png)
 
-It eliminates the repetitive code such as step definitions, test assertions, payload parsing and API calls such as Http, Kafka, DB Services and more. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
+It eliminates the repetitive code such as Java step definitions, test assertions, payload parsing, API calls such as Http, Kafka, DB Services and much more. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
 
 It has got best of best ideas and practices from the community to keep it super simple and the adoption is rapidly growing among the developer/tester community. It alleviates pain and brings the simplicity in validating the APIs.
 
-It also helps in mocking/stubbing interfacing APIs during the testing cycle. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - enabling us to simply reuse the test(s) from our regression pack.
+It also helps in mocking/stubbing interfacing APIs during the testing cycle in a declarative-fashion as a [test-step](https://github.com/authorjapps/zerocode/blob/master/README.md#using-wiremock-for-mocking-dependent-end-points) as well as [standalone](https://github.com/authorjapps/api-mock-maker) mock-server deployed locally or into cloud. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - enabling us to simply reuse the test(s) from our regression pack.
 
-> Enables us to use the JSON payload structure with no manipulation needed.
+> The beauty is it enables us to use the JSON payload structure with no manipulation needed.
 
 ```javaScript
 e.g. a single step below doing a 'GET' call to '/users/octocat' and asserting the 'GET' response.
 
 {
-   "name": "get_user_step", 
+   "name": "step1", 
    "url": "/users/octocat", 
    "operation": "GET",      
    "request": {},           
@@ -72,6 +79,13 @@ e.g. a single step below doing a 'GET' call to '/users/octocat' and asserting th
       }
    }
 }
+
+Here the host and port are maintained in a properties file to enable easy environment-switching.
+
+host.properties
+---------------
+web.application.endpoint.host=https://api.github.com
+web.application.endpoint.port=443
 ```
 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
@@ -137,7 +151,21 @@ Maven dependency xml:
 Hello World 🙌
 ====
 
-#### Clone or download the below quick-start repos to run them in local IDE or maven command. 
+In a typical TDD approach, Zerocode is used in various phases of a project to pass though the quality gates. 
+This makes the TDD cycle very very easy, clean and efficient.
+e.g.
++ End to End Testing
++ Performance Testing
++ Integration Testing
++ Dev Build/In-Memory Testing
++ SIT Build
++ Contract Test Build
++ Manual Testing like usual REST clients(Postman or Insomnia etc)
++ DataBase Integrity Testing
++ API Mocking/Service Virtualization
+
+
+Clone or download the below quick-start repos to run these from your local IDE or maven. 
 
  * Quick start - [**Hello World** examples](https://github.com/authorjapps/zerocode-hello-world) <br/> 
   
