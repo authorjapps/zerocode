@@ -6,11 +6,22 @@ Zerocode makes it easy to create and maintain automated tests with absolute mini
 
 It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
+
+[![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
+[![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://user-images.githubusercontent.com/12598420/51129522-98061180-1822-11e9-914a-6ff08b8ac103.png)
+[![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
+[![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
+[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
+[![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
+[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeEasyTDD)
+
+
 Using Custom Http Client
 ===
 `@UseHttpClient` enables us to use any project specific custom Http client. See an example [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldCustomHttpClientSuite.java).
 e.g.
 ```java
+@TargetEnv("app_sit1.properties")
 @UseHttpClient(CustomHttpClient.class)
 public class HelloWorldGitHubSuite {
    ...
@@ -23,6 +34,7 @@ Running a Single Scenario Test
 `ZeroCodeUnitRunner` is the JUnit runner which enables us to run a single or more test-cases from a Java test-class.
 e.g.
 ```java
+@TargetEnv("app_sit1.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class GitHubHelloWorldTest {
 
@@ -39,6 +51,7 @@ Running a Suite of Tests
 `ZeroCodePackageRunner` is the JUnit runner which enables us to run a pack/suite of tests from the test resources folder.
 e.g.
 ```java
+@TargetEnv("app_sit1.properties")
 @TestPackageRoot("screening_tests") //<--- Root of the package to pick all tests including sub-folders
 @RunWith(ZeroCodePackageRunner.class)
 public class ScreeningTestSuite {
@@ -47,7 +60,7 @@ public class ScreeningTestSuite {
 
 ```
 
-Declarative Test-Case - Hooking BDD Scenario Steps
+Declarative TestCase - Hooking BDD Scenario Steps
 ===
 
 ![declarative_reduced](https://user-images.githubusercontent.com/12598420/53393304-ee26b280-3993-11e9-8522-983635c054d7.png)
@@ -87,15 +100,6 @@ host.properties
 web.application.endpoint.host=https://api.github.com
 web.application.endpoint.port=443
 ```
-
-[![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
-[![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://user-images.githubusercontent.com/12598420/51129522-98061180-1822-11e9-914a-6ff08b8ac103.png)
-[![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
-[![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
-[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
-[![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
-[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeEasyTDD)
-
 
 e.g. Our below User-Journey or ACs(Acceptance Criterias) or a scenario,
 ```java
@@ -208,11 +212,6 @@ Supported testing frameworks:
 
 <br/>
 
-REST AND SOAP Testing
-===
-
-Develop and test applications with TDD and BDD approach while easily building up our regression suites. 
-
 ~~Testing no more a harder, slower and sleepless task~~
 
 See the [HelloWorldTest](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworld/JustHelloWorldTest.java) and [more](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldmore/JustHelloWorldMoreTest.java)
@@ -233,7 +232,7 @@ Visit the page [Kafka Testing Introduction](https://github.com/authorjapps/zeroc
 
 <br/>
 
-DataBase(DB) Testing
+DataBase(DB) Integration Testing
 ===
 Visit the page [Database Validation](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) for step-by-step approach.
 
@@ -247,7 +246,7 @@ Smart Projects using Zerocode
 
 <br/>
 
-Latest release 
+Maven Dependencies 
 ===
 [Search in the Maven Portal](https://search.maven.org/search?q=zerocode-tdd) or [View in Maven repo](https://mvnrepository.com/artifact/org.jsmart/zerocode-tdd)
 
