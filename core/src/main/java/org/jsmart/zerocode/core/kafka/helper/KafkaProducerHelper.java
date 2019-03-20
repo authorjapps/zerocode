@@ -22,23 +22,25 @@ import java.util.Properties;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
 import static org.jsmart.zerocode.core.kafka.common.CommonConfigs.BOOTSTRAP_SERVERS;
 import static org.jsmart.zerocode.core.kafka.error.KafkaMessageConstants.NO_RECORD_FOUND_TO_SEND;
+import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
 
 public class KafkaProducerHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaProducerHelper.class);
     private static final Gson gson = new GsonSerDeProvider().get();
     private static final ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
-    public static Producer<Long, String> createProducer(String bootStrapServers, String producerPropertyFile) {
-
+    public  static Producer<Long, String> createProducer(String bootStrapServers, String producerPropertyFile) {
         try (InputStream propsIs = Resources.getResource(producerPropertyFile).openStream()) {
             Properties properties = new Properties();
             properties.load(propsIs);
             properties.put(BOOTSTRAP_SERVERS, bootStrapServers);
 
+            resolveValuePlaceHolders(properties);
+
             return new KafkaProducer(properties);
 
         } catch (IOException e) {
-            throw new RuntimeException("Exception while reading kafka producer properties" + e);
+            throw new RuntimeException("Exception while reading kafka producer properties - " + e);
         }
     }
 
@@ -81,5 +83,16 @@ public class KafkaProducerHelper {
             return RAW;
         }
     }
+
+    private static void resolveValuePlaceHolders(Properties properties) {
+        properties.keySet().forEach(key -> {
+            String value = properties.getProperty(key.toString());
+            String resolvedValue = resolveKnownTokens(value);
+            if(!value.equals(resolvedValue)){
+                properties.put(key, resolvedValue);
+            }
+        });
+    }
+
 
 }

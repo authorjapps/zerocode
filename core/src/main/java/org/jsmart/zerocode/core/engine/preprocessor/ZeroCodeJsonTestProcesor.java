@@ -25,7 +25,7 @@ public interface ZeroCodeJsonTestProcesor {
 
     String resolveStringJson(String requestJsonAsString, String resolvedScenarioState);
 
-    List<String> getAllTokens(String requestJsonAsString);
+    String resolveKnownTokensAndProperties(String requestJsonOrAnyString);
 
     String resolveJsonPaths(String resolvedFromTemplate, String jsonString);
 
