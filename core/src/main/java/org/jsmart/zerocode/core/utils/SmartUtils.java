@@ -17,15 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.Charset.defaultCharset;
@@ -150,27 +142,6 @@ public class SmartUtils {
 
     public ObjectMapper getMapper() {
         return mapper;
-    }
-
-    /**
-     * This method was introduced later,
-     * But Framework uses- ZeroCodeJsonTestProcesorImpl#getAllTokens(java.lang.String)
-     *
-     * @param aString - Containing the pattern
-     * @return List of strings matching the pattern
-     */
-    public static List<String> getAllTokens(String aString) {
-
-        Pattern pattern = Pattern.compile("\\$\\{(.+?)\\}");
-        Matcher matcher = pattern.matcher(aString);
-
-        List<String> keyTokens = new ArrayList<>();
-
-        while (matcher.find()) {
-            keyTokens.add(matcher.group(1));
-        }
-
-        return keyTokens;
     }
 
     public static String resolveToken(String stringWithToken, Map<String, String> paramMap) {

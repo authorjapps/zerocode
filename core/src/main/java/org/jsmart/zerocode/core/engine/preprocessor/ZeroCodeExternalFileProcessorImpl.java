@@ -29,9 +29,9 @@ import org.slf4j.Logger;
 import java.util.List;
 import java.util.Map;
 
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesorImpl.JSON_PAYLOAD_FILE;
-import static org.jsmart.zerocode.core.utils.SmartUtils.getAllTokens;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.JSON_PAYLOAD_FILE;
 import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -160,7 +160,7 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
 
     private String getJsonFilePhToken(String valueString) {
         if (valueString != null) {
-            List<String> allTokens = getAllTokens(valueString);
+            List<String> allTokens = getTestCaseTokens(valueString);
             if (allTokens != null && !allTokens.isEmpty()) {
                 return allTokens.get(0);
             }
@@ -170,7 +170,7 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
 
     boolean checkDigNeeded(Step thisStep) throws JsonProcessingException {
         String stepJson = objectMapper.writeValueAsString(thisStep);
-        List<String> allTokens = getAllTokens(stepJson);
+        List<String> allTokens = getTestCaseTokens(stepJson);
 
         return allTokens.toString().contains(JSON_PAYLOAD_FILE);
     }
