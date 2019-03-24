@@ -1,8 +1,11 @@
 package org.jsmart.zerocode.core.runner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
@@ -35,6 +38,9 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsScenarioRunner {
 
     private static final Logger LOGGER = getLogger(ZeroCodeMultiStepsScenarioRunnerImpl.class);
+
+    private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
+
 
     @Inject
     private ZeroCodeJsonTestProcesor zeroCodeJsonTestProcesor;
@@ -109,6 +115,15 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                     thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
 
+                     if(thisStep.getStepFile()!=null){
+                          stepId = thisStep.getId();
+                          stepFileName = thisStep.getStepFile().asText();
+                         try {
+                             thisStep = objectMapper.treeToValue(thisStep.getStepFile(),Step.class);
+                         } catch (JsonProcessingException e) {
+                             e.printStackTrace();
+                         }
+                     }
                     final String requestJsonAsString = thisStep.getRequest().toString();
 
                     StepExecutionState stepExecutionState = new StepExecutionState();
@@ -154,6 +169,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                         .step(thisStepName)
                                         .url(serviceName)
                                         .method(operationName)
+                                        .id(stepId)
                                         .request(prettyPrintJson(resolvedRequestJson));
 
                                 executionResult = serviceExecutor.executeRESTService(serviceName, operationName, resolvedRequestJson);
@@ -165,6 +181,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                         .relationshipId(logPrefixRelationshipId)
                                         .requestTimeStamp(requestTimeStamp)
                                         .step(thisStepName)
+                                        .id(stepId)
                                         .url(serviceName)
                                         .method(operationName)
                                         .request(prettyPrintJson(resolvedRequestJson));
@@ -184,6 +201,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                         .step(thisStepName)
                                         .url(serviceName)
                                         .method(operationName)
+                                        .id(stepId)
                                         .request(prettyPrintJson(resolvedRequestJson));
 
                                 String topicName = serviceName.substring(KAFKA_TOPIC.length());
@@ -196,6 +214,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                         .relationshipId(logPrefixRelationshipId)
                                         .requestTimeStamp(requestTimeStamp)
                                         .step(thisStepName)
+                                        .id(stepId)
                                         .url(serviceName)
                                         .method(operationName)
                                         .request(prettyPrintJson(resolvedRequestJson));

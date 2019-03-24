@@ -13,6 +13,8 @@ public class RequestLogBuilder {
     private String request;
     private String stepName;
     private Integer loop;
+    private String id;
+
 
     @JsonCreator
     public RequestLogBuilder() {
@@ -53,6 +55,12 @@ public class RequestLogBuilder {
         return this;
     }
 
+    public RequestLogBuilder id(String id){
+        this.id = id;
+        return this;
+    }
+
+
     public LocalDateTime getRequestTimeStamp() {
         return requestTimeStamp;
     }
@@ -81,11 +89,22 @@ public class RequestLogBuilder {
         return loop;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
+
     @Override
     public String toString() {
         return relationshipId +
                 "\n*requestTimeStamp:" + requestTimeStamp +
                 "\nstep:" + stepName +
+                "\nid:" + id +
                 "\nurl:" + url +
                 "\nmethod:" + method +
                 "\nrequest:\n" + request;

@@ -18,7 +18,22 @@ public class Step {
     private final String url;
     private JsonNode request;
     private JsonNode assertions;
+    private String step;
 
+    @JsonProperty("id")
+    private String id;
+
+    @JsonProperty("stepFile")
+    private JsonNode stepFile;
+
+
+    public String getStep() {
+        return step;
+    }
+
+    public void setStep(String step) {
+        this.step = step;
+    }
 
     public Integer getLoop() {
         return loop;
@@ -42,6 +57,22 @@ public class Step {
 
     public JsonNode getAssertions() {
         return assertions;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public JsonNode getStepFile() {
+        return stepFile;
+    }
+
+    public void setStepFile(JsonNode stepFile) {
+        this.stepFile = stepFile;
     }
 
     @JsonCreator
