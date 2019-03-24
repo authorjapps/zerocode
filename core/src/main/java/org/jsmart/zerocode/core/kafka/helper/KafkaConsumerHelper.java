@@ -29,6 +29,7 @@ import static java.lang.Long.parseLong;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.*;
+import static org.jsmart.zerocode.core.kafka.common.KafkaCommonUtils.resolveValuePlaceHolders;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 public class KafkaConsumerHelper {
@@ -41,6 +42,8 @@ public class KafkaConsumerHelper {
             Properties properties = new Properties();
             properties.load(propsIs);
             properties.put("bootstrap.servers", bootStrapServers);
+
+            resolveValuePlaceHolders(properties);
 
             final Consumer consumer = new KafkaConsumer(properties);
             consumer.subscribe(Collections.singletonList(topic));

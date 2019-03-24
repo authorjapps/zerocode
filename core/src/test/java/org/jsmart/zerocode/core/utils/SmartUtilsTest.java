@@ -21,6 +21,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 
 @RunWith(JukitoRunner.class)
 //@UseModules(ApplicationMainModule.class) //<--- Only if you dont pass any value to it's constructor
@@ -99,12 +100,12 @@ public class SmartUtilsTest {
     public void willEvaluatePlaceHolder() throws Exception {
 
         String aString = "Hello_${WORLD}";
-        List<String> placeHolders = SmartUtils.getAllTokens(aString);
+        List<String> placeHolders = getTestCaseTokens(aString);
         Assert.assertThat(placeHolders.size(), is(1));
         Assert.assertThat(placeHolders.get(0), is("WORLD"));
 
         aString = "Hello_${$.step_name}";
-        placeHolders = SmartUtils.getAllTokens(aString);
+        placeHolders = getTestCaseTokens(aString);
         Assert.assertThat(placeHolders.size(), is(1));
         Assert.assertThat(placeHolders.get(0), is("$.step_name"));
 
@@ -114,11 +115,11 @@ public class SmartUtilsTest {
     public void testNullOrEmptyString_withPlaceHolders() throws Exception {
 
         String aString = "";
-        List<String> placeHolders = SmartUtils.getAllTokens(aString);
+        List<String> placeHolders = getTestCaseTokens(aString);
         Assert.assertThat(placeHolders.size(), is(0));
 
         aString = "Hello_";
-        placeHolders = SmartUtils.getAllTokens(aString);
+        placeHolders = getTestCaseTokens(aString);
         Assert.assertThat(placeHolders.size(), is(0));
     }
 

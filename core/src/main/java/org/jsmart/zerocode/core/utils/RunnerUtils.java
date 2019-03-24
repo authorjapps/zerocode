@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jsmart.zerocode.core.utils.SmartUtils.getAllTokens;
 import static org.jsmart.zerocode.core.utils.SmartUtils.getEnvPropertyValue;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 
 /**
  * This code is used by Unit and Package runner.
@@ -30,7 +30,7 @@ public class RunnerUtils {
 
         String envPropNameWithPrefix = envProperty.value();
 
-        List<String> allTokens = getAllTokens(envPropNameWithPrefix);
+        List<String> allTokens = getTestCaseTokens(envPropNameWithPrefix);
 
         if(allTokens.size() >= 1 && null != getEnvPropertyValue(allTokens.get(0))){
 
