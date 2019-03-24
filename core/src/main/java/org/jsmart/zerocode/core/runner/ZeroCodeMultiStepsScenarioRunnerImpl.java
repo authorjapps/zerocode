@@ -115,13 +115,14 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                     thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
 
+                    String stepId="";
+
                      if(thisStep.getStepFile()!=null){
                           stepId = thisStep.getId();
-                          stepFileName = thisStep.getStepFile().asText();
                          try {
                              thisStep = objectMapper.treeToValue(thisStep.getStepFile(),Step.class);
                          } catch (JsonProcessingException e) {
-                             e.printStackTrace();
+                             LOGGER.error("\n### Executing Scenario -->> Count No: " + e.getMessage());
                          }
                      }
                     final String requestJsonAsString = thisStep.getRequest().toString();
