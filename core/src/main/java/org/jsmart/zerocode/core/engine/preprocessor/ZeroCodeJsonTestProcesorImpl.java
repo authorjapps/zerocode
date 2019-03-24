@@ -24,20 +24,14 @@ import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.jsmart.zerocode.core.engine.assertion.*;
-import org.jsmart.zerocode.core.utils.SmartUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static java.lang.String.format;
-import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
+import static org.jsmart.zerocode.core.utils.TokenUtils.*;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
@@ -47,36 +41,9 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     final List<String> propertyKeys = new ArrayList<>();
     final Properties properties = new Properties();
 
-    /*
-     * General place holders
-     */
-    public static final String JSON_PAYLOAD_FILE = "JSON.FILE:";
-
-    private static final String PREFIX_ASU = "ASU";
-    private static final String RANDOM_NUMBER = "RANDOM.NUMBER";
-    private static final String RANDOM_STRING_PREFIX = "RANDOM.STRING:";
-    private static final String STATIC_ALPHABET = "STATIC.ALPHABET:";
-    private static final String LOCALDATE_TODAY = "LOCAL.DATE.TODAY:";
-    private static final String LOCALDATETIME_NOW = "LOCAL.DATETIME.NOW:";
-    private static final String XML_FILE = "XML.FILE:";
-    private static final String RANDOM_UU_ID = "RANDOM.UUID";
-    private static final String RECORD_DUMP = "RECORD.DUMP:";
-
-    private static final List<String> availableTokens = Arrays.asList(
-            PREFIX_ASU,
-            RANDOM_NUMBER,
-            RANDOM_STRING_PREFIX,
-            STATIC_ALPHABET,
-            LOCALDATE_TODAY,
-            LOCALDATETIME_NOW,
-            XML_FILE,
-            RANDOM_UU_ID,
-            RECORD_DUMP
-    );
-
-    /*
-     * Assertion place holders
-     */
+    // -----------------------
+    // Assertion place holders
+    // -----------------------
     public static final String ASSERT_VALUE_NOT_NULL = "$NOT.NULL";
     public static final String ASSERT_VALUE_NULL = "$NULL";
     public static final String ASSERT_VALUE_EMPTY_ARRAY = "$[]";
@@ -89,7 +56,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_VALUE_GREATER_THAN = "$GT.";
     public static final String ASSERT_VALUE_LESSER_THAN = "$LT.";
     public static final String ASSERT_PATH_VALUE_NODE = "$";
-    private static final String RAW_BODY = ".rawBody";
+    public static final String RAW_BODY = ".rawBody";
 
     private final ObjectMapper mapper;
     private final String hostFileName;
@@ -103,69 +70,28 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
     @Override
     public String resolveStringJson(String requestJsonOrAnyString, String scenarioStateJson) {
-        Map<String, Object> parammap = new HashMap<>();
-
-        final List<String> allTokens = getAllTokens(requestJsonOrAnyString);
-        allTokens.forEach(runTimeToken -> {
-            availableTokens.forEach(inStoreToken -> {
-                if (runTimeToken.startsWith(inStoreToken)) {
-                    if (runTimeToken.startsWith(RANDOM_NUMBER)) {
-                        parammap.put(runTimeToken, System.currentTimeMillis() + "");
-
-                    } else if (runTimeToken.startsWith(RANDOM_STRING_PREFIX)) {
-                        int length = Integer.parseInt(runTimeToken.substring(RANDOM_STRING_PREFIX.length()));
-                        parammap.put(runTimeToken, createRandomAlphaString(length));
-
-                    } else if (runTimeToken.startsWith(STATIC_ALPHABET)) {
-                        int length = Integer.parseInt(runTimeToken.substring(STATIC_ALPHABET.length()));
-                        parammap.put(runTimeToken, createStaticAlphaString(length));
-
-                    } else if (runTimeToken.startsWith(LOCALDATE_TODAY)) {
-                        String formatPattern = runTimeToken.substring(LOCALDATE_TODAY.length());
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
-                        parammap.put(runTimeToken, LocalDate.now().format(formatter));
-
-                    } else if (runTimeToken.startsWith(LOCALDATETIME_NOW)) {
-                        String formatPattern = runTimeToken.substring(LOCALDATETIME_NOW.length());
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
-                        parammap.put(runTimeToken, LocalDateTime.now().format(formatter));
-
-                    } else if (runTimeToken.startsWith(XML_FILE)) {
-                        String xmlFileResource = runTimeToken.substring(XML_FILE.length());
-                        final String xmlString = getXmlContent(xmlFileResource);
-                        // Used escapeJava, do not use escapeXml as it replaces
-                        // with GT LT etc ie what exactly you don't want
-                        parammap.put(runTimeToken, escapeJava(xmlString));
-
-                    } else if (runTimeToken.startsWith(RANDOM_UU_ID)) {
-                        parammap.put(runTimeToken, randomUUID().toString());
-                    }
-                }
-            });
-
-            if (isPropertyKey(runTimeToken)) {
-                parammap.put(runTimeToken, properties.get(runTimeToken));
-            }
-
-        });
-
-        StrSubstitutor sub = new StrSubstitutor(parammap);
-        String resolvedFromTemplate = sub.replace(requestJsonOrAnyString);
-
+        String resolvedFromTemplate = resolveKnownTokensAndProperties(requestJsonOrAnyString);
         return resolveJsonPaths(resolvedFromTemplate, scenarioStateJson);
     }
 
     @Override
-    public List<String> getAllTokens(String requestJsonAsString) {
-        List<String> keyTokens = new ArrayList<>();
+    public String resolveKnownTokensAndProperties(String requestJsonOrAnyString) {
+        Map<String, Object> paramMap = new HashMap<>();
 
-        Pattern pattern = Pattern.compile("\\$\\{(.+?)\\}");
-        Matcher matcher = pattern.matcher(requestJsonAsString);
-        while (matcher.find()) {
-            keyTokens.add(matcher.group(1));
-        }
+        final List<String> testCaseTokens = getTestCaseTokens(requestJsonOrAnyString);
 
-        return keyTokens;
+        testCaseTokens.forEach(runTimeToken -> {
+            populateParamMap(paramMap, runTimeToken);
+
+            if (isPropertyKey(runTimeToken)) {
+                paramMap.put(runTimeToken, properties.get(runTimeToken));
+            }
+
+        });
+
+        StrSubstitutor sub = new StrSubstitutor(paramMap);
+
+        return sub.replace(requestJsonOrAnyString);
     }
 
     @Override
@@ -217,7 +143,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public List<String> getAllJsonPathTokens(String requestJsonAsString) {
         List<String> jsonPaths = new ArrayList<>();
 
-        final List<String> allTokens = getAllTokens(requestJsonAsString);
+        final List<String> allTokens = getTestCaseTokens(requestJsonAsString);
         allTokens.forEach(thisToken -> {
             if (thisToken.startsWith("$.")) {
                 jsonPaths.add(thisToken);
@@ -388,44 +314,6 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
         });
 
         return failedReports;
-    }
-
-    private String createRandomAlphaString(int length) {
-        StringBuilder builder = new StringBuilder();
-        Random r = new Random();
-        for (int i = 0; i < length; i++) {
-            builder.append((char) ('a' + r.nextInt(26)));
-        }
-        String randomString = builder.toString();
-        return randomString;
-    }
-
-    private String createStaticAlphaString(int length) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            builder.append((char) ('a' + i));
-
-            /*
-             * This will repeat after A to Z
-             */
-            i = i >= 26 ? 0 : i;
-        }
-
-        return builder.toString();
-    }
-
-    public static List<String> getAvailableTokens() {
-        return availableTokens;
-    }
-
-    public String getXmlContent(String xmlFileResource) {
-        try {
-            return SmartUtils.readJsonAsString(xmlFileResource);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Oops! Problem occurred while reading the XML file '" + xmlFileResource
-                    + "', details:" + e);
-        }
     }
 
     private void loadAnnotatedHostProperties() {

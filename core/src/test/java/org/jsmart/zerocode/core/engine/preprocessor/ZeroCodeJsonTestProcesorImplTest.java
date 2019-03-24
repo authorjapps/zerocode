@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
+import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
@@ -40,12 +42,12 @@ public class ZeroCodeJsonTestProcesorImplTest {
     public void willEvaluatePlaceHolder() throws Exception {
 
         String aString = "Hello_${WORLD}";
-        List<String> placeHolders = jsonPreProcessor.getAllTokens(aString);
+        List<String> placeHolders = getTestCaseTokens(aString);
         assertThat(placeHolders.size(), is(1));
         assertThat(placeHolders.get(0), is("WORLD"));
 
         aString = "Hello_${$.step_name}";
-        placeHolders = jsonPreProcessor.getAllTokens(aString);
+        placeHolders = getTestCaseTokens(aString);
         assertThat(placeHolders.size(), is(1));
         assertThat(placeHolders.get(0), is("$.step_name"));
 
@@ -69,7 +71,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava("09_test_engine/01_request_with_place_holders.json", ScenarioSpec.class);
         final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();
 
-        final List<String> placeHolders = jsonPreProcessor.getAllTokens(requestJsonAsString);
+        final List<String> placeHolders = getTestCaseTokens(requestJsonAsString);
         assertThat(placeHolders.size(), is(4));
 
         final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
@@ -258,7 +260,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
 
         final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();
 
-        final List<String> placeHolders = jsonPreProcessor.getAllTokens(requestJsonAsString);
+        final List<String> placeHolders = getTestCaseTokens(requestJsonAsString);
         assertThat(placeHolders.size(), is(2));
 
         final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
@@ -275,7 +277,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
 
         final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();
 
-        final List<String> placeHolders = jsonPreProcessor.getAllTokens(requestJsonAsString);
+        final List<String> placeHolders = getTestCaseTokens(requestJsonAsString);
         assertThat(placeHolders.size(), is(2));
 
         final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
@@ -289,7 +291,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "\t\"onlineOrderId\": \"${RANDOM.UUID}\"\n" +
                 "}";
 
-        final List<String> placeHolders = jsonPreProcessor.getAllTokens(requestJsonAsString);
+        final List<String> placeHolders = getTestCaseTokens(requestJsonAsString);
         assertThat(placeHolders.size(), is(1));
 
         final String resolvedRequestJson = jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
