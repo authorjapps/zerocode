@@ -18,22 +18,8 @@ public class Step {
     private final String url;
     private JsonNode request;
     private JsonNode assertions;
-    private String step;
-
-    @JsonProperty("id")
     private String id;
-
-    @JsonProperty("stepFile")
     private JsonNode stepFile;
-
-
-    public String getStep() {
-        return step;
-    }
-
-    public void setStep(String step) {
-        this.step = step;
-    }
 
     public Integer getLoop() {
         return loop;
@@ -82,7 +68,8 @@ public class Step {
             @JsonProperty("operation") String operation,
             @JsonProperty("url") String url,
             @JsonProperty("request") JsonNode request,
-            @JsonProperty("assertions") JsonNode assertions) {
+            @JsonProperty("assertions") JsonNode assertions
+    ) {
         this.loop = loop;
         this.name = name;
         this.operation = operation;
@@ -94,12 +81,14 @@ public class Step {
     @Override
     public String toString() {
         return "Step{" +
-                "stepLoop=" + loop +
+                "loop=" + loop +
                 ", name='" + name + '\'' +
                 ", operation='" + operation + '\'' +
                 ", url='" + url + '\'' +
                 ", request=" + request +
                 ", assertions=" + assertions +
+                ", id='" + id + '\'' +
+                ", stepFile=" + stepFile +
                 '}';
     }
 }

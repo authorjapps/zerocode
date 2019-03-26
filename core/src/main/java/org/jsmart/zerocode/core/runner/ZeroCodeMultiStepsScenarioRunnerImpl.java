@@ -41,7 +41,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
-
     @Inject
     private ZeroCodeJsonTestProcesor zeroCodeJsonTestProcesor;
 
@@ -63,13 +62,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     @Named("web.application.endpoint.context")
     private String applicationContext;
 
-    //---------------------------------------------------
-    //kafka bootstrap servers or brokers comma separated
-    //---------------------------------------------------
     @Inject(optional = true)
     @Named("kafka.bootstrap.servers")
     private String kafkaServers;
-
 
     //guice -ends
 
@@ -115,16 +110,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                     thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
 
-                    String stepId="";
+                    String stepId = thisStep.getId();
 
-                     if(thisStep.getStepFile()!=null){
-                          stepId = thisStep.getId();
-                         try {
-                             thisStep = objectMapper.treeToValue(thisStep.getStepFile(),Step.class);
-                         } catch (JsonProcessingException e) {
-                             LOGGER.error("\n### Executing Scenario -->> Count No: " + e.getMessage());
-                         }
-                     }
+                    thisStep = createFromStepFile(thisStep, stepId);
+
                     final String requestJsonAsString = thisStep.getRequest().toString();
 
                     StepExecutionState stepExecutionState = new StepExecutionState();
@@ -191,7 +180,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 break;
 
                             case KAFKA_CALL:
-                                if(kafkaServers == null){
+                                if (kafkaServers == null) {
                                     throw new RuntimeException(">>> 'kafka.bootstrap.servers' property can not be null for kafka operations");
                                 }
                                 printBrokerProperties();
@@ -251,19 +240,21 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createAssertersFrom(resolvedAssertionJson);
                         List<AssertionReport> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
 
-                        if(!failureResults.isEmpty()) {
-                        	StringBuilder builder = new StringBuilder();
-                        	failureResults.forEach(f -> { builder.append(f.toString() + "\n"); });
-                        	logCorrelationshipPrinter.assertion(builder.toString());
-                        }else {
-                        	
-                        	logCorrelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
+                        if (!failureResults.isEmpty()) {
+                            StringBuilder builder = new StringBuilder();
+                            failureResults.forEach(f -> {
+                                builder.append(f.toString() + "\n");
+                            });
+                            logCorrelationshipPrinter.assertion(builder.toString());
+                        } else {
+
+                            logCorrelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
                         }
                         // --------------------------------------------------------------------------------
                         // Non dependent requests into a single JSON file (Issue-167 - Feature Implemented)
                         // --------------------------------------------------------------------------------
-                        boolean ignoreStepFailures = scenario.getIgnoreStepFailures() == null? false : scenario.getIgnoreStepFailures();
-                        if(ignoreStepFailures == true && !failureResults.isEmpty()){
+                        boolean ignoreStepFailures = scenario.getIgnoreStepFailures() == null ? false : scenario.getIgnoreStepFailures();
+                        if (ignoreStepFailures == true && !failureResults.isEmpty()) {
                             stepOutcomeGreen = notificationHandler.handleAssertion(
                                     notifier,
                                     description,
@@ -415,11 +406,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private String getFullyQualifiedRestUrl(String serviceEndPoint) {
 
-        if(host == null || port == null){
+        if (host == null || port == null) {
             throw new RuntimeException("'" + PROPERTY_KEY_HOST + "' or 'port' - can not be null");
         }
 
-        if(applicationContext == null){
+        if (applicationContext == null) {
             throw new RuntimeException("'" + PROPERTY_KEY_PORT + "' key must be present even if empty or blank");
         }
 
@@ -453,4 +444,16 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     }
 
+    private Step createFromStepFile(Step thisStep, String stepId) {
+        if (thisStep.getStepFile() != null) {
+            try {
+                thisStep = objectMapper.treeToValue(thisStep.getStepFile(), Step.class);
+            } catch (JsonProcessingException e) {
+                LOGGER.error("\n### Error while parsing for stepId - {}, stepFile - {}",
+                        stepId, thisStep.getStepFile());
+                throw new RuntimeException(e);
+            }
+        }
+        return thisStep;
+    }
 }

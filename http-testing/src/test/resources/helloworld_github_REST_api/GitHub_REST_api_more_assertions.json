@@ -2,13 +2,18 @@
     "scenarioName": "GitHub GET API and more @@Alex",
     "steps": [
         {
-            "id" : "step1",
-            "stepFile": "${JSON.FILE:steps/step1.json}"
-
-        },
-        {
-            "id": "step2",
-            "stepFile": "${JSON.FILE:steps/step2.json}"
+            "name": "get_github_server_details",
+            "url": "/users/albertosipov",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login": "albertosipov",
+                    "id": 36400587
+                }
+            }
         }
     ]
 }

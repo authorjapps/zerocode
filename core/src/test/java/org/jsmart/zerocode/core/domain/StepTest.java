@@ -25,7 +25,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(JukitoRunner.class)
-//@UseModules(ApplicationMainModule.class)
+// Or use - @UseModules(ApplicationMainModule.class)
 public class StepTest {
     public static class JukitoModule extends TestModule {
         @Override
@@ -42,16 +42,6 @@ public class StepTest {
 
     @Inject
     private ObjectMapper mapper;
-
-    @Before
-    public void beforeMethod() throws Exception {
-        /**
-         * This also tests your injection wirings.
-         * Running via JukitoRunner doesnt need this.
-         */
-        //mapper = new ObjectMapper();
-
-    }
 
     @Test
     public void shouldDeserializeSingleStep() throws Exception {
@@ -75,10 +65,18 @@ public class StepTest {
 
         assertThat(headerMap.get("Cookie"), is("cookie_123"));
         assertThat(queryParamsMap.get("invId"), is(10101));
-        //assertThat(stepDeserialized.getAssertions().getStatus(), is(201));
         assertThat(stepDeserialized.getAssertions().get("status").asInt(), is(201));
         assertThat(stepDeserialized.getAssertions().get("status").asLong(), is(201L));
         assertThat(stepDeserialized.getAssertions().get("status").asText(), is("201"));
+    }
+
+    @Test
+    public void testDeserExternalStepFile() throws Exception {
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/05_test_external_step_reuse.json");
+        Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
+        assertThat(stepDeserialized, notNullValue());
+        assertThat(stepDeserialized.getId(), is("step1"));
+        assertThat(stepDeserialized.getStepFile().asText(), is("file/path"));
     }
 
     @Test
@@ -89,7 +87,6 @@ public class StepTest {
         JsonNode singleStepNode = mapper.valueToTree(stepDeserialized);
         String singleStepNodeString = mapper.writeValueAsString(singleStepNode);
 
-        // jayway json assert with this string.
         JSONAssert.assertEquals(singleStepNodeString, jsonDocumentAsString, true);
 
         assertThat(singleStepNode.get("name").asText(), is("StepNameWithoutSpaceEgCREATE"));
@@ -112,11 +109,4 @@ public class StepTest {
          */
     }
 
-    /**
-     * Do not use this private method as this has been moved to SmartUtils
-     **/
-    protected String getJsonDocumentAsString(String name) throws IOException {
-        String jsonAsString = Resources.toString(getClass().getClassLoader().getResource(name), StandardCharsets.UTF_8);
-        return jsonAsString;
-    }
 }

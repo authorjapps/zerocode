@@ -1,0 +1,14 @@
+{
+    "scenarioName": "GitHub Step Reuse @@Alex",
+    "steps": [
+        {
+            "id" : "step1",
+            "stepFile": "${JSON.FILE:steps/step1.json}"
+
+        },
+        {
+            "id": "step2",
+            "stepFile": "${JSON.FILE:steps/step2.json}"
+        }
+    ]
+}

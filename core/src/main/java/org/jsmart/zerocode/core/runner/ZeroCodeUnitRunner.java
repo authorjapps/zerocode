@@ -207,7 +207,9 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         if (passed) {
             LOGGER.info(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
                     child.getScenarioName(),
-                    child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
+                    child.getSteps().stream()
+                            .map(step -> step.getName() == null ? step.getId() : step.getName())
+                            .collect(Collectors.toList())));
         }
 
         notifier.fireTestFinished(description);
