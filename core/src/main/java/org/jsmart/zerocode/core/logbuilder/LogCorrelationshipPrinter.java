@@ -26,6 +26,7 @@ public class LogCorrelationshipPrinter {
     private Boolean result;
     private Double responseDelay;
 
+
     public LogCorrelationshipPrinter(Logger logger) {
         this.logger = logger;
     }
@@ -70,7 +71,8 @@ public class LogCorrelationshipPrinter {
                 .result(responseLogBuilder.getAssertion())
                 .requestTimeStamp(requestLogBuilder.getRequestTimeStamp())
                 .responseTimeStamp(responseLogBuilder.responseTimeStamp)
-                .responseDelay(responseDelay);
+                .responseDelay(responseDelay)
+                .id(requestLogBuilder.getId());
         if (this.result) {
         	zeroCodeReportStep.result(RESULT_PASS);
 		}else{

@@ -16,6 +16,7 @@ public class ZeroCodeReportStepBuilder {
     String result;
     String request;
     String response;
+    String id;
 
     public static ZeroCodeReportStepBuilder newInstance() {
         return new ZeroCodeReportStepBuilder();
@@ -82,6 +83,11 @@ public class ZeroCodeReportStepBuilder {
 
     public ZeroCodeReportStepBuilder result(String result) {
         this.result = result;
+        return this;
+    }
+
+    public ZeroCodeReportStepBuilder id(String id) {
+        this.id = id;
         return this;
     }
 

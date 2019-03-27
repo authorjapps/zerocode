@@ -1,0 +1,14 @@
+{
+    "name": "get_github_server_details_1",
+    "url": "/users/albertosipov",
+    "operation": "GET",
+    "request": {
+    },
+    "assertions": {
+        "status": 200,
+        "body": {
+            "login": "albertosipov",
+            "id": 36400587
+        }
+    }
+}
