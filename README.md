@@ -1,20 +1,121 @@
 <img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
 ===
+[![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode)
+[![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://user-images.githubusercontent.com/12598420/51129522-98061180-1822-11e9-914a-6ff08b8ac103.png)
+[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
+[![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
+[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeEasyTDD)
 > _Automated API testing was never so easy before._
 
 Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. Jump to the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section to explore more.
 
 It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
+For example, if our REST API returns the following from URL "`https://localhost:8080/api/customers/123`"
+```javaScript
+{
+    "id": 123,
+    "type": "Premium High Value",
+    "addresses": [
+        {
+            "type":"holiday",
+            "line1":"Mars"
+        }
+    ]
+}
+```
 
-[![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
-[![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://user-images.githubusercontent.com/12598420/51129522-98061180-1822-11e9-914a-6ff08b8ac103.png)
-[![zerocode REST API Automation](https://img.shields.io/badge/REST%20API-automation-green.svg)](https://github.com/authorjapps/zerocode-hello-world) 
-[![zerocode SOAP Testing Automation API Automation](https://img.shields.io/badge/SOAP%20testing-automation-blue.svg)](https://github.com/authorjapps/zerocode/issues/28) 
-[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
-[![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
-[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeEasyTDD)
+then, we can easily validate the above API using `Zerocode` like below.
 
+> _The beauty here is, we can use the JSON payload structure as it is without any manipulation._
+
+
+```javaScript
+{
+    "name": "get_customer_step",
+    "url": "api/customers/123",
+    "operation": "GET",
+    "request": {},
+    "assertions": {
+        "status": 200,
+        "body": {
+            "id": 123,
+            "type": "Premium High Value",
+            "addresses": [
+                {
+                    "type":"holiday",
+                    "line1":"Mars"
+                }
+            ]
+        }
+    }
+}
+```
+
+Or
+
+```javaScript
+{
+    ...
+    "assertions": {
+        "status": 200,
+        "body": {
+            "id": 123,
+            "type": "Premium High Value",
+            "addresses.SIZE": 1
+        }
+    }
+}
+```
+
+Or
+
+```javaScript
+{
+    ...
+    "assertions": {
+        "status": 200,
+        "body": {
+            "id": "$NOT.NULL",        //<--- A not-null indeterministic value
+            "addresses.SIZE": "$GT.0" //<--- A value greater than 0
+        }
+    }
+}
+```
+
+Or
+
+```javaScript
+{
+    ...
+    "assertions": {
+        "body": {
+            "type": "$CONTAINS.STRING:Premium High" //<--- Match only part of the value
+        }
+    }
+}
+```
+
+and run it simply by pointing to the above JSON file from a "JUnit" @Test method.
+
+```java
+   @Test
+   @JsonTestCase("test_customer_get_api.json")
+   public void getCustomerHappy(){
+       /* No code was needed here */
+   }
+
+```
+
+Looks simple n easy? Why not give a try? See the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section.
+
+Smart Projects Using Zerocode
+===
+ + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
+ + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
+ + [Barclays Bank](https://www.barclays.co.uk/) - Micro-Services API Contract Validation for System APIs build using Spring Boot
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Authentication testing
 
 Using Custom Http Client
 ===
@@ -23,8 +124,7 @@ e.g.
 ```java
 @TargetEnv("app_sit1.properties")
 @UseHttpClient(CustomHttpClient.class)
-public class HelloWorldGitHubSuite {
-   ...
+public class HelloWorldApiTest {
 }
 ```
 But this is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
@@ -43,7 +143,8 @@ public class GitHubHelloWorldTest {
    public void testCrudOperation(){
    }
    
-}   
+}
+
 ```
 
 Running a Suite of Tests
@@ -55,7 +156,6 @@ e.g.
 @TestPackageRoot("screening_tests") //<--- Root of the package to pick all tests including sub-folders
 @RunWith(ZeroCodePackageRunner.class)
 public class ScreeningTestSuite {
-   ...
 }
 
 ```
@@ -70,8 +170,6 @@ It eliminates the repetitive code such as Java step definitions, test assertions
 It has got best of best ideas and practices from the community to keep it super simple and the adoption is rapidly growing among the developer/tester community. It alleviates pain and brings the simplicity in validating the APIs.
 
 It also helps in mocking/stubbing interfacing APIs during the testing cycle in a declarative-fashion as a [test-step](https://github.com/authorjapps/zerocode/blob/master/README.md#using-wiremock-for-mocking-dependent-end-points) as well as [standalone](https://github.com/authorjapps/api-mock-maker) mock-server deployed locally or into cloud. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - enabling us to simply reuse the test(s) from our regression pack.
-
-> The beauty is it enables us to use the JSON payload structure with no manipulation needed.
 
 ```javaScript
 e.g. a single step below doing a 'GET' call to '/users/octocat' and asserting the 'GET' response.
@@ -106,14 +204,14 @@ e.g. Our below User-Journey or ACs(Acceptance Criterias) or a scenario,
 AC1:
 GIVEN- the POST api end point '/api/v1/users' to create an user,     
 WHEN- I invoke the API,     
-THEN- I will receive the 201 status with the a user ID and headers 
+THEN- I will receive the 201 response status with the a {created-User-Id}
 AND- I will validate the response
 
 AC2:
 GIVEN- the REST api GET end point '/api/v1/users/${created-User-Id}',     
 WHEN- I invoke the API,     
-THEN- I will receive the 200(Ok) status with body(user details) and headers
-AND- I will assert the response
+THEN- I will receive the 200(Ok) response status with body(user details) and headers
+AND- I will validate the response
 ```
 translates to the below executable JSON steps in `Zerocode` - Simple and clean ! <br/>
 _(See here [a full blown CRUD operation scenario](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) with POST, PUT, GET, DELETE example.)_ <br/>
@@ -235,14 +333,6 @@ Visit the page [Kafka Testing Introduction](https://github.com/authorjapps/zeroc
 DataBase(DB) Integration Testing
 ===
 Visit the page [Database Validation](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) for step-by-step approach.
-
-<br/>
-
-Smart Projects using Zerocode
-===
- + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
- + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Authentication testing
 
 <br/>
 
