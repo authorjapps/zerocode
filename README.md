@@ -7,7 +7,9 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeEasyTDD)
 > _Automated API testing was never so easy before._
 
-Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. Jump to the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section to explore more. Zerocode is currently used by companies like Volalink, HSBC Bank, HomeOffice and [others](https://github.com/authorjapps/zerocode#smart-projects-using-zerocode) to achive zero-defect production drop of their micro-services.
+Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. Jump to the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section to explore more. 
+
+Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode#smart-projects-using-zerocode) to achieve zero-defect production drop of their micro-services.
 
 It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
@@ -60,8 +62,7 @@ Or
         "status": 200,
         "body": {
             "id": 123,
-            "type": "Premium High Value",
-            "addresses.SIZE": 1
+            "addresses.SIZE": 1    // Only array length validation, not the contents
         }
     }
 }
@@ -74,8 +75,8 @@ Or
     ...
     "assertions": {
         "body": {
-            "id": "$NOT.NULL",        // A not-null indeterministic value
-            "addresses.SIZE": "$GT.0" // A value greater than 0
+            "id": "$NOT.NULL",     // A not-null indeterministic value
+            "addresses.SIZE": "$GT.0"   // A value greater than 0
         }
     }
 }
@@ -88,7 +89,7 @@ Or
     ...
     "assertions": {
         "body": {
-            "type": "$CONTAINS.STRING:Premium High" // Match only part of the value
+            "type": "$CONTAINS.STRING:Premium High"      // Matches only part of the value
         }
     }
 }
@@ -101,7 +102,7 @@ Or
     ...
     "assertions": {
         "body": {
-	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1   // Indeterministic array element position
+	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1      // Indeterministic array element position
         }
     }
 }
