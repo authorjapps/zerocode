@@ -101,7 +101,7 @@ Or
     ...
     "assertions": {
         "body": {
-	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1
+	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1   // Indeterministic array element position
         }
     }
 }
