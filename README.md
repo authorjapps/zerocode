@@ -2,13 +2,12 @@
 ===
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/authorjapps/zerocode/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode)
-[![Code Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen.svg)](https://user-images.githubusercontent.com/12598420/51129522-98061180-1822-11e9-914a-6ff08b8ac103.png)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/zerocode-testing/help-and-usage)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 [![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeEasyTDD)
 > _Automated API testing was never so easy before._
 
-Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. Jump to the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section to explore more.
+Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. Jump to the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section to explore more. Zerocode is currently used by companies like Volalink, HSBC Bank, HomeOffice and [others](https://github.com/authorjapps/zerocode#smart-projects-using-zerocode) to achive zero-defect production drop of their micro-services.
 
 It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
@@ -33,7 +32,6 @@ then, we can easily validate the above API using `Zerocode` like below.
 
 ```javaScript
 {
-    "name": "get_customer_step",
     "url": "api/customers/123",
     "operation": "GET",
     "request": {},
@@ -75,10 +73,9 @@ Or
 {
     ...
     "assertions": {
-        "status": 200,
         "body": {
-            "id": "$NOT.NULL",        //<--- A not-null indeterministic value
-            "addresses.SIZE": "$GT.0" //<--- A value greater than 0
+            "id": "$NOT.NULL",        // A not-null indeterministic value
+            "addresses.SIZE": "$GT.0" // A value greater than 0
         }
     }
 }
@@ -91,7 +88,20 @@ Or
     ...
     "assertions": {
         "body": {
-            "type": "$CONTAINS.STRING:Premium High" //<--- Match only part of the value
+            "type": "$CONTAINS.STRING:Premium High" // Match only part of the value
+        }
+    }
+}
+```
+
+Or
+
+```javaScript
+{
+    ...
+    "assertions": {
+        "body": {
+	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1
         }
     }
 }
@@ -103,9 +113,10 @@ and run it simply by pointing to the above JSON file from a "JUnit" @Test method
    @Test
    @JsonTestCase("test_customer_get_api.json")
    public void getCustomerHappy(){
-       /* No code was needed here */
+       
+        /* No code needed here */
+       
    }
-
 ```
 
 Looks simple n easy? Why not give a try? See the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section.
@@ -115,7 +126,7 @@ Smart Projects Using Zerocode
  + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
  + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
  + [Barclays Bank](https://www.barclays.co.uk/) - Micro-Services API Contract Validation for System APIs build using Spring Boot
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Authentication testing
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Kafka Data-pipeline testing, Authentication testing.
 
 Using Custom Http Client
 ===
@@ -140,9 +151,14 @@ public class GitHubHelloWorldTest {
 
    @Test
    @JsonTestCase("screening_tests/test_happy_flow.json")
-   public void testCrudOperation(){
+   public void testHappyFlow(){
    }
-   
+
+   @Test
+   @JsonTestCase("screening_tests/test_negative_flow.json")
+   public void testNegativeFlow(){
+   }
+
 }
 
 ```
@@ -171,30 +187,10 @@ It has got best of best ideas and practices from the community to keep it super 
 
 It also helps in mocking/stubbing interfacing APIs during the testing cycle in a declarative-fashion as a [test-step](https://github.com/authorjapps/zerocode/blob/master/README.md#using-wiremock-for-mocking-dependent-end-points) as well as [standalone](https://github.com/authorjapps/api-mock-maker) mock-server deployed locally or into cloud. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - enabling us to simply reuse the test(s) from our regression pack.
 
-```javaScript
-e.g. a single step below doing a 'GET' call to '/users/octocat' and asserting the 'GET' response.
-
-{
-   "name": "step1", 
-   "url": "/users/octocat", 
-   "operation": "GET",      
-   "request": {},           
-   "assertions": {          
-      "status": 200,        
-      "body": {             
-          "id": 583231,
-          "login": "octocat",
-          "addresses": [
-             // more...
-          ]
-      }
-   }
-}
-
 Here the host and port are maintained in a properties file to enable easy environment-switching.
-
-host.properties
----------------
+```
+host_env1.properties
+--------------------
 web.application.endpoint.host=https://api.github.com
 web.application.endpoint.port=443
 ```
