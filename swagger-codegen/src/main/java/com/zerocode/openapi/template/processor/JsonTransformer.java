@@ -126,9 +126,9 @@ public class JsonTransformer {
 		ApiResponse response = operation.getResponses().get("200");
 		objectNode.set("status", objMapper.getNodeFactory().numberNode(200));
 		if (response.getContent() != null && !response.getContent().isEmpty())
-			objectNode.set("body",getSchemaType(openAPI.getComponents(),
-					response.getContent().values().iterator().next().getSchema(),null));
-		
+			objectNode.set("body", getSchemaType(openAPI.getComponents(),
+					response.getContent().values().iterator().next().getSchema(), null));
+
 		return objectNode;
 	}
 
@@ -160,7 +160,7 @@ public class JsonTransformer {
 		if (operation.getParameters() != null) {
 			operation.getParameters().stream().forEach(p -> {
 				if ("body".equalsIgnoreCase(p.getIn())) {
-					objectNode.setAll(getSchemaType(openAPI.getComponents(), p.getSchema(),"body"));
+					objectNode.setAll(getSchemaType(openAPI.getComponents(), p.getSchema(), "body"));
 				}
 			});
 		}
@@ -192,7 +192,7 @@ public class JsonTransformer {
 	 */
 	private String prepareURL(Operation operation, OpenAPI openAPI, String baseURL) throws URISyntaxException {
 		StringBuilder builder = new StringBuilder(baseURL);
-		StringJoiner paramJoiner= new StringJoiner("=","&","");
+		StringJoiner paramJoiner = new StringJoiner("=", "&", "");
 		if (operation.getParameters() != null) {
 			operation.getParameters().stream().forEach(p -> {
 				if ("query".equalsIgnoreCase(p.getIn())) {
@@ -200,7 +200,7 @@ public class JsonTransformer {
 				}
 			});
 		}
-		return builder.append(paramJoiner.length()>0?"?"+paramJoiner.toString():"").toString();
+		return builder.append(paramJoiner.length() > 0 ? "?" + paramJoiner.toString() : "").toString();
 	}
 
 	/**
@@ -215,7 +215,7 @@ public class JsonTransformer {
 			openAPI.getComponents().getSchemas().keySet().forEach(p -> {
 				log.debug("Populating schematype {} ", p);
 				ObjectNode schemaNode = getSchemaType(openAPI.getComponents(),
-						openAPI.getComponents().getSchemas().get(p),null);
+						openAPI.getComponents().getSchemas().get(p), null);
 				log.debug("Caching object{} against schematype {} ", p, schemaNode);
 				schemaMap.put(p, schemaNode);
 			});
@@ -238,22 +238,32 @@ public class JsonTransformer {
 		if (schema instanceof ComposedSchema) {
 			log.debug("Composed schema  {} ", schema);
 			ComposedSchema composedSchema = (ComposedSchema) schema;
-			composedSchema.getAllOf().stream()
-					.forEach(s -> schemaNode.
-							setAll(getSchemaType(components, s,null)));
+			composedSchema.getAllOf().stream().forEach(s -> schemaNode.setAll(getSchemaType(components, s, null)));
 		} else if (!StringUtils.isEmpty(schema.get$ref())) {
 			log.debug("RefType  {} ", schema.get$ref());
 			schemaNode.setAll(getSchemaType(components,
-					components.getSchemas().get(schema.get$ref().substring(schema.get$ref().lastIndexOf("/") + 1)),null));
+					components.getSchemas().get(schema.get$ref().substring(schema.get$ref().lastIndexOf("/") + 1)),
+					null));
 		} else if ("Array".equalsIgnoreCase(schema.getType())) {
 			ArraySchema arrSchema = (ArraySchema) schema;
 			ArrayNode arrNode = schemaNode.arrayNode();
-			arrNode.add(getSchemaType(components, arrSchema.getItems(),null));
-			schemaNode.set(key==null?"":key, arrNode);
+			arrNode.add(getSchemaType(components, arrSchema.getItems(), null));
+			schemaNode.set(key == null ? "" : key, arrNode);
 		} else {
 			log.debug("Object Schema {}", schema);
+			// TODO more work needed to handle object and array nested types
 			if (schema.getProperties() != null) {
-				schema.getProperties().keySet().stream().forEach(k -> schemaNode.set((String) k, null));
+				schema.getProperties().keySet().stream().forEach(k -> {
+					Schema tempSchema = (Schema) schema.getProperties().get(k);
+					String type = tempSchema.getType();
+					if ("Array".equalsIgnoreCase(type)) {
+						schemaNode.setAll(getSchemaType(components, tempSchema, (String) k));
+					} else if ("object".equalsIgnoreCase(type)) {
+						schemaNode.set((String) k, getSchemaType(components, tempSchema, (String) k));
+					} else {
+						schemaNode.set((String) k, null);
+					}
+				});
 			}
 
 		}
