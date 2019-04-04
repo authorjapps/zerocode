@@ -1,0 +1,21 @@
+{
+    "scenarioName": "Scenario-{{path}}",
+    "steps": [
+    {{#STEPS}}
+
+        {
+            "name": "{{operation}}_{{path}}",
+            "url": "{{url}}",
+            "operation": "{{operation}}",
+            "request": {
+            	{{requestBody}}
+            },
+            "assertions": {
+                "status":{{STATUS}},
+               	{{responseBody}}
+            }
+        }
+        {{seperator}}
+      {{/STEPS}}  
+    ]
+}
