@@ -1,15 +1,14 @@
 package com.zerocode.openapi.template.processor;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.jsmart.zerocode.core.domain.Step;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +16,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.swagger.v3.oas.models.Components;
@@ -38,6 +37,8 @@ import lombok.extern.slf4j.Slf4j;
  * The Class JsonTransformer.
  */
 @Component
+
+/** The Constant log. */
 
 /** The Constant log. */
 
@@ -82,6 +83,32 @@ public class JsonTransformer {
 		// Get All Schema types
 		Map<String, Object> schemaObjects = populateSchemaTypes(openAPI);
 		List<Step> steps = populateSteps(openAPI, schemaObjects);
+		ouputStepsToFile(steps, source, target);
+	}
+
+	/**
+	 * Ouput steps to file.
+	 *
+	 * @param steps  the steps
+	 * @param source the source
+	 * @param target the target
+	 */
+	private void ouputStepsToFile(List<Step> steps, String source, String target) {
+		// try-with-resources statement based on post comment below :)
+		File file = null;
+		try {
+			file = new File(target);
+			if (file.exists()) {
+				log.error("File {} already exists  ", target);
+				throw new IllegalArgumentException("File already exist");
+			}
+			file.createNewFile();
+			objMapper.enable(SerializationFeature.INDENT_OUTPUT);
+			objMapper.writerWithDefaultPrettyPrinter().writeValue(file, steps);
+		} catch (Exception e) {
+			log.error("Error writing output {} ",target, e);
+		} finally {
+		}
 	}
 
 	/**
@@ -230,6 +257,7 @@ public class JsonTransformer {
 	 *
 	 * @param components the components
 	 * @param schema     the schema
+	 * @param key        the key
 	 * @return the schema type
 	 */
 	private ObjectNode getSchemaType(Components components, Schema schema, String key) {
@@ -261,7 +289,7 @@ public class JsonTransformer {
 					} else if ("object".equalsIgnoreCase(type)) {
 						schemaNode.set((String) k, getSchemaType(components, tempSchema, (String) k));
 					} else {
-						schemaNode.set((String) k, null);
+						schemaNode.set((String) k, schemaNode.textNode(""));
 					}
 				});
 			}
