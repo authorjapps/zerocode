@@ -260,6 +260,7 @@ public class JsonTransformer {
 	 * @param key        the key
 	 * @return the schema type
 	 */
+	//TODO: Handle it well this method is doing too much and is way too complicated
 	private ObjectNode getSchemaType(Components components, Schema schema, String key) {
 		log.debug("populating schema {} ", schema);
 		ObjectNode schemaNode = objMapper.createObjectNode();
