@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,7 @@ import io.swagger.v3.oas.models.PathItem.HttpMethod;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +40,8 @@ import lombok.extern.slf4j.Slf4j;
  * The Class JsonTransformer.
  */
 @Component
+
+/** The Constant log. */
 
 /** The Constant log. */
 
@@ -83,7 +88,8 @@ public class JsonTransformer {
 		// Get All Schema types
 		Map<String, Object> schemaObjects = populateSchemaTypes(openAPI);
 		List<Step> steps = populateSteps(openAPI, schemaObjects);
-		ouputStepsToFile(steps, source, target);
+		ScenarioSpec scenario= new ScenarioSpec(null, false, openAPI.getOpenapi(), steps);
+		ouputStepsToFile(scenario, source, target);
 	}
 
 	/**
@@ -93,7 +99,7 @@ public class JsonTransformer {
 	 * @param source the source
 	 * @param target the target
 	 */
-	private void ouputStepsToFile(List<Step> steps, String source, String target) {
+	private void ouputStepsToFile(ScenarioSpec scenario, String source, String target) {
 		// try-with-resources statement based on post comment below :)
 		File file = null;
 		try {
@@ -104,9 +110,9 @@ public class JsonTransformer {
 			}
 			file.createNewFile();
 			objMapper.enable(SerializationFeature.INDENT_OUTPUT);
-			objMapper.writerWithDefaultPrettyPrinter().writeValue(file, steps);
+			objMapper.writerWithDefaultPrettyPrinter().writeValue(file, scenario);
 		} catch (Exception e) {
-			log.error("Error writing output {} ",target, e);
+			log.error("Error writing output {} ", target, e);
 		} finally {
 		}
 	}
@@ -123,19 +129,20 @@ public class JsonTransformer {
 		List<Step> steps = new LinkedList<>();
 		openAPI.getPaths().keySet().forEach(p -> {
 			PathItem path = openAPI.getPaths().get(p);
-			HttpMethod method = path.readOperationsMap().keySet().stream().findFirst().get();
-			Operation operation = path.readOperationsMap().get(method);
-			String operationStr = method.name();
-			String url = null;
-			try {
-				url = prepareURL(operation, openAPI, baseURL + p);
-			} catch (URISyntaxException e) {
-				// Do nothing
-			}
-			JsonNode request = prepareRequest(operation, openAPI, schemaObjects);
-			JsonNode assertions = prepareAssertion(operation, openAPI, schemaObjects);
-			steps.add(new Step(1, operationStr, operationStr, url, request, assertions));
-			// processPath(path,schemaObject)
+			path.readOperationsMap().keySet().stream().forEach(o -> {
+				Operation operation = path.readOperationsMap().get(o);
+				String name = operation.getOperationId();
+				String url = null;
+				try {
+					url = prepareURL(operation, openAPI, baseURL + p);
+				} catch (URISyntaxException e) {
+					// Do nothing
+				}
+				JsonNode request = prepareRequest(operation, openAPI, schemaObjects);
+				JsonNode assertions = prepareAssertion(operation, openAPI, schemaObjects);
+				steps.add(new Step(null, name, o.toString(), url, request, assertions));
+				// processPath(path,schemaObject)
+			});
 		});
 		return steps;
 	}
@@ -150,12 +157,16 @@ public class JsonTransformer {
 	 */
 	private JsonNode prepareAssertion(Operation operation, OpenAPI openAPI, Map<String, Object> schemaObjects) {
 		ObjectNode objectNode = objMapper.createObjectNode();
-		ApiResponse response = operation.getResponses().get("200");
-		objectNode.set("status", objMapper.getNodeFactory().numberNode(200));
-		if (response.getContent() != null && !response.getContent().isEmpty())
-			objectNode.set("body", getSchemaType(openAPI.getComponents(),
-					response.getContent().values().iterator().next().getSchema(), null));
-
+		operation.getResponses().keySet().forEach(r -> {
+			if (NumberUtils.isNumber((String) r)) {
+				objectNode.set("status", objMapper.getNodeFactory().numberNode(Integer.valueOf((String) r)));
+				ApiResponse response = operation.getResponses().get(r);
+				if (response != null && !response.getContent().values().isEmpty()) {
+					objectNode.set("body", getSchemaType(openAPI.getComponents(),
+							response.getContent().values().iterator().next().getSchema(), null));
+				}
+			}
+		});
 		return objectNode;
 	}
 
@@ -184,12 +195,13 @@ public class JsonTransformer {
 	 */
 	private void populateRequestBody(ObjectNode objectNode, Operation operation, OpenAPI openAPI,
 			Map<String, Object> schemaObjects) {
-		if (operation.getParameters() != null) {
-			operation.getParameters().stream().forEach(p -> {
-				if ("body".equalsIgnoreCase(p.getIn())) {
-					objectNode.setAll(getSchemaType(openAPI.getComponents(), p.getSchema(), "body"));
-				}
-			});
+		if (operation.getRequestBody() != null) {
+			RequestBody body = operation.getRequestBody();
+			if (body.getContent() != null && !body.getContent().values().isEmpty()) {
+				objectNode.setAll(getSchemaType(openAPI.getComponents(),
+						body.getContent().values().iterator().next().getSchema(), "body"));
+
+			}
 		}
 
 	}
@@ -260,7 +272,7 @@ public class JsonTransformer {
 	 * @param key        the key
 	 * @return the schema type
 	 */
-	//TODO: Handle it well this method is doing too much and is way too complicated
+	// TODO: Handle it well this method is doing too much and is way too complicated
 	private ObjectNode getSchemaType(Components components, Schema schema, String key) {
 		log.debug("populating schema {} ", schema);
 		ObjectNode schemaNode = objMapper.createObjectNode();
