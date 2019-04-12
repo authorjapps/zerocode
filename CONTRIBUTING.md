@@ -39,7 +39,7 @@ ISSUE-14 # SSL enabled http client
 
 [forking]: https://help.github.com/articles/fork-a-repo
 [pull request]: https://help.github.com/articles/creating-a-pull-request
-[mailing-lists]: https://groups.google.com/forum/#!members/zerocode-automation
+[mailing-lists]: https://groups.google.com/forum/#!forum/zerocode-automation
 [gitter chat room]: https://gitter.im/zerocode-testing/help-and-usage
 
 
