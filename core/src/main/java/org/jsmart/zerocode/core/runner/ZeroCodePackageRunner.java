@@ -3,8 +3,14 @@ package org.jsmart.zerocode.core.runner;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.module.RuntimeHttpClientModule;
+import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.JsonTestCases;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.TestPackageRoot;
@@ -21,9 +27,6 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.google.inject.Guice.createInjector;
 import static java.lang.System.getProperty;
@@ -72,17 +75,33 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     @Override
     protected List<ScenarioSpec> getChildren() {
         TestPackageRoot rootPackageAnnotation = testClass.getAnnotation(TestPackageRoot.class);
-        if (rootPackageAnnotation == null) {
-            throw new RuntimeException("Ah! Almost there. Just missing root package details." +
-                    "\ne.g. Annotate your Test class now, e.g. @TestPackageRoot(\"resource_folder_for_test_cases\")");
+        JsonTestCases jsonTestCasesAnnotation = testClass.getAnnotation(JsonTestCases.class);
+        validateSuiteAnnotationPresent(rootPackageAnnotation, jsonTestCasesAnnotation);
+
+        if (rootPackageAnnotation != null) {
+            /*
+             * Different scenarios with same name -or- Same scenarios with same name more than once is prevented
+             */
+            smartUtils.checkDuplicateScenarios(rootPackageAnnotation.value());
+
+            return smartUtils.getScenarioSpecListByPackage(rootPackageAnnotation.value());
+
+        } else {
+            List<JsonTestCase> jsonTestCases = Arrays.asList(testClass.getAnnotationsByType(JsonTestCase.class));
+            List<String> allEndPointFiles = jsonTestCases.stream()
+                    .map(thisTestCase -> thisTestCase.value())
+                    .collect(Collectors.toList());
+
+            return allEndPointFiles.stream()
+                    .map(testResource -> {
+                        try {
+                            return smartUtils.jsonFileToJava(testResource, ScenarioSpec.class);
+                        } catch (IOException e) {
+                            throw new RuntimeException("Exception while deserializing to Spec. Details: " + e);
+                        }
+                    })
+                    .collect(Collectors.toList());
         }
-
-        /*
-         * Different scenarios with same name -or- Same scenarios with same name more than once is prevented
-         */
-        smartUtils.checkDuplicateScenarios(rootPackageAnnotation.value());
-
-        return smartUtils.getScenarioSpecListByPackage(rootPackageAnnotation.value());
     }
 
     /**
@@ -114,12 +133,12 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     }
 
     @Override
-    public void run(RunNotifier notifier){
+    public void run(RunNotifier notifier) {
         ZeroCodeTestReportListener reportListener = new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator());
         notifier.addListener(reportListener);
 
         LOGGER.info("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
-        if(!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))){
+        if (!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
             notifier.addListener(reportListener);
         }
 
@@ -154,18 +173,18 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
         if (passed) {
             LOGGER.info(String.format("\nPackageRunner- **FINISHED executing all Steps for [%s] **.\nSteps were:%s",
-                            child.getScenarioName(),
-                            child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
+                    child.getScenarioName(),
+                    child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
         }
-        
+
         notifier.fireTestFinished(description);
-    
+
     }
 
     public Injector getInjector() {
         //TODO: Synchronise this with e.g. synchronized (ZeroCodePackageRunner.class) {}
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
-        String serverEnv = envAnnotation != null? envAnnotation.value() : "config_hosts.properties";
+        String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
 
         serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 
@@ -205,7 +224,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     }
 
     private void handleNoRunListenerReport(ZeroCodeTestReportListener reportListener) {
-        if(CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))){
+        if (CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
             /**
              * Gradle does not support JUnit RunListener. Hence Zerocode gracefully handled this
              * upon request from Gradle users. But this is not limited to Gradle, anywhere you
@@ -222,4 +241,19 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         }
     }
 
+
+    private void validateSuiteAnnotationPresent(TestPackageRoot rootPackageAnnotation, JsonTestCases jsonTestCasesAnnotation) {
+        if (rootPackageAnnotation == null && jsonTestCasesAnnotation == null) {
+            throw new RuntimeException("Missing Test Suite details." +
+                    "To run as a Test Suite - \n" +
+                    "Annotate your Test Suite class with, e.g. \n@TestPackageRoot(\"resource_folder_for_test_cases\") " +
+                    "\n-Or- \n" +
+                    "Annotate your Test Suite class with, e.g. \n@JsonTestCases({\n" +
+                    "        @JsonTestCase(\"path/to/test_case_1.json\"),\n" +
+                    "        @JsonTestCase(\"path/to/test_case_2.json\")\n" +
+                    "})" +
+                    "\n-Or- \n" +
+                    "Run as usual 'Junit Suite' pointing to the individual test classes.");
+        }
+    }
 }
