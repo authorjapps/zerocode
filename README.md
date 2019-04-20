@@ -264,6 +264,8 @@ Maven and CI 🔨
 **Help and Usage:** [Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
+**Mailing List:** [Mailing List](https://groups.google.com/forum/#!forum/zerocode-automation) <br/>
+**Chat Room:** [Gitter Chat ](https://gitter.im/zerocode-testing/help-and-usage) <br/>
 
 > The purpose of Zerocode lib is to make our API tests easy to **write**, easy to **change**, easy to **share**.
 
