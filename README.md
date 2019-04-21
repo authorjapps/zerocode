@@ -62,7 +62,7 @@ Or
         "status": 200,
         "body": {
             "id": 123,
-            "addresses.SIZE": 1    // Only array length validation, not the contents
+            "addresses.SIZE": 1  // Only array length validation, not the contents
         }
     }
 }
@@ -75,8 +75,8 @@ Or
     ...
     "assertions": {
         "body": {
-            "id": "$NOT.NULL",     // A not-null indeterministic value
-            "addresses.SIZE": "$GT.0"   // A value greater than 0
+            "id": "$NOT.NULL",  // A not-null indeterministic value
+            "addresses.SIZE": "$GT.0"  // A value greater than 0
         }
     }
 }
@@ -89,7 +89,7 @@ Or
     ...
     "assertions": {
         "body": {
-            "type": "$CONTAINS.STRING:Premium High"      // Matches only part of the value
+            "type": "$CONTAINS.STRING:Premium High"  // Matches only part of the value
         }
     }
 }
@@ -102,7 +102,7 @@ Or
     ...
     "assertions": {
         "body": {
-	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1      // Indeterministic array element position
+	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1  // Indeterministic element position in an array
         }
     }
 }
@@ -114,9 +114,7 @@ and run it simply by pointing to the above JSON file from a "JUnit" @Test method
    @Test
    @JsonTestCase("test_customer_get_api.json")
    public void getCustomerHappy(){
-       
-        /* No code needed here */
-       
+        // No code goes here. This remains empty.
    }
 ```
 
