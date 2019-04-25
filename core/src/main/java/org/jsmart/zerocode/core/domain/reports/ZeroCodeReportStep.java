@@ -24,21 +24,22 @@ public class ZeroCodeReportStep {
     private final String result;
     private final String request;
     private final String response;
+    private final String assertions;
 
     @JsonCreator
     public ZeroCodeReportStep(
-            @JsonProperty("stepLoop")Integer loop,
-            @JsonProperty("name")String name,
-            @JsonProperty("url")String url,
-            @JsonProperty("correlationId")String correlationId,
-            @JsonProperty("operation")String operation,
-            @JsonProperty("requestTimeStamp")LocalDateTime requestTimeStamp,
-            @JsonProperty("responseTimeStamp")LocalDateTime responseTimeStamp,
-            @JsonProperty("responseDelay")Double responseDelay,
-            @JsonProperty("result")String result,
-            @JsonProperty("request")String request,
-            @JsonProperty("response")String response
-    ) {
+            @JsonProperty("stepLoop") Integer loop,
+            @JsonProperty("name") String name,
+            @JsonProperty("url") String url,
+            @JsonProperty("correlationId") String correlationId,
+            @JsonProperty("operation") String operation,
+            @JsonProperty("requestTimeStamp") LocalDateTime requestTimeStamp,
+            @JsonProperty("responseTimeStamp") LocalDateTime responseTimeStamp,
+            @JsonProperty("responseDelay") Double responseDelay,
+            @JsonProperty("result") String result,
+            @JsonProperty("request") String request,
+            @JsonProperty("response") String response,
+            @JsonProperty("assertions") String assertions) {
         this.loop = loop;
         this.name = name;
         this.url = url;
@@ -50,6 +51,7 @@ public class ZeroCodeReportStep {
         this.result = result;
         this.request = request;
         this.response = response;
+        this.assertions = assertions;
     }
 
     public Integer getLoop() {
@@ -92,12 +94,12 @@ public class ZeroCodeReportStep {
         return request;
     }
 
-//    public JsonNode getRequest() throws IOException {
-//        return new ObjectMapperProvider().get().readTree(request);
-//    }
-
     public String getResponse() {
         return response;
+    }
+
+    public String getAssertions() {
+        return assertions;
     }
 
     @Override
@@ -114,6 +116,7 @@ public class ZeroCodeReportStep {
                 ", result='" + result + '\'' +
                 ", request='" + request + '\'' +
                 ", response='" + response + '\'' +
+                ", assertions='" + assertions + '\'' +
                 '}';
     }
 }

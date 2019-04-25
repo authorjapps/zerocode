@@ -17,6 +17,7 @@ public class ZeroCodeReportStepBuilder {
     String request;
     String response;
     String id;
+    String assertions;
 
     public static ZeroCodeReportStepBuilder newInstance() {
         return new ZeroCodeReportStepBuilder();
@@ -27,7 +28,7 @@ public class ZeroCodeReportStepBuilder {
                 loop, name, url,
                 correlationId, operation, requestTimeStamp,
                 responseTimeStamp, responseDelay, result,
-                request, response);
+                request, response, assertions);
         return built;
     }
 
@@ -83,6 +84,11 @@ public class ZeroCodeReportStepBuilder {
 
     public ZeroCodeReportStepBuilder result(String result) {
         this.result = result;
+        return this;
+    }
+
+    public ZeroCodeReportStepBuilder assertions(String assertions) {
+        this.assertions = assertions;
         return this;
     }
 

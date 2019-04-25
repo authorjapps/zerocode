@@ -1,0 +1,18 @@
+{
+    "scenarioName": "GitHub Version-Details REST API will GET, version and server details @@Emma",
+    "steps": [
+        {
+            "name": "get_github_server_details",
+            "url": "/users/octocat/orgs",
+            "operation": "GET",
+            "request": {
+                "headers":{
+                    "api_key": "efg-135-xyz-9393"
+                }
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+    ]
+}

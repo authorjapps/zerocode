@@ -4,12 +4,11 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
-import org.jsmart.zerocode.core.di.module.PropertiesInjectorModule;
 import org.jsmart.zerocode.core.di.module.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.di.module.RuntimeKafkaClientModule;
 import org.jsmart.zerocode.core.domain.*;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
@@ -285,7 +284,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         ZeroCodeExecResultBuilder reportResultBuilder = newInstance().loop(0).scenarioName(description.getClassName());
         reportResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
 
-        ZeroCodeReportBuilder reportBuilder = ZeroCodeReportBuilder.newInstance().timeStamp(LocalDateTime.now());
+        ZeroCodeExecResultIoWriteBuilder reportBuilder = ZeroCodeExecResultIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
         reportBuilder.result(reportResultBuilder.build());
         reportBuilder.printToFile(description.getClassName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
     }

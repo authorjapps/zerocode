@@ -9,7 +9,7 @@ import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
@@ -72,7 +72,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private static StepNotificationHandler notificationHandler = new StepNotificationHandler();
 
-    private ZeroCodeReportBuilder reportBuilder;
+    private ZeroCodeExecResultIoWriteBuilder reportBuilder;
 
     private ZeroCodeExecResultBuilder reportResultBuilder;
 
@@ -83,7 +83,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         LOGGER.info("\n-------------------------- BDD: Scenario:{} -------------------------\n", scenario.getScenarioName());
 
-        reportBuilder = ZeroCodeReportBuilder.newInstance().timeStamp(LocalDateTime.now());
+        reportBuilder = ZeroCodeExecResultIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
 
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 

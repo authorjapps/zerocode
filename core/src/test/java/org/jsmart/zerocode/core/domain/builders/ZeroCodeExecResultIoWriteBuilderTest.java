@@ -2,7 +2,7 @@ package org.jsmart.zerocode.core.domain.builders;
 
 import org.junit.Test;
 
-public class ZeroCodeReportBuilderTest {
+public class ZeroCodeExecResultIoWriteBuilderTest {
 
     @Test
     public void testActual() throws Exception {

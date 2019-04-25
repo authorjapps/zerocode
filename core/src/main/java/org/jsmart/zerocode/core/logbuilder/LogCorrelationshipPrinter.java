@@ -61,14 +61,13 @@ public class LogCorrelationshipPrinter {
         ZeroCodeReportStepBuilder zeroCodeReportStep = ZeroCodeReportStepBuilder.newInstance()
                 //.request(requestLogBuilder.request) //TODO
                 //.response(responseLogBuilder.response) //TODO
-                //.assertions()
                 .loop(stepLoop)
                 .name(requestLogBuilder.getStepName())
                 .correlationId(getCorrelationId())
                 .result(result == true? RESULT_PASS : RESULT_FAIL)
                 .url(requestLogBuilder.getUrl())
                 .operation(requestLogBuilder.getMethod())
-                .result(responseLogBuilder.getAssertion())
+                .assertions(responseLogBuilder.getAssertion())
                 .requestTimeStamp(requestLogBuilder.getRequestTimeStamp())
                 .responseTimeStamp(responseLogBuilder.responseTimeStamp)
                 .responseDelay(responseDelay)

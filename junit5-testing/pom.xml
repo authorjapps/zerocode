@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>zerocode-tdd-parent</artifactId>
+        <groupId>org.jsmart</groupId>
+        <version>1.3.6-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.jsmart</groupId>
+    <artifactId>junit5-testing</artifactId>
+    <version>1.3.6-SNAPSHOT</version>
+
+    <packaging>jar</packaging>
+    <name>Zerocode JUnit5 Jupiter Testing</name>
+    <description>Zerocode tests with JUnit5 Jupiter Engine</description>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <micro-simulator.version>1.1.8</micro-simulator.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <artifactId>zerocode-tdd</artifactId>
+            <groupId>org.jsmart</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+        </dependency>
+        <!--
+           The below "micro-simulator" dependency is not needed for real live projects.
+           This is used here just to mock/stub some end points for demo purpose only.
+        -->
+        <dependency>
+            <groupId>org.jsmart</groupId>
+            <artifactId>micro-simulator</artifactId>
+            <version>${micro-simulator.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M3</version>
+                <configuration>
+                    <!--<junitPlatformArtifactName>com.github.junit-team.junit5:junit-platform-engine</junitPlatformArtifactName>-->
+                    <!--<properties>-->
+                    <!--<configurationParameters>-->
+                    <!--junit.jupiter.execution.parallel.enabled=true-->
+                    <!--junit.jupiter.execution.parallel.config.strategy=fixed-->
+                    <!--junit.jupiter.execution.parallel.config.fixed.parallelism=2-->
+                    <!--</configurationParameters>-->
+                    <!--</properties>-->
+                    <includes>
+                        <include>org.jsmart.zerocode.tests.load.jupiter.JUnit5LoadTest</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
