@@ -23,7 +23,6 @@ import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
 import static org.jsmart.zerocode.core.kafka.common.CommonConfigs.BOOTSTRAP_SERVERS;
 import static org.jsmart.zerocode.core.kafka.common.KafkaCommonUtils.resolveValuePlaceHolders;
 import static org.jsmart.zerocode.core.kafka.error.KafkaMessageConstants.NO_RECORD_FOUND_TO_SEND;
-import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
 
 public class KafkaProducerHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaProducerHelper.class);

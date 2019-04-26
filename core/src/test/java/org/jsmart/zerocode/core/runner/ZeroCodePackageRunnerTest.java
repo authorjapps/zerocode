@@ -24,12 +24,12 @@ public class ZeroCodePackageRunnerTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @TestPackageRoot("03_test_one_multi_steps")
-    public static class FlowSpecExampleTest {
+    public static class ScenarioTestFlowExampleTest {
     }
 
     @Before
     public void initializeRunner() throws Exception {
-        zeroCodePackageRunner = new ZeroCodePackageRunner(FlowSpecExampleTest.class);
+        zeroCodePackageRunner = new ZeroCodePackageRunner(ScenarioTestFlowExampleTest.class);
     }
 
     @Test
@@ -48,7 +48,10 @@ public class ZeroCodePackageRunnerTest {
     @Test
     public void willComplain_If_Annotation_Missing() throws Exception {
         expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Ah! Almost there. Just missing root package details");
+        expectedException.expectMessage("Annotate your Test Suite class with");
+        expectedException.expectMessage("@TestPackageRoot(");
+        expectedException.expectMessage("@JsonTestCases({");
+        expectedException.expectMessage("usual 'Junit Suite'");
         zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExampleWithoutAnnotationClass.class);
         zeroCodePackageRunner.getChildren();
     }

@@ -3,7 +3,6 @@ package org.jsmart.zerocode.core.kafka.receive.message;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
-import org.jsmart.zerocode.core.kafka.send.message.ProducerJsonRecord;
 import org.junit.Test;
 
 import java.io.IOException;

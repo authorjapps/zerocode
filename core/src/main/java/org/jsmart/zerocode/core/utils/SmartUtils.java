@@ -70,9 +70,9 @@ public class SmartUtils {
     public List<ScenarioSpec> getScenarioSpecListByPackage(String packageName) {
         List<String> allEndPointFiles = getAllEndPointFiles(packageName);
         List<ScenarioSpec> scenarioSpecList = allEndPointFiles.stream()
-                .map(flowSpecFile -> {
+                .map(testResource -> {
                     try {
-                        return jsonFileToJava(flowSpecFile, ScenarioSpec.class);
+                        return jsonFileToJava(testResource, ScenarioSpec.class);
                     } catch (IOException e) {
                         throw new RuntimeException("Exception while deserializing to Spec. Details: " + e);
                     }
