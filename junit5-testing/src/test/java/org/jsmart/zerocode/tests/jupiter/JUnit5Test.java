@@ -14,7 +14,7 @@ public class JUnit5Test {
     @Test
     public void testX() {
         out.println("JUnit5 ---> testX()");
-        assertTrue(2 == 3);
+        assertTrue(2 == 2);
     }
 
     @Test

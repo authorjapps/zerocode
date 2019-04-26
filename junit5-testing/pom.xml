@@ -42,17 +42,6 @@
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>
         </dependency>
-        <!--
-           The below "micro-simulator" dependency is not needed for real live projects.
-           This is used here just to mock/stub some end points for demo purpose only.
-        -->
-        <dependency>
-            <groupId>org.jsmart</groupId>
-            <artifactId>micro-simulator</artifactId>
-            <version>${micro-simulator.version}</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -79,7 +68,8 @@
                     <!--</configurationParameters>-->
                     <!--</properties>-->
                     <includes>
-                        <include>org.jsmart.zerocode.tests.load.jupiter.JUnit5LoadTest</include>
+                        <include>org.jsmart.zerocode.jupiter.extension.JupiterZeroCodeParallelTest</include>
+                        <include>org.jsmart.zerocode.tests.loadjupiter.JUnit5LoadTest</include>
                     </includes>
                 </configuration>
             </plugin>
