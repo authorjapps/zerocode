@@ -31,6 +31,28 @@ public class JupiterLoadProcessor extends LoadProcessor {
         return this;
     }
 
+    public void updatePassFailCount(SummaryGeneratingListener summaryListener) {
+        TestExecutionSummary summary = summaryListener.getSummary();
+        if (summary.getTotalFailureCount() > 0) {
+            getFailedCounter().incrementAndGet();
+            summary.getFailures().forEach(thisFailure -> {
+                TestIdentifier testIdentifier = thisFailure.getTestIdentifier();
+                String exceptionMessage = thisFailure.getException().getMessage();
+                LOGGER.info("\n----------------------------------------------------------------------\n");
+                LOGGER.info("\n###JUnit5: Test Failed Due To --> {}, \ntestIdentifier={}", exceptionMessage, testIdentifier);
+                LOGGER.info("\n----------------------------------------------------------------------\n");
+            });
+        } else {
+            getPassedCounter().incrementAndGet();
+        }
+    }
+
+    private void registerReportListener(Class<?> testClass, String testMethod, Launcher launcher) {
+        ZeroCodeTestReportJupiterListener reportListener =
+                new ZeroCodeTestReportJupiterListener(testClass, testMethod );
+        launcher.registerTestExecutionListeners(reportListener);
+    }
+
     private Runnable createJupiterRunnable(Class<?> testClass, String testMethod) {
         return () -> {
 
@@ -58,27 +80,5 @@ public class JupiterLoadProcessor extends LoadProcessor {
             updatePassFailCount(summaryListener);
 
         };
-    }
-
-    public void updatePassFailCount(SummaryGeneratingListener summaryListener) {
-        TestExecutionSummary summary = summaryListener.getSummary();
-        if (summary.getTotalFailureCount() > 0) {
-            getFailedCounter().incrementAndGet();
-            summary.getFailures().forEach(thisFailure -> {
-                TestIdentifier testIdentifier = thisFailure.getTestIdentifier();
-                String exceptionMessage = thisFailure.getException().getMessage();
-                LOGGER.info("\n----------------------------------------------------------------------\n");
-                LOGGER.info("\n###JUnit5: Test Failed Due To --> {}, \ntestIdentifier={}", exceptionMessage, testIdentifier);
-                LOGGER.info("\n----------------------------------------------------------------------\n");
-            });
-        } else {
-            getPassedCounter().incrementAndGet();
-        }
-    }
-
-    private void registerReportListener(Class<?> testClass, String testMethod, Launcher launcher) {
-        ZeroCodeTestReportJupiterListener reportListener =
-                new ZeroCodeTestReportJupiterListener(testClass, testMethod );
-        launcher.registerTestExecutionListeners(reportListener);
     }
 }
