@@ -18,9 +18,7 @@ public class JUnit5LoadTest {
             @TestMapping(testClass = JUnit5Test.class, testMethod = "testY")
     })
     public void testLoad() {
-        // --------------------
-        // No code needed here
-        // --------------------
+        /* No code needed here */
     }
 
 }

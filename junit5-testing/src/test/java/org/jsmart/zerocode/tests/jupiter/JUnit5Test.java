@@ -13,14 +13,14 @@ public class JUnit5Test {
 
     @Test
     public void testX() {
-        out.println("JUnit5 ---> testX()");
-        assertTrue(2 == 2);
+        out.println("*JUnit5 ---> testX()");
+        assertTrue(2 == 2); //jupiter assert
     }
 
     @Test
     public void testY() {
-        out.println("JUnit5 ---> testY()");
-        assertTrue(2 == 2);
+        out.println("*JUnit5 ---> testY()");
+        assertTrue(2 == 2); //jupiter assert
     }
 
 }
