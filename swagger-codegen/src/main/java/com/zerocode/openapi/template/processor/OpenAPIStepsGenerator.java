@@ -245,8 +245,7 @@ public class OpenAPIStepsGenerator {
 		try {
 			return mapper.readTree(Json.pretty(rep));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error creating example json",e);
 		}
 		return null;
 	}
