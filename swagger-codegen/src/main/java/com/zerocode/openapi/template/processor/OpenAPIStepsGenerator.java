@@ -51,21 +51,7 @@ public class OpenAPIStepsGenerator {
 		Yaml.mapper().registerModule(simpleModule);
 	}
 
-	/** The source. */
-	@Value("${source}")
-	String source;
 
-	/** The target. */
-	@Value("${target}")
-	String target;
-
-	/** The target. */
-	@Value("${template.dir}")
-	String templateDir;
-
-	/** The template location. */
-	@Autowired
-	Map<String, String> templateLocation;
 
 	/** The obj mapper. */
 	ObjectMapper objMapper = new ObjectMapper();
@@ -73,7 +59,7 @@ public class OpenAPIStepsGenerator {
 	/**
 	 * Transform.
 	 */
-	public void transform() {
+	public void transform(String source, String target) {
 		OpenAPI openAPI = (new OpenAPIV3Parser()).read(source, null, null);
 		List<Step> steps = populateSteps(openAPI);
 		ScenarioSpec scenario = new ScenarioSpec(null, false, openAPI.getOpenapi(), steps);

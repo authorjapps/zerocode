@@ -48,7 +48,7 @@ public class OpenAPIStepsGeneratorTest {
 
 	@Test
 	public void testTransform() {
-		transformer.transform();
+		transformer.transform("input/petStore.yaml","src/test/resources/output/sample_petStore.json");
 	}
 
 }
