@@ -18,7 +18,6 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
-import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 

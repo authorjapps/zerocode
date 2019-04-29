@@ -62,7 +62,7 @@ Or
         "status": 200,
         "body": {
             "id": 123,
-            "addresses.SIZE": 1    // Only array length validation, not the contents
+            "addresses.SIZE": 1  // Only array length validation, not the contents
         }
     }
 }
@@ -75,8 +75,8 @@ Or
     ...
     "assertions": {
         "body": {
-            "id": "$NOT.NULL",     // A not-null indeterministic value
-            "addresses.SIZE": "$GT.0"   // A value greater than 0
+            "id": "$NOT.NULL",  // A not-null indeterministic value
+            "addresses.SIZE": "$GT.0"  // A value greater than 0
         }
     }
 }
@@ -89,7 +89,7 @@ Or
     ...
     "assertions": {
         "body": {
-            "type": "$CONTAINS.STRING:Premium High"      // Matches only part of the value
+            "type": "$CONTAINS.STRING:Premium High"  // Matches only part of the value
         }
     }
 }
@@ -102,7 +102,7 @@ Or
     ...
     "assertions": {
         "body": {
-	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1      // Indeterministic array element position
+	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1  // Indeterministic element position in an array
         }
     }
 }
@@ -114,9 +114,7 @@ and run it simply by pointing to the above JSON file from a "JUnit" @Test method
    @Test
    @JsonTestCase("test_customer_get_api.json")
    public void getCustomerHappy(){
-       
-        /* No code needed here */
-       
+        // No code goes here. This remains empty.
    }
 ```
 
@@ -168,14 +166,47 @@ Running a Suite of Tests
 ===
 `ZeroCodePackageRunner` is the JUnit runner which enables us to run a pack/suite of tests from the test resources folder.
 e.g.
++ Selecting all tests from a resource folder
 ```java
 @TargetEnv("app_sit1.properties")
 @TestPackageRoot("screening_tests") //<--- Root of the package to pick all tests including sub-folders
 @RunWith(ZeroCodePackageRunner.class)
 public class ScreeningTestSuite {
+    // This class remains empty	
 }
 
 ```
+
+Or
++ Selecting tests by cherry-picking from test resources
+```java
+@TargetEnv("app_dev1.properties")
+@UseHttpClient(CustomHttpClient.class)
+@RunWith(ZeroCodePackageRunner.class)
+@JsonTestCases({
+        @JsonTestCase("path1/test_case_scenario_1.json"),
+        @JsonTestCase("path2/test_case_scenario_2.json"),
+})
+public class HelloWorldSelectedGitHubSuite {
+    // This class remains empty
+}
+```
+
+Or
++ Slecting as usual `JUnit Suite`
+
+```java
+@RunWith(Suite.class)				
+@Suite.SuiteClasses({				
+  HelloWorldSimpleTest.class,
+  HelloWorldMoreTest.class,  			
+})		
+
+public class HelloWorldJunitSuite {
+    // This class remains empty		
+}
+```
+
 
 Declarative TestCase - Hooking BDD Scenario Steps
 ===
@@ -197,7 +228,7 @@ web.application.endpoint.port=443
 ```
 
 e.g. Our below User-Journey or ACs(Acceptance Criterias) or a scenario,
-```java
+```JSON
 AC1:
 GIVEN- the POST api end point '/api/v1/users' to create an user,     
 WHEN- I invoke the API,     
@@ -205,7 +236,7 @@ THEN- I will receive the 201 response status with the a {created-User-Id}
 AND- I will validate the response
 
 AC2:
-GIVEN- the REST api GET end point '/api/v1/users/${created-User-Id}',     
+GIVEN- the REST api GET end point '/api/v1/users/${id}',     
 WHEN- I invoke the API,     
 THEN- I will receive the 200(Ok) response status with body(user details) and headers
 AND- I will validate the response
@@ -231,6 +262,8 @@ Maven and CI 🔨
 **Help and Usage:** [Table of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) <br/>
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
+**Mailing List:** [Mailing List](https://groups.google.com/forum/#!forum/zerocode-automation) <br/>
+**Chat Room:** [Gitter Chat ](https://gitter.im/zerocode-testing/help-and-usage) <br/>
 
 > The purpose of Zerocode lib is to make our API tests easy to **write**, easy to **change**, easy to **share**.
 
@@ -288,9 +321,12 @@ To build any of the above projects, we can use the following command
 mvn clean install -DskipTests
 ```
 
+For selected module build
+> mvn clean install -pl core,http-testing
+
 <br/>
 
-Upcoming Releases :panda_face:
+Upcoming Releases 🐼
 ====
 + Kafka - Testing Distributed Data Stream application (Easy and fun) 🔜 <br/>
   + Multi Topic `produce` and `consume` 🔜 <br/>
