@@ -154,7 +154,7 @@ public class JsonTransformer {
 			if (NumberUtils.isNumber((String) r)) {
 				objectNode.set("status", objMapper.getNodeFactory().numberNode(Integer.valueOf((String) r)));
 				ApiResponse response = operation.getResponses().get(r);
-				if (response != null && !response.getContent().values().isEmpty()) {
+				if (response != null && response.getContent()!=null && !response.getContent().values().isEmpty()) {
 					objectNode.set("body",
 							getSchemaType(openAPI, response.getContent().values().iterator().next().getSchema()));
 				}
