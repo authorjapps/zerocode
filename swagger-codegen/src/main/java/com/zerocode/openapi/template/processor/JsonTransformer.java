@@ -1,15 +1,14 @@
 package com.zerocode.openapi.template.processor;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +18,17 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import io.swagger.v3.oas.models.Components;
+import io.swagger.oas.inflector.examples.ExampleBuilder;
+import io.swagger.oas.inflector.examples.models.Example;
+import io.swagger.oas.inflector.processors.JsonNodeExampleSerializer;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
-import io.swagger.v3.oas.models.PathItem.HttpMethod;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
@@ -41,25 +41,15 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Component
 
-/** The Constant log. */
-
-/** The Constant log. */
-
-/** The Constant log. */
-
-/** The Constant log. */
-
-/** The Constant log. */
-
-/** The Constant log. */
-
-/** The Constant log. */
-
-/** The Constant log. */
-
-/** The Constant log. */
 @Slf4j
 public class JsonTransformer {
+	static {
+		// register the JSON serializer
+		SimpleModule simpleModule = new SimpleModule();
+		simpleModule.addSerializer(new JsonNodeExampleSerializer());
+		Json.mapper().registerModule(simpleModule);
+		Yaml.mapper().registerModule(simpleModule);
+	}
 
 	/** The source. */
 	@Value("${source}")
@@ -84,11 +74,15 @@ public class JsonTransformer {
 	 * Transform.
 	 */
 	public void transform() {
-		OpenAPI openAPI = (new OpenAPIV3Parser()).read(source);
+		// ParseOptions options = new ParseOptions();
+		// options.setResolve(true);
+		// options.setResolveFully(true);
+		OpenAPI openAPI = (new OpenAPIV3Parser()).read(source, null, null);
 		// Get All Schema types
-		Map<String, Object> schemaObjects = populateSchemaTypes(openAPI);
-		List<Step> steps = populateSteps(openAPI, schemaObjects);
-		ScenarioSpec scenario= new ScenarioSpec(null, false, openAPI.getOpenapi(), steps);
+		// ResolverFully resolverUtil = new ResolverFully();
+		// resolverUtil.resolveFully(openAPI);
+		List<Step> steps = populateSteps(openAPI);
+		ScenarioSpec scenario = new ScenarioSpec(null, false, openAPI.getOpenapi(), steps);
 		ouputStepsToFile(scenario, source, target);
 	}
 
@@ -124,7 +118,7 @@ public class JsonTransformer {
 	 * @param schemaObjects the schema objects
 	 * @return the list
 	 */
-	private List<Step> populateSteps(OpenAPI openAPI, Map<String, Object> schemaObjects) {
+	private List<Step> populateSteps(OpenAPI openAPI) {
 		String baseURL = openAPI.getServers().get(0).getUrl();
 		List<Step> steps = new LinkedList<>();
 		openAPI.getPaths().keySet().forEach(p -> {
@@ -138,10 +132,9 @@ public class JsonTransformer {
 				} catch (URISyntaxException e) {
 					// Do nothing
 				}
-				JsonNode request = prepareRequest(operation, openAPI, schemaObjects);
-				JsonNode assertions = prepareAssertion(operation, openAPI, schemaObjects);
+				JsonNode request = prepareRequest(operation, openAPI);
+				JsonNode assertions = prepareAssertion(operation, openAPI);
 				steps.add(new Step(null, name, o.toString(), url, request, assertions));
-				// processPath(path,schemaObject)
 			});
 		});
 		return steps;
@@ -155,15 +148,15 @@ public class JsonTransformer {
 	 * @param schemaObjects the schema objects
 	 * @return the json node
 	 */
-	private JsonNode prepareAssertion(Operation operation, OpenAPI openAPI, Map<String, Object> schemaObjects) {
+	private JsonNode prepareAssertion(Operation operation, OpenAPI openAPI) {
 		ObjectNode objectNode = objMapper.createObjectNode();
 		operation.getResponses().keySet().forEach(r -> {
 			if (NumberUtils.isNumber((String) r)) {
 				objectNode.set("status", objMapper.getNodeFactory().numberNode(Integer.valueOf((String) r)));
 				ApiResponse response = operation.getResponses().get(r);
 				if (response != null && !response.getContent().values().isEmpty()) {
-					objectNode.set("body", getSchemaType(openAPI.getComponents(),
-							response.getContent().values().iterator().next().getSchema(), null));
+					objectNode.set("body",
+							getSchemaType(openAPI, response.getContent().values().iterator().next().getSchema()));
 				}
 			}
 		});
@@ -178,10 +171,10 @@ public class JsonTransformer {
 	 * @param schemaObjects the schema objects
 	 * @return the json node
 	 */
-	private JsonNode prepareRequest(Operation operation, OpenAPI openAPI, Map<String, Object> schemaObjects) {
+	private JsonNode prepareRequest(Operation operation, OpenAPI openAPI) {
 		ObjectNode objectNode = objMapper.createObjectNode();
-		populateRequestHeader(objectNode, operation, openAPI, schemaObjects);
-		populateRequestBody(objectNode, operation, openAPI, schemaObjects);
+		populateRequestHeader(objectNode, operation, openAPI);
+		populateRequestBody(objectNode, operation, openAPI);
 		return objectNode;
 	}
 
@@ -193,13 +186,12 @@ public class JsonTransformer {
 	 * @param openAPI       the open API
 	 * @param schemaObjects the schema objects
 	 */
-	private void populateRequestBody(ObjectNode objectNode, Operation operation, OpenAPI openAPI,
-			Map<String, Object> schemaObjects) {
+	private void populateRequestBody(ObjectNode objectNode, Operation operation, OpenAPI openAPI) {
 		if (operation.getRequestBody() != null) {
 			RequestBody body = operation.getRequestBody();
 			if (body.getContent() != null && !body.getContent().values().isEmpty()) {
-				objectNode.setAll(getSchemaType(openAPI.getComponents(),
-						body.getContent().values().iterator().next().getSchema(), "body"));
+				objectNode.set("body",
+						getSchemaType(openAPI, body.getContent().values().iterator().next().getSchema()));
 
 			}
 		}
@@ -214,8 +206,7 @@ public class JsonTransformer {
 	 * @param openAPI       the open API
 	 * @param schemaObjects the schema objects
 	 */
-	private void populateRequestHeader(ObjectNode objectNode, Operation operation, OpenAPI openAPI,
-			Map<String, Object> schemaObjects) {
+	private void populateRequestHeader(ObjectNode objectNode, Operation operation, OpenAPI openAPI) {
 		// TODO Auto-generated method stub
 
 	}
@@ -243,28 +234,6 @@ public class JsonTransformer {
 	}
 
 	/**
-	 * Populate schema types.
-	 *
-	 * @param openAPI the open API
-	 * @return the map
-	 */
-	private Map<String, Object> populateSchemaTypes(OpenAPI openAPI) {
-		Map<String, Object> schemaMap = new LinkedHashMap<>();
-		if (openAPI != null && openAPI.getComponents() != null && openAPI.getComponents().getSchemas() != null) {
-			openAPI.getComponents().getSchemas().keySet().forEach(p -> {
-				log.debug("Populating schematype {} ", p);
-				ObjectNode schemaNode = getSchemaType(openAPI.getComponents(),
-						openAPI.getComponents().getSchemas().get(p), null);
-				log.debug("Caching object{} against schematype {} ", p, schemaNode);
-				schemaMap.put(p, schemaNode);
-			});
-		} else {
-			log.debug("No components found");
-		}
-		return schemaMap;
-	}
-
-	/**
 	 * Populate schema type.
 	 *
 	 * @param components the components
@@ -272,44 +241,16 @@ public class JsonTransformer {
 	 * @param key        the key
 	 * @return the schema type
 	 */
-	// TODO: Handle it well this method is doing too much and is way too complicated
-	private ObjectNode getSchemaType(Components components, Schema schema, String key) {
-		log.debug("populating schema {} ", schema);
-		ObjectNode schemaNode = objMapper.createObjectNode();
-		if (schema instanceof ComposedSchema) {
-			log.debug("Composed schema  {} ", schema);
-			ComposedSchema composedSchema = (ComposedSchema) schema;
-			composedSchema.getAllOf().stream().forEach(s -> schemaNode.setAll(getSchemaType(components, s, null)));
-		} else if (!StringUtils.isEmpty(schema.get$ref())) {
-			log.debug("RefType  {} ", schema.get$ref());
-			schemaNode.setAll(getSchemaType(components,
-					components.getSchemas().get(schema.get$ref().substring(schema.get$ref().lastIndexOf("/") + 1)),
-					null));
-		} else if ("Array".equalsIgnoreCase(schema.getType())) {
-			ArraySchema arrSchema = (ArraySchema) schema;
-			ArrayNode arrNode = schemaNode.arrayNode();
-			arrNode.add(getSchemaType(components, arrSchema.getItems(), null));
-			schemaNode.set(key == null ? "" : key, arrNode);
-		} else {
-			log.debug("Object Schema {}", schema);
-			// TODO more work needed to handle object and array nested types
-			if (schema.getProperties() != null) {
-				schema.getProperties().keySet().stream().forEach(k -> {
-					Schema tempSchema = (Schema) schema.getProperties().get(k);
-					String type = tempSchema.getType();
-					if ("Array".equalsIgnoreCase(type)) {
-						schemaNode.setAll(getSchemaType(components, tempSchema, (String) k));
-					} else if ("object".equalsIgnoreCase(type)) {
-						schemaNode.set((String) k, getSchemaType(components, tempSchema, (String) k));
-					} else {
-						schemaNode.set((String) k, schemaNode.textNode(""));
-					}
-				});
-			}
-
+	private JsonNode getSchemaType(OpenAPI openAPI, Schema schema) {
+		ObjectMapper mapper = new ObjectMapper();
+		Example rep = ExampleBuilder.fromSchema(schema, openAPI.getComponents().getSchemas());
+		try {
+			return mapper.readTree(Json.pretty(rep));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return schemaNode;
-
+		return null;
 	}
 
 }

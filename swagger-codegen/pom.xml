@@ -35,10 +35,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-inflector -->
 		<dependency>
-			<groupId>io.swagger.parser.v3</groupId>
-			<artifactId>swagger-parser</artifactId>
-			<version>2.0.11</version>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-inflector</artifactId>
+			<version>2.0.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.jsmart/zerocode-tdd -->
 		<dependency>
