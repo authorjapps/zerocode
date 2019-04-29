@@ -16,16 +16,16 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource(locations = "/test.properties")
-public class JsonTransformerTest {
+public class OpenAPIStepsGeneratorTest {
 	
 	@TestConfiguration
-	@ComponentScan(basePackageClasses =  {JsonTransformer.class})
+	@ComponentScan(basePackageClasses =  {OpenAPIStepsGenerator.class})
 	static class Config{
 		
 	}
 
 	@Autowired
-	JsonTransformer transformer;
+	OpenAPIStepsGenerator transformer;
 	
 	@MockBean
 	Map<String,String> templateLocation;

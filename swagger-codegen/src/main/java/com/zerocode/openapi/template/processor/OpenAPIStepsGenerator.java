@@ -42,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 
 @Slf4j
-public class JsonTransformer {
+public class OpenAPIStepsGenerator {
 	static {
 		// register the JSON serializer
 		SimpleModule simpleModule = new SimpleModule();
@@ -74,13 +74,7 @@ public class JsonTransformer {
 	 * Transform.
 	 */
 	public void transform() {
-		// ParseOptions options = new ParseOptions();
-		// options.setResolve(true);
-		// options.setResolveFully(true);
 		OpenAPI openAPI = (new OpenAPIV3Parser()).read(source, null, null);
-		// Get All Schema types
-		// ResolverFully resolverUtil = new ResolverFully();
-		// resolverUtil.resolveFully(openAPI);
 		List<Step> steps = populateSteps(openAPI);
 		ScenarioSpec scenario = new ScenarioSpec(null, false, openAPI.getOpenapi(), steps);
 		ouputStepsToFile(scenario, source, target);
@@ -94,7 +88,6 @@ public class JsonTransformer {
 	 * @param target the target
 	 */
 	private void ouputStepsToFile(ScenarioSpec scenario, String source, String target) {
-		// try-with-resources statement based on post comment below :)
 		File file = null;
 		try {
 			file = new File(target);
@@ -154,7 +147,7 @@ public class JsonTransformer {
 			if (NumberUtils.isNumber((String) r)) {
 				objectNode.set("status", objMapper.getNodeFactory().numberNode(Integer.valueOf((String) r)));
 				ApiResponse response = operation.getResponses().get(r);
-				if (response != null && response.getContent()!=null && !response.getContent().values().isEmpty()) {
+				if (response != null && response.getContent() != null && !response.getContent().values().isEmpty()) {
 					objectNode.set("body",
 							getSchemaType(openAPI, response.getContent().values().iterator().next().getSchema()));
 				}
@@ -222,12 +215,17 @@ public class JsonTransformer {
 	 */
 	private String prepareURL(Operation operation, OpenAPI openAPI, String baseURL) throws URISyntaxException {
 		StringBuilder builder = new StringBuilder(baseURL);
-		StringJoiner paramJoiner = new StringJoiner("=", "&", "");
+		StringJoiner paramJoiner = new StringJoiner("=");
+	   StringBuilder firstSeperator = new StringBuilder("");
 		if (operation.getParameters() != null) {
 			operation.getParameters().stream().forEach(p -> {
 				if ("query".equalsIgnoreCase(p.getIn())) {
-					paramJoiner.add(p.getName());
+					paramJoiner.add(firstSeperator.toString() + p.getName());
+					if(firstSeperator.toString().trim().equals("")) {
+						firstSeperator.append("&");
+					}
 				}
+
 			});
 		}
 		return builder.append(paramJoiner.length() > 0 ? "?" + paramJoiner.toString() : "").toString();
