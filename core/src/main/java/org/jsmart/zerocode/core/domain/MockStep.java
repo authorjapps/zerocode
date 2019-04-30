@@ -1,16 +1,16 @@
 package org.jsmart.zerocode.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 /**
  * Do not enable this @JsonIgnoreProperties(ignoreUnknown = true) as this will suppress the test data failure,
  * let it spit out the exception(s) in case of a bad json/test input
