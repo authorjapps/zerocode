@@ -1,18 +1,15 @@
-package com.zerocode.openapi.template.processor;
+package com.zerocode.oas.stepgen.generator;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 
 @Slf4j
-public class OpenAPIStepsGenerator {
+public class OpenAPISteps implements OpenAPIStepsGenerator {
 	static {
 		// register the JSON serializer
 		SimpleModule simpleModule = new SimpleModule();
@@ -51,44 +48,18 @@ public class OpenAPIStepsGenerator {
 		Yaml.mapper().registerModule(simpleModule);
 	}
 
-
-
 	/** The obj mapper. */
 	ObjectMapper objMapper = new ObjectMapper();
 
 	/**
 	 * Transform.
 	 */
-	public void transform(String source, String target) {
-		OpenAPI openAPI = (new OpenAPIV3Parser()).read(source, null, null);
+	@Override
+	public ScenarioSpec transform(OpenAPI openAPI) {
 		List<Step> steps = populateSteps(openAPI);
-		ScenarioSpec scenario = new ScenarioSpec(null, false, openAPI.getOpenapi(), steps);
-		ouputStepsToFile(scenario, source, target);
+		return new ScenarioSpec(null, false, openAPI.getOpenapi(), steps);
 	}
 
-	/**
-	 * Ouput steps to file.
-	 *
-	 * @param steps  the steps
-	 * @param source the source
-	 * @param target the target
-	 */
-	private void ouputStepsToFile(ScenarioSpec scenario, String source, String target) {
-		File file = null;
-		try {
-			file = new File(target);
-			if (file.exists()) {
-				log.error("File {} already exists  ", target);
-				throw new IllegalArgumentException("File already exist");
-			}
-			file.createNewFile();
-			objMapper.enable(SerializationFeature.INDENT_OUTPUT);
-			objMapper.writerWithDefaultPrettyPrinter().writeValue(file, scenario);
-		} catch (Exception e) {
-			log.error("Error writing output {} ", target, e);
-		} finally {
-		}
-	}
 
 	/**
 	 * Populate steps.
@@ -202,12 +173,12 @@ public class OpenAPIStepsGenerator {
 	private String prepareURL(Operation operation, OpenAPI openAPI, String baseURL) throws URISyntaxException {
 		StringBuilder builder = new StringBuilder(baseURL);
 		StringJoiner paramJoiner = new StringJoiner("=");
-	   StringBuilder firstSeperator = new StringBuilder("");
+		StringBuilder firstSeperator = new StringBuilder("");
 		if (operation.getParameters() != null) {
 			operation.getParameters().stream().forEach(p -> {
 				if ("query".equalsIgnoreCase(p.getIn())) {
 					paramJoiner.add(firstSeperator.toString() + p.getName());
-					if(firstSeperator.toString().trim().equals("")) {
+					if (firstSeperator.toString().trim().equals("")) {
 						firstSeperator.append("&");
 					}
 				}
@@ -231,9 +202,12 @@ public class OpenAPIStepsGenerator {
 		try {
 			return mapper.readTree(Json.pretty(rep));
 		} catch (IOException e) {
-			log.error("Error creating example json",e);
+			log.error("Error creating example json", e);
 		}
 		return null;
 	}
+
+
+
 
 }
