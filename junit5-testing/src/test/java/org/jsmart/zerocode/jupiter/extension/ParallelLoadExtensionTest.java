@@ -12,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ZeroCodeParallelExtensionTest {
+class ParallelLoadExtensionTest {
 
-    @ExtendWith({ZeroCodeParallelExtension.class})
+    @ExtendWith({ParallelLoadExtension.class})
     public class JUnit5ExampleLoad {
 
         @Test
@@ -34,16 +34,16 @@ class ZeroCodeParallelExtensionTest {
         Method[] declaredMethods = clazz.getDeclaredMethods();
         Method testMethod = declaredMethods[0]; // this is 'testLoad()'
 
-        ZeroCodeParallelExtension zeroCodeParallelExtension = new ZeroCodeParallelExtension();
+        ParallelLoadExtension parallelLoadExtension = new ParallelLoadExtension();
         RuntimeException thrown =
                 assertThrows(RuntimeException.class,
-                        () -> zeroCodeParallelExtension.validateAndGetLoadPropertiesFile(clazz, testMethod),
+                        () -> parallelLoadExtension.validateAndGetLoadPropertiesFile(clazz, testMethod),
                         "Expected to throw RuntimeException, but it didn't throw.");
 
         assertTrue(thrown.getMessage().contains("Missing the the @LoadWith(...)"));
     }
 
-    @ExtendWith({ZeroCodeParallelExtension.class})
+    @ExtendWith({ParallelLoadExtension.class})
     public class JUnit5ExampleLoad2 {
 
         @Test
@@ -63,8 +63,8 @@ class ZeroCodeParallelExtensionTest {
         Method[] declaredMethods = clazz.getDeclaredMethods();
         Method testMethod = declaredMethods[0]; // this is 'testLoad()'
 
-        ZeroCodeParallelExtension zeroCodeParallelExtension = new ZeroCodeParallelExtension();
-        String loadPropertiesFile = zeroCodeParallelExtension.validateAndGetLoadPropertiesFile(clazz, testMethod);
+        ParallelLoadExtension parallelLoadExtension = new ParallelLoadExtension();
+        String loadPropertiesFile = parallelLoadExtension.validateAndGetLoadPropertiesFile(clazz, testMethod);
 
         assertEquals("load_generation.properties", loadPropertiesFile);
     }

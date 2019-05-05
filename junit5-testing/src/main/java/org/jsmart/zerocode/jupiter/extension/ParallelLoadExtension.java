@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Visit the Wiki page and HelloWorld repo on this for precise examples.
  */
 @API(status = EXPERIMENTAL)
-public class ZeroCodeParallelExtension implements BeforeEachCallback {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeParallelExtension.class);
+public class ParallelLoadExtension implements BeforeEachCallback {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParallelLoadExtension.class);
     private final ObjectMapper mapper = new ObjectMapperProvider().get();
     private final ZeroCodeReportGenerator reportGenerator = new ZeroCodeReportGeneratorImpl(mapper);
 
