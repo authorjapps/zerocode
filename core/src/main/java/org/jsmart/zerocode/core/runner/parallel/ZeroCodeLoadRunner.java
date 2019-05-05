@@ -1,5 +1,7 @@
 package org.jsmart.zerocode.core.runner.parallel;
 
+import java.util.Arrays;
+import java.util.List;
 import org.jsmart.zerocode.core.domain.LoadWith;
 import org.jsmart.zerocode.core.domain.TestMapping;
 import org.junit.runner.Description;
@@ -10,9 +12,7 @@ import org.junit.runners.model.InitializationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.List;
-
+import static org.jsmart.zerocode.core.utils.RunnerUtils.validateTestMethod;
 import static org.junit.runner.Description.createTestDescription;
 
 public class ZeroCodeLoadRunner extends ParentRunner<TestMapping> {
@@ -34,7 +34,7 @@ public class ZeroCodeLoadRunner extends ParentRunner<TestMapping> {
     @Override
     protected List<TestMapping> getChildren() {
         validateAnnotationPresence();
-        validateTestMethod();
+        validateTestMethod(testClass);
         return Arrays.asList(testClass.getAnnotationsByType(TestMapping.class));
     }
 
@@ -89,18 +89,6 @@ public class ZeroCodeLoadRunner extends ParentRunner<TestMapping> {
 
         }
 
-    }
-
-    private void validateTestMethod() {
-        String errMessage = " was invalid, please re-check and pick the correct test method to load.";
-        try {
-            TestMapping methodMapping = testClass.getAnnotation(TestMapping.class);
-            errMessage = "Mapped test method `" + methodMapping.testMethod() + "`" + errMessage;
-            methodMapping.testClass().getMethod(methodMapping.testMethod());
-        } catch (NoSuchMethodException e) {
-            LOGGER.error(errMessage);
-            throw new RuntimeException(errMessage + e);
-        }
     }
 
 }

@@ -69,8 +69,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     @Named("interactive.html.report.disabled")
     private boolean interactiveHtmlReportDisabled;
 
-    @Inject
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     private List<ZeroCodeReport> treeReports;
 
@@ -78,7 +77,9 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
     private List<ZeroCodeCsvReport> csvRows = new ArrayList<>();
 
-    public ZeroCodeReportGeneratorImpl() {
+    @Inject
+    public ZeroCodeReportGeneratorImpl(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
 
     @Override
@@ -114,7 +115,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     	step.info(MarkupHelper.createCodeBlock(thisStep.getOperation() + "\t" + thisStep.getUrl()));
                     	step.info(MarkupHelper.createCodeBlock(thisStep.getRequest(), CodeLanguage.JSON));
                         step.info(MarkupHelper.createCodeBlock(thisStep.getResponse(), CodeLanguage.JSON));
-                    	step.fail(MarkupHelper.createCodeBlock("Reason:\n" + thisStep.getResult()));
+                    	step.fail(MarkupHelper.createCodeBlock("Reason:\n" + thisStep.getAssertions()));
                     }
                     extentReports.flush();
                 });

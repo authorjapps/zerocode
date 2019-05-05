@@ -1,5 +1,7 @@
 package org.jsmart.zerocode.core.report;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -17,11 +19,12 @@ public class ZeroCodeReportGeneratorImplTest {
 
     private ZeroCodeReportGeneratorImpl zeroCodeReportGenerator;
 
+    ObjectMapper mapper = new ObjectMapperProvider().get();
 
     @Before
     public void setItUp() throws Exception {
 
-        zeroCodeReportGenerator = new ZeroCodeReportGeneratorImpl();
+        zeroCodeReportGenerator = new ZeroCodeReportGeneratorImpl(mapper);
 
     }
 

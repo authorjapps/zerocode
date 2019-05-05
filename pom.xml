@@ -32,6 +32,7 @@
         <module>core</module>
         <module>http-testing</module>
         <module>kafka-testing</module>
+        <module>junit5-testing</module>
     </modules>
 
     <developers>
@@ -58,6 +59,9 @@
 
     <properties>
         <!-- This project properties -->
+        <junit5.version>5.4.2</junit5.version>
+        <junit.vintage.version>5.4.2</junit.vintage.version>
+        <junit-platform-runner.version>1.4.2</junit-platform-runner.version>
         <junit.version>4.12</junit.version>
         <jackson-databind.version>2.9.8</jackson-databind.version>
         <guava.version>23.0</guava.version>
@@ -79,7 +83,7 @@
         <extentreports.version>4.0.9</extentreports.version>
         <version.kafka-clients>2.1.0</version.kafka-clients>
         <version.gson>2.6.2</version.gson>
-        <!-- maven plugin, build properties  -->
+        <!-- Maven plugins, build properties  -->
         <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
         <java-compiler-source.version>1.8</java-compiler-source.version>
         <java-compiler-target.version>1.8</java-compiler-target.version>
@@ -90,6 +94,26 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit5.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit5.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${junit.vintage.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-runner</artifactId>
+                <version>${junit-platform-runner.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>

@@ -2,6 +2,7 @@ package org.jsmart.zerocode.core.utils;
 
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.EnvProperty;
+import org.jsmart.zerocode.core.domain.TestMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,4 +87,15 @@ public class RunnerUtils {
         }
     }
 
+    public static void validateTestMethod(Class<?> testClass) {
+        String errMessage = " was invalid, please re-check and pick the correct test method to load.";
+        try {
+            TestMapping methodMapping = testClass.getAnnotation(TestMapping.class);
+            errMessage = "Mapped test method `" + methodMapping.testMethod() + "`" + errMessage;
+            methodMapping.testClass().getMethod(methodMapping.testMethod());
+        } catch (NoSuchMethodException e) {
+            LOGGER.error(errMessage);
+            throw new RuntimeException(errMessage + e);
+        }
+    }
 }
