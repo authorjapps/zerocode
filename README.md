@@ -193,7 +193,7 @@ public class HelloWorldSelectedGitHubSuite {
 ```
 
 Or
-+ Slecting as usual `JUnit Suite`
++ Selecting as usual `JUnit Suite`
 
 ```java
 @RunWith(Suite.class)				
