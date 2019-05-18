@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 /**
@@ -20,6 +21,8 @@ public class Step {
     private JsonNode assertions;
     private String id;
     private JsonNode stepFile;
+    private List<Object> parameterized;
+    private List<String> parameterizedCsv;
 
     public Integer getLoop() {
         return loop;
@@ -61,6 +64,22 @@ public class Step {
         this.stepFile = stepFile;
     }
 
+    public List<Object> getParameterized() {
+        return parameterized;
+    }
+
+    public void setParameterized(List<Object> parameterized) {
+        this.parameterized = parameterized;
+    }
+
+    public List<String> getParameterizedCsv() {
+        return parameterizedCsv;
+    }
+
+    public void setParameterizedCsv(List<String> parameterizedCsv) {
+        this.parameterizedCsv = parameterizedCsv;
+    }
+
     @JsonCreator
     public Step(
             @JsonProperty("stepLoop") Integer loop,
@@ -89,6 +108,7 @@ public class Step {
                 ", assertions=" + assertions +
                 ", id='" + id + '\'' +
                 ", stepFile=" + stepFile +
+                ", parameterized=" + parameterized +
                 '}';
     }
 }

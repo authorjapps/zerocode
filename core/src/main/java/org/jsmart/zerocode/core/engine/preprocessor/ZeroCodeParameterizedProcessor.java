@@ -18,9 +18,7 @@ package org.jsmart.zerocode.core.engine.preprocessor;
 
 import org.jsmart.zerocode.core.domain.Step;
 
-public interface ZeroCodeExternalFileProcessor {
+public interface ZeroCodeParameterizedProcessor {
 
-    Step resolveExtJsonFile(Step thisStep);
-
-    Step createFromStepFile(Step thisStep, String stepId);
+    Step processParameterized(Step thisStep, int i);
 }

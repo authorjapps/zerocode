@@ -1,0 +1,28 @@
+{
+    "scenarioName": "Parameterized test scenario demo",
+    "steps": [
+        {
+            "name": "get_user",
+            "url": "",
+            "operation": "",
+            "request": {
+                "status": "${2}",
+                "body": {
+                    "login": "octocat-${0}-${1}"
+                }
+            },
+            "assertions": {
+                "status": "${2}",
+                "body": {
+                    "login": "octocat-${0}-${1}"
+                }
+            },
+            "parameterizedCsv": [
+              //id,     AddressId, status
+                "1,        2,        200",
+                "11,      22,        400",
+                "21,      31,        500"
+            ]
+        }
+    ]
+}

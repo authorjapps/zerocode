@@ -1,10 +1,13 @@
 package org.jsmart.zerocode.core.runner;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.univocity.parsers.csv.CsvParser;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.function.BiConsumer;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
@@ -17,20 +20,20 @@ import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
 import org.jsmart.zerocode.core.logbuilder.LogCorrelationshipPrinter;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.function.BiConsumer;
-
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.*;
+import static org.jsmart.zerocode.core.domain.ZerocodeConstants.KAFKA_TOPIC;
+import static org.jsmart.zerocode.core.domain.ZerocodeConstants.PROPERTY_KEY_HOST;
+import static org.jsmart.zerocode.core.domain.ZerocodeConstants.PROPERTY_KEY_PORT;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
-import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.serviceType;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.loopCount;
+import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.serviceType;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -48,7 +51,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     private ZeroCodeExternalFileProcessor extFileProcessor;
 
     @Inject
+    private ZeroCodeParameterizedProcessor parameterizedProcessor;
+
+    @Inject
     private JsonServiceExecutor serviceExecutor;
+
+    @Inject
+    private CsvParser csvParser;
 
     @Inject(optional = true)
     @Named("web.application.endpoint.host")
@@ -74,7 +83,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private ZeroCodeExecResultIoWriteBuilder reportBuilder;
 
-    private ZeroCodeExecResultBuilder reportResultBuilder;
+    private ZeroCodeExecResultBuilder execResultBuilder;
 
     private Boolean stepOutcomeGreen;
 
@@ -96,14 +105,16 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             /*
              * Build Report scenario for each k
              */
-            reportResultBuilder = newInstance()
+            execResultBuilder = newInstance()
                     .loop(k)
                     .scenarioName(scenario.getScenarioName());
 
             for (Step thisStep : scenario.getSteps()) {
 
-                final int stepLoopTimes = thisStep.getLoop() == null ? 1 : thisStep.getLoop();
-                for (int i = 0; i < stepLoopTimes; i++) {
+                int stepLoopCount;
+                stepLoopCount = loopCount(thisStep);
+
+                for (int i = 0; i < stepLoopCount; i++) {
                     LOGGER.info("\n### Executing Step -->> Count No: " + i);
                     logCorrelationshipPrinter = LogCorrelationshipPrinter.newInstance(LOGGER);
                     logCorrelationshipPrinter.stepLoop(i);
@@ -111,10 +122,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
 
                     String stepId = thisStep.getId();
+                    thisStep = extFileProcessor.createFromStepFile(thisStep, stepId);
 
-                    thisStep = createFromStepFile(thisStep, stepId);
+                    Step parameterizedStep = parameterizedProcessor.processParameterized(thisStep, i);
 
-                    final String requestJsonAsString = thisStep.getRequest().toString();
+                    final String requestJsonAsString = parameterizedStep.getRequest().toString();
 
                     StepExecutionState stepExecutionState = new StepExecutionState();
 
@@ -122,7 +134,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                      * Create the step name as it is for the 1st stepLoopTimes i.e. i=0.
                      * Rest of the loops suffix as i ie stepName1, stepName2, stepName3 etc
                      */
-                    final String thisStepName = thisStep.getName() + (i == 0 ? "" : i);
+                    final String thisStepName = parameterizedStep.getName() + (i == 0 ? "" : i);
 
                     stepExecutionState.addStep(thisStepName);
 
@@ -137,8 +149,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     final String logPrefixRelationshipId = logCorrelationshipPrinter.createRelationshipId();
 
                     try {
-                        String serviceName = thisStep.getUrl();
-                        String operationName = thisStep.getOperation();
+                        String serviceName = parameterizedStep.getUrl();
+                        String operationName = parameterizedStep.getOperation();
 
                         // --------------------------------
                         // Resolve the URL patterns if any
@@ -231,7 +243,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         // Handle assertion section -START
                         // ---------------------------------
                         String resolvedAssertionJson = zeroCodeJsonTestProcesor.resolveStringJson(
-                                thisStep.getAssertions().toString(),
+                                parameterizedStep.getAssertions().toString(),
                                 scenarioExecutionState.getResolvedScenarioState()
                         );
 
@@ -346,13 +358,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                          * Build step report for each step
                          * Add the report step to the result step list.
                          */
-                        reportResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
+                        execResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
 
                         /*
                          * FAILED and Exception reports are generated here
                          */
                         if (!stepOutcomeGreen) {
-                            reportBuilder.result(reportResultBuilder.build());
+                            reportBuilder.result(execResultBuilder.build());
                             reportBuilder.printToFile(scenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
                         }
                     }
@@ -361,7 +373,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             } //<--- steps for-each
 
-            reportBuilder.result(reportResultBuilder.build());
+            reportBuilder.result(execResultBuilder.build());
 
         } //<-- Scenario Loop
 
@@ -444,16 +456,4 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     }
 
-    private Step createFromStepFile(Step thisStep, String stepId) {
-        if (thisStep.getStepFile() != null) {
-            try {
-                thisStep = objectMapper.treeToValue(thisStep.getStepFile(), Step.class);
-            } catch (JsonProcessingException e) {
-                LOGGER.error("\n### Error while parsing for stepId - {}, stepFile - {}",
-                        stepId, thisStep.getStepFile());
-                throw new RuntimeException(e);
-            }
-        }
-        return thisStep;
-    }
 }
