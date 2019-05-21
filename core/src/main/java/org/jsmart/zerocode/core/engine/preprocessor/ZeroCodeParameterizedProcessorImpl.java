@@ -81,7 +81,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
         Step parameterizedStep;
         if (thisStep.getParameterized() != null) {
 
-            parameterizedStep = resolveParams(thisStep, i);
+            parameterizedStep = resolveParamsValues(thisStep, i);
 
         } else if (thisStep.getParameterizedCsv() != null) {
 
@@ -95,7 +95,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
         return parameterizedStep;
     }
 
-    private Step resolveParams(Step step, int paramIndex) {
+    private Step resolveParamsValues(Step step, int paramIndex) {
         try {
             String stepJson = objectMapper.writeValueAsString(step);
             List<Object> parameterized = step.getParameterized();

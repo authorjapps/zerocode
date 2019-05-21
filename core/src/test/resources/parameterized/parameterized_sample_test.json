@@ -16,13 +16,13 @@
                 "body": {
                     "login": "octocat-${0}"
                 }
-            },
-            "parameterized": [
-                //value
-                200,
-                "Hello",
-                true
-            ]
+            }
         }
+    ],
+    "parameterized": [
+        //value
+        200,
+        "Hello",
+        true
     ]
 }

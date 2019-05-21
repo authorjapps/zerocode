@@ -19,6 +19,7 @@ public class Step {
     private final String url;
     private JsonNode request;
     private JsonNode assertions;
+    private JsonNode verifications;
     private String id;
     private JsonNode stepFile;
     private List<Object> parameterized;
@@ -46,6 +47,10 @@ public class Step {
 
     public JsonNode getAssertions() {
         return assertions;
+    }
+
+    public JsonNode getVerifications() {
+        return verifications;
     }
 
     public String getId() {
@@ -87,14 +92,15 @@ public class Step {
             @JsonProperty("operation") String operation,
             @JsonProperty("url") String url,
             @JsonProperty("request") JsonNode request,
-            @JsonProperty("assertions") JsonNode assertions
-    ) {
+            @JsonProperty("assertions") JsonNode assertions,
+            @JsonProperty("verifications") JsonNode verifications) {
         this.loop = loop;
         this.name = name;
         this.operation = operation;
         this.request = request;
         this.url = url;
-        this.assertions = assertions;
+        this.assertions = assertions.isNull() ? verifications : assertions;
+        this.verifications = verifications;
     }
 
     @Override
@@ -106,6 +112,7 @@ public class Step {
                 ", url='" + url + '\'' +
                 ", request=" + request +
                 ", assertions=" + assertions +
+                ", verifications=" + verifications +
                 ", id='" + id + '\'' +
                 ", stepFile=" + stepFile +
                 ", parameterized=" + parameterized +

@@ -51,16 +51,16 @@ public class SmartUtilsTest {
 
     @Test
     public void testJsonToJavaFor_jsonFileName() throws Exception {
-        Step stepJava = smartUtils.jsonFileToJava("01_test_smart_test_cases/01_test_json_single_step.json", Step.class);
+        Step stepJava = smartUtils.jsonFileToJava("01_unit_test_jsons/01_test_json_single_step.json", Step.class);
         assertThat(stepJava.getLoop(), is(3));
 
-        ScenarioSpec flowJava = smartUtils.jsonFileToJava("01_test_smart_test_cases/02_test_json_flow_single_step.json", ScenarioSpec.class);
-        assertThat(flowJava.getLoop(), is(5));
+        ScenarioSpec scenarioJava = smartUtils.jsonFileToJava("01_unit_test_jsons/02_test_json_flow_single_step.json", ScenarioSpec.class);
+        assertThat(scenarioJava.getLoop(), is(5));
     }
 
     @Test
     public void willGetJsonFileIntoA_JavaString() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/01_test_json_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_unit_test_jsons/01_test_json_single_step.json");
         assertThat(jsonDocumentAsString, containsString("assertions"));
         assertThat(jsonDocumentAsString, containsString("request"));
         assertThat(jsonDocumentAsString, containsString("{"));
@@ -69,9 +69,9 @@ public class SmartUtilsTest {
 
     @Test
     public void willReadAllfileNamesFrom_TestResource() throws Exception {
-        List<String> allTestCaseFiles = SmartUtils.getAllEndPointFiles("01_test_smart_test_cases");
-        assertThat(allTestCaseFiles.size(), is(8));
-        assertThat(allTestCaseFiles.get(0).toString(), is("01_test_smart_test_cases/01_test_json_single_step.json"));
+        List<String> allTestCaseFiles = SmartUtils.getAllEndPointFiles("01_unit_test_jsons");
+        assertThat(allTestCaseFiles.size(), is(9));
+        assertThat(allTestCaseFiles.get(0).toString(), is("01_unit_test_jsons/01_test_json_single_step.json"));
     }
 
     @Test
