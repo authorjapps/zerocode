@@ -87,7 +87,7 @@ Or
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "body": {
             "type": "$CONTAINS.STRING:Premium High"  // Matches only part of the value
         }
@@ -127,7 +127,7 @@ Smart Projects Using Zerocode
  + [Barclays Bank](https://www.barclays.co.uk/) - Micro-Services API Contract Validation for System APIs build using Spring Boot
  + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Kafka Data-pipeline testing, Authentication testing.
 
-Using Custom Http Client
+Configuring Custom Http Client
 ===
 `@UseHttpClient` enables us to use any project specific custom Http client. See an example [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldCustomHttpClientSuite.java).
 e.g.
@@ -138,6 +138,11 @@ public class HelloWorldApiTest {
 }
 ```
 But this is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
+
+Visit [here](https://dzone.com/articles/oauth2-authentication-in-zerocode) to learn how [OAuth2 protected APIs](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/OAuth2/OAuth2Test.java) have are tested in an easy and straightforward manner.
+```
+@UseHttpClient(OAuth2HttpClient.class)
+```
 
 Running a Single Scenario Test
 ===
