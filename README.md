@@ -9,7 +9,7 @@
 
 Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. Jump to the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section to explore more. 
 
-Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode#smart-projects-using-zerocode) to achieve zero-defect production drop of their micro-services.
+Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode/blob/master/README.md#smart-projects-using-zerocode) to achieve zero-defect production drop of their micro-services.
 
 It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
@@ -37,7 +37,7 @@ then, we can easily validate the above API using `Zerocode` like below.
     "url": "api/customers/123",
     "operation": "GET",
     "request": {},
-    "assertions": {
+    "verifications": {
         "status": 200,
         "body": {
             "id": 123,
@@ -58,7 +58,7 @@ Or
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "status": 200,
         "body": {
             "id": 123,
@@ -73,7 +73,7 @@ Or
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "body": {
             "id": "$NOT.NULL",  // A not-null indeterministic value
             "addresses.SIZE": "$GT.0"  // A value greater than 0
@@ -100,7 +100,7 @@ Or
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "body": {
 	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1  // Indeterministic element position in an array
         }
