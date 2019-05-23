@@ -120,13 +120,6 @@ and run it simply by pointing to the above JSON file from a "JUnit" @Test method
 
 Looks simple n easy? Why not give a try? See the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section.
 
-Smart Projects Using Zerocode
-===
- + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
- + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
- + [Barclays Bank](https://www.barclays.co.uk/) - Micro-Services API Contract Validation for System APIs build using Spring Boot
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Kafka Data-pipeline testing, Authentication testing.
-
 Configuring Custom Http Client
 ===
 `@UseHttpClient` enables us to use any project specific custom Http client. See an example [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldCustomHttpClientSuite.java).
@@ -288,18 +281,19 @@ Maven dependency xml:
 Hello World 🙌
 ====
 
-In a typical TDD approach, Zerocode is used in various phases of a project to pass though the quality gates. 
+In a typical TDD approach, Zerocode is used in various phases of a project to pass though various quality gates. 
 This makes the TDD cycle very very easy, clean and efficient.
 e.g.
-+ End to End Testing
-+ Performance Testing
-+ Integration Testing
-+ Dev Build/In-Memory Testing
-+ SIT Build
-+ Contract Test Build
-+ Manual Testing like usual REST clients(Postman or Insomnia etc)
-+ DataBase Integrity Testing
-+ API Mocking/Service Virtualization
++ NFR - Performance Testing
++ NFR - Security Testing
++ DEV - Integration Testing
++ DEV - Dev Build/In-Memory Testing
++ CI - End to End Testing Build
++ CI - SIT(System Integration Testing) Build
++ CI - Contract Test Build
++ CI - DataBase Integrity Testing
++ MANUAL - Manual Testing like usual REST clients(Postman or Insomnia etc)
++ MOCK - API Mocking/Service Virtualization
 
 
 Clone or download the below quick-start repos to run these from your local IDE or maven. 
@@ -345,6 +339,7 @@ Upcoming Releases 🐼
 Supported testing frameworks:
 ===
  * [JUnit](http://junit.org)
+ * [JUnit5 Jupiter Support](https://github.com/authorjapps/zerocode/wiki/JUnit5-Jupiter-Parallel-Load-Extension)
 
 <br/>
 
@@ -381,6 +376,13 @@ Maven Dependencies
 [More (Wiki) >>](https://github.com/authorjapps/zerocode/wiki)
 
 <br/>
+
+Smart Projects Using Zerocode
+===
+ + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
+ + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
+ + [Barclays Bank](https://www.barclays.co.uk/) - Micro-Services API Contract Validation for System APIs build using Spring Boot
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Kafka Data-pipeline testing, Authentication testing.
 
 Latest news/releases/features
 ===
