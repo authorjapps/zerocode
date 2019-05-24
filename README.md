@@ -9,7 +9,7 @@
 
 Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. Jump to the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section to explore more. 
 
-Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode#smart-projects-using-zerocode) to achieve zero-defect production drop of their micro-services.
+Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode/blob/master/README.md#smart-projects-using-zerocode) to achieve zero-defect production drop of their micro-services.
 
 It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
@@ -37,7 +37,7 @@ then, we can easily validate the above API using `Zerocode` like below.
     "url": "api/customers/123",
     "operation": "GET",
     "request": {},
-    "assertions": {
+    "verifications": {
         "status": 200,
         "body": {
             "id": 123,
@@ -58,7 +58,7 @@ Or
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "status": 200,
         "body": {
             "id": 123,
@@ -73,7 +73,7 @@ Or
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "body": {
             "id": "$NOT.NULL",  // A not-null indeterministic value
             "addresses.SIZE": "$GT.0"  // A value greater than 0
@@ -87,7 +87,7 @@ Or
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "body": {
             "type": "$CONTAINS.STRING:Premium High"  // Matches only part of the value
         }
@@ -100,7 +100,7 @@ Or
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "body": {
 	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1  // Indeterministic element position in an array
         }
@@ -120,14 +120,7 @@ and run it simply by pointing to the above JSON file from a "JUnit" @Test method
 
 Looks simple n easy? Why not give a try? See the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section.
 
-Smart Projects Using Zerocode
-===
- + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
- + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
- + [Barclays Bank](https://www.barclays.co.uk/) - Micro-Services API Contract Validation for System APIs build using Spring Boot
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Kafka Data-pipeline testing, Authentication testing.
-
-Using Custom Http Client
+Configuring Custom Http Client
 ===
 `@UseHttpClient` enables us to use any project specific custom Http client. See an example [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldCustomHttpClientSuite.java).
 e.g.
@@ -138,6 +131,11 @@ public class HelloWorldApiTest {
 }
 ```
 But this is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
+
+Visit [here](https://dzone.com/articles/oauth2-authentication-in-zerocode) to learn how [OAuth2 protected APIs](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/OAuth2/OAuth2Test.java) have are tested in an easy and straightforward manner.
+```
+@UseHttpClient(OAuth2HttpClient.class)
+```
 
 Running a Single Scenario Test
 ===
@@ -283,18 +281,19 @@ Maven dependency xml:
 Hello World 🙌
 ====
 
-In a typical TDD approach, Zerocode is used in various phases of a project to pass though the quality gates. 
+In a typical TDD approach, Zerocode is used in various phases of a project to pass though various quality gates. 
 This makes the TDD cycle very very easy, clean and efficient.
 e.g.
-+ End to End Testing
-+ Performance Testing
-+ Integration Testing
-+ Dev Build/In-Memory Testing
-+ SIT Build
-+ Contract Test Build
-+ Manual Testing like usual REST clients(Postman or Insomnia etc)
-+ DataBase Integrity Testing
-+ API Mocking/Service Virtualization
++ NFR - Performance Testing
++ NFR - Security Testing
++ DEV - Integration Testing
++ DEV - Dev Build/In-Memory Testing
++ CI - End to End Testing Build
++ CI - SIT(System Integration Testing) Build
++ CI - Contract Test Build
++ CI - DataBase Integrity Testing
++ MANUAL - Manual Testing like usual REST clients(Postman or Insomnia etc)
++ MOCK - API Mocking/Service Virtualization
 
 
 Clone or download the below quick-start repos to run these from your local IDE or maven. 
@@ -340,6 +339,7 @@ Upcoming Releases 🐼
 Supported testing frameworks:
 ===
  * [JUnit](http://junit.org)
+ * [JUnit5 Jupiter Support](https://github.com/authorjapps/zerocode/wiki/JUnit5-Jupiter-Parallel-Load-Extension)
 
 <br/>
 
@@ -376,6 +376,13 @@ Maven Dependencies
 [More (Wiki) >>](https://github.com/authorjapps/zerocode/wiki)
 
 <br/>
+
+Smart Projects Using Zerocode
+===
+ + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
+ + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
+ + [Barclays Bank](https://www.barclays.co.uk/) - Micro-Services API Contract Validation for System APIs build using Spring Boot
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Kafka Data-pipeline testing, Authentication testing.
 
 Latest news/releases/features
 ===
