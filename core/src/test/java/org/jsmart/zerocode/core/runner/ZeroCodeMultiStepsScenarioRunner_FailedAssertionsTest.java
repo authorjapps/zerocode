@@ -20,7 +20,7 @@ import org.junit.runner.Result;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ZeroCodeMultiStepsScenarioRunner_FailedAssertions {
+public class ZeroCodeMultiStepsScenarioRunner_FailedAssertionsTest {
 	
     public static final String SCENARIO_NAME = "Two Step - One Fail";
 
