@@ -1,0 +1,27 @@
+{
+  "scenarioName": "GIVEN Two Step - One Fail THEN Report assertions and payload",
+  "ignoreStepFailures": true,
+  "steps": [
+    {
+      "name": "FailedStep", 
+      "url": "/thisUrlShouldntWork",
+      "operation": "GET",
+      "request": {},
+      "assertions": {
+        "status": 200
+      }
+    },
+    {
+      "name": "PassedStep",
+      "url": "/thisUrlShouldntWork",
+      "operation": "GET",
+      "request": {},
+      "assertions": {
+        "status": 404
+      }
+    }
+
+  ]
+}
+
+
