@@ -12,17 +12,19 @@
                 }
             },
             "assertions": {
-                "status": "${0}",
+                "status": "${$.get_user.request.status}",
                 "body": {
                     "login": "octocat-${0}"
                 }
             }
         }
     ],
-    "parameterized": [
-        //value
-        200,
-        "Hello",
-        true
-    ]
+    "parameterized": {
+        "valueSource":[
+            //value
+            200,
+            "Hello",
+            true
+        ]
+    }
 }

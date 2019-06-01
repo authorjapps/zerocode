@@ -37,7 +37,7 @@ then, we can easily validate the above API using `Zerocode` like below.
     "url": "api/customers/123",
     "operation": "GET",
     "request": {},
-    "assertions": {
+    "verifications": {
         "status": 200,
         "body": {
             "id": 123,
@@ -52,13 +52,23 @@ then, we can easily validate the above API using `Zerocode` like below.
     }
 }
 ```
+Or
+
+```javaScript
+{
+    ...
+    "verifications": {
+        "status": 200 // Verify status is 200
+    }
+}
+```
 
 Or
 
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "status": 200,
         "body": {
             "id": 123,
@@ -73,7 +83,7 @@ Or
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "body": {
             "id": "$NOT.NULL",  // A not-null indeterministic value
             "addresses.SIZE": "$GT.0"  // A value greater than 0
@@ -87,7 +97,7 @@ Or
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "body": {
             "type": "$CONTAINS.STRING:High Value"  // Matches only part of the value
         }
@@ -100,7 +110,7 @@ Or
 ```javaScript
 {
     ...
-    "assertions": {
+    "verifications": {
         "body": {
 	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1  // Indeterministic element position in an array
         }

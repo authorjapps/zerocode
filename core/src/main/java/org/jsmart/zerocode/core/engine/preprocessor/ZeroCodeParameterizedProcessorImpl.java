@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.slf4j.Logger;
 
@@ -41,22 +42,22 @@ import static org.slf4j.LoggerFactory.getLogger;
  * <p>
  * Parameters can be
  * "parameterized": [
- * 200,
- * "Hello",
- * true
+ *      200,
+ *      "Hello",
+ *      true
  * ]
  * <p>
  * -or-
  * <p>
  * "parameterizedCsv": [
- * "1,    2,   200",
- * "11,  22, 400",
- * "21,  31, 500"
+ *      "1,    2,   200",
+ *      "11,  22, 400",
+ *      "21,  31, 500"
  * ]
  * <p>
  * In each the above cases, the step will execute 3 times.
  * <p>
- * For "parameterized" case ${0} will resolve to 200, "Hello", true respectively for each run.
+ * For "parameterized" case, ${0} will resolve to 200, "Hello", true respectively for each run.
  * <p>
  * For "parameterizedCsv" case, ${0}, ${1}, ${2} will resolve to "1", "2", "200" for the first run.
  * Then it will resolve to "11",  "22", "400" for the 2nd run ans so on.
@@ -93,6 +94,73 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
 
         }
         return parameterizedStep;
+    }
+
+    @Override
+    public ScenarioSpec processParameterized(ScenarioSpec scenario, int iteration) {
+        ScenarioSpec parameterizedScenario;
+
+        if (scenario.getParameterized().getValueSource() != null) {
+
+            parameterizedScenario = resolveParamsValues(scenario, iteration);
+
+        } else if (scenario.getParameterized().getCsvSource() != null) {
+
+            parameterizedScenario = resolveParamsCsv(scenario, iteration);
+
+        } else {
+
+            parameterizedScenario = scenario;
+
+        }
+
+        return parameterizedScenario;
+    }
+
+    private ScenarioSpec resolveParamsValues(ScenarioSpec scenario, int paramIndex) {
+        try {
+            String stepJson = objectMapper.writeValueAsString(scenario);
+            List<Object> parameterized = scenario.getParameterized().getValueSource();
+
+            if (parameterized == null || parameterized.isEmpty()) {
+                return scenario;
+            }
+
+            Map<String, Object> valuesMap = new HashMap<>();
+            valuesMap.put(VALUE_SOURCE_KEY, parameterized.get(paramIndex));
+            String resultantStepJson = replaceWithValues(stepJson, valuesMap);
+
+            return objectMapper.readValue(resultantStepJson, ScenarioSpec.class);
+
+        } catch (Exception exx) {
+            throw new RuntimeException("Error while resolving parameterized values for a scenario - " + exx);
+        }
+    }
+
+    private ScenarioSpec resolveParamsCsv(ScenarioSpec scenario, int paramIndex) {
+        try {
+            String stepJson = objectMapper.writeValueAsString(scenario);
+            List<String> parameterizedCsvList = scenario.getParameterized().getCsvSource();
+
+            if (parameterizedCsvList == null || parameterizedCsvList.isEmpty()) {
+                return scenario;
+            }
+
+            Map<String, Object> valuesMap = new HashMap<>();
+            String csvLine = parameterizedCsvList.get(paramIndex);
+
+            String[] parsedLine = csvParser.parseLine(csvLine + LINE_SEPARATOR);
+            AtomicLong index = new AtomicLong(0);
+            Arrays.stream(parsedLine)
+                    .forEach(thisValue -> valuesMap.put(index.getAndIncrement() + "", thisValue));
+
+            String resultantStepJson = replaceWithValues(stepJson, valuesMap);
+
+            return objectMapper.readValue(resultantStepJson, ScenarioSpec.class);
+
+        } catch (Exception exx) {
+            throw new RuntimeException("Error while resolving parameterizedCsv values - " + exx);
+        }
     }
 
     private Step resolveParamsValues(Step step, int paramIndex) {

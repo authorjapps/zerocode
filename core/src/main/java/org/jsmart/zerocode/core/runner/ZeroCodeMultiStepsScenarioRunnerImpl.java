@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.jsmart.zerocode.core.domain.Parameterized;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
@@ -96,20 +97,32 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
-        final int scenarioLoopTimes = scenario.getLoop() == null ? 1 : scenario.getLoop();
+        int scenarioLoopTimes = scenario.getLoop() == null ? 1 : scenario.getLoop();
+        ///
+        Parameterized parameterized = scenario.getParameterized();
+        if(parameterized != null && parameterized.getValueSource() != null && parameterized.getValueSource().size() > 1){
+            int size = parameterized.getValueSource().size();
+            scenarioLoopTimes = size;
+        } else if(parameterized != null && parameterized.getCsvSource() != null && parameterized.getCsvSource().size() > 1){
+            int size = parameterized.getCsvSource().size();
+            scenarioLoopTimes = size;
+        }
 
+        ///
         for (int k = 0; k < scenarioLoopTimes; k++) {
 
             LOGGER.info("\n### Executing Scenario -->> Count No: " + k);
 
-            /*
-             * Build Report scenario for each k
-             */
+            ScenarioSpec parameterizedScenario = parameterizedProcessor.processParameterized(scenario, k);
+
+            // ---------------------------------
+            // Build Report scenario for each k
+            // ---------------------------------
             execResultBuilder = newInstance()
                     .loop(k)
-                    .scenarioName(scenario.getScenarioName());
+                    .scenarioName(parameterizedScenario.getScenarioName());
 
-            for (Step thisStep : scenario.getSteps()) {
+            for (Step thisStep : parameterizedScenario.getSteps()) {
 
                 int stepLoopCount;
                 stepLoopCount = loopCount(thisStep);
@@ -265,12 +278,12 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         // --------------------------------------------------------------------------------
                         // Non dependent requests into a single JSON file (Issue-167 - Feature Implemented)
                         // --------------------------------------------------------------------------------
-                        boolean ignoreStepFailures = scenario.getIgnoreStepFailures() == null ? false : scenario.getIgnoreStepFailures();
+                        boolean ignoreStepFailures = parameterizedScenario.getIgnoreStepFailures() == null ? false : parameterizedScenario.getIgnoreStepFailures();
                         if (ignoreStepFailures == true && !failureResults.isEmpty()) {
                             stepOutcomeGreen = notificationHandler.handleAssertion(
                                     notifier,
                                     description,
-                                    scenario.getScenarioName(),
+                                    parameterizedScenario.getScenarioName(),
                                     thisStepName,
                                     failureResults,
                                     notificationHandler::handleAssertionFailed);
@@ -297,7 +310,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             stepOutcomeGreen = notificationHandler.handleAssertion(
                                     notifier,
                                     description,
-                                    scenario.getScenarioName(),
+                                    parameterizedScenario.getScenarioName(),
                                     thisStepName,
                                     failureResults,
                                     notificationHandler::handleAssertionFailed);
@@ -313,7 +326,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         stepOutcomeGreen = notificationHandler.handleAssertion(
                                 notifier,
                                 description,
-                                scenario.getScenarioName(),
+                                parameterizedScenario.getScenarioName(),
                                 thisStepName,
                                 failureResults,
                                 notificationHandler::handleAssertionPassed);
@@ -342,7 +355,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         stepOutcomeGreen = notificationHandler.handleAssertion(
                                 notifier,
                                 description,
-                                scenario.getScenarioName(),
+                                parameterizedScenario.getScenarioName(),
                                 thisStepName,
                                 (new RuntimeException("ZeroCode Step execution failed. Details:" + ex)),
                                 notificationHandler::handleStepException);
@@ -365,7 +378,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                          */
                         if (!stepOutcomeGreen) {
                             reportBuilder.result(execResultBuilder.build());
-                            reportBuilder.printToFile(scenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
+                            reportBuilder.printToFile(parameterizedScenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
                         }
                     }
 

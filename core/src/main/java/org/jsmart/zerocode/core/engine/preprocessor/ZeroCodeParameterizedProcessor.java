@@ -16,9 +16,12 @@
  */
 package org.jsmart.zerocode.core.engine.preprocessor;
 
+import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 
 public interface ZeroCodeParameterizedProcessor {
 
     Step processParameterized(Step thisStep, int i);
+
+    ScenarioSpec processParameterized(ScenarioSpec scenario, int iteration);
 }
