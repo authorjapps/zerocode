@@ -188,7 +188,7 @@
                     <!--</configurationParameters>-->
                     <!--</properties>-->
                     <includes>
-                        <include>org.jsmart.zerocode.jupiter.extension.JupiterZeroCodeParallelTest</include>
+                        <include>org.jsmart.zerocode.jupiter.extension.ParallelLoadExtensionTest</include>
                         <include>org.jsmart.zerocode.tests.loadjupiter.JUnit5LoadTest</include>
                     </includes>
                 </configuration>
