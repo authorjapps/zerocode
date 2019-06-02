@@ -38,12 +38,6 @@
                     <artifactId>*</artifactId>
                 </exclusion>
                 -->
-                <!--
-                <exclusion>
-                    <groupId>aopalliance</groupId>
-                    <artifactId>aopalliance</artifactId>
-                </exclusion>
-                -->
                 <exclusion>
                     <groupId>org.jboss.resteasy</groupId>
                     <artifactId>resteasy-jaxrs</artifactId>
@@ -99,10 +93,6 @@
                 <exclusion>
                     <groupId>commons-httpclient</groupId>
                     <artifactId>commons-httpclient</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>aopalliance</groupId>
-                    <artifactId>aopalliance</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.junit.vintage</groupId>
