@@ -13,7 +13,7 @@ Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [
 
 It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
-For example, if our REST API returns the following from URL "`https://localhost:8080/api/customers/123`"
+For example, if our REST API returns the following from URL "`https://localhost:8080/api/customers/123`" with status `200`,
 ```javaScript
 {
     "id": 123,
