@@ -242,6 +242,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                         if (!failureResults.isEmpty()) {
                             StringBuilder builder = new StringBuilder();
+                            
+                            // Print expected Payload along with assertion errors
+                            builder.append("Assumed Payload: \n" + prettyPrintJson(resolvedAssertionJson) + "\n");
+                            builder.append("Assertion Errors: \n");
+                            
                             failureResults.forEach(f -> {
                                 builder.append(f.toString() + "\n");
                             });
