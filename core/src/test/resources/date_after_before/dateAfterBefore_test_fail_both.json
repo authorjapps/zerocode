@@ -1,0 +1,21 @@
+{
+    "scenarioName": "Assert that 'startDateTime' is before expected & 'endDateTime' is after expected",
+    "steps": [
+        {
+            "name": "get_project_details",
+            "url": "",
+            "operation": "",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                "projectDetails": {
+	                    "startDateTime" : "$DATE.BEFORE:2016-09-14T09:49:34.000Z",
+	                    "endDateTime" : "$DATE.AFTER:2019-09-14T09:49:34.000Z"
+                    }
+                }
+            }
+        }
+    ]
+}
