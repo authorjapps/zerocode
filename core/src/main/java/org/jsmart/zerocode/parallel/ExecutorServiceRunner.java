@@ -1,7 +1,6 @@
 package org.jsmart.zerocode.parallel;
 
 
-import org.jboss.resteasy.spi.InternalServerErrorException;
 import org.jsmart.zerocode.core.utils.PropertiesProviderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -207,9 +206,6 @@ public class ExecutorServiceRunner {
             LOGGER.info("executing the 'Future' now...");
             return future.get();
         } catch (Exception futureEx) {
-            if (futureEx.getCause() instanceof InternalServerErrorException) {
-                throw (InternalServerErrorException) futureEx.getCause();
-            }
             throw new RuntimeException(futureEx);
         }
     }
