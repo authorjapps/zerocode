@@ -50,7 +50,7 @@ public class H2DBTest {
     private  Connection createAndGetConnection() throws ClassNotFoundException, SQLException {
         Connection conn;
         Class.forName("org.h2.Driver");
-      return  DriverManager.getConnection("jdbc:h2:~/test");
+      return  DriverManager.getConnection("jdbc:h2:./target/test");
     }
 
 }
