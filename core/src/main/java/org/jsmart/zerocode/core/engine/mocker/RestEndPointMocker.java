@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
@@ -68,7 +69,10 @@ public class RestEndPointMocker {
              */
             wireMockServer.stop();
         }
-        wireMockServer = new WireMockServer(wireMockConfig().port(dynamicPort)); // <-- Strange
+        wireMockServer = new WireMockServer(
+                wireMockConfig()
+                .extensions(new ResponseTemplateTransformer(true))
+                .port(dynamicPort)); // <-- Strange
         wireMockServer.start();
         WireMock.configureFor("localhost", dynamicPort); // <-- Repetition of PORT was needed, this is a wireMock bug
     }
