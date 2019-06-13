@@ -2260,6 +2260,13 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 
 
 #### 100:
+#### JSON Slice And Dice - Solved
++ [Exapnd, Collapse, Remove Node and Traverse etc](https://jsoneditoronline.org/)
+  + Tree structure viewing - Good for array traversing
+  + Remove a node -> Click on left arrow
++ [Beautify, Minify, Copy Jayway JSON Pth](http://jsonpathfinder.com/)
++ [JSON Path Evaluator](http://jsonpath.herokuapp.com/?path=$.store.book[*].author)
+
 #### Video tutorials
 * [RESTful testing with test cases in JSON](https://youtu.be/nSWq5SuyqxE) - YouTube
 * [Zerocode - Simple and powerful testing library - HelloWorld](https://www.youtube.com/watch?v=YCV1cqGt5e0) - YouTube
@@ -2270,3 +2277,5 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 * [REST API or SOAP End Point Testing](https://www.codeproject.com/Articles/1242569/REST-API-or-SOAP-End-Point-Testing-with-ZeroCode-J) - Codeproject
 * [DZone- MuleSoft API Testing With Zerocode Test Framework](https://dzone.com/articles/zerocode-test-framework-for-restsoap-api-tddbdd-ap) - DZone
 * [Testing need not be harder or slower, it should be easier and faster](https://dzone.com/articles/rest-api-testing-using-the-zerocode-json-based-bdd) - DZone
+* [Kafka - Quick and Practical Testing With Zerocode](https://dzone.com/articles/a-quick-and-practical-example-of-kafka-testing) - DZone
+* [Kotlin Apps Testing With Zerocode](https://dzone.com/articles/kotlin-spring-bootspring-data-h2-db-rest-api) - DZone
