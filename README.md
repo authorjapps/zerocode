@@ -2260,6 +2260,13 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 
 
 #### 100:
+#### JSON Slice And Dice - Solved
++ [Exapnd, Collapse, Remove Node and Traverse etc](https://jsoneditoronline.org/)
+  + Tree structure viewing - Good for array traversing
+  + Remove a node -> Click on left arrow
++ [Beautify, Minify, Copy Jayway JSON Pth](http://jsonpathfinder.com/)
++ [JSON Path Evaluator](http://jsonpath.herokuapp.com/?path=$.store.book[*].author)
+
 #### Video tutorials
 * [RESTful testing with test cases in JSON](https://youtu.be/nSWq5SuyqxE) - YouTube
 * [Zerocode - Simple and powerful testing library - HelloWorld](https://www.youtube.com/watch?v=YCV1cqGt5e0) - YouTube
