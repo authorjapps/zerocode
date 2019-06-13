@@ -19,6 +19,14 @@
                                 "Content-Type" : "application/json"
                             },
                             "body": {
+                                // Showcases the use of WireMock's Response Templates
+                                // http://wiremock.org/docs/response-templating/
+                                // "fixed_date_time" is set by ZeroCode at mock-creation time, so it will remain the same accross subsequent calls
+                                // "dynamic_oneMinuteAgo", "dynamic_oneMinuteAhead" and "ucparam" are resolved at mock-response time, so they can be different per call
+                                // The templates are Handlebars Templates, where {{...}} delimits the templates, and inside you can put 'helpers'
+                                // now is one of those helpers that returns the current date (new java.util.Date()), and takes some extra attributes
+                                // to manipulate it. See the section 'Date and time helpers' on the WireMock-link for more info
+                                // upper is another helper, that uppercases it's argument (i.c. the first value of the request-parameter named 'param'
                                 "fixed_date_time": "${LOCAL.DATETIME.NOW:uuuu-MM-dd HH:mm:ss.SSS}",
                                 "dynamic_oneMinuteAgo": "{{now offset='-1 minutes' format='yyyy-MM-dd HH:mm:ss.SSS'}}",
                                 "dynamic_oneMinuteAhead": "{{now offset='+1 minutes' format='yyyy-MM-dd HH:mm:ss.SSS'}}",
