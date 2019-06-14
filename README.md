@@ -308,8 +308,6 @@ Clone or download the below quick-start repos to run these from your local IDE o
  
  * Quick start - [**Spring Boot** application - **Integration testing** - In-Memory](https://github.com/authorjapps/spring-boot-integration-test) <br/>
  
- * Quick start - [**Mock or Stub** server - **Click, Click, Done** - Via Wiremock Json DSL](https://github.com/authorjapps/api-mock-maker) <br/>
-
  * Quick start - [**Performance testing** - Resusing Spring JUnit tests(`less common`) - JUnit-Spring-Zerocode](https://github.com/authorjapps/zerocode-spring-junit) <br/>
 
  * Quick start - [**Kotlin Integration** - A Simple Kotlin Application - Dev and Test Best Practice](https://github.com/BeTheCodeWithYou/SpringBoot-Kotlin) <br/>
@@ -2249,6 +2247,8 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 | $CONTAINS.STRING:id was cust-001       | Assertion passes if the node response contains string "id was cust-001" | Otherwise fails |
 | $CONTAINS.STRING.IGNORECASE:id WaS CuSt-001       | Assertion passes if the response value contains string "id was cust-001" with case insensitive | Otherwise fails |
 | $MATCHES.STRING:`\\d{4}-\\d{2}-\\d{2}`       | Assertion passes if the response value contains e.g. `"1989-07-09"` matching regex `\\d{4}-\\d{2}-\\d{2}` | Otherwise fails |
+| $DATE.BEFORE:2017-09-14T09:49:34.000Z       | Assertion passes if the actual date is earlier than this date | Otherwise fails |
+| $DATE.AFTER:2016-09-14T09:49:34.000Z       | Assertion passes if the actual date is later than this date | Otherwise fails |
 
 #### Assertion Path holders
 
