@@ -2254,9 +2254,9 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 
 | Place Holder  | Output        | More  |
 | ------------- |:-------------| -----|
-| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : 3` - Assertion passes if the array size matches with value(3) | Search for `dealing with arrays` in this README for more usages |
-| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : "$GT.2"` - Assertion passes if the array size is greater than the value(2) | Search for `dealing with arrays` in this README for more usages |
-| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : "$LT.4"` - Assertion passes if the array size is lesser than the value(4) | Search for `dealing with arrays` in this README for more usages |
+| `"<path.to.array>.SIZE":"$GT.2"`     | e.g. `"persons.SIZE" : "$GT.2"` - Assertion passes if the array contains more than 2 elements | Search for `dealing with arrays` in this README for more usages |
+| `"<path.to.array>.SIZE":"$LT.4"`       | e.g. `"persons.SIZE" : "$LT.4"` - Assertion passes if the array contains less than 4 elements | Search for `dealing with arrays` in this README for more usages |
+| `"<path.to.array>.SIZE":3`     | e.g. `"persons.SIZE" : 3` - Assertion passes if the array has exactly 3 elements | Search for `dealing with arrays` in this README for more usages |
 
 
 #### 100:
