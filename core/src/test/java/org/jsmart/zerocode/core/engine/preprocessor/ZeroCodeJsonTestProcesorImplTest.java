@@ -710,4 +710,139 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(failedReports.get(0).toString(),
                 is("Assertion path '$.body.persons' with actual value '2' did not match the expected value 'Array of size $NOT.EQ.2'"));
     }
+    
+    @Test
+    public void testDateAfterBefore_both() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "date_after_before/dateAfterBefore_test_both.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$DATE.BEFORE:2015-09-14T09:49:34.000Z\","));
+        assertThat(resolvedAssertions, containsString("\"endDateTime\":\"$DATE.AFTER:2015-09-14T09:49:34.000Z\""));
+        
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(3));
+
+        String mockTestResponse = "{\n" +
+                "	\"status\": 200,\n" +
+                "	\"body\": {\n" +
+                "	    \"projectDetails\": {\n" +
+                "            \"startDateTime\": \"2014-09-14T09:49:34.000Z\",\n" +
+                "            \"endDateTime\": \"2016-09-14T09:49:34.000Z\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+    
+        
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        assertThat(failedReports.size(), is(0));
+    }
+    
+    @Test
+    public void testDateAfterBefore_fail_both() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "date_after_before/dateAfterBefore_test_fail_both.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$DATE.BEFORE:2016-09-14T09:49:34.000Z\","));
+        assertThat(resolvedAssertions, containsString("\"endDateTime\":\"$DATE.AFTER:2019-09-14T09:49:34.000Z\""));
+        
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(3));
+
+        String mockTestResponse = "{\n" +
+                "	\"status\": 200,\n" +
+                "	\"body\": {\n" +
+                "	    \"projectDetails\": {\n" +
+                "	            \"startDateTime\": \"2017-04-14T11:49:56.000Z\",\n" +
+                "	            \"endDateTime\": \"2018-11-12T09:39:34.000Z\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+    
+        
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(2));
+        assertThat(failedReports.get(0).toString(),
+                is("Assertion path '$.body.projectDetails.startDateTime' with actual value '2017-04-14T11:49:56.000Z' "
+                		+ "did not match the expected value 'Date Before:2016-09-14T09:49:34'"));
+        assertThat(failedReports.get(1).toString(),
+                is("Assertion path '$.body.projectDetails.endDateTime' with actual value '2018-11-12T09:39:34.000Z' "
+                		+ "did not match the expected value 'Date After:2019-09-14T09:49:34'"));
+    }
+    
+    @Test
+    public void testDateAfterBefore_fail_afterSameDate() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "date_after_before/dateAfterBefore_test_fail_afterSameDate.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$DATE.AFTER:2015-09-14T09:49:34.000Z\""));
+        
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "	\"status\": 200,\n" +
+                "	\"body\": {\n" +
+                "	    \"projectDetails\": {\n" +
+                "	            \"startDateTime\": \"2015-09-14T09:49:34.000Z\",\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+    
+        
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
+        assertThat(failedReports.get(0).toString(),
+                is("Assertion path '$.body.projectDetails.startDateTime' with actual value '2015-09-14T09:49:34.000Z' "
+                		+ "did not match the expected value 'Date After:2015-09-14T09:49:34'"));
+    }
+    
+    @Test
+    public void testDateAfterBefore_fail_beforeSameDate() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "date_after_before/dateAfterBefore_test_fail_beforeSameDate.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$DATE.BEFORE:2015-09-14T09:49:34.000Z\""));
+        
+        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "	\"status\": 200,\n" +
+                "	\"body\": {\n" +
+                " 		\"projectDetails\": {\n" +
+                "			\"startDateTime\": \"2015-09-14T09:49:34.000Z\",\n" +
+                "		}\n" +
+                "	}\n" +
+                "}";
+    
+        
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
+        assertThat(failedReports.get(0).toString(),
+                is("Assertion path '$.body.projectDetails.startDateTime' with actual value '2015-09-14T09:49:34.000Z' "
+                		+ "did not match the expected value 'Date Before:2015-09-14T09:49:34'"));
+    }
 }

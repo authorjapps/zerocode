@@ -1,0 +1,19 @@
+{
+    "scenarioName": "Assert that 'created_at' is before expected & 'updated_at' is after expected",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/users/octocat",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "created_at" : "$DATE.BEFORE:2015-09-14T09:49:34.000Z",
+                    "updated_at" : "$DATE.AFTER:2015-09-14T09:49:34.000Z"
+                }
+            }
+        }
+    ]
+}
