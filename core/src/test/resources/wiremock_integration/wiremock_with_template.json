@@ -24,12 +24,12 @@
                                 // "fixed_date_time" is set by ZeroCode at mock-creation time, so it will remain the same accross subsequent calls
                                 // "dynamic_oneMinuteAgo", "dynamic_oneMinuteAhead" and "ucparam" are resolved at mock-response time, so they can be different per call
                                 // The templates are Handlebars Templates, where {{...}} delimits the templates, and inside you can put 'helpers'
-                                // now is one of those helpers that returns the current date (new java.util.Date()), and takes some extra attributes
-                                // to manipulate it. See the section 'Date and time helpers' on the WireMock-link for more info
+                                // localdatetime is one of those helpers that returns the current date (LocalDateTime, for compatibility with LOCAL.DATETIME.NOW)
+                                // and provides 'offset' to manipulate it. See the section 'Date and time helpers' on the WireMock-link for more info about offset.
                                 // upper is another helper, that uppercases it's argument (i.c. the first value of the request-parameter named 'param'
-                                "fixed_date_time": "${LOCAL.DATETIME.NOW:uuuu-MM-dd HH:mm:ss.SSS}",
-                                "dynamic_oneMinuteAgo": "{{now offset='-1 minutes' format='yyyy-MM-dd HH:mm:ss.SSS'}}",
-                                "dynamic_oneMinuteAhead": "{{now offset='+1 minutes' format='yyyy-MM-dd HH:mm:ss.SSS'}}",
+                                "fixed_date_time": "${LOCAL.DATETIME.NOW:uuuu-MM-dd'T'HH:mm:ss.SSS}",
+                                "dynamic_oneMinuteAgo": "{{localdatetime offset='-1 minutes'}}",
+                                "dynamic_oneMinuteAhead": "{{localdatetime offset='+1 minutes'}}",
                                 "ucparam": "{{upper request.query.param[0]}}"
                             }
                         }
@@ -58,10 +58,9 @@
             "assertions": {
                 "status": 200,
                 "body": {
-                    "ucparam": "LOWERTOUPPER"
-                    // Once PR#249 is accepted, "fixed_date_time": "$DATE.AFTER${$.GetTemplate.response.dynamic_oneMinuteAgo}"
-                    // and "fixed_date_time": "$DATE.BEFORE${$.GetTemplate.response.dynamic_oneMinuteAhead}"
-                    // should work
+                    "ucparam": "LOWERTOUPPER",
+                    "fixed_date_time": "$DATE.AFTER:${$.GetTemplate.response.body.dynamic_oneMinuteAgo}",
+                    "fixed_date_time": "$DATE.BEFORE:${$.GetTemplate.response.body.dynamic_oneMinuteAhead}"
                 }
             }
         }

@@ -1,11 +1,13 @@
 package org.jsmart.zerocode.core.engine.mocker;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.jknack.handlebars.Helper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
@@ -71,10 +73,16 @@ public class RestEndPointMocker {
         }
         wireMockServer = new WireMockServer(
                 wireMockConfig()
-                .extensions(new ResponseTemplateTransformer(true))
+                .extensions(new ResponseTemplateTransformer(true, getWiremockHelpers()))
                 .port(dynamicPort)); // <-- Strange
         wireMockServer.start();
         WireMock.configureFor("localhost", dynamicPort); // <-- Repetition of PORT was needed, this is a wireMock bug
+    }
+
+    private static Map<String, Helper> getWiremockHelpers() {
+        Map<String, Helper> helperMap = new HashedMap();
+        helperMap.put("localdatetime", new HandlebarsLocalDateHelper());
+        return helperMap;
     }
 
     private static MappingBuilder createPutRequestBuilder(MockStep mockStep) {
