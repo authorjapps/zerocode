@@ -55,5 +55,11 @@ public class SmartJUnitRunnerTestCases {
 
     }
 
+    @Test
+    @JsonTestCase("07_some_test_cases/08_REST_with_retry_test.json")
+    public void restRetry() throws Exception {
+
+    }
+
 
 }

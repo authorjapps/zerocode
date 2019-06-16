@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 //@JsonIgnoreProperties(ignoreUnknown = true)
 public class Step {
     private final Integer loop;
+    private final Retry retry;
     private final String name;
     private final String operation;
     private final String url;
@@ -23,6 +24,10 @@ public class Step {
 
     public Integer getLoop() {
         return loop;
+    }
+
+    public Retry getRetry() {
+        return retry;
     }
 
     public String getName() {
@@ -64,6 +69,7 @@ public class Step {
     @JsonCreator
     public Step(
             @JsonProperty("stepLoop") Integer loop,
+            @JsonProperty("retry") Retry retry,
             @JsonProperty("name") String name,
             @JsonProperty("operation") String operation,
             @JsonProperty("url") String url,
@@ -71,6 +77,7 @@ public class Step {
             @JsonProperty("assertions") JsonNode assertions
     ) {
         this.loop = loop;
+        this.retry = retry;
         this.name = name;
         this.operation = operation;
         this.request = request;
@@ -82,6 +89,7 @@ public class Step {
     public String toString() {
         return "Step{" +
                 "loop=" + loop +
+                ", retry='" + retry + '\'' +
                 ", name='" + name + '\'' +
                 ", operation='" + operation + '\'' +
                 ", url='" + url + '\'' +

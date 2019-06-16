@@ -102,8 +102,19 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             for (Step thisStep : scenario.getSteps()) {
 
-                final int stepLoopTimes = thisStep.getLoop() == null ? 1 : thisStep.getLoop();
+                boolean retryTillSuccess = false;
+                int delay = 0;
+                int stepLoopTimes = 1;
+                if ( thisStep.getLoop() != null ) {
+                    stepLoopTimes = thisStep.getLoop();
+                } else if ( thisStep.getRetry() != null ) {
+                    stepLoopTimes = thisStep.getRetry().getMax();
+                    delay = thisStep.getRetry().getDelay();
+                    retryTillSuccess = true;
+                }
+
                 for (int i = 0; i < stepLoopTimes; i++) {
+                    waitForDelay(delay);
                     LOGGER.info("\n### Executing Step -->> Count No: " + i);
                     logCorrelationshipPrinter = LogCorrelationshipPrinter.newInstance(LOGGER);
                     logCorrelationshipPrinter.stepLoop(i);
@@ -255,6 +266,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                             logCorrelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
                         }
+
+                        if (retryTillSuccess && ( i + 1 < stepLoopTimes ) && !failureResults.isEmpty()) {
+                            LOGGER.info("continuing until success");
+                            continue;
+                        }
                         // --------------------------------------------------------------------------------
                         // Non dependent requests into a single JSON file (Issue-167 - Feature Implemented)
                         // --------------------------------------------------------------------------------
@@ -315,6 +331,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         // ---------------------------------
 
                         logCorrelationshipPrinter.result(stepOutcomeGreen);
+
+                        if ( retryTillSuccess ) {
+                            LOGGER.info("Leaving early with successfull assertion");
+                            break;
+                        }
 
                     } catch (Exception ex) {
 
@@ -386,6 +407,15 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
          *  Red symbolises failure, but nothing has failed here.
          */
         return true;
+    }
+
+    private void waitForDelay(int delay) {
+        if ( delay > 0 ) {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+            }
+        }
     }
 
     @Override
