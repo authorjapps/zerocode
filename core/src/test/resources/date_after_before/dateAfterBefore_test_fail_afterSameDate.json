@@ -11,7 +11,7 @@
                 "status": 200,
                 "body": {
                 "projectDetails": {
-	                    "startDateTime" : "$DATE.AFTER:2015-09-14T09:49:34.000Z"
+	                    "startDateTime" : "$LOCAL.DATETIME.AFTER:2015-09-14T09:49:34.000Z"
                     }
                 }
             }
