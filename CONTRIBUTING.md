@@ -7,7 +7,7 @@ to accept your pull requests to this project by raising an issue in the
 [issue list](https://github.com/authorjapps/zerocode/issues) or picking an existing issue.
 
 The issue clearly explains about the new or enhanced feature, or a bug fix. 
-Please follow these [simple guicelines](https://github.com/authorjapps/zerocode/wiki/Guidelines-for-raising-issues) here.
+Please follow these [simple guidelines](https://github.com/authorjapps/zerocode/wiki/Guidelines-for-raising-issues) here.
 
 ## How to submit a Pull Request i.e. the change you want to merge ##
 
