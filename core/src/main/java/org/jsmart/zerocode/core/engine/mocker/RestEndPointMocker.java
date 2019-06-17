@@ -62,11 +62,13 @@ public class RestEndPointMocker {
 
 
     public static void restartWireMock(int dynamicPort) {
+        if ( wireMockServer != null ) {
+            /*
+             * Stop the wireMock server if it is running previously due to any other tests.
+             */
+            wireMockServer.stop();
+        }
         wireMockServer = new WireMockServer(wireMockConfig().port(dynamicPort)); // <-- Strange
-        /*
-         * Stop the wireMock server if it is running previously due to any other tests.
-         */
-        wireMockServer.stop();
         wireMockServer.start();
         WireMock.configureFor("localhost", dynamicPort); // <-- Repetition of PORT was needed, this is a wireMock bug
     }
