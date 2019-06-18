@@ -1,5 +1,5 @@
 {
-  "scenarioName": "Rest with Retry Test",
+  "scenarioName": "Rest with Retry within loop Test",
   "steps": [
     {
       "name": "RetryUntilSuccessMock",
@@ -26,8 +26,9 @@
       }
     },
     {
-      "retry": {"max": 12, "delay": 100},
-      "name": "GetDatesRequest", //<-- with comments
+      "loop": 4,
+      "retry": {"max": 2, "delay": 1000},
+      "name": "GetDatesRequest",
       "url": "http://localhost:8888/retry/001",
       "operation": "GET",
       "request": {
