@@ -59,8 +59,8 @@
                 "status": 200,
                 "body": {
                     "ucparam": "LOWERTOUPPER",
-                    "fixed_date_time": "$DATE.AFTER:${$.GetTemplate.response.body.dynamic_oneMinuteAgo}",
-                    "fixed_date_time": "$DATE.BEFORE:${$.GetTemplate.response.body.dynamic_oneMinuteAhead}"
+                    "fixed_date_time": "$LOCAL.DATETIME.AFTER:${$.GetTemplate.response.body.dynamic_oneMinuteAgo}",
+                    "fixed_date_time": "$LOCAL.DATETIME.BEFORE:${$.GetTemplate.response.body.dynamic_oneMinuteAhead}"
                 }
             }
         }
