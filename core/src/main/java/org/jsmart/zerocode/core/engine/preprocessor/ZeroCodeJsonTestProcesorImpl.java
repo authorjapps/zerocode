@@ -59,8 +59,8 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_VALUE_NOT_EQUAL_TO_NUMBER = "$NOT.EQ.";
     public static final String ASSERT_VALUE_GREATER_THAN = "$GT.";
     public static final String ASSERT_VALUE_LESSER_THAN = "$LT.";
-    public static final String ASSERT_DATE_AFTER = "$DATE.AFTER:";
-    public static final String ASSERT_DATE_BEFORE = "$DATE.BEFORE:";
+    public static final String ASSERT_LOCAL_DATETIME_AFTER = "$LOCAL.DATETIME.AFTER:";
+    public static final String ASSERT_LOCAL_DATETIME_BEFORE = "$LOCAL.DATETIME.BEFORE:";
     public static final String ASSERT_PATH_VALUE_NODE = "$";
     public static final String RAW_BODY = ".rawBody";
 
@@ -209,11 +209,11 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 } else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_LESSER_THAN)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_LESSER_THAN.length());
                     asserter = new FieldHasLesserThanValueAsserter(path, new BigDecimal(expected));
-                } else if (value instanceof String && (value.toString()).startsWith(ASSERT_DATE_AFTER)) {
-                    String expected = ((String) value).substring(ASSERT_DATE_AFTER.length());
+                } else if (value instanceof String && (value.toString()).startsWith(ASSERT_LOCAL_DATETIME_AFTER)) {
+                    String expected = ((String) value).substring(ASSERT_LOCAL_DATETIME_AFTER.length());
                     asserter = new FieldHasDateAfterValueAsserter(path, parseLocalDateTime(expected));
-                }else if (value instanceof String && (value.toString()).startsWith(ASSERT_DATE_BEFORE)) {
-                    String expected = ((String) value).substring(ASSERT_DATE_BEFORE.length());
+                }else if (value instanceof String && (value.toString()).startsWith(ASSERT_LOCAL_DATETIME_BEFORE)) {
+                    String expected = ((String) value).substring(ASSERT_LOCAL_DATETIME_BEFORE.length());
                     asserter = new FieldHasDateBeforeValueAsserter(path, parseLocalDateTime(expected));
                 }
                 else {
