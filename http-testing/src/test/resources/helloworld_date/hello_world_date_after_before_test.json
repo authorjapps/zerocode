@@ -10,8 +10,8 @@
             "assertions": {
                 "status": 200,
                 "body": {
-                    "created_at" : "$DATE.BEFORE:2015-09-14T09:49:34.000Z",
-                    "updated_at" : "$DATE.AFTER:2015-09-14T09:49:34.000Z"
+                    "created_at" : "$LOCAL.DATETIME.BEFORE:2015-09-14T09:49:34.000Z",
+                    "updated_at" : "$LOCAL.DATETIME.AFTER:2015-09-14T09:49:34.000Z"
                 }
             }
         }

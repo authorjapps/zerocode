@@ -721,8 +721,8 @@ public class ZeroCodeJsonTestProcesorImplTest {
         String mockScenarioState = "{}";
 
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
-        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$DATE.BEFORE:2015-09-14T09:49:34.000Z\","));
-        assertThat(resolvedAssertions, containsString("\"endDateTime\":\"$DATE.AFTER:2015-09-14T09:49:34.000Z\""));
+        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$LOCAL.DATETIME.BEFORE:2015-09-14T09:49:34.000Z\","));
+        assertThat(resolvedAssertions, containsString("\"endDateTime\":\"$LOCAL.DATETIME.AFTER:2015-09-14T09:49:34.000Z\""));
         
         List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
         assertThat(asserters.size(), is(3));
@@ -752,8 +752,8 @@ public class ZeroCodeJsonTestProcesorImplTest {
         String mockScenarioState = "{}";
 
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
-        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$DATE.BEFORE:2016-09-14T09:49:34.000Z\","));
-        assertThat(resolvedAssertions, containsString("\"endDateTime\":\"$DATE.AFTER:2019-09-14T09:49:34.000Z\""));
+        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$LOCAL.DATETIME.BEFORE:2016-09-14T09:49:34.000Z\","));
+        assertThat(resolvedAssertions, containsString("\"endDateTime\":\"$LOCAL.DATETIME.AFTER:2019-09-14T09:49:34.000Z\""));
         
         List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
         assertThat(asserters.size(), is(3));
@@ -790,7 +790,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         String mockScenarioState = "{}";
 
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
-        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$DATE.AFTER:2015-09-14T09:49:34.000Z\""));
+        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$LOCAL.DATETIME.AFTER:2015-09-14T09:49:34.000Z\""));
         
         List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
         assertThat(asserters.size(), is(2));
@@ -823,7 +823,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         String mockScenarioState = "{}";
 
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
-        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$DATE.BEFORE:2015-09-14T09:49:34.000Z\""));
+        assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$LOCAL.DATETIME.BEFORE:2015-09-14T09:49:34.000Z\""));
         
         List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
         assertThat(asserters.size(), is(2));
