@@ -4,10 +4,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class H2DBTest {
 
@@ -50,7 +54,7 @@ public class H2DBTest {
     private  Connection createAndGetConnection() throws ClassNotFoundException, SQLException {
         Connection conn;
         Class.forName("org.h2.Driver");
-      return  DriverManager.getConnection("jdbc:h2:~/test");
+      return  DriverManager.getConnection("jdbc:h2:./target/test");
     }
 
 }
