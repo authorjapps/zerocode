@@ -25,13 +25,22 @@ public class FieldIsOneOfValueAsserter implements JsonAsserter {
 			if (expectedString.endsWith("]"))
 				expectedString = expectedString.substring(0, expectedString.length() - 1);
 
-			// Split into an array
-			final String[] expectedArray = expectedString.split(",");
-
+			// Store collection as a java array
+			String[] expectedArray = null;
+			
+			// Check if it's an empty json array
+			if (!expectedString.isEmpty()) {
+				// Split into an array
+				expectedArray = expectedString.split(",");
+			} else {
+				expectedArray = new String[] {};
+			}
+				
 			// Remove leading and trailing spaces
 			for (int i = 0; i < expectedArray.length; i++) {
-				// If it's just a leading/trailing space and not a whole blank string
-				if (!expectedArray[i].isBlank())
+				// Checking that this is not a whitespace string (cannot use .isBlank() as we're
+				// targeting java 1.8)
+				if (!expectedArray[i].trim().isEmpty())
 					expectedArray[i] = expectedArray[i].trim();
 			}
 
