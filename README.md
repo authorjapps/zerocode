@@ -112,7 +112,7 @@ and run it simply by pointing to the above JSON file from a "JUnit" @Test method
 
 ```java
    @Test
-   @JsonTestCase("test_customer_get_api.json")
+   @Scenario("test_customer_get_api.json")
    public void getCustomerHappy(){
         // No code goes here. This remains empty.
    }
@@ -147,12 +147,12 @@ e.g.
 public class GitHubHelloWorldTest {
 
    @Test
-   @JsonTestCase("screening_tests/test_happy_flow.json")
+   @Scenario("screening_tests/test_happy_flow.json")
    public void testHappyFlow(){
    }
 
    @Test
-   @JsonTestCase("screening_tests/test_negative_flow.json")
+   @Scenario("screening_tests/test_negative_flow.json")
    public void testNegativeFlow(){
    }
 
@@ -181,9 +181,9 @@ Or
 @TargetEnv("app_dev1.properties")
 @UseHttpClient(CustomHttpClient.class)
 @RunWith(ZeroCodePackageRunner.class)
-@JsonTestCases({
-        @JsonTestCase("path1/test_case_scenario_1.json"),
-        @JsonTestCase("path2/test_case_scenario_2.json"),
+@Scenarios({
+        @Scenario("path1/test_case_scenario_1.json"),
+        @Scenario("path2/test_case_scenario_2.json"),
 })
 public class HelloWorldSelectedGitHubSuite {
     // This class remains empty
@@ -420,7 +420,7 @@ That's it. Done.
 public class JustHelloWorldTest {
 
     @Test
-    @JsonTestCase("helloworld/hello_world_status_ok_assertions.json")
+    @Scenario("helloworld/hello_world_status_ok_assertions.json")
     public void testGet() throws Exception {
 
     }
@@ -1402,7 +1402,7 @@ The runner looks like this:
 public class ScreeningServiceContractTest {
 
     @Test
-    @JsonTestCase("contract_tests/screeningservice/get_screening_details_by_custid.json")
+    @Scenario("contract_tests/screeningservice/get_screening_details_by_custid.json")
     public void testScreeningLocalAndGlobal() throws Exception {
     }
 }
@@ -1438,7 +1438,7 @@ public class ScreeningServiceContractTest {
 public class JustHelloWorldTest {
 
     @Test
-    @JsonTestCase("helloworld/hello_world_status_ok_assertions.json")
+    @Scenario("helloworld/hello_world_status_ok_assertions.json")
     public void testGet() throws Exception {
 
     }
@@ -1599,7 +1599,7 @@ import org.junit.runner.RunWith;
 public class EnvPropertyHelloWorldTest {
 
     @Test
-    @JsonTestCase("hello_world/hello_world_get.json")
+    @Scenario("hello_world/hello_world_get.json")
     public void testRunAgainstConfigPropertySetViaJenkins() throws Exception {
         
     }
@@ -1839,7 +1839,7 @@ public class SoapCorpProxySslHttpClientTest {
 
     @Ignore
     @Test
-    @JsonTestCase("foo/bar/soap_test_case_file.json")
+    @Scenario("foo/bar/soap_test_case_file.json")
     public void testSoapWithCorpProxyEnabled() throws Exception {
 
     }

@@ -266,7 +266,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         if (rootPackageAnnotation == null && (jsonTestCasesAnnotation == null && scenarios == null)) {
             throw new RuntimeException("Missing Test Suite details." +
                     "To run as a Test Suite - \n" +
-                    "Annotate your Test Suite class with, e.g. \n@TestPackageRoot(\"resource_folder_for_test_cases\") " +
+                    "Annotate your Test Suite class with, e.g. \n@TestPackageRoot(\"resource_folder_for_scenario_files\") " +
                     "\n\n-Or- \n" +
                     "Annotate your Test Suite class with, e.g. \n@JsonTestCases({\n" +
                     "        @JsonTestCase(\"path/to/test_case_1.json\"),\n" +
