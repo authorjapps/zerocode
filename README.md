@@ -296,8 +296,6 @@ Clone or download the below quick-start repos to run these from your local IDE o
  
  * Quick start - [**Spring Boot** application - **Integration testing** - In-Memory](https://github.com/authorjapps/spring-boot-integration-test) <br/>
  
- * Quick start - [**Mock or Stub** server - **Click, Click, Done** - Via Wiremock Json DSL](https://github.com/authorjapps/api-mock-maker) <br/>
-
  * Quick start - [**Performance testing** - Resusing Spring JUnit tests(`less common`) - JUnit-Spring-Zerocode](https://github.com/authorjapps/zerocode-spring-junit) <br/>
 
  * Quick start - [**Kotlin Integration** - A Simple Kotlin Application - Dev and Test Best Practice](https://github.com/BeTheCodeWithYou/SpringBoot-Kotlin) <br/>
@@ -2237,17 +2235,26 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 | $CONTAINS.STRING:id was cust-001       | Assertion passes if the node response contains string "id was cust-001" | Otherwise fails |
 | $CONTAINS.STRING.IGNORECASE:id WaS CuSt-001       | Assertion passes if the response value contains string "id was cust-001" with case insensitive | Otherwise fails |
 | $MATCHES.STRING:`\\d{4}-\\d{2}-\\d{2}`       | Assertion passes if the response value contains e.g. `"1989-07-09"` matching regex `\\d{4}-\\d{2}-\\d{2}` | Otherwise fails |
+| $LOCAL.DATETIME.BEFORE:2017-09-14T09:49:34.000Z       | Assertion passes if the actual date is earlier than this date | Otherwise fails |
+| $LOCAL.DATETIME.AFTER:2016-09-14T09:49:34.000Z       | Assertion passes if the actual date is later than this date | Otherwise fails |
 
 #### Assertion Path holders
 
 | Place Holder  | Output        | More  |
 | ------------- |:-------------| -----|
-| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : 3` - Assertion passes if the array size matches with value(3) | Search for `dealing with arrays` in this README for more usages |
-| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : "$GT.2"` - Assertion passes if the array size is greater than the value(2) | Search for `dealing with arrays` in this README for more usages |
-| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : "$LT.4"` - Assertion passes if the array size is lesser than the value(4) | Search for `dealing with arrays` in this README for more usages |
+| `"<path.to.array>.SIZE":"$GT.2"`     | e.g. `"persons.SIZE" : "$GT.2"` - Assertion passes if the array contains more than 2 elements | Search for `dealing with arrays` in this README for more usages |
+| `"<path.to.array>.SIZE":"$LT.4"`       | e.g. `"persons.SIZE" : "$LT.4"` - Assertion passes if the array contains less than 4 elements | Search for `dealing with arrays` in this README for more usages |
+| `"<path.to.array>.SIZE":3`     | e.g. `"persons.SIZE" : 3` - Assertion passes if the array has exactly 3 elements | Search for `dealing with arrays` in this README for more usages |
 
 
 #### 100:
+#### JSON Slice And Dice - Solved
++ [Exapnd, Collapse, Remove Node and Traverse etc](https://jsoneditoronline.org/)
+  + Tree structure viewing - Good for array traversing
+  + Remove a node -> Click on left arrow
++ [Beautify, Minify, Copy Jayway JSON Pth](http://jsonpathfinder.com/)
++ [JSON Path Evaluator](http://jsonpath.herokuapp.com/?path=$.store.book[*].author)
+
 #### Video tutorials
 * [RESTful testing with test cases in JSON](https://youtu.be/nSWq5SuyqxE) - YouTube
 * [Zerocode - Simple and powerful testing library - HelloWorld](https://www.youtube.com/watch?v=YCV1cqGt5e0) - YouTube
@@ -2258,3 +2265,5 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 * [REST API or SOAP End Point Testing](https://www.codeproject.com/Articles/1242569/REST-API-or-SOAP-End-Point-Testing-with-ZeroCode-J) - Codeproject
 * [DZone- MuleSoft API Testing With Zerocode Test Framework](https://dzone.com/articles/zerocode-test-framework-for-restsoap-api-tddbdd-ap) - DZone
 * [Testing need not be harder or slower, it should be easier and faster](https://dzone.com/articles/rest-api-testing-using-the-zerocode-json-based-bdd) - DZone
+* [Kafka - Quick and Practical Testing With Zerocode](https://dzone.com/articles/a-quick-and-practical-example-of-kafka-testing) - DZone
+* [Kotlin Apps Testing With Zerocode](https://dzone.com/articles/kotlin-spring-bootspring-data-h2-db-rest-api) - DZone

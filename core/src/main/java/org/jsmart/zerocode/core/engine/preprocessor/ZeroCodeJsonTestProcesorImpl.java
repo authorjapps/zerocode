@@ -6,11 +6,15 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
+
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.jsmart.zerocode.core.domain.reports.LocalDateTimeDeserializer;
 import org.jsmart.zerocode.core.engine.assertion.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static java.lang.String.format;
@@ -39,6 +43,8 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_VALUE_NOT_EQUAL_TO_NUMBER = "$NOT.EQ.";
     public static final String ASSERT_VALUE_GREATER_THAN = "$GT.";
     public static final String ASSERT_VALUE_LESSER_THAN = "$LT.";
+    public static final String ASSERT_LOCAL_DATETIME_AFTER = "$LOCAL.DATETIME.AFTER:";
+    public static final String ASSERT_LOCAL_DATETIME_BEFORE = "$LOCAL.DATETIME.BEFORE:";
     public static final String ASSERT_PATH_VALUE_NODE = "$";
     public static final String RAW_BODY = ".rawBody";
 
@@ -192,7 +198,14 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 } else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_LESSER_THAN)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_LESSER_THAN.length());
                     asserter = new FieldHasLesserThanValueAsserter(path, new BigDecimal(expected));
-                } else {
+                } else if (value instanceof String && (value.toString()).startsWith(ASSERT_LOCAL_DATETIME_AFTER)) {
+                    String expected = ((String) value).substring(ASSERT_LOCAL_DATETIME_AFTER.length());
+                    asserter = new FieldHasDateAfterValueAsserter(path, parseLocalDateTime(expected));
+                }else if (value instanceof String && (value.toString()).startsWith(ASSERT_LOCAL_DATETIME_BEFORE)) {
+                    String expected = ((String) value).substring(ASSERT_LOCAL_DATETIME_BEFORE.length());
+                    asserter = new FieldHasDateBeforeValueAsserter(path, parseLocalDateTime(expected));
+                }
+                else {
                     asserter = new FieldHasExactValueAsserter(path, value);
                 }
 
@@ -320,5 +333,9 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
 
     private boolean isPropertyKey(String runTimeToken) {
         return propertyKeys.contains(runTimeToken);
+    }
+    
+    private LocalDateTime parseLocalDateTime (String value){ 	
+    	return LocalDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME);
     }
 }

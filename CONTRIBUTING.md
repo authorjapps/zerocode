@@ -6,7 +6,8 @@ Contribution should be easy with small guidelines you need to follow.  We would 
 to accept your pull requests to this project by raising an issue in the 
 [issue list](https://github.com/authorjapps/zerocode/issues) or picking an existing issue.
 
-The issue clearly explains about the new or enhanced feature, or a bug fix.
+The issue clearly explains about the new or enhanced feature, or a bug fix. 
+Please follow these [simple guidelines](https://github.com/authorjapps/zerocode/wiki/Guidelines-for-raising-issues) here.
 
 ## How to submit a Pull Request i.e. the change you want to merge ##
 
@@ -36,6 +37,9 @@ ISSUE-14 # SSL enabled http client
   1. Finally, push the commits to your fork and submit a [pull request][].
 
   1. Please join our [mailing-lists][] and [gitter chat room][] for seeking community help.
+
+## Note
+Any contribution submitted by an author for inclusion in this repository shall be licensed under this [LICENSE](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
 
 [forking]: https://help.github.com/articles/fork-a-repo
 [pull request]: https://help.github.com/articles/creating-a-pull-request
