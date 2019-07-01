@@ -225,7 +225,7 @@ web.application.endpoint.host=https://api.github.com
 web.application.endpoint.port=443
 ```
 
-e.g. Our below User-Journey or ACs(Acceptance Criterias) or a scenario,
+e.g. Our below User-Journey or AC(Acceptance Criteria) or a Scenario,
 ```JSON
 AC1:
 GIVEN- the POST api end point '/api/v1/users' to create an user,     
