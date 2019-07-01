@@ -59,24 +59,9 @@ Or
 {
     ...
     "verifications": {
-        "status": 200,
-        "body": {
-            "id": 123,
-            "addresses.SIZE": 1  // Only array length validation, not the contents
-        }
-    }
-}
-```
-
-Or
-
-```javaScript
-{
-    ...
-    "verifications": {
         "body": {
             "id": "$NOT.NULL",  // A not-null indeterministic value
-            "addresses.SIZE": "$GT.0"  // A value greater than 0
+            "addresses.SIZE": "$GT.0"  // Only the length validation(not the contents) - Greater Than 0. 
         }
     }
 }
@@ -157,22 +142,25 @@ public class GitHubHelloWorldTest {
    }
 
 }
-
 ```
 
 Running a Suite of Tests
 ===
 `ZeroCodePackageRunner` is the JUnit runner which enables us to run a pack/suite of tests from the test resources folder.
 e.g.
-+ Selecting all tests from a resource folder
-```java
-@TargetEnv("app_sit1.properties")
-@TestPackageRoot("screening_tests") //<--- Root of the package to pick all tests including sub-folders
-@RunWith(ZeroCodePackageRunner.class)
-public class ScreeningTestSuite {
-    // This class remains empty	
-}
 
++ Selecting as usual `JUnit Suite`
+
+```java
+@RunWith(Suite.class)				
+@Suite.SuiteClasses({				
+  HelloWorldSimpleTest.class,
+  HelloWorldMoreTest.class,  			
+})		
+
+public class HelloWorldJunitSuite {
+    // This class remains empty		
+}
 ```
 
 Or
@@ -191,20 +179,20 @@ public class HelloWorldSelectedGitHubSuite {
 ```
 
 Or
-+ Selecting as usual `JUnit Suite`
 
++ Selecting all tests from a resource folder
 ```java
-@RunWith(Suite.class)				
-@Suite.SuiteClasses({				
-  HelloWorldSimpleTest.class,
-  HelloWorldMoreTest.class,  			
-})		
-
-public class HelloWorldJunitSuite {
-    // This class remains empty		
+@TargetEnv("app_sit1.properties")
+@TestPackageRoot("screening_tests") //<--- Root of the package to pick all tests including sub-folders
+@RunWith(ZeroCodePackageRunner.class)
+public class ScreeningTestSuite {
+    // This class remains empty	
 }
 ```
 
+Load Testing
+===
+Use Zerocode declarative [parallel load generation](https://github.com/authorjapps/zerocode/blob/master/README.md#generating-load-for-performance-testing-aka-stress-testing) on the target system.
 
 Declarative TestCase - Hooking BDD Scenario Steps
 ===
@@ -1587,7 +1575,7 @@ Also the framework enables you to override this behaviour/handling by overriding
 package org.jsmart.zerocode.testhelp.tests;
 
 import org.jsmart.zerocode.core.domain.EnvProperty;
-import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.Test;
