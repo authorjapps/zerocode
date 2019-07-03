@@ -34,8 +34,6 @@ import static org.slf4j.LoggerFactory.getLogger;
  * test case itself. We should use the IDE features which now a days makes a lot easier in terms of dealing with
  * JSON contents to keep the testing life cycle simple.
  *
- * @author nirmal.fleet@google.com (Nirmal Chandra)
- * @author ghorpade.a.g@gmail.com (Amit Ghorpade)
  */
 @Singleton
 public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFileProcessor {
