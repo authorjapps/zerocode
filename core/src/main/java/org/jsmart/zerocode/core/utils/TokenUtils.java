@@ -1,27 +1,30 @@
 package org.jsmart.zerocode.core.utils;
 
-import org.apache.commons.lang.text.StrSubstitutor;
+import static java.util.UUID.randomUUID;
+import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.UUID.randomUUID;
-import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.*;
+import org.apache.commons.lang.text.StrSubstitutor;
 
 public class TokenUtils {
-
+	
     public static String resolveKnownTokens(String requestJsonOrAnyString) {
         Map<String, Object> paramMap = new HashMap<>();
 
         final List<String> testCaseTokens = getTestCaseTokens(requestJsonOrAnyString);
-
-        testCaseTokens.forEach(runTimeToken -> {
+        testCaseTokens.stream().distinct().forEach(runTimeToken -> {
             populateParamMap(paramMap, runTimeToken);
         });
 
@@ -34,7 +37,12 @@ public class TokenUtils {
         getKnownTokens().forEach(inStoreToken -> {
                     if (runTimeToken.startsWith(inStoreToken)) {
                         if (runTimeToken.startsWith(RANDOM_NUMBER)) {
-                            paramaMap.put(runTimeToken, System.currentTimeMillis() + "");
+                        	String[] slices = runTimeToken.split(":");
+                        	if (slices.length == 2) {
+                        		paramaMap.put(runTimeToken, FixedRandomGenerator.getGenerator(Integer.parseInt(slices[1])));
+                        	}else {
+								paramaMap.put(runTimeToken, RandomGenerator.getGenerator());
+							}
 
                         } else if (runTimeToken.startsWith(RANDOM_STRING_PREFIX)) {
                             int length = Integer.parseInt(runTimeToken.substring(RANDOM_STRING_PREFIX.length()));
