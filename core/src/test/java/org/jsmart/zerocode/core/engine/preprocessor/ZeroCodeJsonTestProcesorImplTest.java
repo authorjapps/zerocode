@@ -859,7 +859,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, Not Looking]\""));
         	
         	
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -886,7 +886,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, Not Looking]\""));
         	
         	
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -913,7 +913,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, Not Looking]\""));
         	
         	
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -939,7 +939,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching,, Not Looking]\""));
         	
         	
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -966,7 +966,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, , Not Looking]\""));
         	
         	
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -993,7 +993,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[]\""));
         	
         	
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
