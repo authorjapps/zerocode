@@ -11,7 +11,9 @@ import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.module.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.JsonTestCases;
+import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.Scenarios;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.TestPackageRoot;
 import org.jsmart.zerocode.core.domain.UseHttpClient;
@@ -76,7 +78,8 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     protected List<ScenarioSpec> getChildren() {
         TestPackageRoot rootPackageAnnotation = testClass.getAnnotation(TestPackageRoot.class);
         JsonTestCases jsonTestCasesAnnotation = testClass.getAnnotation(JsonTestCases.class);
-        validateSuiteAnnotationPresent(rootPackageAnnotation, jsonTestCasesAnnotation);
+        Scenarios scenariosAnnotation = testClass.getAnnotation(Scenarios.class);
+        validateSuiteAnnotationPresent(rootPackageAnnotation, jsonTestCasesAnnotation, scenariosAnnotation);
 
         if (rootPackageAnnotation != null) {
             /*
@@ -87,10 +90,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
             return smartUtils.getScenarioSpecListByPackage(rootPackageAnnotation.value());
 
         } else {
-            List<JsonTestCase> jsonTestCases = Arrays.asList(testClass.getAnnotationsByType(JsonTestCase.class));
-            List<String> allEndPointFiles = jsonTestCases.stream()
-                    .map(thisTestCase -> thisTestCase.value())
-                    .collect(Collectors.toList());
+            List<String> allEndPointFiles = readTestScenarioFiles();
 
             return allEndPointFiles.stream()
                     .map(testResource -> {
@@ -241,18 +241,43 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         }
     }
 
+    private List<String> readTestScenarioFiles() {
+        // --------------------------------------------------
+        // Backward compatibility
+        // Warning - Stop supporting this for future releases
+        // i.e. JsonTestCase
+        // --------------------------------------------------
+        List<JsonTestCase> jsonTestCases = Arrays.asList(testClass.getAnnotationsByType(JsonTestCase.class));
+        if(jsonTestCases != null && jsonTestCases.size() > 0){
+            return jsonTestCases.stream()
+                    .map(thisTestCase -> thisTestCase.value())
+                    .collect(Collectors.toList());
+        }
 
-    private void validateSuiteAnnotationPresent(TestPackageRoot rootPackageAnnotation, JsonTestCases jsonTestCasesAnnotation) {
-        if (rootPackageAnnotation == null && jsonTestCasesAnnotation == null) {
+        List<Scenario> scenarios = Arrays.asList(testClass.getAnnotationsByType(Scenario.class));
+        return scenarios.stream()
+                .map(thisTestCase -> thisTestCase.value())
+                .collect(Collectors.toList());
+    }
+
+    private void validateSuiteAnnotationPresent(TestPackageRoot rootPackageAnnotation,
+                                                JsonTestCases jsonTestCasesAnnotation,
+                                                Scenarios scenarios) {
+        if (rootPackageAnnotation == null && (jsonTestCasesAnnotation == null && scenarios == null)) {
             throw new RuntimeException("Missing Test Suite details." +
                     "To run as a Test Suite - \n" +
-                    "Annotate your Test Suite class with, e.g. \n@TestPackageRoot(\"resource_folder_for_test_cases\") " +
-                    "\n-Or- \n" +
+                    "Annotate your Test Suite class with, e.g. \n@TestPackageRoot(\"resource_folder_for_scenario_files\") " +
+                    "\n\n-Or- \n" +
                     "Annotate your Test Suite class with, e.g. \n@JsonTestCases({\n" +
                     "        @JsonTestCase(\"path/to/test_case_1.json\"),\n" +
                     "        @JsonTestCase(\"path/to/test_case_2.json\")\n" +
                     "})" +
-                    "\n-Or- \n" +
+                    "\n\n-Or- \n" +
+                    "Annotate your Test Suite class with, e.g. \n@Scenarios({\n" +
+                    "        @Scenario(\"path/to/test_case_1.json\"),\n" +
+                    "        @Scenario(\"path/to/test_case_2.json\")\n" +
+                    "})" +
+                    "\n\n-Or- \n" +
                     "Run as usual 'Junit Suite' pointing to the individual test classes.");
         }
     }
