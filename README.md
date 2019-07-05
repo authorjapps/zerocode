@@ -59,24 +59,9 @@ Or
 {
     ...
     "verifications": {
-        "status": 200,
-        "body": {
-            "id": 123,
-            "addresses.SIZE": 1  // Only array length validation, not the contents
-        }
-    }
-}
-```
-
-Or
-
-```javaScript
-{
-    ...
-    "verifications": {
         "body": {
             "id": "$NOT.NULL",  // A not-null indeterministic value
-            "addresses.SIZE": "$GT.0"  // A value greater than 0
+            "addresses.SIZE": "$GT.0"  // Only the length validation(not the contents) - Greater Than 0. 
         }
     }
 }
@@ -112,7 +97,7 @@ and run it simply by pointing to the above JSON file from a "JUnit" @Test method
 
 ```java
    @Test
-   @JsonTestCase("test_customer_get_api.json")
+   @Scenario("test_customer_get_api.json")
    public void getCustomerHappy(){
         // No code goes here. This remains empty.
    }
@@ -147,50 +132,23 @@ e.g.
 public class GitHubHelloWorldTest {
 
    @Test
-   @JsonTestCase("screening_tests/test_happy_flow.json")
+   @Scenario("screening_tests/test_happy_flow.json")
    public void testHappyFlow(){
    }
 
    @Test
-   @JsonTestCase("screening_tests/test_negative_flow.json")
+   @Scenario("screening_tests/test_negative_flow.json")
    public void testNegativeFlow(){
    }
 
 }
-
 ```
 
 Running a Suite of Tests
 ===
 `ZeroCodePackageRunner` is the JUnit runner which enables us to run a pack/suite of tests from the test resources folder.
 e.g.
-+ Selecting all tests from a resource folder
-```java
-@TargetEnv("app_sit1.properties")
-@TestPackageRoot("screening_tests") //<--- Root of the package to pick all tests including sub-folders
-@RunWith(ZeroCodePackageRunner.class)
-public class ScreeningTestSuite {
-    // This class remains empty	
-}
 
-```
-
-Or
-+ Selecting tests by cherry-picking from test resources
-```java
-@TargetEnv("app_dev1.properties")
-@UseHttpClient(CustomHttpClient.class)
-@RunWith(ZeroCodePackageRunner.class)
-@JsonTestCases({
-        @JsonTestCase("path1/test_case_scenario_1.json"),
-        @JsonTestCase("path2/test_case_scenario_2.json"),
-})
-public class HelloWorldSelectedGitHubSuite {
-    // This class remains empty
-}
-```
-
-Or
 + Selecting as usual `JUnit Suite`
 
 ```java
@@ -205,6 +163,36 @@ public class HelloWorldJunitSuite {
 }
 ```
 
+Or
++ Selecting tests by cherry-picking from test resources
+```java
+@TargetEnv("app_dev1.properties")
+@UseHttpClient(CustomHttpClient.class)
+@RunWith(ZeroCodePackageRunner.class)
+@Scenarios({
+        @Scenario("path1/test_case_scenario_1.json"),
+        @Scenario("path2/test_case_scenario_2.json"),
+})
+public class HelloWorldSelectedGitHubSuite {
+    // This class remains empty
+}
+```
+
+Or
+
++ Selecting all tests from a resource folder
+```java
+@TargetEnv("app_sit1.properties")
+@TestPackageRoot("screening_tests") //<--- Root of the package to pick all tests including sub-folders
+@RunWith(ZeroCodePackageRunner.class)
+public class ScreeningTestSuite {
+    // This class remains empty	
+}
+```
+
+Load Testing
+===
+Use Zerocode declarative [parallel load generation](https://github.com/authorjapps/zerocode/blob/master/README.md#generating-load-for-performance-testing-aka-stress-testing) on the target system.
 
 Declarative TestCase - Hooking BDD Scenario Steps
 ===
@@ -225,7 +213,7 @@ web.application.endpoint.host=https://api.github.com
 web.application.endpoint.port=443
 ```
 
-e.g. Our below User-Journey or ACs(Acceptance Criterias) or a scenario,
+e.g. Our below User-Journey or AC(Acceptance Criteria) or a Scenario,
 ```JSON
 AC1:
 GIVEN- the POST api end point '/api/v1/users' to create an user,     
@@ -418,7 +406,7 @@ That's it. Done.
 public class JustHelloWorldTest {
 
     @Test
-    @JsonTestCase("helloworld/hello_world_status_ok_assertions.json")
+    @Scenario("helloworld/hello_world_status_ok_assertions.json")
     public void testGet() throws Exception {
 
     }
@@ -1400,7 +1388,7 @@ The runner looks like this:
 public class ScreeningServiceContractTest {
 
     @Test
-    @JsonTestCase("contract_tests/screeningservice/get_screening_details_by_custid.json")
+    @Scenario("contract_tests/screeningservice/get_screening_details_by_custid.json")
     public void testScreeningLocalAndGlobal() throws Exception {
     }
 }
@@ -1436,7 +1424,7 @@ public class ScreeningServiceContractTest {
 public class JustHelloWorldTest {
 
     @Test
-    @JsonTestCase("helloworld/hello_world_status_ok_assertions.json")
+    @Scenario("helloworld/hello_world_status_ok_assertions.json")
     public void testGet() throws Exception {
 
     }
@@ -1585,7 +1573,7 @@ Also the framework enables you to override this behaviour/handling by overriding
 package org.jsmart.zerocode.testhelp.tests;
 
 import org.jsmart.zerocode.core.domain.EnvProperty;
-import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.Test;
@@ -1597,7 +1585,7 @@ import org.junit.runner.RunWith;
 public class EnvPropertyHelloWorldTest {
 
     @Test
-    @JsonTestCase("hello_world/hello_world_get.json")
+    @Scenario("hello_world/hello_world_get.json")
     public void testRunAgainstConfigPropertySetViaJenkins() throws Exception {
         
     }
@@ -1837,7 +1825,7 @@ public class SoapCorpProxySslHttpClientTest {
 
     @Ignore
     @Test
-    @JsonTestCase("foo/bar/soap_test_case_file.json")
+    @Scenario("foo/bar/soap_test_case_file.json")
     public void testSoapWithCorpProxyEnabled() throws Exception {
 
     }
