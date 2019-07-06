@@ -24,7 +24,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImplRetryTest {
     private static final ObjectMapper mapper = new ObjectMapperProvider().get();
 
     @Test
-    public void test_FailSimpleAssertionInMultiStep() {
+    public void testRetryScenarios() {
 
         final String SCENARIO_RETRY = "Rest with Retry Test";
         final String SCENARIO_RETRY_LOOP = "Rest with Retry within loop Test";
