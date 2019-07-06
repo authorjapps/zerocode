@@ -22,12 +22,12 @@
         ]
       },
       "assertions": {
-        "status": 200 //<--- when all mocks have been successfully created.
+        "status": 200
       }
     },
     {
-      "retry": {"max": 12, "delay": 100},
-      "name": "GetDatesRequest", //<-- with comments
+      "retry": {"max": 12, "delay": 1000},
+      "name": "GetDatesRequest",
       "url": "http://localhost:8888/retry/001",
       "operation": "GET",
       "request": {

@@ -10,7 +10,7 @@
           {
             "name": "SlidingDateMock",
             "operation": "GET",
-            "url": "/retry/001",
+            "url": "/retry/002",
             "response": {
               "status": 200,
               "body": {
@@ -22,14 +22,14 @@
         ]
       },
       "assertions": {
-        "status": 200 //<--- when all mocks have been successfully created.
+        "status": 200
       }
     },
     {
-      "loop": 4,
-      "retry": {"max": 2, "delay": 1000},
+      "loop": 2,
+      "retry": {"max": 3, "delay": 1000},
       "name": "GetDatesRequest",
-      "url": "http://localhost:8888/retry/001",
+      "url": "http://localhost:8888/retry/002",
       "operation": "GET",
       "request": {
         "headers": {

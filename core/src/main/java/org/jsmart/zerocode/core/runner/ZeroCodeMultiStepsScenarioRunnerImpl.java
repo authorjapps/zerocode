@@ -265,8 +265,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 logCorrelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
                             }
 
-                            if (retryTillSuccess && (i + 1 < retryMaxTimes) && !failureResults.isEmpty()) {
-                                LOGGER.info("continuing until success");
+                            if (retryTillSuccess && (retryCounter + 1 < retryMaxTimes) && !failureResults.isEmpty()) {
+                                LOGGER.info("Retry: Attempt number: {}", retryCounter + 2);
                                 waitForDelay(retryDelay);
                                 continue;
                             }
@@ -332,7 +332,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             logCorrelationshipPrinter.result(stepOutcomeGreen);
 
                             if (retryTillSuccess) {
-                                LOGGER.info("Leaving early with successfull assertion");
+                                LOGGER.info("Retry: Leaving early with successful assertion");
                                 break;
                             }
 
@@ -413,7 +413,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         if ( delay > 0 ) {
             try {
                 Thread.sleep(delay);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
             }
         }
     }
