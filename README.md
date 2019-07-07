@@ -2237,6 +2237,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 | $MATCHES.STRING:`\\d{4}-\\d{2}-\\d{2}`       | Assertion passes if the response value contains e.g. `"1989-07-09"` matching regex `\\d{4}-\\d{2}-\\d{2}` | Otherwise fails |
 | $LOCAL.DATETIME.BEFORE:2017-09-14T09:49:34.000Z       | Assertion passes if the actual date is earlier than this date | Otherwise fails |
 | $LOCAL.DATETIME.AFTER:2016-09-14T09:49:34.000Z       | Assertion passes if the actual date is later than this date | Otherwise fails |
+| $ONE.OF:[First Val, Second Val, Nth Val]       | Assertion passes if `currentStatus` actual value is one of the expected values supplied in the `array` | Otherwise fails. E.g. `"currentStatus": "$ONE.OF:[Found, Searching, Not Found]"` |
 
 #### Assertion Path holders
 
