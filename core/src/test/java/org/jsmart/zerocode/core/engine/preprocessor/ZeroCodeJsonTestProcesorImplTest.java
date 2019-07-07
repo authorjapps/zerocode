@@ -845,4 +845,165 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 is("Assertion path '$.body.projectDetails.startDateTime' with actual value '2015-09-14T09:49:34.000Z' "
                 		+ "did not match the expected value 'Date Before:2015-09-14T09:49:34'"));
     }
+    
+    @Test
+    public void testValueOneOf_ValuePresent() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_currentStatus.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, Not Looking]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "        \"currentStatus\": \"Searching\"\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(0));
+    }
+    
+    @Test
+    public void testValueOneOf_ValueNotPresent() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_currentStatus.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, Not Looking]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "        \"currentStatus\": \"Quit\"\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
+    }
+    
+    @Test
+    public void testValueOneOf_ActualResultNull() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_currentStatus.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, Not Looking]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
+    }
+    
+    @Test
+    public void testValueOneOf_MatchEmptyString() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_emptyString.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching,, Not Looking]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "        \"currentStatus\": \"\"\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(0));
+    }
+    
+    @Test
+    public void testValueOneOf_MatchWhiteSpace() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_whiteSpace.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, , Not Looking]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "        \"currentStatus\": \" \"\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(0));
+    }
+    
+    @Test
+    public void testValueOneOf_ExpectedArrayEmpty() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_expectedArrayEmpty.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "        \"currentStatus\": \"Searching\"\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
+    }
 }

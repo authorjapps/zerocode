@@ -45,6 +45,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_VALUE_LESSER_THAN = "$LT.";
     public static final String ASSERT_LOCAL_DATETIME_AFTER = "$LOCAL.DATETIME.AFTER:";
     public static final String ASSERT_LOCAL_DATETIME_BEFORE = "$LOCAL.DATETIME.BEFORE:";
+    public static final String ASSERT_VALUE_ONE_OF = "$ONE.OF:";
     public static final String ASSERT_PATH_VALUE_NODE = "$";
     public static final String RAW_BODY = ".rawBody";
 
@@ -204,6 +205,9 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 }else if (value instanceof String && (value.toString()).startsWith(ASSERT_LOCAL_DATETIME_BEFORE)) {
                     String expected = ((String) value).substring(ASSERT_LOCAL_DATETIME_BEFORE.length());
                     asserter = new FieldHasDateBeforeValueAsserter(path, parseLocalDateTime(expected));
+                }else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_ONE_OF)) {
+                    String expected = ((String) value).substring(ASSERT_VALUE_ONE_OF.length());
+                    asserter = new FieldIsOneOfValueAsserter(path, expected);
                 }
                 else {
                     asserter = new FieldHasExactValueAsserter(path, value);
