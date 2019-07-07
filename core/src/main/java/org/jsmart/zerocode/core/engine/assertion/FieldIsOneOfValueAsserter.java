@@ -2,6 +2,8 @@ package org.jsmart.zerocode.core.engine.assertion;
 
 import java.util.Arrays;
 
+import static org.apache.commons.lang.StringUtils.substringBetween;
+
 public class FieldIsOneOfValueAsserter implements JsonAsserter {
 	private final String path;
 	final Object expected;
@@ -16,14 +18,7 @@ public class FieldIsOneOfValueAsserter implements JsonAsserter {
 		boolean areEqual;
 
 		if (expected != null) {
-			String expectedString = (String) expected;
-
-			// Remove json string array brackets
-			if (expectedString.startsWith("["))
-				expectedString = expectedString.substring(1);
-
-			if (expectedString.endsWith("]"))
-				expectedString = expectedString.substring(0, expectedString.length() - 1);
+            String expectedString = substringBetween((String) expected, "[", "]");
 
 			// Store collection as a java array
 			String[] expectedArray = null;
