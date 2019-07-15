@@ -39,6 +39,9 @@ public class FixedRandomGenerator {
 	 * @return a {@link FixedRandomGenerator} number of given length
 	 */
 	public static FixedRandomGenerator getGenerator(int length) {
+		if (length < 1 || length > 19 ) {
+			throw new RuntimeException("length of the random number should be between (1-19)");
+		}
 		FixedRandomGenerator buff = GENERATOR_MAP.get(length);
 		if (buff == null) {
 			buff = new FixedRandomGenerator(length);
