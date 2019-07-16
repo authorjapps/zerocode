@@ -17,4 +17,26 @@ public class TokenUtilsTest {
         assertThat(Long.parseLong(uniqueId) > 1, is(true));
 
     }
+    
+    @Test
+    public void testResolveSystemProperty_PROPERTY_FOUND() {
+    	
+    	String exampleInputString = "zerocode-tokentest: ${SYSTEM.PROPERTY:java.vendor}"; // java.vendor = Oracle Corporation
+    	String resolvedString = resolveKnownTokens(exampleInputString);
+    	String resolvedToken = resolvedString.substring("zerocode-tokentest: ".length());
+    	
+    	assertThat(resolvedToken.equals("Oracle Corporation"), is(true));
+    	
+    }
+    
+    @Test
+    public void testResolveSystemProperty_PROPERTY_NOT_FOUND() {
+    	
+    	String exampleInputString = "zerocode-tokentest: ${SYSTEM.PROPERTY:dummy_property_one}"; // Property does not exist
+    	String resolvedString = resolveKnownTokens(exampleInputString);
+    	String unResolvedToken = resolvedString.substring("zerocode-tokentest: ".length());
+    	// If the property is NOT FOUND then the token is not resolved and remains as a normal string
+    	assertThat(unResolvedToken.equals("${SYSTEM.PROPERTY:dummy_property_one}"), is(true));
+    	
+    }
 }

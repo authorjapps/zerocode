@@ -53,6 +53,11 @@ public class TokenUtils {
                             String formatPattern = runTimeToken.substring(LOCALDATETIME_NOW.length());
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
                             paramaMap.put(runTimeToken, LocalDateTime.now().format(formatter));
+                            
+                        } else if (runTimeToken.startsWith(SYSTEM_PROPERTY)) {
+
+                        	String propertyName = runTimeToken.substring(SYSTEM_PROPERTY.length());
+                        	paramaMap.put(runTimeToken, System.getProperty(propertyName));
 
                         } else if (runTimeToken.startsWith(XML_FILE)) {
                             String xmlFileResource = runTimeToken.substring(XML_FILE.length());
