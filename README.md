@@ -107,24 +107,18 @@ Looks simple n easy? Why not give a try? See the [quick-start section](https://g
 
 Configuring Custom Http Client
 ===
-`@UseHttpClient` enables us to use any project specific custom Http client. See an example [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldCustomHttpClientSuite.java).
+`@UseHttpClient` enables us to use any project specific custom Http client. See an example [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldcustomclient/GitHubSecurityHeaderTokenTest.java).
 e.g.
 ```java
-@TargetEnv("app_sit1.properties")
 @UseHttpClient(CustomHttpClient.class)
-public class HelloWorldApiTest {
+public class GitHubSecurityHeaderTokenTest {
 }
 ```
-But this is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
-
-Visit [here](https://dzone.com/articles/oauth2-authentication-in-zerocode) to learn how [OAuth2 protected APIs](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/OAuth2/OAuth2Test.java) have are tested in an easy and straightforward manner.
-```
-@UseHttpClient(OAuth2HttpClient.class)
-```
+But this feature is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
 
 Running a Single Scenario Test
 ===
-`ZeroCodeUnitRunner` is the JUnit runner which enables us to run a single or more test-cases from a Java test-class.
+`ZeroCodeUnitRunner` is the JUnit runner which enables us to run a single or more test-cases from a JUnit test-class.
 e.g.
 ```java
 @TargetEnv("app_sit1.properties")
@@ -146,10 +140,8 @@ public class GitHubHelloWorldTest {
 
 Running a Suite of Tests
 ===
-`ZeroCodePackageRunner` is the JUnit runner which enables us to run a pack/suite of tests from the test resources folder.
-e.g.
 
-+ Selecting as usual `JUnit Suite`
++ Selecting all tests as usual `JUnit Suite`
 
 ```java
 @RunWith(Suite.class)				
@@ -174,21 +166,34 @@ Or
         @Scenario("path2/test_case_scenario_2.json"),
 })
 public class HelloWorldSelectedGitHubSuite {
-    // This class remains empty
+    // This space remains empty
 }
 ```
 
-Or
+Python
+===
+If you are looking for simillar REST API testing DSL in Python(YAML),
+Then visit this open-source [pyresttest](https://github.com/svanoort/pyresttest#sample-test) lib in the GitHub.
 
-+ Selecting all tests from a resource folder
-```java
-@TargetEnv("app_sit1.properties")
-@TestPackageRoot("screening_tests") //<--- Root of the package to pick all tests including sub-folders
-@RunWith(ZeroCodePackageRunner.class)
-public class ScreeningTestSuite {
-    // This class remains empty	
-}
+In the below example -
+- `name` is equivalent to `scenarioName`
+- `method` is equivalent to `operation`
+- `validators` is equivalent to `verifications` or `assertions` of Zerocode
+
+```yaml
+- test: # create entity by PUT
+    - name: "Create or update a person"
+    - url: "/api/person/1/"
+    - method: "PUT"
+    - body: '{"first_name": "Gaius","id": 1,"last_name": "Baltar","login": "gbaltar"}'
+    - headers: {'Content-Type': 'application/json'}
+    - validators:  # This is how we do more complex testing!
+        - compare: {header: content-type, comparator: contains, expected:'json'}
+        - compare: {jsonpath_mini: 'login', expected: 'gbaltar'}  # JSON extraction
+        - compare: {raw_body:"", comparator:contains, expected: 'Baltar' }  # Tests on raw response
 ```
+
+The [Quick-Start](https://github.com/svanoort/pyresttest/blob/master/quickstart.md) guide explains how to bring up a REST end point and run the tests.
 
 Load Testing
 ===
@@ -2237,6 +2242,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 | $MATCHES.STRING:`\\d{4}-\\d{2}-\\d{2}`       | Assertion passes if the response value contains e.g. `"1989-07-09"` matching regex `\\d{4}-\\d{2}-\\d{2}` | Otherwise fails |
 | $LOCAL.DATETIME.BEFORE:2017-09-14T09:49:34.000Z       | Assertion passes if the actual date is earlier than this date | Otherwise fails |
 | $LOCAL.DATETIME.AFTER:2016-09-14T09:49:34.000Z       | Assertion passes if the actual date is later than this date | Otherwise fails |
+| $ONE.OF:[First Val, Second Val, Nth Val]       | Assertion passes if `currentStatus` actual value is one of the expected values supplied in the `array` | Otherwise fails. E.g. `"currentStatus": "$ONE.OF:[Found, Searching, Not Found]"` |
 
 #### Assertion Path holders
 

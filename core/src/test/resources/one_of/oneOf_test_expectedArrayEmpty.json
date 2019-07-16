@@ -1,0 +1,18 @@
+{
+    "scenarioName": "Assert that 'currentStatus' is one of array items which is empty",
+    "steps": [
+        {
+            "name": "get_person_job_details",
+            "url": "",
+            "operation": "",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                	"currentStatus": "$ONE.OF:[]"
+                }
+            }
+        }
+    ]
+}
