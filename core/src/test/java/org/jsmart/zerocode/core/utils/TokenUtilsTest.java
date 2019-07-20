@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.utils;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -17,18 +18,29 @@ public class TokenUtilsTest {
         assertThat(Long.parseLong(uniqueId) > 1, is(true));
 
     }
-    
+
+    @Ignore("This might fail for who is e.g. Open Jdk or Zulu JDK")
     @Test
-    public void testResolveSystemProperty_PROPERTY_FOUND() {
+    public void testResolveSystemProperty_PROPERTY_FOUND_javaVendor() {
     	
     	String exampleInputString = "zerocode-tokentest: ${SYSTEM.PROPERTY:java.vendor}"; // java.vendor = Oracle Corporation
     	String resolvedString = resolveKnownTokens(exampleInputString);
     	String resolvedToken = resolvedString.substring("zerocode-tokentest: ".length());
     	
     	assertThat(resolvedToken.equals("Oracle Corporation"), is(true));
-    	
+
     }
-    
+
+    @Test
+    public void testResolveSystemProperty_PROPERTY_FOUND_fileEncoing() {
+
+        String exampleInputString = "zerocode-tokentest: ${SYSTEM.PROPERTY:file.encoding}"; // java.vendor = Oracle Corporation
+        String resolvedString = resolveKnownTokens(exampleInputString);
+        String resolvedToken = resolvedString.substring("zerocode-tokentest: ".length());
+
+        assertThat(resolvedToken, is("UTF-8"));
+    }
+
     @Test
     public void testResolveSystemProperty_PROPERTY_NOT_FOUND() {
     	
