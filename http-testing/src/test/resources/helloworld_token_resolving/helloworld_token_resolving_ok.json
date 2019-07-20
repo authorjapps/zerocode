@@ -1,0 +1,29 @@
+{
+    "scenarioName": "GIVEN- the standard token resolving capabilities, WHEN- I invoke GET, THEN- The header tokens will resolve and I will get a 200",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/users/octocat",
+            "operation": "GET",
+            "request": {
+            	"headers":{
+            		"x-random-number": "${RANDOM.NUMBER}",
+            		"x-random-string-4": "${RANDOM.STRING:4}",
+            		"x-system-property-java-vendor": "${SYSTEM.PROPERTY:java.vendor}",
+            		"x-static-alphabet-6": "${STATIC.ALPHABET:6}",
+            		"x-random-uuid": "${RANDOM.UUID}",
+            		"x-local-date-today": "${LOCAL.DATE.TODAY:yyyy-MM-dd}",
+            		"x-local-datetime-now": "${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ss.nnnnnnnnn}"
+            	}
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat",
+                    "id" : 583231,
+                    "type" : "User"
+                }
+            }
+        }
+    ]
+}
