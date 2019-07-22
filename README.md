@@ -59,24 +59,9 @@ Or
 {
     ...
     "verifications": {
-        "status": 200,
-        "body": {
-            "id": 123,
-            "addresses.SIZE": 1  // Only array length validation, not the contents
-        }
-    }
-}
-```
-
-Or
-
-```javaScript
-{
-    ...
-    "verifications": {
         "body": {
             "id": "$NOT.NULL",  // A not-null indeterministic value
-            "addresses.SIZE": "$GT.0"  // A value greater than 0
+            "addresses.SIZE": "$GT.0"  // Only the length validation(not the contents) - Greater Than 0. 
         }
     }
 }
@@ -112,7 +97,7 @@ and run it simply by pointing to the above JSON file from a "JUnit" @Test method
 
 ```java
    @Test
-   @JsonTestCase("test_customer_get_api.json")
+   @Scenario("test_customer_get_api.json")
    public void getCustomerHappy(){
         // No code goes here. This remains empty.
    }
@@ -122,24 +107,18 @@ Looks simple n easy? Why not give a try? See the [quick-start section](https://g
 
 Configuring Custom Http Client
 ===
-`@UseHttpClient` enables us to use any project specific custom Http client. See an example [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldCustomHttpClientSuite.java).
+`@UseHttpClient` enables us to use any project specific custom Http client. See an example [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldcustomclient/GitHubSecurityHeaderTokenTest.java).
 e.g.
 ```java
-@TargetEnv("app_sit1.properties")
 @UseHttpClient(CustomHttpClient.class)
-public class HelloWorldApiTest {
+public class GitHubSecurityHeaderTokenTest {
 }
 ```
-But this is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
-
-Visit [here](https://dzone.com/articles/oauth2-authentication-in-zerocode) to learn how [OAuth2 protected APIs](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/OAuth2/OAuth2Test.java) have are tested in an easy and straightforward manner.
-```
-@UseHttpClient(OAuth2HttpClient.class)
-```
+But this feature is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
 
 Running a Single Scenario Test
 ===
-`ZeroCodeUnitRunner` is the JUnit runner which enables us to run a single or more test-cases from a Java test-class.
+`ZeroCodeUnitRunner` is the JUnit runner which enables us to run a single or more test-cases from a JUnit test-class.
 e.g.
 ```java
 @TargetEnv("app_sit1.properties")
@@ -147,51 +126,22 @@ e.g.
 public class GitHubHelloWorldTest {
 
    @Test
-   @JsonTestCase("screening_tests/test_happy_flow.json")
+   @Scenario("screening_tests/test_happy_flow.json")
    public void testHappyFlow(){
    }
 
    @Test
-   @JsonTestCase("screening_tests/test_negative_flow.json")
+   @Scenario("screening_tests/test_negative_flow.json")
    public void testNegativeFlow(){
    }
 
 }
-
 ```
 
 Running a Suite of Tests
 ===
-`ZeroCodePackageRunner` is the JUnit runner which enables us to run a pack/suite of tests from the test resources folder.
-e.g.
-+ Selecting all tests from a resource folder
-```java
-@TargetEnv("app_sit1.properties")
-@TestPackageRoot("screening_tests") //<--- Root of the package to pick all tests including sub-folders
-@RunWith(ZeroCodePackageRunner.class)
-public class ScreeningTestSuite {
-    // This class remains empty	
-}
 
-```
-
-Or
-+ Selecting tests by cherry-picking from test resources
-```java
-@TargetEnv("app_dev1.properties")
-@UseHttpClient(CustomHttpClient.class)
-@RunWith(ZeroCodePackageRunner.class)
-@JsonTestCases({
-        @JsonTestCase("path1/test_case_scenario_1.json"),
-        @JsonTestCase("path2/test_case_scenario_2.json"),
-})
-public class HelloWorldSelectedGitHubSuite {
-    // This class remains empty
-}
-```
-
-Or
-+ Selecting as usual `JUnit Suite`
++ Selecting all tests as usual `JUnit Suite`
 
 ```java
 @RunWith(Suite.class)				
@@ -205,6 +155,49 @@ public class HelloWorldJunitSuite {
 }
 ```
 
+Or
++ Selecting tests by cherry-picking from test resources
+```java
+@TargetEnv("app_dev1.properties")
+@UseHttpClient(CustomHttpClient.class)
+@RunWith(ZeroCodePackageRunner.class)
+@Scenarios({
+        @Scenario("path1/test_case_scenario_1.json"),
+        @Scenario("path2/test_case_scenario_2.json"),
+})
+public class HelloWorldSelectedGitHubSuite {
+    // This space remains empty
+}
+```
+
+Python
+===
+If you are looking for simillar REST API testing DSL in Python(YAML),
+Then visit this open-source [pyresttest](https://github.com/svanoort/pyresttest#sample-test) lib in the GitHub.
+
+In the below example -
+- `name` is equivalent to `scenarioName`
+- `method` is equivalent to `operation`
+- `validators` is equivalent to `verifications` or `assertions` of Zerocode
+
+```yaml
+- test: # create entity by PUT
+    - name: "Create or update a person"
+    - url: "/api/person/1/"
+    - method: "PUT"
+    - body: '{"first_name": "Gaius","id": 1,"last_name": "Baltar","login": "gbaltar"}'
+    - headers: {'Content-Type': 'application/json'}
+    - validators:  # This is how we do more complex testing!
+        - compare: {header: content-type, comparator: contains, expected:'json'}
+        - compare: {jsonpath_mini: 'login', expected: 'gbaltar'}  # JSON extraction
+        - compare: {raw_body:"", comparator:contains, expected: 'Baltar' }  # Tests on raw response
+```
+
+The [Quick-Start](https://github.com/svanoort/pyresttest/blob/master/quickstart.md) guide explains how to bring up a REST end point and run the tests.
+
+Load Testing
+===
+Use Zerocode declarative [parallel load generation](https://github.com/authorjapps/zerocode/blob/master/README.md#generating-load-for-performance-testing-aka-stress-testing) on the target system.
 
 Declarative TestCase - Hooking BDD Scenario Steps
 ===
@@ -225,7 +218,7 @@ web.application.endpoint.host=https://api.github.com
 web.application.endpoint.port=443
 ```
 
-e.g. Our below User-Journey or ACs(Acceptance Criterias) or a scenario,
+e.g. Our below User-Journey or AC(Acceptance Criteria) or a Scenario,
 ```JSON
 AC1:
 GIVEN- the POST api end point '/api/v1/users' to create an user,     
@@ -418,7 +411,7 @@ That's it. Done.
 public class JustHelloWorldTest {
 
     @Test
-    @JsonTestCase("helloworld/hello_world_status_ok_assertions.json")
+    @Scenario("helloworld/hello_world_status_ok_assertions.json")
     public void testGet() throws Exception {
 
     }
@@ -1400,7 +1393,7 @@ The runner looks like this:
 public class ScreeningServiceContractTest {
 
     @Test
-    @JsonTestCase("contract_tests/screeningservice/get_screening_details_by_custid.json")
+    @Scenario("contract_tests/screeningservice/get_screening_details_by_custid.json")
     public void testScreeningLocalAndGlobal() throws Exception {
     }
 }
@@ -1436,7 +1429,7 @@ public class ScreeningServiceContractTest {
 public class JustHelloWorldTest {
 
     @Test
-    @JsonTestCase("helloworld/hello_world_status_ok_assertions.json")
+    @Scenario("helloworld/hello_world_status_ok_assertions.json")
     public void testGet() throws Exception {
 
     }
@@ -1585,7 +1578,7 @@ Also the framework enables you to override this behaviour/handling by overriding
 package org.jsmart.zerocode.testhelp.tests;
 
 import org.jsmart.zerocode.core.domain.EnvProperty;
-import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.Test;
@@ -1597,7 +1590,7 @@ import org.junit.runner.RunWith;
 public class EnvPropertyHelloWorldTest {
 
     @Test
-    @JsonTestCase("hello_world/hello_world_get.json")
+    @Scenario("hello_world/hello_world_get.json")
     public void testRunAgainstConfigPropertySetViaJenkins() throws Exception {
         
     }
@@ -1837,7 +1830,7 @@ public class SoapCorpProxySslHttpClientTest {
 
     @Ignore
     @Test
-    @JsonTestCase("foo/bar/soap_test_case_file.json")
+    @Scenario("foo/bar/soap_test_case_file.json")
     public void testSoapWithCorpProxyEnabled() throws Exception {
 
     }
@@ -2230,6 +2223,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 | ${RANDOM.STRING:4}       | Replaces with a random string consists of four english alpphabets | The length can be dynamic |
 | ${STATIC.ALPHABET:5}       | Replaces with abcde ie Static string of length 5| String starts from "a" and continues, repeats after "z"|
 | ${STATIC.ALPHABET:7}       | Replaces with abcdefg ie Static string of length 7| String starts from a"" and continues, repeats after "z"|
+| ${SYSTEM.PROPERTY:java.vendor}       | Replaces with the value of the system property. E.g. `java.vendor` resolves to `Oracle Corporation` or `Azul Systems, Inc.` | If no property exists then the place holder remains in place i.e. `java.vendor` |
 | ${LOCAL.DATE.TODAY:yyyy-MM-dd}       | Resolves this today's date in the format yyyy-MM-dd or any suppliedformat| See format examples here https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/18_date_and_datetime_today_generator.json |
 | ${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ss.nnnnnnnnn}       | Resolves this today's datetime stamp in any supplied format| See format examples here https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/18_date_and_datetime_today_generator.json |
 
@@ -2249,6 +2243,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 | $MATCHES.STRING:`\\d{4}-\\d{2}-\\d{2}`       | Assertion passes if the response value contains e.g. `"1989-07-09"` matching regex `\\d{4}-\\d{2}-\\d{2}` | Otherwise fails |
 | $LOCAL.DATETIME.BEFORE:2017-09-14T09:49:34.000Z       | Assertion passes if the actual date is earlier than this date | Otherwise fails |
 | $LOCAL.DATETIME.AFTER:2016-09-14T09:49:34.000Z       | Assertion passes if the actual date is later than this date | Otherwise fails |
+| $ONE.OF:[First Val, Second Val, Nth Val]       | Assertion passes if `currentStatus` actual value is one of the expected values supplied in the `array` | Otherwise fails. E.g. `"currentStatus": "$ONE.OF:[Found, Searching, Not Found]"` |
 
 #### Assertion Path holders
 
