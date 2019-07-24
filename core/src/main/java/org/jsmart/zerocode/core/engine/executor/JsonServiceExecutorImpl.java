@@ -78,8 +78,6 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
 
         } catch (Exception e) {
 
-            e.printStackTrace();
-
             throw new RuntimeException(e);
 
         }

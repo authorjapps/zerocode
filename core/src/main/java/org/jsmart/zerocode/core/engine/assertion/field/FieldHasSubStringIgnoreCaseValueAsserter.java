@@ -1,4 +1,8 @@
-package org.jsmart.zerocode.core.engine.assertion;
+
+package org.jsmart.zerocode.core.engine.assertion.field;
+
+import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 
 public class FieldHasSubStringIgnoreCaseValueAsserter implements JsonAsserter {
     private final String path;

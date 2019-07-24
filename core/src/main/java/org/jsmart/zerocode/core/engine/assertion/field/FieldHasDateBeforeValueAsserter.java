@@ -1,17 +1,20 @@
-package org.jsmart.zerocode.core.engine.assertion;
+
+package org.jsmart.zerocode.core.engine.assertion.field;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
 
-public class FieldHasDateAfterValueAsserter implements JsonAsserter {
+public class FieldHasDateBeforeValueAsserter implements JsonAsserter {
     private final String path;
     private final LocalDateTime expected;
 
-    public FieldHasDateAfterValueAsserter(String path, LocalDateTime expected) {
+    public FieldHasDateBeforeValueAsserter(String path, LocalDateTime expected) {
         this.path = path;
         this.expected = expected;
     }
@@ -34,13 +37,13 @@ public class FieldHasDateAfterValueAsserter implements JsonAsserter {
             try {
                 resultDT = LocalDateTime.parse((String) result,
                         DateTimeFormatter.ISO_DATE_TIME);
-                areEqual = resultDT.isAfter(expected);
+                areEqual = resultDT.isBefore(expected);
             } catch (DateTimeParseException ex) {
                 areEqual = false;
             }
         }
 
         return areEqual ? createMatchingMessage()
-                : createNotMatchingMessage(path, "Date After:" + expected, result);
+                : createNotMatchingMessage(path, "Date Before:" + expected, result);
     }
 }

@@ -1,4 +1,8 @@
-package org.jsmart.zerocode.core.engine.assertion;
+
+package org.jsmart.zerocode.core.engine.assertion.field;
+
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
+import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;

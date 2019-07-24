@@ -1,13 +1,18 @@
-package org.jsmart.zerocode.core.engine.assertion;
+
+package org.jsmart.zerocode.core.engine.assertion.field;
+
+import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
+import org.jsmart.zerocode.core.engine.assertion.NumberComparator;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
 
-public class FieldHasInEqualNumberValueAsserter implements JsonAsserter {
+public class FieldHasLesserThanValueAsserter implements JsonAsserter {
     private final String path;
     private final Number expected;
 
-    public FieldHasInEqualNumberValueAsserter(String path, Number expected) {
+    public FieldHasLesserThanValueAsserter(String path, Number expected) {
         this.path = path;
         this.expected = expected;
     }
@@ -19,26 +24,26 @@ public class FieldHasInEqualNumberValueAsserter implements JsonAsserter {
 
     @Override
     public FieldAssertionMatcher actualEqualsToExpected(Object result) {
-        boolean areNotEqual;
+        boolean areEqual;
 
         if (result instanceof Number && expected instanceof Number) {
             NumberComparator comparator = new NumberComparator();
-            areNotEqual = comparator.compare((Number) result, (Number) expected) != 0;
+            areEqual = comparator.compare((Number) result, (Number) expected) == -1;
 
         } else if (result == null && expected == null) {
-            areNotEqual = false;
+            areEqual = true;
 
-        } else if (result == null) {
-            areNotEqual = true;
+        } else if (result != null) {
+            areEqual = false;
 
         } else {
-            areNotEqual = true;
+            areEqual = false;
 
         }
 
-        return areNotEqual ?
+        return areEqual ?
                 createMatchingMessage() :
-                createNotMatchingMessage(path, "not equals to " + expected, result);
+                createNotMatchingMessage(path, "Lesser Than:" + expected, result);
     }
 }
 

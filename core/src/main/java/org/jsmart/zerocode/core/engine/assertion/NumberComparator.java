@@ -3,7 +3,7 @@ package org.jsmart.zerocode.core.engine.assertion;
 import java.math.BigDecimal;
 import java.util.Comparator;
 
-class NumberComparator implements Comparator<Number> {
+public class NumberComparator implements Comparator<Number> {
 
     /**
      * Compares two numbers and returns their differences.

@@ -1,13 +1,18 @@
-package org.jsmart.zerocode.core.engine.assertion;
+
+package org.jsmart.zerocode.core.engine.assertion.field;
+
+import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
+import org.jsmart.zerocode.core.engine.assertion.NumberComparator;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
 
-public class FieldHasLesserThanValueAsserter implements JsonAsserter {
+public class FieldHasGreaterThanValueAsserter implements JsonAsserter {
     private final String path;
     private final Number expected;
 
-    public FieldHasLesserThanValueAsserter(String path, Number expected) {
+    public FieldHasGreaterThanValueAsserter(String path, Number expected) {
         this.path = path;
         this.expected = expected;
     }
@@ -23,22 +28,26 @@ public class FieldHasLesserThanValueAsserter implements JsonAsserter {
 
         if (result instanceof Number && expected instanceof Number) {
             NumberComparator comparator = new NumberComparator();
-            areEqual = comparator.compare((Number) result, (Number) expected) == -1;
+            areEqual = comparator.compare((Number) result, (Number) expected) == 1;
 
-        } else if (result == null && expected == null) {
+        }
+        else if (result == null && expected == null) {
             areEqual = true;
 
-        } else if (result != null) {
+        }
+        else if (result == null) {
             areEqual = false;
 
-        } else {
+        }
+        else {
             areEqual = false;
 
         }
 
+
         return areEqual ?
                 createMatchingMessage() :
-                createNotMatchingMessage(path, "Lesser Than:" + expected, result);
+                createNotMatchingMessage(path, "Greater Than:" + expected, result);
     }
 }
 

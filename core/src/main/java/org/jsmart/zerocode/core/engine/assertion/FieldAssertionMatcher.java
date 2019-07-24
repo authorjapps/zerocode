@@ -1,3 +1,4 @@
+
 package org.jsmart.zerocode.core.engine.assertion;
 
 public class FieldAssertionMatcher {
@@ -18,10 +19,6 @@ public class FieldAssertionMatcher {
     }
 
     public boolean matches() {
-        // -------------------------------------------------------------------
-        // For test SUCCESS,there is no need of sending the jsonPath.
-        // Framework is only concerned about failures i.e. un-matching values.
-        // -------------------------------------------------------------------
         return null == getJsonPath();
     }
 
