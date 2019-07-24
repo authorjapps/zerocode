@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import static java.lang.String.format;
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.*;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
@@ -243,11 +244,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                         if (!failureResults.isEmpty()) {
                             StringBuilder builder = new StringBuilder();
-                            
+
                             // Print expected Payload along with assertion errors
                             builder.append("Assumed Payload: \n" + prettyPrintJson(resolvedAssertionJson) + "\n");
                             builder.append("Assertion Errors: \n");
-                            
+
                             failureResults.forEach(f -> {
                                 builder.append(f.toString() + "\n");
                             });
@@ -430,7 +431,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
              * -OR-
              * Empty context path is also ok if it requires. In this case do not put a front slash.
              */
-            return String.format("%s:%s%s%s", host, port, applicationContext, serviceEndPoint);
+            return format("%s:%s%s%s", host, port, applicationContext, serviceEndPoint);
         }
     }
 
@@ -444,9 +445,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private void printBrokerProperties() {
 
-        System.out.println("---------------------------------------------------------");
-        System.out.println(String.format("kafka.bootstrap.servers - %s", kafkaServers));
-        System.out.println("---------------------------------------------------------");
+        LOGGER.info("\n---------------------------------------------------------\n" +
+                        format("kafka.bootstrap.servers - %s", kafkaServers) +
+                    "\n---------------------------------------------------------");
 
     }
 
