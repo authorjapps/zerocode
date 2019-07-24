@@ -60,7 +60,6 @@ public class RestEndPointMocker {
         });
     }
 
-
     public static void restartWireMock(int dynamicPort) {
         if ( wireMockServer != null ) {
             /*
@@ -72,6 +71,16 @@ public class RestEndPointMocker {
         wireMockServer.start();
         WireMock.configureFor("localhost", dynamicPort); // <-- Repetition of PORT was needed, this is a wireMock bug
     }
+
+    public static void stopWireMockServer() {
+        if (null != wireMockServer) {
+            wireMockServer.stop();
+            wireMockServer = null;
+            LOGGER.info("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
+        }
+    }
+
+
 
     private static MappingBuilder createPutRequestBuilder(MockStep mockStep) {
         final MappingBuilder requestBuilder = put(urlEqualTo(mockStep.getUrl()));

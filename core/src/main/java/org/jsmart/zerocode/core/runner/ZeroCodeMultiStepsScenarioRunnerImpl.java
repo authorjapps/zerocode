@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.function.BiConsumer;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
@@ -22,16 +25,12 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.function.BiConsumer;
-
-import static java.lang.String.format;
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.*;
+import static org.jsmart.zerocode.core.domain.ZerocodeConstants.KAFKA_TOPIC;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
-import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
-import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.serviceType;
+import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.stopWireMockServer;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
+import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.serviceType;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -184,7 +183,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 if (kafkaServers == null) {
                                     throw new RuntimeException(">>> 'kafka.bootstrap.servers' property can not be null for kafka operations");
                                 }
-                                printBrokerProperties();
+                                printBrokerProperties(kafkaServers);
                                 logCorrelationshipPrinter.aRequestBuilder()
                                         .stepLoop(i)
                                         .relationshipId(logPrefixRelationshipId)
@@ -409,46 +408,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     public void overrideApplicationContext(String applicationContext) {
         this.applicationContext = applicationContext;
-    }
-
-    private String getFullyQualifiedRestUrl(String serviceEndPoint) {
-
-        if (host == null || port == null) {
-            throw new RuntimeException("'" + PROPERTY_KEY_HOST + "' or 'port' - can not be null");
-        }
-
-        if (applicationContext == null) {
-            throw new RuntimeException("'" + PROPERTY_KEY_PORT + "' key must be present even if empty or blank");
-        }
-
-        if (serviceEndPoint.startsWith("http://") || serviceEndPoint.startsWith("https://")) {
-
-            return serviceEndPoint;
-
-        } else {
-            /*
-             * Make sure your property file contains context-path with a front slash like "/google-map".
-             * -OR-
-             * Empty context path is also ok if it requires. In this case do not put a front slash.
-             */
-            return format("%s:%s%s%s", host, port, applicationContext, serviceEndPoint);
-        }
-    }
-
-    private void stopWireMockServer() {
-        if (null != wireMockServer) {
-            wireMockServer.stop();
-            wireMockServer = null;
-            LOGGER.info("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
-        }
-    }
-
-    private void printBrokerProperties() {
-
-        LOGGER.info("\n---------------------------------------------------------\n" +
-                        format("kafka.bootstrap.servers - %s", kafkaServers) +
-                    "\n---------------------------------------------------------");
-
     }
 
     private Step createFromStepFile(Step thisStep, String stepId) {
