@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
-import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 
 import java.util.List;
@@ -17,5 +17,5 @@ public interface ZeroCodeJsonTestProcesor {
 
     List<JsonAsserter> createJsonAsserters(String resolvedAssertionJson);
 
-    List<AssertionReport> assertAllAndReturnFailed(List<JsonAsserter> asserters, String executionResult);
+    List<FieldAssertionMatcher> assertAllAndReturnFailed(List<JsonAsserter> asserters, String executionResult);
 }

@@ -27,7 +27,6 @@ import static org.slf4j.LoggerFactory.getLogger;
  * Later the logs are written to the target folder as raw JSON files ready for rendering
  * CSV-reports and Html-Chart/Dashboards
  *
- * @author Nirmal Chandra on 25-apr-2019
  */
 public class ZeroCodeTestReportJupiterListener implements TestExecutionListener {
     private static final Logger LOGGER = getLogger(ZeroCodeTestReportJupiterListener.class);

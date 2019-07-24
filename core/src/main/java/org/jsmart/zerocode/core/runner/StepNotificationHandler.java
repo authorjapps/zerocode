@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -22,7 +22,7 @@ public class StepNotificationHandler {
                     Description description,
                     String scenarioName,
                     String stepName,
-                    List<AssertionReport> failureReportList) {
+                    List<FieldAssertionMatcher> failureReportList) {
         /**
          * Generate error report and display clearly which expectation(s) did not match
          */
@@ -55,7 +55,7 @@ public class StepNotificationHandler {
                     Description description,
                     String scenarioName,
                     String stepName,
-                    List<AssertionReport> failureReportList) {
+                    List<FieldAssertionMatcher> failureReportList) {
         LOGGER.info(String.format("\n***Step PASSED:%s->%s", scenarioName, stepName));
         
         return true;
@@ -77,7 +77,7 @@ public class StepNotificationHandler {
      * all private functions below
      */
     
-    private int maxEntryLengthOf(List<AssertionReport> failureReportList) {
+    private int maxEntryLengthOf(List<FieldAssertionMatcher> failureReportList) {
         final Integer maxLength = ofNullable(failureReportList).orElse(Collections.emptyList()).stream()
                         .map(report -> report.toString().length())
                         .max(Comparator.naturalOrder())

@@ -6,7 +6,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.jsmart.simulator.main.SimpleRestJsonSimulatorsMain;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
-import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
 import org.jsmart.zerocode.core.utils.SmartUtils;
@@ -160,7 +160,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(17));
 
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, sapmleExecutionResult);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, sapmleExecutionResult);
 
         System.out.println("###failedReports : " + failedReports);
         assertThat(failedReports.toString(), containsString("did not match the expected value 'NOT NULL'"));
@@ -208,7 +208,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(asserters.size(), is(1));
 
         String sampleExecutionResult = "\"id-generated-0101-XY\"";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, sampleExecutionResult);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, sampleExecutionResult);
 
         System.out.println("###failedReports : " + failedReports);
         assertThat(failedReports.toString(), containsString("'$' with actual value 'id-generated-0101-XY' did not match the expected value 'id-generated-0101'"));
@@ -243,7 +243,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(asserters.size(), is(1));
 
         Integer sampleExecutionResult = 1077;
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, sampleExecutionResult.toString());
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, sampleExecutionResult.toString());
 
         System.out.println("###failedReports : " + failedReports);
         assertThat(failedReports.toString(), containsString("'$' with actual value '1077' did not match the expected value '1099'"));
@@ -320,7 +320,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "    \"name\": \"Hello CreXasy\"\n" +
                 "  }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
         assertThat(failedReports.toString(), containsString("did not match the expected value 'containing sub-string with ignoring case:"));
@@ -345,7 +345,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "    \"name\": \"Hello Creasy\"\n" +
                 "  }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(0));
     }
@@ -371,7 +371,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "    \"dob\": \"2018-06-26\"\n" +
                 "  }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(0));
     }
@@ -404,7 +404,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(0));
     }
@@ -434,7 +434,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
     }
@@ -467,7 +467,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(0));
     }
@@ -500,11 +500,11 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
         assertThat(failedReports.get(0).toString(),
-                is("Assertion path '$.body.persons' with actual value '2' did not match the expected value 'Array of size $GT.5'"));
+                is("Assertion jsonPath '$.body.persons' with actual value '2' did not match the expected value 'Array of size $GT.5'"));
     }
 
     @Test
@@ -535,7 +535,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(0));
     }
@@ -568,11 +568,11 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
         assertThat(failedReports.get(0).toString(),
-                is("Assertion path '$.body.persons' with actual value '2' did not match the expected value 'Array of size $LT.1'"));
+                is("Assertion jsonPath '$.body.persons' with actual value '2' did not match the expected value 'Array of size $LT.1'"));
     }
 
     @Test
@@ -603,7 +603,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(0));
     }
@@ -636,11 +636,11 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
         assertThat(failedReports.get(0).toString(),
-                is("Assertion path '$.body.persons' with actual value '2' did not match the expected value 'Array of size $EQ.3'"));
+                is("Assertion jsonPath '$.body.persons' with actual value '2' did not match the expected value 'Array of size $EQ.3'"));
     }
 
     @Test
@@ -671,7 +671,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(0));
     }
@@ -704,11 +704,11 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
         assertThat(failedReports.get(0).toString(),
-                is("Assertion path '$.body.persons' with actual value '2' did not match the expected value 'Array of size $NOT.EQ.2'"));
+                is("Assertion jsonPath '$.body.persons' with actual value '2' did not match the expected value 'Array of size $NOT.EQ.2'"));
     }
     
     @Test
@@ -738,7 +738,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "}";
     
         
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
         assertThat(failedReports.size(), is(0));
     }
     
@@ -769,14 +769,14 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "}";
     
         
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(2));
         assertThat(failedReports.get(0).toString(),
-                is("Assertion path '$.body.projectDetails.startDateTime' with actual value '2017-04-14T11:49:56.000Z' "
+                is("Assertion jsonPath '$.body.projectDetails.startDateTime' with actual value '2017-04-14T11:49:56.000Z' "
                 		+ "did not match the expected value 'Date Before:2016-09-14T09:49:34'"));
         assertThat(failedReports.get(1).toString(),
-                is("Assertion path '$.body.projectDetails.endDateTime' with actual value '2018-11-12T09:39:34.000Z' "
+                is("Assertion jsonPath '$.body.projectDetails.endDateTime' with actual value '2018-11-12T09:39:34.000Z' "
                 		+ "did not match the expected value 'Date After:2019-09-14T09:49:34'"));
     }
     
@@ -805,11 +805,11 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "}";
     
         
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
         assertThat(failedReports.get(0).toString(),
-                is("Assertion path '$.body.projectDetails.startDateTime' with actual value '2015-09-14T09:49:34.000Z' "
+                is("Assertion jsonPath '$.body.projectDetails.startDateTime' with actual value '2015-09-14T09:49:34.000Z' "
                 		+ "did not match the expected value 'Date After:2015-09-14T09:49:34'"));
     }
     
@@ -838,11 +838,11 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "}";
     
         
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
         assertThat(failedReports.get(0).toString(),
-                is("Assertion path '$.body.projectDetails.startDateTime' with actual value '2015-09-14T09:49:34.000Z' "
+                is("Assertion jsonPath '$.body.projectDetails.startDateTime' with actual value '2015-09-14T09:49:34.000Z' "
                 		+ "did not match the expected value 'Date Before:2015-09-14T09:49:34'"));
     }
     
@@ -868,7 +868,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        \"currentStatus\": \"Searching\"\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(0));
     }
@@ -895,7 +895,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        \"currentStatus\": \"Quit\"\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
     }
@@ -921,7 +921,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "    \"body\": {\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
     }
@@ -948,7 +948,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        \"currentStatus\": \"\"\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(0));
     }
@@ -975,7 +975,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        \"currentStatus\": \" \"\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(0));
     }
@@ -1002,7 +1002,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
                 "        \"currentStatus\": \"Searching\"\n" +
                 "    }\n" +
                 "}";
-        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        List<FieldAssertionMatcher> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
 
         assertThat(failedReports.size(), is(1));
     }

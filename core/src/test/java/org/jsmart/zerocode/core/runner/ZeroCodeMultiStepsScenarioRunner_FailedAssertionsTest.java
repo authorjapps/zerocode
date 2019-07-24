@@ -60,7 +60,7 @@ public class ZeroCodeMultiStepsScenarioRunner_FailedAssertionsTest {
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getResult(), is("FAILED"));
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getAssertions(), containsString("Assumed Payload"));
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getAssertions(), containsString("Assertion Errors"));
-            assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getAssertions(), containsString("Assertion path"));
+            assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getAssertions(), containsString("Assertion jsonPath"));
 
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(1).getName(), is("PassedStep"));
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(1).getResult(), is("PASSED"));

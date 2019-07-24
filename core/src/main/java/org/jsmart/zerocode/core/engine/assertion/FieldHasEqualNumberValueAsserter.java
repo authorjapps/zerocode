@@ -1,5 +1,8 @@
 package org.jsmart.zerocode.core.engine.assertion;
 
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
+
 public class FieldHasEqualNumberValueAsserter implements JsonAsserter {
     private final String path;
     private final Number expected;
@@ -15,7 +18,7 @@ public class FieldHasEqualNumberValueAsserter implements JsonAsserter {
     }
 
     @Override
-    public AssertionReport actualEqualsToExpected(Object result) {
+    public FieldAssertionMatcher actualEqualsToExpected(Object result) {
         boolean areEqual;
 
         if (result instanceof Number && expected instanceof Number) {
@@ -34,8 +37,8 @@ public class FieldHasEqualNumberValueAsserter implements JsonAsserter {
         }
 
         return areEqual ?
-                AssertionReport.createFieldMatchesReport() :
-                AssertionReport.createFieldDoesNotMatchReport(path, expected, result);
+                createMatchingMessage() :
+                createNotMatchingMessage(path, expected, result);
     }
 }
 

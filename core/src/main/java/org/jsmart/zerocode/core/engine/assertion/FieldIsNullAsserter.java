@@ -1,5 +1,8 @@
 package org.jsmart.zerocode.core.engine.assertion;
 
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
+
 public class FieldIsNullAsserter implements JsonAsserter {
     private final String path;
 
@@ -13,9 +16,9 @@ public class FieldIsNullAsserter implements JsonAsserter {
     }
 
     @Override
-    public AssertionReport actualEqualsToExpected(Object result) {
+    public FieldAssertionMatcher actualEqualsToExpected(Object result) {
         return result == null ?
-                AssertionReport.createFieldMatchesReport() :
-                AssertionReport.createFieldDoesNotMatchReport(path, "NULL", result);
+                createMatchingMessage() :
+                createNotMatchingMessage(path, "NULL", result);
     }
 }

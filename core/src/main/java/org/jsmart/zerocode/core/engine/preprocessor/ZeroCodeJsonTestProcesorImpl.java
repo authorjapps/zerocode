@@ -8,7 +8,6 @@ import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
 
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.jsmart.zerocode.core.domain.reports.LocalDateTimeDeserializer;
 import org.jsmart.zerocode.core.engine.assertion.*;
 
 import java.io.IOException;
@@ -180,7 +179,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     }
                 } else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_CONTAINS_STRING)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_CONTAINS_STRING.length());
-                    asserter = new FieldHasSubStringValueAsserter(path, expected);
+                    asserter = new FieldContainsStringAsserter(path, expected);
                 } else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_MATCHES_STRING)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_MATCHES_STRING.length());
                     asserter = new FieldMatchesRegexPatternAsserter(path, expected);
@@ -304,17 +303,17 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     }
 
     @Override
-    public List<AssertionReport> assertAllAndReturnFailed(List<JsonAsserter> asserters, String executionResult) {
+    public List<FieldAssertionMatcher> assertAllAndReturnFailed(List<JsonAsserter> asserters, String executionResult) {
 
-        List<AssertionReport> failedReports = new ArrayList<>();
+        List<FieldAssertionMatcher> failedReports = new ArrayList<>();
 
         asserters.forEach(asserter -> {
 
-            final AssertionReport assertionReport = asserter.assertWithJson(executionResult);
+            final FieldAssertionMatcher fieldMatcher = asserter.assertWithJson(executionResult);
 
-            if (!assertionReport.matches()) {
+            if (!fieldMatcher.matches()) {
 
-                failedReports.add(assertionReport);
+                failedReports.add(fieldMatcher);
 
             }
         });

@@ -1,10 +1,13 @@
 package org.jsmart.zerocode.core.engine.assertion;
 
-public class FieldHasSubStringValueAsserter implements JsonAsserter {
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
+
+public class FieldContainsStringAsserter implements JsonAsserter {
     private final String path;
     private final String expected;
 
-    public FieldHasSubStringValueAsserter(String path, String expected) {
+    public FieldContainsStringAsserter(String path, String expected) {
         this.path = path;
         this.expected = expected;
     }
@@ -15,7 +18,7 @@ public class FieldHasSubStringValueAsserter implements JsonAsserter {
     }
 
     @Override
-    public AssertionReport actualEqualsToExpected(Object result) {
+    public FieldAssertionMatcher actualEqualsToExpected(Object result) {
         boolean areEqual;
         if (result instanceof String && expected instanceof String) {
             String s1 = (String) result;
@@ -26,7 +29,7 @@ public class FieldHasSubStringValueAsserter implements JsonAsserter {
         }
 
         return areEqual ?
-                AssertionReport.createFieldMatchesReport() :
-                AssertionReport.createFieldDoesNotMatchReport(path, "containing sub-string:" + expected, result);
+                createMatchingMessage() :
+                createNotMatchingMessage(path, "containing sub-string:" + expected, result);
     }
 }
