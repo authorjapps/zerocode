@@ -1,12 +1,12 @@
-package org.jsmart.zerocode.core.engine.executor;
+package org.jsmart.zerocode.core.engine.executor.httpapi;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.jayway.jsonpath.JsonPath;
-
 import org.jsmart.simulator.main.SimpleRestJsonSimulatorsMain;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.After;
 import org.junit.Before;
