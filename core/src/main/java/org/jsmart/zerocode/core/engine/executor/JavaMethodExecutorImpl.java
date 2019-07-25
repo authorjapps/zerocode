@@ -2,21 +2,20 @@ package org.jsmart.zerocode.core.engine.executor;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class JavaExecutorImpl implements JavaExecutor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JavaExecutorImpl.class);
+public class JavaMethodExecutorImpl implements JavaMethodExecutor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaMethodExecutorImpl.class);
 
     //guice
     private final Injector injector;
 
     @Inject
-    public JavaExecutorImpl(Injector injector) {
+    public JavaMethodExecutorImpl(Injector injector) {
         this.injector = injector;
     }
     //guice
@@ -40,7 +39,7 @@ public class JavaExecutorImpl implements JavaExecutor {
         }
     }
 
-    public List<Class<?>> argumentTypes(String className, String methodName) {
+    public List<Class<?>> getParameterTypes(String className, String methodName) {
         return Arrays.asList(findMethod(className, methodName).getParameterTypes());
     }
 
@@ -67,6 +66,4 @@ public class JavaExecutorImpl implements JavaExecutor {
         }
         return type;
     }
-
 }
-

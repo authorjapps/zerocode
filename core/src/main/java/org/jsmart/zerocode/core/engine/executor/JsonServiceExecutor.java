@@ -9,5 +9,4 @@ public interface JsonServiceExecutor {
 
     String executeKafkaService(String kafkaServers, String urlName, String methodName, String requestJson);
 
-
 }

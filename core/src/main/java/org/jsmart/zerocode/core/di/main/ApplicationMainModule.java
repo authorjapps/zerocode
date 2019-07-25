@@ -7,8 +7,8 @@ import org.jsmart.zerocode.core.di.module.GsonModule;
 import org.jsmart.zerocode.core.di.module.HttpClientModule;
 import org.jsmart.zerocode.core.di.module.ObjectMapperModule;
 import org.jsmart.zerocode.core.di.module.PropertiesInjectorModule;
-import org.jsmart.zerocode.core.engine.executor.JavaExecutor;
-import org.jsmart.zerocode.core.engine.executor.JavaExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.JavaMethodExecutor;
+import org.jsmart.zerocode.core.engine.executor.JavaMethodExecutorImpl;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
 import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
@@ -50,7 +50,7 @@ public class ApplicationMainModule extends AbstractModule {
          */
         bind(ZeroCodeMultiStepsScenarioRunner.class).to(ZeroCodeMultiStepsScenarioRunnerImpl.class);
         bind(JsonServiceExecutor.class).to(JsonServiceExecutorImpl.class);
-        bind(JavaExecutor.class).to(JavaExecutorImpl.class);
+        bind(JavaMethodExecutor.class).to(JavaMethodExecutorImpl.class);
         bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
         bind(ZeroCodeExternalFileProcessor.class).to(ZeroCodeExternalFileProcessorImpl.class);

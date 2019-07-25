@@ -3,28 +3,26 @@ package org.jsmart.zerocode.core.engine.executor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import java.util.List;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class JavaExecutorImplTest {
-
-    JavaExecutor defaultJavaExecutor;
+public class JavaMethodExecutorImplTest {
+    JavaMethodExecutor methodExecutor;
     Injector injector;
     SmartUtils smartUtils;
     ObjectMapper mapper;
 
     @Before
-    public void name() throws Exception {
+    public void setUp() throws Exception {
         injector = Guice.createInjector(new ApplicationMainModule("config_hosts_test.properties"));
-        defaultJavaExecutor = new JavaExecutorImpl(injector);
+        methodExecutor = new JavaMethodExecutorImpl(injector);
         smartUtils = injector.getInstance(SmartUtils.class);
         mapper = smartUtils.getMapper();
     }
@@ -32,7 +30,7 @@ public class JavaExecutorImplTest {
     @Test
     public void willExecuteA_Java_Method() throws Exception {
 
-        final Object result = defaultJavaExecutor.execute("org.jsmart.zerocode.core.AddService", "add", 1, 2);
+        final Object result = methodExecutor.execute("org.jsmart.zerocode.core.AddService", "add", 1, 2);
         assertThat(result, is(3));
     }
 
@@ -43,10 +41,10 @@ public class JavaExecutorImplTest {
         String serviceName = "org.jsmart.zerocode.core.AddService";
         String methodName = "square";
 
-        List<Class<?>> argumentTypes = defaultJavaExecutor.argumentTypes(serviceName, methodName);
+        List<Class<?>> argumentTypes = methodExecutor.getParameterTypes(serviceName, methodName);
 
         Object request = mapper.readValue(requestJson, argumentTypes.get(0));
-        Object result = defaultJavaExecutor.execute(serviceName, methodName, request);
+        Object result = methodExecutor.execute(serviceName, methodName, request);
 
         assertThat(result, is(900));
     }
@@ -59,7 +57,7 @@ public class JavaExecutorImplTest {
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();
         String methodName = scenarioSpec.getSteps().get(0).getOperation();
 
-        Object result = defaultJavaExecutor.execute(serviceName, methodName, null);
+        Object result = methodExecutor.execute(serviceName, methodName, null);
 
         assertThat(result, is(30));
     }
@@ -72,10 +70,10 @@ public class JavaExecutorImplTest {
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();
         String methodName = scenarioSpec.getSteps().get(0).getOperation();
         String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
-        List<Class<?>> argumentTypes = defaultJavaExecutor.argumentTypes(serviceName, methodName);
+        List<Class<?>> argumentTypes = methodExecutor.getParameterTypes(serviceName, methodName);
 
         Object request = mapper.readValue(requestJson, argumentTypes.get(0));
-        Object result = defaultJavaExecutor.execute(serviceName, methodName, request);
+        Object result = methodExecutor.execute(serviceName, methodName, request);
 
         assertThat(result, is(65025));
     }
@@ -88,10 +86,10 @@ public class JavaExecutorImplTest {
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();
         String methodName = scenarioSpec.getSteps().get(0).getOperation();
         String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
-        List<Class<?>> argumentTypes = defaultJavaExecutor.argumentTypes(serviceName, methodName);
+        List<Class<?>> argumentTypes = methodExecutor.getParameterTypes(serviceName, methodName);
 
         Object request = mapper.readValue(requestJson, argumentTypes.get(0));
-        Object result = defaultJavaExecutor.execute(serviceName, methodName, request);
+        Object result = methodExecutor.execute(serviceName, methodName, request);
 
         assertThat(result, is(900));
     }
@@ -105,10 +103,10 @@ public class JavaExecutorImplTest {
         String serviceName = "org.jsmart.zerocode.core.AddService";
         String methodName = "squareMyNumber";
 
-        List<Class<?>> argumentTypes = defaultJavaExecutor.argumentTypes(serviceName, methodName);
+        List<Class<?>> argumentTypes = methodExecutor.getParameterTypes(serviceName, methodName);
 
         Object request = mapper.readValue(requestJson, argumentTypes.get(0));
-        Object result = defaultJavaExecutor.execute(serviceName, methodName, request);
+        Object result = methodExecutor.execute(serviceName, methodName, request);
         assertThat(result, is(900));
     }
 }

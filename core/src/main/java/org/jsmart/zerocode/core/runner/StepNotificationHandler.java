@@ -88,11 +88,11 @@ public class StepNotificationHandler {
     
     private String deckedUpLine(int stringLength) {
         final String DECKED_CHAR = "-";
-        String dottedlLine = "";
+        String dottedLine = "";
         for (int i = 0; i < stringLength; i++) {
-            dottedlLine = dottedlLine + DECKED_CHAR;
+            dottedLine = dottedLine + DECKED_CHAR;
         }
         
-        return dottedlLine;
+        return dottedLine;
     }
 }

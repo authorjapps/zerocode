@@ -28,7 +28,7 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceExecutorImpl.class);
 
     @Inject
-    private JavaExecutor javaExecutor;
+    private JavaMethodExecutor javaExecutor;
 
     @Inject
     private ObjectMapper objectMapper;
@@ -56,18 +56,18 @@ public class JsonServiceExecutorImpl implements JsonServiceExecutor {
             throw new RuntimeException("Can not proceed as the framework could not load the executors. ");
         }
 
-        List<Class<?>> argumentTypes = javaExecutor.argumentTypes(serviceName, methodName);
+        List<Class<?>> parameterTypes = javaExecutor.getParameterTypes(serviceName, methodName);
 
         try {
             Object result;
 
-            if (argumentTypes == null || argumentTypes.size() == 0) {
+            if (parameterTypes == null || parameterTypes.size() == 0) {
 
                 result = javaExecutor.execute(serviceName, methodName);
 
             } else {
 
-                Object request = objectMapper.readValue(requestJson, argumentTypes.get(0));
+                Object request = objectMapper.readValue(requestJson, parameterTypes.get(0));
                 result = javaExecutor.execute(serviceName, methodName, request);
 
             }
