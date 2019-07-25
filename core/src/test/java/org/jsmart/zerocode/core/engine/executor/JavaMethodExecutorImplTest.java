@@ -8,12 +8,18 @@ import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class JavaMethodExecutorImplTest {
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     JavaMethodExecutor methodExecutor;
     Injector injector;
     SmartUtils smartUtils;
@@ -35,7 +41,17 @@ public class JavaMethodExecutorImplTest {
     }
 
     @Test
-    public void willExecuteJsonRequestFor_java_method_basics() throws Exception {
+    public void test_noMatchingMethod_exception() throws Exception {
+        String serviceName = "org.jsmart.zerocode.core.AddService";
+        String methodName = "invalidMethod";
+
+        expectedException.expect(RuntimeException.class);
+        expectedException.expectMessage("Java exec(): No matching method invalidMethod found in class org.jsmart.zerocode.core.AddService");
+        List<Class<?>> argumentTypes = methodExecutor.getParameterTypes(serviceName, methodName);
+    }
+
+    @Test
+    public void willExecuteJsonRequestFor_javaMethod_viaReflection() throws Exception {
         String requestJson = "30";
 
         String serviceName = "org.jsmart.zerocode.core.AddService";
@@ -63,7 +79,7 @@ public class JavaMethodExecutorImplTest {
     }
 
     @Test
-    public void willExecuteJsonRequestFor_java_method() throws Exception {
+    public void willExecuteJsonRequestFor_java_method_viaDsl() throws Exception {
         String scenariosJsonAsString = SmartUtils.readJsonAsString("05_test_java_service/01_test_json_java_service_method_Integer.json");
         final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
 
@@ -95,7 +111,7 @@ public class JavaMethodExecutorImplTest {
     }
 
     @Test
-    public void willExecuteJsonRequestFor_CustomObject_back_to_basics() throws Exception {
+    public void willExecuteJsonWithParams_CustomObject_viaJson() throws Exception {
         String requestJson = "{\n" +
                 "          \"number\": 30\n" +
                 "        }";
