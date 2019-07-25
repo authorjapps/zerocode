@@ -15,7 +15,7 @@ import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
-import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
@@ -48,7 +48,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     private ZeroCodeExternalFileProcessor extFileProcessor;
 
     @Inject
-    private JsonServiceExecutor serviceExecutor;
+    private ApiServiceExecutor serviceExecutor;
 
     @Inject(optional = true)
     @Named("web.application.endpoint.host")
@@ -162,7 +162,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                         .id(stepId)
                                         .request(prettyPrintJson(resolvedRequestJson));
 
-                                executionResult = serviceExecutor.executeRESTService(serviceName, operationName, resolvedRequestJson);
+                                executionResult = serviceExecutor.executeHttpApi(serviceName, operationName, resolvedRequestJson);
                                 break;
 
                             case JAVA_CALL:
@@ -176,7 +176,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                         .method(operationName)
                                         .request(prettyPrintJson(resolvedRequestJson));
 
-                                executionResult = serviceExecutor.executeJavaService(serviceName, operationName, resolvedRequestJson);
+                                executionResult = serviceExecutor.executeJavaOperation(serviceName, operationName, resolvedRequestJson);
                                 break;
 
                             case KAFKA_CALL:

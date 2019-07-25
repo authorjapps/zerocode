@@ -7,10 +7,12 @@ import org.jsmart.zerocode.core.di.module.GsonModule;
 import org.jsmart.zerocode.core.di.module.HttpClientModule;
 import org.jsmart.zerocode.core.di.module.ObjectMapperModule;
 import org.jsmart.zerocode.core.di.module.PropertiesInjectorModule;
+import org.jsmart.zerocode.core.engine.executor.HttpApiExecutor;
+import org.jsmart.zerocode.core.engine.executor.HttpApiExecutorImpl;
 import org.jsmart.zerocode.core.engine.executor.JavaMethodExecutor;
 import org.jsmart.zerocode.core.engine.executor.JavaMethodExecutorImpl;
-import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
-import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
@@ -49,7 +51,8 @@ public class ApplicationMainModule extends AbstractModule {
          * Bind Direct classes, classes to interfaces etc
          */
         bind(ZeroCodeMultiStepsScenarioRunner.class).to(ZeroCodeMultiStepsScenarioRunnerImpl.class);
-        bind(JsonServiceExecutor.class).to(JsonServiceExecutorImpl.class);
+        bind(ApiServiceExecutor.class).to(ApiServiceExecutorImpl.class);
+        bind(HttpApiExecutor.class).to(HttpApiExecutorImpl.class);
         bind(JavaMethodExecutor.class).to(JavaMethodExecutorImpl.class);
         bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);

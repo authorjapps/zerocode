@@ -18,12 +18,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class JsonServiceExecutorImplTest {
+public class ApiServiceExecutorImplTest {
 
     public static final int PORT = 9999;
     public static final String HOST_WITH_CONTEXT = "http://localhost:" + PORT;
 
-    JsonServiceExecutorImpl jsonServiceExecutor;
+    ApiServiceExecutorImpl jsonServiceExecutor;
     Injector injector;
     SmartUtils smartUtils;
     SimpleRestJsonSimulatorsMain simulator ;
@@ -38,7 +38,7 @@ public class JsonServiceExecutorImplTest {
 
         injector = Guice.createInjector(new ApplicationMainModule("config_hosts_test.properties"));
         smartUtils = injector.getInstance(SmartUtils.class);
-        jsonServiceExecutor = injector.getInstance(JsonServiceExecutorImpl.class);
+        jsonServiceExecutor = injector.getInstance(ApiServiceExecutorImpl.class);
     }
 
     @After
@@ -67,7 +67,7 @@ public class JsonServiceExecutorImplTest {
         /*
          * End-point available: http://localhost:9998/home/bathroom/1
          */
-        String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + "/home/bathroom/1", "GET", "{}");
+        String responseString = jsonServiceExecutor.executeHttpApi(HOST_WITH_CONTEXT + "/home/bathroom/1", "GET", "{}");
         assertThat(responseString, containsString("Shower"));
         JSONAssert.assertEquals("{\n" +
                 "  \"status\": 200,\n" +
@@ -91,7 +91,7 @@ public class JsonServiceExecutorImplTest {
         String methodName = scenarioSpec.getSteps().get(0).getOperation();
         String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
 
-        final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
+        final String responseString = jsonServiceExecutor.executeHttpApi(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
         assertThat(responseString, containsString("Shower"));
         JSONAssert.assertEquals("{\n" +
                 "    \"status\": 200,\n" +
@@ -129,7 +129,7 @@ public class JsonServiceExecutorImplTest {
         String methodName = scenarioSpec.getSteps().get(0).getOperation();
         String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
 
-        final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
+        final String responseString = jsonServiceExecutor.executeHttpApi(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
         assertThat(responseString, containsString("201"));
     }
     
@@ -143,7 +143,7 @@ public class JsonServiceExecutorImplTest {
         String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
         String assertions = scenarioSpec.getSteps().get(0).getAssertions().toString();
         
-        final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
+        final String responseString = jsonServiceExecutor.executeHttpApi(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
         assertThat(responseString, containsString("\"valid-text-node-json\"")); //<-- Mark: This is a JSON node, so held by double quotes.
         
         assertThat(assertions, is("{\"status\":201,\"body\":\"valid-text-node-json\"}"));
@@ -159,7 +159,7 @@ public class JsonServiceExecutorImplTest {
         String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
         String assertions = scenarioSpec.getSteps().get(0).getAssertions().toString();
     
-        final String responseString = jsonServiceExecutor.executeRESTService(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
+        final String responseString = jsonServiceExecutor.executeHttpApi(HOST_WITH_CONTEXT + serviceName, methodName, requestJson);
         assertThat(responseString, containsString("non-json")); //<-- Mark: This is a non-JSON content which is simple String, hence not held by double quotes.
     
         assertThat(assertions, is("{\"status\":201,\"rawBody\":\"non-jsonX\"}"));

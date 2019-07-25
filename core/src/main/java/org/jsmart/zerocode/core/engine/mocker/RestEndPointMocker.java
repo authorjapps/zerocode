@@ -8,7 +8,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
-import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 public class RestEndPointMocker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceExecutorImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiServiceExecutorImpl.class);
 
     public static WireMockServer wireMockServer;
 

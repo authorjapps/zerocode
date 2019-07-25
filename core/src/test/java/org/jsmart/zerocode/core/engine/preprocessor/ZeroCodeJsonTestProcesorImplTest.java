@@ -8,7 +8,7 @@ import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
-import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
 public class ZeroCodeJsonTestProcesorImplTest {
-    JsonServiceExecutorImpl jsonServiceExecutor;
+    ApiServiceExecutorImpl jsonServiceExecutor;
     Injector injector;
     SmartUtils smartUtils;
     SimpleRestJsonSimulatorsMain simulator ;
