@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.engine.executor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import java.lang.reflect.Method;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import static java.lang.Class.forName;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 public class JavaMethodExecutorImpl implements JavaMethodExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaMethodExecutorImpl.class);
@@ -17,20 +19,52 @@ public class JavaMethodExecutorImpl implements JavaMethodExecutor {
     //guice
     private final Injector injector;
 
+    private final ObjectMapper objectMapper;
+
     @Inject
-    public JavaMethodExecutorImpl(Injector injector) {
+    public JavaMethodExecutorImpl(Injector injector, ObjectMapper objectMapper) {
         this.injector = injector;
+        this.objectMapper = objectMapper;
     }
+
     //guice
+
+    @Override
+    public String execute(String qualifiedClassName, String methodName, String requestJson) {
+
+        try {
+            List<Class<?>> parameterTypes = getParameterTypes(qualifiedClassName, methodName);
+
+            Object result;
+
+            if (parameterTypes == null || parameterTypes.size() == 0) {
+
+                result = executeWithParams(qualifiedClassName, methodName);
+
+            } else {
+
+                Object request = objectMapper.readValue(requestJson, parameterTypes.get(0));
+                result = executeWithParams(qualifiedClassName, methodName, request);
+            }
+
+            final String resultJson = objectMapper.writeValueAsString(result);
+            return prettyPrintJson(resultJson);
+
+        } catch (Exception e) {
+            LOGGER.error("Exception - " + e);
+            throw new RuntimeException(e);
+
+        }
+    }
 
     /*
      *
      * @param qualifiedClassName : including package name: e.g. "org.jsmart.zerocode.core.AddService"
-     * @param methodName
-     * @param params
+     * @param methodName : public method in this class
+     * @param params : parameters to this method
      * @return
      */
-    public Object execute(String qualifiedClassName, String methodName, Object... params) {
+    Object executeWithParams(String qualifiedClassName, String methodName, Object... params) {
 
         /**
          * Refer SOF example:
@@ -49,15 +83,11 @@ public class JavaMethodExecutorImpl implements JavaMethodExecutor {
         }
     }
 
-    public List<Class<?>> getParameterTypes(String className, String methodName) {
-        return asList(findMatchingMethod(className, methodName).getParameterTypes());
-    }
-
-    private Method findMatchingMethod(String className, String methodName) {
+    Method findMatchingMethod(String className, String methodName) {
         try{
             // See the method invocation JDK documentation here:
             // Link: https://docs.oracle.com/javase/tutorial/reflect/member/methodInvocation.html
-            // TODO - Handle overloaded method i.e. Thread.sleep(args...) types
+            // TODO - Handle overloaded methods e.g. Thread.sleep(args...)
 
             Class<?> clazz = forName(className);
 
@@ -75,4 +105,9 @@ public class JavaMethodExecutorImpl implements JavaMethodExecutor {
             throw new RuntimeException(e);
         }
     }
+
+    List<Class<?>> getParameterTypes(String className, String methodName) {
+        return asList(findMatchingMethod(className, methodName).getParameterTypes());
+    }
+
 }

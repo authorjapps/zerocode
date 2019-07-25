@@ -3,8 +3,10 @@ package org.jsmart.zerocode.core.engine.executor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import java.lang.reflect.Method;
 import java.util.List;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Before;
@@ -20,7 +22,7 @@ public class JavaMethodExecutorImplTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    JavaMethodExecutor methodExecutor;
+    JavaMethodExecutorImpl methodExecutor;
     Injector injector;
     SmartUtils smartUtils;
     ObjectMapper mapper;
@@ -28,15 +30,27 @@ public class JavaMethodExecutorImplTest {
     @Before
     public void setUp() throws Exception {
         injector = Guice.createInjector(new ApplicationMainModule("config_hosts_test.properties"));
-        methodExecutor = new JavaMethodExecutorImpl(injector);
+        mapper = new ObjectMapperProvider().get();
+
+        methodExecutor = new JavaMethodExecutorImpl(injector, mapper);
         smartUtils = injector.getInstance(SmartUtils.class);
-        mapper = smartUtils.getMapper();
+    }
+
+    @Test
+    public void willFind_matchingMethod() throws Exception {
+        String serviceName = "org.jsmart.zerocode.core.AddService";
+        String methodName = "squareMyNumber";
+
+        Method matchingMethod = methodExecutor.findMatchingMethod(serviceName, methodName);
+
+        assertThat(matchingMethod.getDeclaringClass().getName(), is("org.jsmart.zerocode.core.AddService"));
+        assertThat(matchingMethod.getName(), is("squareMyNumber"));
     }
 
     @Test
     public void willExecuteA_Java_Method() throws Exception {
 
-        final Object result = methodExecutor.execute("org.jsmart.zerocode.core.AddService", "add", 1, 2);
+        final Object result = methodExecutor.executeWithParams("org.jsmart.zerocode.core.AddService", "add", 1, 2);
         assertThat(result, is(3));
     }
 
@@ -60,7 +74,7 @@ public class JavaMethodExecutorImplTest {
         List<Class<?>> argumentTypes = methodExecutor.getParameterTypes(serviceName, methodName);
 
         Object request = mapper.readValue(requestJson, argumentTypes.get(0));
-        Object result = methodExecutor.execute(serviceName, methodName, request);
+        Object result = methodExecutor.executeWithParams(serviceName, methodName, request);
 
         assertThat(result, is(900));
     }
@@ -73,7 +87,7 @@ public class JavaMethodExecutorImplTest {
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();
         String methodName = scenarioSpec.getSteps().get(0).getOperation();
 
-        Object result = methodExecutor.execute(serviceName, methodName, null);
+        Object result = methodExecutor.executeWithParams(serviceName, methodName, null);
 
         assertThat(result, is(30));
     }
@@ -89,7 +103,7 @@ public class JavaMethodExecutorImplTest {
         List<Class<?>> argumentTypes = methodExecutor.getParameterTypes(serviceName, methodName);
 
         Object request = mapper.readValue(requestJson, argumentTypes.get(0));
-        Object result = methodExecutor.execute(serviceName, methodName, request);
+        Object result = methodExecutor.executeWithParams(serviceName, methodName, request);
 
         assertThat(result, is(65025));
     }
@@ -105,7 +119,7 @@ public class JavaMethodExecutorImplTest {
         List<Class<?>> argumentTypes = methodExecutor.getParameterTypes(serviceName, methodName);
 
         Object request = mapper.readValue(requestJson, argumentTypes.get(0));
-        Object result = methodExecutor.execute(serviceName, methodName, request);
+        Object result = methodExecutor.executeWithParams(serviceName, methodName, request);
 
         assertThat(result, is(900));
     }
@@ -122,7 +136,8 @@ public class JavaMethodExecutorImplTest {
         List<Class<?>> argumentTypes = methodExecutor.getParameterTypes(serviceName, methodName);
 
         Object request = mapper.readValue(requestJson, argumentTypes.get(0));
-        Object result = methodExecutor.execute(serviceName, methodName, request);
+        Object result = methodExecutor.executeWithParams(serviceName, methodName, request);
         assertThat(result, is(900));
     }
+
 }
