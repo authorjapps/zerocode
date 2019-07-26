@@ -41,7 +41,7 @@ public class TokenUtils {
                         	if (slices.length == 2) {
                         		paramaMap.put(runTimeToken, FixedRandomGenerator.getGenerator(Integer.parseInt(slices[1])));
                         	}else {
-								paramaMap.put(runTimeToken, RandomGenerator.getGenerator());
+								paramaMap.put(runTimeToken, System.currentTimeMillis());
 							}
 
                         } else if (runTimeToken.startsWith(RANDOM_STRING_PREFIX)) {

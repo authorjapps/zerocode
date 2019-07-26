@@ -5,7 +5,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  *  A fixed length random generator supports up to 19 digits
- * @author santhosh
  *
  */
 public class FixedRandomGenerator {
