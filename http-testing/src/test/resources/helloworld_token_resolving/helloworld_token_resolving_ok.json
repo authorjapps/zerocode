@@ -8,6 +8,9 @@
             "request": {
             	"headers":{
             		"x-random-number": "${RANDOM.NUMBER}",
+            		"x-fixed-length2-number": "${RANDOM.NUMBER:2}",
+            		"x-fixed-length4-number1": "${RANDOM.NUMBER:4}",
+            		"x-fixed-length4-number2": "${RANDOM.NUMBER:4}",
             		"x-random-string-4": "${RANDOM.STRING:4}",
             		"x-system-property-java-vendor": "${SYSTEM.PROPERTY:java.vendor}",
             		"x-static-alphabet-6": "${STATIC.ALPHABET:6}",

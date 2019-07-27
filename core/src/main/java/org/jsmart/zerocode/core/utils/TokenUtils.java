@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.text.StrSubstitutor;
 
 public class TokenUtils {
-	
+
     public static String resolveKnownTokens(String requestJsonOrAnyString) {
         Map<String, Object> paramMap = new HashMap<>();
 
@@ -37,12 +37,12 @@ public class TokenUtils {
         getKnownTokens().forEach(inStoreToken -> {
                     if (runTimeToken.startsWith(inStoreToken)) {
                         if (runTimeToken.startsWith(RANDOM_NUMBER)) {
-                        	String[] slices = runTimeToken.split(":");
-                        	if (slices.length == 2) {
-                        		paramaMap.put(runTimeToken, FixedRandomGenerator.getGenerator(Integer.parseInt(slices[1])));
-                        	}else {
-								paramaMap.put(runTimeToken, System.currentTimeMillis());
-							}
+                            String[] slices = runTimeToken.split(":");
+                            if (slices.length == 2) {
+                                paramaMap.put(runTimeToken, FixedLengthRandomGenerator.getGenerator(Integer.parseInt(slices[1])));
+                            } else {
+                                paramaMap.put(runTimeToken, System.currentTimeMillis());
+                            }
 
                         } else if (runTimeToken.startsWith(RANDOM_STRING_PREFIX)) {
                             int length = Integer.parseInt(runTimeToken.substring(RANDOM_STRING_PREFIX.length()));
@@ -61,11 +61,11 @@ public class TokenUtils {
                             String formatPattern = runTimeToken.substring(LOCALDATETIME_NOW.length());
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
                             paramaMap.put(runTimeToken, LocalDateTime.now().format(formatter));
-                            
+
                         } else if (runTimeToken.startsWith(SYSTEM_PROPERTY)) {
 
-                        	String propertyName = runTimeToken.substring(SYSTEM_PROPERTY.length());
-                        	paramaMap.put(runTimeToken, System.getProperty(propertyName));
+                            String propertyName = runTimeToken.substring(SYSTEM_PROPERTY.length());
+                            paramaMap.put(runTimeToken, System.getProperty(propertyName));
 
                         } else if (runTimeToken.startsWith(XML_FILE)) {
                             String xmlFileResource = runTimeToken.substring(XML_FILE.length());
