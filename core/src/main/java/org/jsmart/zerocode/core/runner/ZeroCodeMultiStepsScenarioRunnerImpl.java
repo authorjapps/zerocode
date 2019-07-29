@@ -97,47 +97,45 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
+        // ---------------------------------------------------------------------
+        // Override scenario loop count with parameterized value size if present
+        // ---------------------------------------------------------------------
         int scenarioLoopTimes = scenario.getLoop() == null ? 1 : scenario.getLoop();
-        ///
-        Parameterized parameterized = scenario.getParameterized();
-        if(parameterized != null && parameterized.getValueSource() != null && parameterized.getValueSource().size() > 1){
-            int size = parameterized.getValueSource().size();
-            scenarioLoopTimes = size;
-        } else if(parameterized != null && parameterized.getCsvSource() != null && parameterized.getCsvSource().size() > 1){
-            int size = parameterized.getCsvSource().size();
-            scenarioLoopTimes = size;
-        }
+        int parameterSize = getParameterSize(scenario.getParameterized());
+        scenarioLoopTimes = parameterSize != 0 ? parameterSize: scenarioLoopTimes;
 
-        ///
-        for (int k = 0; k < scenarioLoopTimes; k++) {
+        for (int scnCount = 0; scnCount < scenarioLoopTimes; scnCount++) {
 
-            LOGGER.info("\n### Executing Scenario -->> Count No: " + k);
+            LOGGER.info("\n---------------------------------------------------------------" +
+                    "\n     Executing Scenario --> Count No or parameter No. {} <-- {}", scnCount,
+                    "\n---------------------------------------------------------------");
 
-            ScenarioSpec parameterizedScenario = parameterizedProcessor.processParameterized(scenario, k);
+            ScenarioSpec parameterizedScenario = parameterizedProcessor.processParameterized(scenario, scnCount);
 
             // ---------------------------------
             // Build Report scenario for each k
             // ---------------------------------
             execResultBuilder = newInstance()
-                    .loop(k)
+                    .loop(scnCount)
                     .scenarioName(parameterizedScenario.getScenarioName());
 
             for (Step thisStep : parameterizedScenario.getSteps()) {
 
-                int stepLoopCount;
-                stepLoopCount = loopCount(thisStep);
+                int stepLoopTimes;
+                stepLoopTimes = loopCount(thisStep);
 
-                for (int i = 0; i < stepLoopCount; i++) {
-                    LOGGER.info("\n### Executing Step -->> Count No: " + i);
+                for (int stepCount = 0; stepCount < stepLoopTimes; stepCount++) {
+                    LOGGER.info("\n### Executing Step -->> Count No: " + stepCount);
                     logCorrelationshipPrinter = LogCorrelationshipPrinter.newInstance(LOGGER);
-                    logCorrelationshipPrinter.stepLoop(i);
+                    logCorrelationshipPrinter.stepLoop(stepCount);
 
                     thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
 
                     String stepId = thisStep.getId();
                     thisStep = extFileProcessor.createFromStepFile(thisStep, stepId);
 
-                    Step parameterizedStep = parameterizedProcessor.processParameterized(thisStep, i);
+                    //Step parameterizedStep = parameterizedProcessor.processParameterized(thisStep, i);
+                    Step parameterizedStep = thisStep;
 
                     final String requestJsonAsString = parameterizedStep.getRequest().toString();
 
@@ -147,7 +145,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                      * Create the step name as it is for the 1st stepLoopTimes i.e. i=0.
                      * Rest of the loops suffix as i ie stepName1, stepName2, stepName3 etc
                      */
-                    final String thisStepName = parameterizedStep.getName() + (i == 0 ? "" : i);
+                    final String thisStepName = parameterizedStep.getName() + (stepCount == 0 ? "" : stepCount);
 
                     stepExecutionState.addStep(thisStepName);
 
@@ -178,7 +176,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             case REST_CALL:
                                 serviceName = getFullyQualifiedUrl(serviceName, host, port, applicationContext);
                                 logCorrelationshipPrinter.aRequestBuilder()
-                                        .stepLoop(i)
+                                        .stepLoop(stepCount)
                                         .relationshipId(logPrefixRelationshipId)
                                         .requestTimeStamp(requestTimeStamp)
                                         .step(thisStepName)
@@ -192,7 +190,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                             case JAVA_CALL:
                                 logCorrelationshipPrinter.aRequestBuilder()
-                                        .stepLoop(i)
+                                        .stepLoop(stepCount)
                                         .relationshipId(logPrefixRelationshipId)
                                         .requestTimeStamp(requestTimeStamp)
                                         .step(thisStepName)
@@ -210,7 +208,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 }
                                 printBrokerProperties();
                                 logCorrelationshipPrinter.aRequestBuilder()
-                                        .stepLoop(i)
+                                        .stepLoop(stepCount)
                                         .relationshipId(logPrefixRelationshipId)
                                         .requestTimeStamp(requestTimeStamp)
                                         .step(thisStepName)
@@ -225,7 +223,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                             case NONE:
                                 logCorrelationshipPrinter.aRequestBuilder()
-                                        .stepLoop(i)
+                                        .stepLoop(stepCount)
                                         .relationshipId(logPrefixRelationshipId)
                                         .requestTimeStamp(requestTimeStamp)
                                         .step(thisStepName)
@@ -268,11 +266,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                         if (!failureResults.isEmpty()) {
                             StringBuilder builder = new StringBuilder();
-                            
+
                             // Print expected Payload along with assertion errors
                             builder.append("Assumed Payload: \n" + prettyPrintJson(resolvedAssertionJson) + "\n");
                             builder.append("Assertion Errors: \n");
-                            
+
                             failureResults.forEach(f -> {
                                 builder.append(f.toString() + "\n");
                             });
@@ -474,5 +472,18 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         System.out.println("---------------------------------------------------------");
 
     }
+
+    private int getParameterSize(Parameterized parameterized) {
+        if (parameterized == null) {
+            return 0;
+        }
+
+        List<Object> valueSource = parameterized.getValueSource();
+        List<String> csvSource = parameterized.getCsvSource();
+
+        return valueSource != null ? valueSource.size() :
+                (csvSource != null? csvSource.size() : 0);
+    }
+
 
 }

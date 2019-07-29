@@ -504,6 +504,7 @@ See more usages and examples below.
 - [Step with more assertions](#3)
 - [Running with step loop](#4)
 - [Running with scenario loop](#5)
+- [Parameterized Testing](#51)
 - [Generated reports and charts](#6)
 - [More assertion with handy place holders](#7)
 - [General Place holders](#8)
@@ -805,6 +806,11 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
   ]
 }
 ```
+
+#### 51:
+#### Paramterized scenario
+To run the scenario steps for each parameter from a list of values or CSV rows.
+See Wiki for details.
 
 
 #### 6:

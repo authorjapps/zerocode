@@ -21,6 +21,7 @@ import org.jsmart.zerocode.core.domain.Step;
 
 public interface ZeroCodeParameterizedProcessor {
 
+    @Deprecated
     Step processParameterized(Step thisStep, int i);
 
     ScenarioSpec processParameterized(ScenarioSpec scenario, int iteration);

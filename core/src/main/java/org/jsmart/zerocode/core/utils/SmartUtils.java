@@ -56,7 +56,7 @@ public class SmartUtils {
         ClassPath jvmClassPath = factory.createFromJVM();
         String[] allSimulationFiles = jvmClassPath.findResources(packageName, new RegExpResourceFilter(".*", ".*\\.json$"));
         if (null == allSimulationFiles || allSimulationFiles.length == 0) {
-            throw new RuntimeException("OverSmartTryingToNothingException: Check the (" + packageName + ") integration test repo folder(empty?). ");
+            throw new RuntimeException("NothingFoundHereException: Check the (" + packageName + ") integration test repo folder(empty?). ");
         }
 
         return Arrays.asList(allSimulationFiles);

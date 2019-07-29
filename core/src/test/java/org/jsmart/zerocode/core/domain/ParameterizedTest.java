@@ -45,7 +45,7 @@ public class ParameterizedTest {
         assertThat(parameterized.getValueSource(), hasItem(true));
 
         String actualJson = mapper.writeValueAsString(parameterized);
-        assertThat(actualJson, is("{\"valueSource\":[\"hello\",123,true],\"csvSource\":null}"));
+        assertThat(actualJson, is("{\"valueSource\":[\"hello\",123,true],\"csvSource\":[\"1,        2,        200\",\"11,      22,        400\"]}"));
     }
 
     @Test
@@ -54,8 +54,8 @@ public class ParameterizedTest {
                 smartUtils.getJsonDocumentAsString("01_unit_test_jsons/08_parameterized.json");
         Parameterized parameterized = mapper.readValue(jsonDocumentAsString, Parameterized.class);
 
-        assertThat(parameterized.getCsvSource(), hasItem("1,        2,        3"));
-        assertThat(parameterized.getCsvSource(), hasItem("11,      22,        33"));
+        assertThat(parameterized.getCsvSource(), hasItem("1,        2,        200"));
+        assertThat(parameterized.getCsvSource(), hasItem("11,      22,        400"));
     }
 
 }

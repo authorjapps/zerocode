@@ -198,7 +198,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     asserter = new FieldHasGreaterThanValueAsserter(path, numberValueOf(expected));
                 } else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_LESSER_THAN)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_LESSER_THAN.length());
-                    asserter = new FieldHasLesserThanValueAsserter(path, numberValueOf(expected);
+                    asserter = new FieldHasLesserThanValueAsserter(path, numberValueOf(expected));
                 } else if (value instanceof String && (value.toString()).startsWith(ASSERT_LOCAL_DATETIME_AFTER)) {
                     String expected = ((String) value).substring(ASSERT_LOCAL_DATETIME_AFTER.length());
                     asserter = new FieldHasDateAfterValueAsserter(path, parseLocalDateTime(expected));

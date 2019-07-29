@@ -1,20 +1,3 @@
-/*
- * Copyright (C) 2014 jApps Ltd and
- * Copyright 2016 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.jsmart.zerocode.core.engine.preprocessor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,6 +60,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
         this.csvParser = csvParser1;
     }
 
+    @Deprecated
     @Override
     public Step processParameterized(Step thisStep, int i) {
         Step parameterizedStep;
@@ -98,23 +82,22 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
 
     @Override
     public ScenarioSpec processParameterized(ScenarioSpec scenario, int iteration) {
-        ScenarioSpec parameterizedScenario;
 
-        if (scenario.getParameterized().getValueSource() != null) {
+        if(scenario.getParameterized() == null){
 
-            parameterizedScenario = resolveParamsValues(scenario, iteration);
+            return scenario;
+
+        } else if (scenario.getParameterized().getValueSource() != null) {
+
+            return resolveParamsValues(scenario, iteration);
 
         } else if (scenario.getParameterized().getCsvSource() != null) {
 
-            parameterizedScenario = resolveParamsCsv(scenario, iteration);
-
-        } else {
-
-            parameterizedScenario = scenario;
+            return resolveParamsCsv(scenario, iteration);
 
         }
 
-        return parameterizedScenario;
+        throw new RuntimeException("Scenario spec was invalid. Please check the DSL format");
     }
 
     private ScenarioSpec resolveParamsValues(ScenarioSpec scenario, int paramIndex) {
