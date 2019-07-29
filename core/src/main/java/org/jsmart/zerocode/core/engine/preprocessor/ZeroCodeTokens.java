@@ -19,6 +19,7 @@ public class ZeroCodeTokens {
     public static final String STATIC_ALPHABET = "STATIC.ALPHABET:";
     public static final String LOCALDATE_TODAY = "LOCAL.DATE.TODAY:";
     public static final String LOCALDATETIME_NOW = "LOCAL.DATETIME.NOW:";
+    public static final String SYSTEM_PROPERTY = "SYSTEM.PROPERTY:";
 
 
     public static List<String> getKnownTokens() {
@@ -29,6 +30,7 @@ public class ZeroCodeTokens {
                 STATIC_ALPHABET,
                 LOCALDATE_TODAY,
                 LOCALDATETIME_NOW,
+                SYSTEM_PROPERTY,
                 XML_FILE,
                 RANDOM_UU_ID,
                 RECORD_DUMP

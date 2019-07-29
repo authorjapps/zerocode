@@ -260,13 +260,19 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 scenarioExecutionState.getResolvedScenarioState()
                         );
 
+                        // -----------------
                         // logging assertion
-
-                        List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createAssertersFrom(resolvedAssertionJson);
+                        // -----------------
+                        List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createJsonAsserters(resolvedAssertionJson);
                         List<AssertionReport> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
 
                         if (!failureResults.isEmpty()) {
                             StringBuilder builder = new StringBuilder();
+                            
+                            // Print expected Payload along with assertion errors
+                            builder.append("Assumed Payload: \n" + prettyPrintJson(resolvedAssertionJson) + "\n");
+                            builder.append("Assertion Errors: \n");
+                            
                             failureResults.forEach(f -> {
                                 builder.append(f.toString() + "\n");
                             });

@@ -13,7 +13,7 @@ Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [
 
 It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
-For example, if our REST API returns the following from URL "`https://localhost:8080/api/customers/123`"
+For example, if our REST API returns the following from URL "`https://localhost:8080/api/customers/123`" with status `200`,
 ```javaScript
 {
     "id": 123,
@@ -58,35 +58,9 @@ Or
 {
     ...
     "verifications": {
-        "status": 200 // Verify status is 200
-    }
-}
-```
-
-Or
-
-```javaScript
-{
-    ...
-    "verifications": {
-        "status": 200,
-        "body": {
-            "id": 123,
-            "addresses.SIZE": 1  // Only array length validation, not the contents
-        }
-    }
-}
-```
-
-Or
-
-```javaScript
-{
-    ...
-    "verifications": {
         "body": {
             "id": "$NOT.NULL",  // A not-null indeterministic value
-            "addresses.SIZE": "$GT.0"  // A value greater than 0
+            "addresses.SIZE": "$GT.0"  // Only the length validation(not the contents) - Greater Than 0. 
         }
     }
 }
@@ -122,7 +96,7 @@ and run it simply by pointing to the above JSON file from a "JUnit" @Test method
 
 ```java
    @Test
-   @JsonTestCase("test_customer_get_api.json")
+   @Scenario("test_customer_get_api.json")
    public void getCustomerHappy(){
         // No code goes here. This remains empty.
    }
@@ -130,28 +104,20 @@ and run it simply by pointing to the above JSON file from a "JUnit" @Test method
 
 Looks simple n easy? Why not give a try? See the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section.
 
-Smart Projects Using Zerocode
+Configuring Custom Http Client
 ===
- + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
- + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
- + [Barclays Bank](https://www.barclays.co.uk/) - Micro-Services API Contract Validation for System APIs build using Spring Boot
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Kafka Data-pipeline testing, Authentication testing.
-
-Using Custom Http Client
-===
-`@UseHttpClient` enables us to use any project specific custom Http client. See an example [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/HelloWorldCustomHttpClientSuite.java).
+`@UseHttpClient` enables us to use any project specific custom Http client. See an example [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/java/org/jsmart/zerocode/testhelp/tests/helloworldcustomclient/GitHubSecurityHeaderTokenTest.java).
 e.g.
 ```java
-@TargetEnv("app_sit1.properties")
 @UseHttpClient(CustomHttpClient.class)
-public class HelloWorldApiTest {
+public class GitHubSecurityHeaderTokenTest {
 }
 ```
-But this is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
+But this feature is optional and the framework defaults to use Apache `HttpClients` for both http and https connections.
 
 Running a Single Scenario Test
 ===
-`ZeroCodeUnitRunner` is the JUnit runner which enables us to run a single or more test-cases from a Java test-class.
+`ZeroCodeUnitRunner` is the JUnit runner which enables us to run a single or more test-cases from a JUnit test-class.
 e.g.
 ```java
 @TargetEnv("app_sit1.properties")
@@ -159,51 +125,22 @@ e.g.
 public class GitHubHelloWorldTest {
 
    @Test
-   @JsonTestCase("screening_tests/test_happy_flow.json")
+   @Scenario("screening_tests/test_happy_flow.json")
    public void testHappyFlow(){
    }
 
    @Test
-   @JsonTestCase("screening_tests/test_negative_flow.json")
+   @Scenario("screening_tests/test_negative_flow.json")
    public void testNegativeFlow(){
    }
 
 }
-
 ```
 
 Running a Suite of Tests
 ===
-`ZeroCodePackageRunner` is the JUnit runner which enables us to run a pack/suite of tests from the test resources folder.
-e.g.
-+ Selecting all tests from a resource folder
-```java
-@TargetEnv("app_sit1.properties")
-@TestPackageRoot("screening_tests") //<--- Root of the package to pick all tests including sub-folders
-@RunWith(ZeroCodePackageRunner.class)
-public class ScreeningTestSuite {
-    // This class remains empty	
-}
 
-```
-
-Or
-+ Selecting tests by cherry-picking from test resources
-```java
-@TargetEnv("app_dev1.properties")
-@UseHttpClient(CustomHttpClient.class)
-@RunWith(ZeroCodePackageRunner.class)
-@JsonTestCases({
-        @JsonTestCase("path1/test_case_scenario_1.json"),
-        @JsonTestCase("path2/test_case_scenario_2.json"),
-})
-public class HelloWorldSelectedGitHubSuite {
-    // This class remains empty
-}
-```
-
-Or
-+ Selecting as usual `JUnit Suite`
++ Selecting all tests as usual `JUnit Suite`
 
 ```java
 @RunWith(Suite.class)				
@@ -217,6 +154,49 @@ public class HelloWorldJunitSuite {
 }
 ```
 
+Or
++ Selecting tests by cherry-picking from test resources
+```java
+@TargetEnv("app_dev1.properties")
+@UseHttpClient(CustomHttpClient.class)
+@RunWith(ZeroCodePackageRunner.class)
+@Scenarios({
+        @Scenario("path1/test_case_scenario_1.json"),
+        @Scenario("path2/test_case_scenario_2.json"),
+})
+public class HelloWorldSelectedGitHubSuite {
+    // This space remains empty
+}
+```
+
+Python
+===
+If you are looking for simillar REST API testing DSL in Python(YAML),
+Then visit this open-source [pyresttest](https://github.com/svanoort/pyresttest#sample-test) lib in the GitHub.
+
+In the below example -
+- `name` is equivalent to `scenarioName`
+- `method` is equivalent to `operation`
+- `validators` is equivalent to `verifications` or `assertions` of Zerocode
+
+```yaml
+- test: # create entity by PUT
+    - name: "Create or update a person"
+    - url: "/api/person/1/"
+    - method: "PUT"
+    - body: '{"first_name": "Gaius","id": 1,"last_name": "Baltar","login": "gbaltar"}'
+    - headers: {'Content-Type': 'application/json'}
+    - validators:  # This is how we do more complex testing!
+        - compare: {header: content-type, comparator: contains, expected:'json'}
+        - compare: {jsonpath_mini: 'login', expected: 'gbaltar'}  # JSON extraction
+        - compare: {raw_body:"", comparator:contains, expected: 'Baltar' }  # Tests on raw response
+```
+
+The [Quick-Start](https://github.com/svanoort/pyresttest/blob/master/quickstart.md) guide explains how to bring up a REST end point and run the tests.
+
+Load Testing
+===
+Use Zerocode declarative [parallel load generation](https://github.com/authorjapps/zerocode/blob/master/README.md#generating-load-for-performance-testing-aka-stress-testing) on the target system.
 
 Declarative TestCase - Hooking BDD Scenario Steps
 ===
@@ -237,7 +217,7 @@ web.application.endpoint.host=https://api.github.com
 web.application.endpoint.port=443
 ```
 
-e.g. Our below User-Journey or ACs(Acceptance Criterias) or a scenario,
+e.g. Our below User-Journey or AC(Acceptance Criteria) or a Scenario,
 ```JSON
 AC1:
 GIVEN- the POST api end point '/api/v1/users' to create an user,     
@@ -293,18 +273,19 @@ Maven dependency xml:
 Hello World 🙌
 ====
 
-In a typical TDD approach, Zerocode is used in various phases of a project to pass though the quality gates. 
+In a typical TDD approach, Zerocode is used in various phases of a project to pass though various quality gates. 
 This makes the TDD cycle very very easy, clean and efficient.
 e.g.
-+ End to End Testing
-+ Performance Testing
-+ Integration Testing
-+ Dev Build/In-Memory Testing
-+ SIT Build
-+ Contract Test Build
-+ Manual Testing like usual REST clients(Postman or Insomnia etc)
-+ DataBase Integrity Testing
-+ API Mocking/Service Virtualization
++ NFR - Performance Testing
++ NFR - Security Testing
++ DEV - Integration Testing
++ DEV - Dev Build/In-Memory Testing
++ CI - End to End Testing Build
++ CI - SIT(System Integration Testing) Build
++ CI - Contract Test Build
++ CI - DataBase Integrity Testing
++ MANUAL - Manual Testing like usual REST clients(Postman or Insomnia etc)
++ MOCK - API Mocking/Service Virtualization
 
 
 Clone or download the below quick-start repos to run these from your local IDE or maven. 
@@ -319,8 +300,6 @@ Clone or download the below quick-start repos to run these from your local IDE o
  
  * Quick start - [**Spring Boot** application - **Integration testing** - In-Memory](https://github.com/authorjapps/spring-boot-integration-test) <br/>
  
- * Quick start - [**Mock or Stub** server - **Click, Click, Done** - Via Wiremock Json DSL](https://github.com/authorjapps/api-mock-maker) <br/>
-
  * Quick start - [**Performance testing** - Resusing Spring JUnit tests(`less common`) - JUnit-Spring-Zerocode](https://github.com/authorjapps/zerocode-spring-junit) <br/>
 
  * Quick start - [**Kotlin Integration** - A Simple Kotlin Application - Dev and Test Best Practice](https://github.com/BeTheCodeWithYou/SpringBoot-Kotlin) <br/>
@@ -350,6 +329,7 @@ Upcoming Releases 🐼
 Supported testing frameworks:
 ===
  * [JUnit](http://junit.org)
+ * [JUnit5 Jupiter Support](https://github.com/authorjapps/zerocode/wiki/JUnit5-Jupiter-Parallel-Load-Extension)
 
 <br/>
 
@@ -387,6 +367,13 @@ Maven Dependencies
 
 <br/>
 
+Smart Projects Using Zerocode
+===
+ + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
+ + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
+ + [Barclays Bank](https://www.barclays.co.uk/) - Micro-Services API Contract Validation for System APIs build using Spring Boot
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Kafka Data-pipeline testing, Authentication testing.
+
 Latest news/releases/features
 ===
 Follow us(Twitter) 
@@ -423,7 +410,7 @@ That's it. Done.
 public class JustHelloWorldTest {
 
     @Test
-    @JsonTestCase("helloworld/hello_world_status_ok_assertions.json")
+    @Scenario("helloworld/hello_world_status_ok_assertions.json")
     public void testGet() throws Exception {
 
     }
@@ -1405,7 +1392,7 @@ The runner looks like this:
 public class ScreeningServiceContractTest {
 
     @Test
-    @JsonTestCase("contract_tests/screeningservice/get_screening_details_by_custid.json")
+    @Scenario("contract_tests/screeningservice/get_screening_details_by_custid.json")
     public void testScreeningLocalAndGlobal() throws Exception {
     }
 }
@@ -1441,7 +1428,7 @@ public class ScreeningServiceContractTest {
 public class JustHelloWorldTest {
 
     @Test
-    @JsonTestCase("helloworld/hello_world_status_ok_assertions.json")
+    @Scenario("helloworld/hello_world_status_ok_assertions.json")
     public void testGet() throws Exception {
 
     }
@@ -1590,7 +1577,7 @@ Also the framework enables you to override this behaviour/handling by overriding
 package org.jsmart.zerocode.testhelp.tests;
 
 import org.jsmart.zerocode.core.domain.EnvProperty;
-import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.Test;
@@ -1602,7 +1589,7 @@ import org.junit.runner.RunWith;
 public class EnvPropertyHelloWorldTest {
 
     @Test
-    @JsonTestCase("hello_world/hello_world_get.json")
+    @Scenario("hello_world/hello_world_get.json")
     public void testRunAgainstConfigPropertySetViaJenkins() throws Exception {
         
     }
@@ -1842,7 +1829,7 @@ public class SoapCorpProxySslHttpClientTest {
 
     @Ignore
     @Test
-    @JsonTestCase("foo/bar/soap_test_case_file.json")
+    @Scenario("foo/bar/soap_test_case_file.json")
     public void testSoapWithCorpProxyEnabled() throws Exception {
 
     }
@@ -2235,6 +2222,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 | ${RANDOM.STRING:4}       | Replaces with a random string consists of four english alpphabets | The length can be dynamic |
 | ${STATIC.ALPHABET:5}       | Replaces with abcde ie Static string of length 5| String starts from "a" and continues, repeats after "z"|
 | ${STATIC.ALPHABET:7}       | Replaces with abcdefg ie Static string of length 7| String starts from a"" and continues, repeats after "z"|
+| ${SYSTEM.PROPERTY:java.vendor}       | Replaces with the value of the system property. E.g. `java.vendor` resolves to `Oracle Corporation` or `Azul Systems, Inc.` | If no property exists then the place holder remains in place i.e. `java.vendor` |
 | ${LOCAL.DATE.TODAY:yyyy-MM-dd}       | Resolves this today's date in the format yyyy-MM-dd or any suppliedformat| See format examples here https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/18_date_and_datetime_today_generator.json |
 | ${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ss.nnnnnnnnn}       | Resolves this today's datetime stamp in any supplied format| See format examples here https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/18_date_and_datetime_today_generator.json |
 
@@ -2252,17 +2240,27 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 | $CONTAINS.STRING:id was cust-001       | Assertion passes if the node response contains string "id was cust-001" | Otherwise fails |
 | $CONTAINS.STRING.IGNORECASE:id WaS CuSt-001       | Assertion passes if the response value contains string "id was cust-001" with case insensitive | Otherwise fails |
 | $MATCHES.STRING:`\\d{4}-\\d{2}-\\d{2}`       | Assertion passes if the response value contains e.g. `"1989-07-09"` matching regex `\\d{4}-\\d{2}-\\d{2}` | Otherwise fails |
+| $LOCAL.DATETIME.BEFORE:2017-09-14T09:49:34.000Z       | Assertion passes if the actual date is earlier than this date | Otherwise fails |
+| $LOCAL.DATETIME.AFTER:2016-09-14T09:49:34.000Z       | Assertion passes if the actual date is later than this date | Otherwise fails |
+| $ONE.OF:[First Val, Second Val, Nth Val]       | Assertion passes if `currentStatus` actual value is one of the expected values supplied in the `array` | Otherwise fails. E.g. `"currentStatus": "$ONE.OF:[Found, Searching, Not Found]"` |
 
 #### Assertion Path holders
 
 | Place Holder  | Output        | More  |
 | ------------- |:-------------| -----|
-| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : 3` - Assertion passes if the array size matches with value(3) | Search for `dealing with arrays` in this README for more usages |
-| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : "$GT.2"` - Assertion passes if the array size is greater than the value(2) | Search for `dealing with arrays` in this README for more usages |
-| $<path.to.array>.SIZE       | e.g. `"persons.SIZE" : "$LT.4"` - Assertion passes if the array size is lesser than the value(4) | Search for `dealing with arrays` in this README for more usages |
+| `"<path.to.array>.SIZE":"$GT.2"`     | e.g. `"persons.SIZE" : "$GT.2"` - Assertion passes if the array contains more than 2 elements | Search for `dealing with arrays` in this README for more usages |
+| `"<path.to.array>.SIZE":"$LT.4"`       | e.g. `"persons.SIZE" : "$LT.4"` - Assertion passes if the array contains less than 4 elements | Search for `dealing with arrays` in this README for more usages |
+| `"<path.to.array>.SIZE":3`     | e.g. `"persons.SIZE" : 3` - Assertion passes if the array has exactly 3 elements | Search for `dealing with arrays` in this README for more usages |
 
 
 #### 100:
+#### JSON Slice And Dice - Solved
++ [Exapnd, Collapse, Remove Node and Traverse etc](https://jsoneditoronline.org/)
+  + Tree structure viewing - Good for array traversing
+  + Remove a node -> Click on left arrow
++ [Beautify, Minify, Copy Jayway JSON Pth](http://jsonpathfinder.com/)
++ [JSON Path Evaluator](http://jsonpath.herokuapp.com/?path=$.store.book[*].author)
+
 #### Video tutorials
 * [RESTful testing with test cases in JSON](https://youtu.be/nSWq5SuyqxE) - YouTube
 * [Zerocode - Simple and powerful testing library - HelloWorld](https://www.youtube.com/watch?v=YCV1cqGt5e0) - YouTube
@@ -2273,3 +2271,5 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 * [REST API or SOAP End Point Testing](https://www.codeproject.com/Articles/1242569/REST-API-or-SOAP-End-Point-Testing-with-ZeroCode-J) - Codeproject
 * [DZone- MuleSoft API Testing With Zerocode Test Framework](https://dzone.com/articles/zerocode-test-framework-for-restsoap-api-tddbdd-ap) - DZone
 * [Testing need not be harder or slower, it should be easier and faster](https://dzone.com/articles/rest-api-testing-using-the-zerocode-json-based-bdd) - DZone
+* [Kafka - Quick and Practical Testing With Zerocode](https://dzone.com/articles/a-quick-and-practical-example-of-kafka-testing) - DZone
+* [Kotlin Apps Testing With Zerocode](https://dzone.com/articles/kotlin-spring-bootspring-data-h2-db-rest-api) - DZone

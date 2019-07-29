@@ -3,10 +3,21 @@ package org.jsmart.zerocode.core.runner;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
+import java.lang.annotation.Annotation;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.module.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.di.module.RuntimeKafkaClientModule;
-import org.jsmart.zerocode.core.domain.*;
+import org.jsmart.zerocode.core.domain.HostProperties;
+import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.Scenario;
+import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.TargetEnv;
+import org.jsmart.zerocode.core.domain.UseHttpClient;
+import org.jsmart.zerocode.core.domain.UseKafkaClient;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
@@ -29,11 +40,6 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.lang.System.getProperty;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
@@ -106,15 +112,18 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 
         final Description description = describeChild(method);
-        JsonTestCase annotation = method.getMethod().getAnnotation(JsonTestCase.class);
+        JsonTestCase jsonTestCaseAnno = method.getMethod().getAnnotation(JsonTestCase.class);
+        if(jsonTestCaseAnno == null){
+            jsonTestCaseAnno = evalScenarioToJsonTestCase(method.getMethod().getAnnotation(Scenario.class));
+        }
 
         if (isIgnored(method)) {
 
             notifier.fireTestIgnored(description);
 
-        } else if (annotation != null) {
+        } else if (jsonTestCaseAnno != null) {
 
-            runLeafJsonTest(notifier, description, annotation);
+            runLeafJsonTest(notifier, description, jsonTestCaseAnno);
 
         } else {
             // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -179,9 +188,9 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
-    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase annotation) {
-        if (annotation != null) {
-            currentTestCase = annotation.value();
+    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno) {
+        if (jsonTestCaseAnno != null) {
+            currentTestCase = jsonTestCaseAnno.value();
         }
 
         notifier.fireTestStarted(description);
@@ -218,9 +227,14 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         List<FrameworkMethod> children = getChildren();
         children.forEach(
                 frameworkMethod -> {
-                    JsonTestCase annotation = frameworkMethod.getAnnotation(JsonTestCase.class);
-                    if (annotation != null) {
-                        smartTestCaseNames.add(annotation.value());
+                    JsonTestCase jsonTestCaseAnno = frameworkMethod.getAnnotation(JsonTestCase.class);
+
+                    if(jsonTestCaseAnno == null){
+                        jsonTestCaseAnno = evalScenarioToJsonTestCase(frameworkMethod.getAnnotation(Scenario.class));
+                    }
+
+                    if (jsonTestCaseAnno != null) {
+                        smartTestCaseNames.add(jsonTestCaseAnno.value());
                     } else {
                         smartTestCaseNames.add(frameworkMethod.getName());
                     }
@@ -331,4 +345,25 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             reportListener.testRunFinished(new Result());
         }
     }
+
+    private JsonTestCase evalScenarioToJsonTestCase(Scenario scenario) {
+        // ---------------------------------------------------
+        // If Scenario is present then convert to JsonTestCase
+        // ---------------------------------------------------
+        JsonTestCase jsonTestCase = new JsonTestCase() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return JsonTestCase.class;
+            }
+
+            @Override
+            public String value() {
+                return scenario != null? scenario.value(): null;
+            }
+        };
+
+        return jsonTestCase.value() == null ? null : jsonTestCase;
+    }
+
 }
