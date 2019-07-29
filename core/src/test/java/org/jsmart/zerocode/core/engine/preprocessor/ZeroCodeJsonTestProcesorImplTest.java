@@ -157,7 +157,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         // start assertion
         String sapmleExecutionResult =
                 smartUtils.getJsonDocumentAsString("09_test_engine/02_2_sample_resolved_execution_response.json");
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(17));
 
         List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, sapmleExecutionResult);
@@ -204,7 +204,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(resolvedAssertions, containsString("\"id-generated-0101\""));
 
         // start assertion
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(1));
 
         String sampleExecutionResult = "\"id-generated-0101-XY\"";
@@ -239,7 +239,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(resolvedAssertions, containsString("1099"));
 
         // start assertion
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(1));
 
         Integer sampleExecutionResult = 1077;
@@ -311,7 +311,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"name\":\"$CONTAINS.STRING.IGNORECASE:CReASY\"}}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -336,7 +336,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"name\":\"$CONTAINS.STRING.IGNORECASE:CReASY\"}}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -362,7 +362,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"dob\":\"$MATCHES.STRING:\\\\d{4}-\\\\d{2}-\\\\d{2}\"}}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -388,7 +388,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":2}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -421,7 +421,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":2}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -451,7 +451,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$GT.1\"}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -484,7 +484,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$GT.5\"}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -519,7 +519,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$LT.3\"}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -552,7 +552,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$LT.1\"}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -587,7 +587,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$EQ.2\"}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -620,7 +620,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$EQ.3\"}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -655,7 +655,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$NOT.EQ.3\"}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -688,7 +688,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("{\"persons.SIZE\":\"$NOT.EQ.2\"}"));
 
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -724,7 +724,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$LOCAL.DATETIME.BEFORE:2015-09-14T09:49:34.000Z\","));
         assertThat(resolvedAssertions, containsString("\"endDateTime\":\"$LOCAL.DATETIME.AFTER:2015-09-14T09:49:34.000Z\""));
         
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(3));
 
         String mockTestResponse = "{\n" +
@@ -755,7 +755,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$LOCAL.DATETIME.BEFORE:2016-09-14T09:49:34.000Z\","));
         assertThat(resolvedAssertions, containsString("\"endDateTime\":\"$LOCAL.DATETIME.AFTER:2019-09-14T09:49:34.000Z\""));
         
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(3));
 
         String mockTestResponse = "{\n" +
@@ -792,7 +792,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$LOCAL.DATETIME.AFTER:2015-09-14T09:49:34.000Z\""));
         
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -825,7 +825,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
         assertThat(resolvedAssertions, containsString("\"startDateTime\":\"$LOCAL.DATETIME.BEFORE:2015-09-14T09:49:34.000Z\""));
         
-        List<JsonAsserter> asserters = jsonPreProcessor.createAssertersFrom(resolvedAssertions);
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
         assertThat(asserters.size(), is(2));
 
         String mockTestResponse = "{\n" +
@@ -844,5 +844,166 @@ public class ZeroCodeJsonTestProcesorImplTest {
         assertThat(failedReports.get(0).toString(),
                 is("Assertion path '$.body.projectDetails.startDateTime' with actual value '2015-09-14T09:49:34.000Z' "
                 		+ "did not match the expected value 'Date Before:2015-09-14T09:49:34'"));
+    }
+    
+    @Test
+    public void testValueOneOf_ValuePresent() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_currentStatus.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, Not Looking]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "        \"currentStatus\": \"Searching\"\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(0));
+    }
+    
+    @Test
+    public void testValueOneOf_ValueNotPresent() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_currentStatus.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, Not Looking]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "        \"currentStatus\": \"Quit\"\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
+    }
+    
+    @Test
+    public void testValueOneOf_ActualResultNull() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_currentStatus.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, Not Looking]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
+    }
+    
+    @Test
+    public void testValueOneOf_MatchEmptyString() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_emptyString.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching,, Not Looking]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "        \"currentStatus\": \"\"\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(0));
+    }
+    
+    @Test
+    public void testValueOneOf_MatchWhiteSpace() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_whiteSpace.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[Found, Searching, , Not Looking]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "        \"currentStatus\": \" \"\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(0));
+    }
+    
+    @Test
+    public void testValueOneOf_ExpectedArrayEmpty() throws Exception {
+        ScenarioSpec scenarioSpec = smartUtils.jsonFileToJava(
+                "one_of/oneOf_test_expectedArrayEmpty.json",
+                ScenarioSpec.class);
+
+        final String assertionsSectionAsString = scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions = jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(resolvedAssertions, containsString("\"currentStatus\":\"$ONE.OF:[]\""));
+        	
+        	
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(2));
+
+        String mockTestResponse = "{\n" +
+                "    \"status\": 200,\n" +
+                "    \"body\": {\n" +
+                "        \"currentStatus\": \"Searching\"\n" +
+                "    }\n" +
+                "}";
+        List<AssertionReport> failedReports = jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(1));
     }
 }
