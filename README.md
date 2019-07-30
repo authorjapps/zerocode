@@ -9,11 +9,11 @@
 
 Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. Jump to the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section to explore more. 
 
-Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode/blob/master/README.md#smart-projects-using-zerocode) to achieve zero-defect production drop of their micro-services.
+Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode/blob/master/README.md#smart-projects-using-zerocode) to achieve accurate production drop of their micro-services.
 
 It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
-For example, if our REST API returns the following from URL "`https://localhost:8080/api/customers/123`" with status `200`,
+For example, if our REST API returns the following from URL `https://localhost:8080/api/v1/customers/123` with `http` status `200(OK)`,
 ```javaScript
 {
     "id": 123,
@@ -34,9 +34,11 @@ then, we can easily validate the above API using `Zerocode` like below.
 
 ```javaScript
 {
-    "url": "api/customers/123",
+    "url": "api/v1/customers/123",
     "operation": "GET",
-    "request": {},
+    "request": {
+        "auth_token":"a_valid_token"
+    },
     "verifications": {
         "status": 200,
         "body": {
@@ -207,7 +209,9 @@ It eliminates the repetitive code such as Java step definitions, test assertions
 
 It has got best of best ideas and practices from the community to keep it super simple and the adoption is rapidly growing among the developer/tester community. It alleviates pain and brings the simplicity in validating the APIs.
 
-It also helps in mocking/stubbing interfacing APIs during the testing cycle in a declarative-fashion as a [test-step](https://github.com/authorjapps/zerocode/blob/master/README.md#using-wiremock-for-mocking-dependent-end-points) as well as [standalone](https://github.com/authorjapps/api-mock-maker) mock-server deployed locally or into cloud. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - enabling us to simply reuse the test(s) from our regression pack.
+It also helps in mocking/stubbing interfacing APIs during the testing cycle in a declarative-fashion. 
+
+Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - Enables us to simply reuse the test(s) from our regression pack.
 
 Here the host and port are maintained in a properties file to enable easy environment-switching.
 ```

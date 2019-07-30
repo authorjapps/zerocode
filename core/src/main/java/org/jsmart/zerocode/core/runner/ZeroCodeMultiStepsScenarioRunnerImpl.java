@@ -106,9 +106,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         for (int scnCount = 0; scnCount < scenarioLoopTimes; scnCount++) {
 
-            LOGGER.info("\n---------------------------------------------------------------" +
-                    "\n     Executing Scenario --> Count No or parameter No. {} <-- {}", scnCount,
-                    "\n---------------------------------------------------------------");
+            LOGGER.info("\n-------------------------------------------------------------------------" +
+                    "\n     Executing Scenario Count No. or parameter No. or Row No. | {} | {}", scnCount,
+                    "\n-------------------------------------------------------------------------");
 
             ScenarioSpec parameterizedScenario = parameterizedProcessor.processParameterized(scenario, scnCount);
 
