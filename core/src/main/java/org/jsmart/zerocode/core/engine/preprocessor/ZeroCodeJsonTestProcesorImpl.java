@@ -6,20 +6,41 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
-
-import org.apache.commons.lang.text.StrSubstitutor;
-import org.jsmart.zerocode.core.domain.reports.LocalDateTimeDeserializer;
-import org.jsmart.zerocode.core.engine.assertion.*;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import net.minidev.json.JSONArray;
+import org.apache.commons.lang.text.StrSubstitutor;
+import org.jsmart.zerocode.core.engine.assertion.ArrayIsEmptyAsserter;
+import org.jsmart.zerocode.core.engine.assertion.ArraySizeAsserter;
+import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasDateAfterValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasDateBeforeValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasEqualNumberValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasExactValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasGreaterThanValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasInEqualNumberValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasLesserThanValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasSubStringIgnoreCaseValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldHasSubStringValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldIsNotNullAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldIsNullAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldIsOneOfValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldMatchesRegexPatternAsserter;
+import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
-import static org.jsmart.zerocode.core.utils.TokenUtils.*;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
+import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
@@ -106,18 +127,17 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     paramMap.put(thisPath, escapedString);
 
                 } else {
-                    // if it is a json block/node or array, this return value is LinkedHashMap.
-                    if (JsonPath.read(scenarioState, thisPath) instanceof LinkedHashMap) {
-                        final String pathValue = mapper.writeValueAsString(JsonPath.read(scenarioState, thisPath));
-                        String escapedPathValue = escapeJava(pathValue);
-                        paramMap.put(thisPath, escapedPathValue);
+                    Object jsonPathValue = JsonPath.read(scenarioState, thisPath);
+                    if (isPathValueJson(jsonPathValue)) {
+                        final String jsonAsString = mapper.writeValueAsString(jsonPathValue);
+                        String escapedJsonString = escapeJava(jsonAsString);
+                        paramMap.put(thisPath, escapedJsonString);
 
                     } else {
-                        // Usual flow
+
                         paramMap.put(thisPath, JsonPath.read(scenarioState, thisPath));
 
                     }
-
                 }
 
             } catch (Exception e) {
@@ -342,4 +362,9 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     private LocalDateTime parseLocalDateTime (String value){ 	
     	return LocalDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME);
     }
+
+    boolean isPathValueJson(Object jsonPathValue) {
+        return jsonPathValue instanceof LinkedHashMap || jsonPathValue instanceof JSONArray;
+    }
+
 }
