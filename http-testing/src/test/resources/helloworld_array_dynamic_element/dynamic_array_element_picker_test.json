@@ -30,7 +30,7 @@
             "name": "get_by_name",
             "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
             "operation": "fetchDbCustomersByName",
-            "request": "${$.find_matching_value.response[0]}",
+            "request": "${$.find_matching_value.response[0]}", //<--- Picked the field from the above array i.e. the step `find_matching_value`
             "assertions": {
                 "results": [
                     {
