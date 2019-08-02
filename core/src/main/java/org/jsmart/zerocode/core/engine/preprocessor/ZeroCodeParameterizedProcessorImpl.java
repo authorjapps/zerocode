@@ -55,29 +55,9 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
     private final CsvParser csvParser;
 
     @Inject
-    public ZeroCodeParameterizedProcessorImpl(ObjectMapper objectMapper, CsvParser csvParser, CsvParser csvParser1) {
+    public ZeroCodeParameterizedProcessorImpl(ObjectMapper objectMapper, CsvParser csvParser) {
         this.objectMapper = objectMapper;
-        this.csvParser = csvParser1;
-    }
-
-    @Deprecated
-    @Override
-    public Step processParameterized(Step thisStep, int i) {
-        Step parameterizedStep;
-        if (thisStep.getParameterized() != null) {
-
-            parameterizedStep = resolveParamsValues(thisStep, i);
-
-        } else if (thisStep.getParameterizedCsv() != null) {
-
-            parameterizedStep = resolveParamsCsv(thisStep, i);
-
-        } else {
-
-            parameterizedStep = thisStep;
-
-        }
-        return parameterizedStep;
+        this.csvParser = csvParser;
     }
 
     @Override
@@ -101,6 +81,8 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
     }
 
     private ScenarioSpec resolveParamsValues(ScenarioSpec scenario, int paramIndex) {
+        LOGGER.info("Resolving parameter value-source for index - {}", paramIndex);
+
         try {
             String stepJson = objectMapper.writeValueAsString(scenario);
             List<Object> parameterized = scenario.getParameterized().getValueSource();
@@ -111,6 +93,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
 
             Map<String, Object> valuesMap = new HashMap<>();
             valuesMap.put(VALUE_SOURCE_KEY, parameterized.get(paramIndex));
+
             String resultantStepJson = replaceWithValues(stepJson, valuesMap);
 
             return objectMapper.readValue(resultantStepJson, ScenarioSpec.class);
@@ -121,6 +104,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
     }
 
     private ScenarioSpec resolveParamsCsv(ScenarioSpec scenario, int paramIndex) {
+        LOGGER.info("Resolving parameter CSV-source for row number - {}", paramIndex);
         try {
             String stepJson = objectMapper.writeValueAsString(scenario);
             List<String> parameterizedCsvList = scenario.getParameterized().getCsvSource();
@@ -132,10 +116,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
             Map<String, Object> valuesMap = new HashMap<>();
             String csvLine = parameterizedCsvList.get(paramIndex);
 
-            String[] parsedLine = csvParser.parseLine(csvLine + LINE_SEPARATOR);
-            AtomicLong index = new AtomicLong(0);
-            Arrays.stream(parsedLine)
-                    .forEach(thisValue -> valuesMap.put(index.getAndIncrement() + "", thisValue));
+            resolveCsvLine(valuesMap, csvLine);
 
             String resultantStepJson = replaceWithValues(stepJson, valuesMap);
 
@@ -146,6 +127,39 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
         }
     }
 
+    private void resolveCsvLine(Map<String, Object> valuesMap, String csvLine) {
+        String[] parsedLine = csvParser.parseLine(csvLine + LINE_SEPARATOR);
+        AtomicLong index = new AtomicLong(0);
+        Arrays.stream(parsedLine)
+                .forEach(thisValue -> valuesMap.put(index.getAndIncrement() + "", thisValue));
+    }
+
+    private String replaceWithValues(String stepJson, Map<String, Object> valuesMap) {
+        StrSubstitutor sub = new StrSubstitutor(valuesMap);
+        return sub.replace(stepJson);
+    }
+
+    @Deprecated
+    @Override
+    public Step processParameterized(Step thisStep, int i) {
+        Step parameterizedStep;
+        if (thisStep.getParameterized() != null) {
+
+            parameterizedStep = resolveParamsValues(thisStep, i);
+
+        } else if (thisStep.getParameterizedCsv() != null) {
+
+            parameterizedStep = resolveParamsCsv(thisStep, i);
+
+        } else {
+
+            parameterizedStep = thisStep;
+
+        }
+        return parameterizedStep;
+    }
+
+    @Deprecated
     private Step resolveParamsValues(Step step, int paramIndex) {
         try {
             String stepJson = objectMapper.writeValueAsString(step);
@@ -166,6 +180,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
         }
     }
 
+    @Deprecated
     private Step resolveParamsCsv(Step step, int paramIndex) {
         try {
             String stepJson = objectMapper.writeValueAsString(step);
@@ -178,10 +193,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
             Map<String, Object> valuesMap = new HashMap<>();
             String csvLine = parameterizedCsvList.get(paramIndex);
 
-            String[] parsedLine = csvParser.parseLine(csvLine + LINE_SEPARATOR);
-            AtomicLong index = new AtomicLong(0);
-            Arrays.stream(parsedLine)
-                    .forEach(thisValue -> valuesMap.put(index.getAndIncrement() + "", thisValue));
+            resolveCsvLine(valuesMap, csvLine);
 
             String resultantStepJson = replaceWithValues(stepJson, valuesMap);
 
@@ -190,11 +202,6 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
         } catch (Exception exx) {
             throw new RuntimeException("Error while resolving parameterizedCsv values - " + exx);
         }
-    }
-
-    private String replaceWithValues(String stepJson, Map<String, Object> valuesMap) {
-        StrSubstitutor sub = new StrSubstitutor(valuesMap);
-        return sub.replace(stepJson);
     }
 
 }
