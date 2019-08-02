@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MimeTypeConverterTest {
@@ -191,4 +193,21 @@ public class MimeTypeConverterTest {
         assertThat(jsonNodeOutput.toString(), containsString("[{\"postCode\":4005"));
 
     }
+
+    @Test
+    public void testConvert_stringToJsonArray() throws Exception{
+        String jsonBlockString = "[{\"id\":\"id-001\",\"name\":\"Emma\"},{\"id\":\"id-002\",\"name\":\"Nikhi\"}]";
+        Object jsonNodeOutput = xmlToJsonConverter.stringToJson(jsonBlockString);
+        assertThat(((JsonNode)jsonNodeOutput).isArray(), is(true));
+        assertThat(((JsonNode)jsonNodeOutput).get(0).get("name").asText(), is("Emma"));
+    }
+
+    @Test
+    public void testConvert_stringToJsonObject() throws Exception{
+        String jsonBlockString = "{\"id\":\"id-001\",\"name\":\"Emma\"}";
+        Object jsonNodeOutput = xmlToJsonConverter.stringToJson(jsonBlockString);
+        assertThat(((JsonNode)jsonNodeOutput).isObject(), is(true));
+        assertThat(((JsonNode)jsonNodeOutput).get("name").asText(), is("Emma"));
+    }
+
 }
