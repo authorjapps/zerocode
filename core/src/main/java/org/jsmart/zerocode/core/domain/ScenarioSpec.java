@@ -14,17 +14,20 @@ public class ScenarioSpec {
     private final Boolean ignoreStepFailures;
     private final String scenarioName;
     private final List<Step> steps;
+    private final Parameterized parameterized;
 
     @JsonCreator
     public ScenarioSpec(
             @JsonProperty("stepLoop") Integer loop,
             @JsonProperty("ignoreStepFailures") Boolean ignoreStepFailures,
             @JsonProperty("scenarioName") String scenarioName,
-            @JsonProperty("steps") List<Step> steps) {
+            @JsonProperty("steps") List<Step> steps,
+            @JsonProperty("parameterized") Parameterized parameterized) {
         this.loop = loop;
         this.ignoreStepFailures = ignoreStepFailures;
         this.scenarioName = scenarioName;
         this.steps = steps;
+        this.parameterized = parameterized;
     }
 
     public Integer getLoop() {
@@ -43,6 +46,10 @@ public class ScenarioSpec {
         return steps == null? (new ArrayList<>()) : steps;
     }
 
+    public Parameterized getParameterized() {
+        return parameterized;
+    }
+
     @Override
     public String toString() {
         return "ScenarioSpec{" +
@@ -50,6 +57,7 @@ public class ScenarioSpec {
                 ", ignoreStepFailures=" + ignoreStepFailures +
                 ", scenarioName='" + scenarioName + '\'' +
                 ", steps=" + steps +
+                ", parameterized=" + parameterized +
                 '}';
     }
 }

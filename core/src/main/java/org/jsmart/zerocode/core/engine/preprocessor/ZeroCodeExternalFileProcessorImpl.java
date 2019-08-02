@@ -6,11 +6,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.jsmart.zerocode.core.domain.Step;
-import org.slf4j.Logger;
-
+import com.univocity.parsers.csv.CsvParser;
 import java.util.List;
 import java.util.Map;
+import org.jsmart.zerocode.core.domain.Step;
+import org.slf4j.Logger;
 
 import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.JSON_PAYLOAD_FILE;
 import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
@@ -83,6 +83,20 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
 
         }
 
+    }
+
+    @Override
+    public Step createFromStepFile(Step thisStep, String stepId) {
+        if (thisStep.getStepFile() != null) {
+            try {
+                thisStep = objectMapper.treeToValue(thisStep.getStepFile(), Step.class);
+            } catch (JsonProcessingException e) {
+                LOGGER.error("\n### Error while parsing for stepId - {}, stepFile - {}",
+                        stepId, thisStep.getStepFile());
+                throw new RuntimeException(e);
+            }
+        }
+        return thisStep;
     }
 
     /**

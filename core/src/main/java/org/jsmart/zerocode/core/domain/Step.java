@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 /**
@@ -18,8 +19,11 @@ public class Step {
     private final String url;
     private JsonNode request;
     private JsonNode assertions;
+    private JsonNode verifications;
     private String id;
     private JsonNode stepFile;
+    private List<Object> parameterized;
+    private List<String> parameterizedCsv;
 
     public Integer getLoop() {
         return loop;
@@ -45,6 +49,10 @@ public class Step {
         return assertions;
     }
 
+    public JsonNode getVerifications() {
+        return verifications;
+    }
+
     public String getId() {
         return id;
     }
@@ -61,6 +69,22 @@ public class Step {
         this.stepFile = stepFile;
     }
 
+    public List<Object> getParameterized() {
+        return parameterized;
+    }
+
+    public void setParameterized(List<Object> parameterized) {
+        this.parameterized = parameterized;
+    }
+
+    public List<String> getParameterizedCsv() {
+        return parameterizedCsv;
+    }
+
+    public void setParameterizedCsv(List<String> parameterizedCsv) {
+        this.parameterizedCsv = parameterizedCsv;
+    }
+
     @JsonCreator
     public Step(
             @JsonProperty("stepLoop") Integer loop,
@@ -68,14 +92,15 @@ public class Step {
             @JsonProperty("operation") String operation,
             @JsonProperty("url") String url,
             @JsonProperty("request") JsonNode request,
-            @JsonProperty("assertions") JsonNode assertions
-    ) {
+            @JsonProperty("assertions") JsonNode assertions,
+            @JsonProperty("verifications") JsonNode verifications) {
         this.loop = loop;
         this.name = name;
         this.operation = operation;
         this.request = request;
         this.url = url;
-        this.assertions = assertions;
+        this.assertions = assertions.isNull() ? verifications : assertions;
+        this.verifications = verifications;
     }
 
     @Override
@@ -87,8 +112,10 @@ public class Step {
                 ", url='" + url + '\'' +
                 ", request=" + request +
                 ", assertions=" + assertions +
+                ", verifications=" + verifications +
                 ", id='" + id + '\'' +
                 ", stepFile=" + stepFile +
+                ", parameterized=" + parameterized +
                 '}';
     }
 }

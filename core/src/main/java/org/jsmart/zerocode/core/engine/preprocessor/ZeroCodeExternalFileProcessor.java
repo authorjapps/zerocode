@@ -6,4 +6,5 @@ public interface ZeroCodeExternalFileProcessor {
 
     Step resolveExtJsonFile(Step thisStep);
 
+    Step createFromStepFile(Step thisStep, String stepId);
 }

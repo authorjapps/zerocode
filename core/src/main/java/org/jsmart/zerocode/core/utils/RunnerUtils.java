@@ -2,6 +2,7 @@ package org.jsmart.zerocode.core.utils;
 
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.EnvProperty;
+import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.TestMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
  */
 public class RunnerUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(RunnerUtils.class);
+    public static final int MIN_COUNT = 1;
 
     public static String getEnvSpecificConfigFile(String serverEnv, Class<?> testClass) {
         LOGGER.info("### testClass : " + testClass);
@@ -97,5 +99,19 @@ public class RunnerUtils {
             LOGGER.error(errMessage);
             throw new RuntimeException(errMessage + e);
         }
+    }
+
+    public static int loopCount(Step thisStep) {
+        int stepLoopTimes = 0;
+
+        if(thisStep.getLoop() != null){
+            stepLoopTimes = thisStep.getLoop();
+        } else if(thisStep.getParameterized() != null){
+            stepLoopTimes = thisStep.getParameterized().size();
+        } else if(thisStep.getParameterizedCsv() != null){
+            stepLoopTimes = thisStep.getParameterizedCsv().size();
+        }
+
+        return stepLoopTimes > 0 ? stepLoopTimes: MIN_COUNT;
     }
 }

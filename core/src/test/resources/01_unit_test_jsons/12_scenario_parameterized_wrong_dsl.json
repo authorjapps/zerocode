@@ -1,0 +1,19 @@
+{
+    "scenarioName": "For deserialize only",
+    "ignoreStepFailures": true,
+    "steps": [
+        {
+            "name": "step1",
+            "url": "/anUrl/${0}",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 900
+            }
+        }
+    ],
+    "parameterized": {
+
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "scenarioName": "Scenario with parameterized values",
+    "ignoreStepFailures": true,
+    "steps": [
+        {
+            "name": "step1",
+            "url": "/anUrl/${0}",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 900
+            }
+        }
+    ],
+    "parameterized": {
+        "valueSource": [
+            "hello",
+            123
+        ]
+    }
+}

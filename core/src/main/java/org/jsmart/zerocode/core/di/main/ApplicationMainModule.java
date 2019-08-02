@@ -3,6 +3,7 @@ package org.jsmart.zerocode.core.di.main;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+import org.jsmart.zerocode.core.di.module.CsvParserModule;
 import org.jsmart.zerocode.core.di.module.GsonModule;
 import org.jsmart.zerocode.core.di.module.HttpClientModule;
 import org.jsmart.zerocode.core.di.module.ObjectMapperModule;
@@ -15,6 +16,8 @@ import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcesso
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesorImpl;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessorImpl;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGeneratorImpl;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunner;
@@ -43,6 +46,7 @@ public class ApplicationMainModule extends AbstractModule {
         install(new HttpClientModule());
         install(new GsonModule());
         install(new PropertiesInjectorModule(serverEnv));
+        install(new CsvParserModule());
         //install(new KafkaModule());
 
         /*
@@ -54,6 +58,7 @@ public class ApplicationMainModule extends AbstractModule {
         bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
         bind(ZeroCodeExternalFileProcessor.class).to(ZeroCodeExternalFileProcessorImpl.class);
+        bind(ZeroCodeParameterizedProcessor.class).to(ZeroCodeParameterizedProcessorImpl.class);
 
         // ------------------------------------------------
         // Bind properties for localhost, CI, DIT, SIT etc
