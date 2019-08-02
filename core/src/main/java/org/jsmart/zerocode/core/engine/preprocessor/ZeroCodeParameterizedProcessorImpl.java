@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
-import org.jsmart.zerocode.core.domain.Step;
 import org.slf4j.Logger;
 
 import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
+import static org.jsmart.zerocode.core.domain.ZerocodeConstants.DSL_FORMAT;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -48,6 +48,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Singleton
 public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterizedProcessor {
     private static final Logger LOGGER = getLogger(ZeroCodeParameterizedProcessorImpl.class);
+
     public static final String VALUE_SOURCE_KEY = "0";
 
     private final ObjectMapper objectMapper;
@@ -77,7 +78,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
 
         }
 
-        throw new RuntimeException("Scenario spec was invalid. Please check the DSL format");
+        throw new RuntimeException("Scenario spec was invalid. Please check the DSL format \ne.g. \n" + DSL_FORMAT);
     }
 
     private ScenarioSpec resolveParamsValues(ScenarioSpec scenario, int paramIndex) {
@@ -137,71 +138,6 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
     private String replaceWithValues(String stepJson, Map<String, Object> valuesMap) {
         StrSubstitutor sub = new StrSubstitutor(valuesMap);
         return sub.replace(stepJson);
-    }
-
-    @Deprecated
-    @Override
-    public Step processParameterized(Step thisStep, int i) {
-        Step parameterizedStep;
-        if (thisStep.getParameterized() != null) {
-
-            parameterizedStep = resolveParamsValues(thisStep, i);
-
-        } else if (thisStep.getParameterizedCsv() != null) {
-
-            parameterizedStep = resolveParamsCsv(thisStep, i);
-
-        } else {
-
-            parameterizedStep = thisStep;
-
-        }
-        return parameterizedStep;
-    }
-
-    @Deprecated
-    private Step resolveParamsValues(Step step, int paramIndex) {
-        try {
-            String stepJson = objectMapper.writeValueAsString(step);
-            List<Object> parameterized = step.getParameterized();
-
-            if (parameterized == null || parameterized.isEmpty()) {
-                return step;
-            }
-
-            Map<String, Object> valuesMap = new HashMap<>();
-            valuesMap.put(VALUE_SOURCE_KEY, parameterized.get(paramIndex));
-            String resultantStepJson = replaceWithValues(stepJson, valuesMap);
-
-            return objectMapper.readValue(resultantStepJson, Step.class);
-
-        } catch (Exception exx) {
-            throw new RuntimeException("Error while resolving parameterized values - " + exx);
-        }
-    }
-
-    @Deprecated
-    private Step resolveParamsCsv(Step step, int paramIndex) {
-        try {
-            String stepJson = objectMapper.writeValueAsString(step);
-            List<String> parameterizedCsvList = step.getParameterizedCsv();
-
-            if (parameterizedCsvList == null || parameterizedCsvList.isEmpty()) {
-                return step;
-            }
-
-            Map<String, Object> valuesMap = new HashMap<>();
-            String csvLine = parameterizedCsvList.get(paramIndex);
-
-            resolveCsvLine(valuesMap, csvLine);
-
-            String resultantStepJson = replaceWithValues(stepJson, valuesMap);
-
-            return objectMapper.readValue(resultantStepJson, Step.class);
-
-        } catch (Exception exx) {
-            throw new RuntimeException("Error while resolving parameterizedCsv values - " + exx);
-        }
     }
 
 }

@@ -1,10 +1,8 @@
 package org.jsmart.zerocode.converter;
 
-import org.jsmart.zerocode.core.utils.SmartUtils;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.jsmart.zerocode.core.utils.SmartUtils;
 
 public class SoapMocker {
 
@@ -17,8 +15,7 @@ public class SoapMocker {
 
             return singleKeyValueMap;
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (RuntimeException  e) {
             throw new RuntimeException("something wrong happened here" + e);
         }
     }

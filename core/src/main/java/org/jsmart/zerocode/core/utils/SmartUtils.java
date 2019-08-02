@@ -9,16 +9,20 @@ import com.google.classpath.RegExpResourceFilter;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.nio.charset.Charset.defaultCharset;
 
@@ -39,8 +43,12 @@ public class SmartUtils {
         return jsonAsString;
     }
 
-    public static String readJsonAsString(String jsonFileName) throws IOException {
-        return Resources.toString(Resources.getResource(jsonFileName), defaultCharset());
+    public static String readJsonAsString(String jsonFileName){
+        try {
+            return Resources.toString(Resources.getResource(jsonFileName), defaultCharset());
+        } catch (IOException e) {
+            throw new RuntimeException("Exception occurred while reading the JSON file - " + jsonFileName);
+        }
     }
 
 

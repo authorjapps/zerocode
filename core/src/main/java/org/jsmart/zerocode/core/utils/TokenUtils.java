@@ -129,8 +129,7 @@ public class TokenUtils {
     public static String getXmlContent(String xmlFileResource) {
         try {
             return SmartUtils.readJsonAsString(xmlFileResource);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
             throw new RuntimeException("Oops! Problem occurred while reading the XML file '" + xmlFileResource
                     + "', details:" + e);
         }

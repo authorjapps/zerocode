@@ -1,0 +1,23 @@
+{
+    "scenarioName": "For deserialize only",
+    "ignoreStepFailures": true,
+    "steps": [
+        {
+            "name": "step1",
+            "url": "/anUrl/${0}/${1}",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": "${2}"
+            }
+        }
+    ],
+    "parameterized": {
+        "csvSource": [
+            //id,     AddressId, status
+            "1,        2,        200",
+            "11,      22,        400"
+        ]
+    }
+}
