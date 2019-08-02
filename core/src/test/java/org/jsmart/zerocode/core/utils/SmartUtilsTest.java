@@ -70,7 +70,7 @@ public class SmartUtilsTest {
     @Test
     public void willReadAllfileNamesFrom_TestResource() throws Exception {
         List<String> allTestCaseFiles = SmartUtils.getAllEndPointFiles("01_unit_test_jsons");
-        assertThat(allTestCaseFiles.size(), is(11));
+        assertThat(allTestCaseFiles.size(), is(14));
         assertThat(allTestCaseFiles.get(0), is("01_unit_test_jsons/00_test_json_single_step_verifications.json"));
     }
 
