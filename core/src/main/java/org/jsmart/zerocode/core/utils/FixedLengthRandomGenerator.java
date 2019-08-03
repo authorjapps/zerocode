@@ -33,7 +33,7 @@ public class FixedLengthRandomGenerator {
     }
 
     /**
-     * @param length of the random number(0 < length < 20)
+     * @param length of the random number(1 to 19 i.e. between 0 to 20)
      * @return a {@link FixedLengthRandomGenerator} number of given length
      */
     public static FixedLengthRandomGenerator getGenerator(int length) {
