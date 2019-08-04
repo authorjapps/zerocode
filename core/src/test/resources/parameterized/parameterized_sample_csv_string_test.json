@@ -1,0 +1,24 @@
+{
+    "scenarioName": "Parameterized test scenario demo",
+    "steps": [
+        {
+            "name": "get_user",
+            "url": "",
+            "operation": "",
+            "request": {
+                "body": {
+                    "login": "octocat"
+                }
+            },
+            "assertions": {
+                "body": {
+                    "login": "octocat"
+                }
+            },
+            "parameterizedCsv": [
+                "Hello,    World,   Hello World",
+                "11,  22, 33"
+            ]
+        }
+    ]
+}

@@ -9,11 +9,11 @@
 
 Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. Jump to the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section to explore more. 
 
-Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode/blob/master/README.md#smart-projects-using-zerocode) to achieve zero-defect production drop of their micro-services.
+Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode/blob/master/README.md#smart-projects-using-zerocode) to achieve accurate production drop of their micro-services.
 
 It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
-For example, if our REST API returns the following from URL "`https://localhost:8080/api/customers/123`" with status `200`,
+For example, if our REST API returns the following from URL `https://localhost:8080/api/v1/customers/123` with `http` status `200(OK)`,
 ```javaScript
 {
     "id": 123,
@@ -34,9 +34,11 @@ then, we can easily validate the above API using `Zerocode` like below.
 
 ```javaScript
 {
-    "url": "api/customers/123",
+    "url": "api/v1/customers/123",
     "operation": "GET",
-    "request": {},
+    "request": {
+        "auth_token":"a_valid_token"
+    },
     "verifications": {
         "status": 200,
         "body": {
@@ -52,7 +54,6 @@ then, we can easily validate the above API using `Zerocode` like below.
     }
 }
 ```
-
 Or
 
 ```javaScript
@@ -74,7 +75,7 @@ Or
     ...
     "verifications": {
         "body": {
-            "type": "$CONTAINS.STRING:Premium High"  // Matches only part of the value
+            "type": "$CONTAINS.STRING:High Value"  // Matches only part of the value
         }
     }
 }
@@ -208,7 +209,9 @@ It eliminates the repetitive code such as Java step definitions, test assertions
 
 It has got best of best ideas and practices from the community to keep it super simple and the adoption is rapidly growing among the developer/tester community. It alleviates pain and brings the simplicity in validating the APIs.
 
-It also helps in mocking/stubbing interfacing APIs during the testing cycle in a declarative-fashion as a [test-step](https://github.com/authorjapps/zerocode/blob/master/README.md#using-wiremock-for-mocking-dependent-end-points) as well as [standalone](https://github.com/authorjapps/api-mock-maker) mock-server deployed locally or into cloud. Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - enabling us to simply reuse the test(s) from our regression pack.
+It also helps in mocking/stubbing interfacing APIs during the testing cycle in a declarative-fashion. 
+
+Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - Enables us to simply reuse the test(s) from our regression pack.
 
 Here the host and port are maintained in a properties file to enable easy environment-switching.
 ```
@@ -505,6 +508,7 @@ See more usages and examples below.
 - [Step with more assertions](#3)
 - [Running with step loop](#4)
 - [Running with scenario loop](#5)
+- [Parameterized Testing](#51)
 - [Generated reports and charts](#6)
 - [More assertion with handy place holders](#7)
 - [General Place holders](#8)
@@ -806,6 +810,11 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
   ]
 }
 ```
+
+#### 51:
+#### Paramterized scenario
+To run the scenario steps for each parameter from a list of values or CSV rows.
+See Wiki for details.
 
 
 #### 6:
@@ -2223,6 +2232,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 | ${RANDOM.STRING:4}       | Replaces with a random string consists of four english alpphabets | The length can be dynamic |
 | ${STATIC.ALPHABET:5}       | Replaces with abcde ie Static string of length 5| String starts from "a" and continues, repeats after "z"|
 | ${STATIC.ALPHABET:7}       | Replaces with abcdefg ie Static string of length 7| String starts from a"" and continues, repeats after "z"|
+| ${SYSTEM.PROPERTY:java.vendor}       | Replaces with the value of the system property. E.g. `java.vendor` resolves to `Oracle Corporation` or `Azul Systems, Inc.` | If no property exists then the place holder remains in place i.e. `java.vendor` |
 | ${LOCAL.DATE.TODAY:yyyy-MM-dd}       | Resolves this today's date in the format yyyy-MM-dd or any suppliedformat| See format examples here https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/18_date_and_datetime_today_generator.json |
 | ${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ss.nnnnnnnnn}       | Resolves this today's datetime stamp in any supplied format| See format examples here https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/18_date_and_datetime_today_generator.json |
 
@@ -2273,3 +2283,6 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 * [Testing need not be harder or slower, it should be easier and faster](https://dzone.com/articles/rest-api-testing-using-the-zerocode-json-based-bdd) - DZone
 * [Kafka - Quick and Practical Testing With Zerocode](https://dzone.com/articles/a-quick-and-practical-example-of-kafka-testing) - DZone
 * [Kotlin Apps Testing With Zerocode](https://dzone.com/articles/kotlin-spring-bootspring-data-h2-db-rest-api) - DZone
+
+## Credits
+![Jetbrains](images/jetbrains.svg)

@@ -7,6 +7,8 @@ import java.io.IOException;
 public interface Converter {
     Object xmlToJson(String xmlObject);
 
+    Object stringToJson(String jsonString) throws IOException;
+
     Object jsonToJson(String jsonString) throws IOException;
 
     Object jsonBlockToJson(JsonNode jsonNode) throws IOException;

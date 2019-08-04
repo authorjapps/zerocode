@@ -48,7 +48,9 @@ public class MimeTypeConverter implements Converter {
     }
 
     /**
-     * Converts input JSON string (usually escaped e.g. "{\"a\": \"b\", \"active\": true}" ) to JSON block
+     * Converts input JSON string (usually escaped e.g. "{\"a\": \"b\", \"active\": true}" ) to JSON block.
+     * This helps in picking a value from the JSON block via Jayway Path and assert.
+     *
      * See also-
      * - method jsonBlockToJson for unescaped json to json block.
      * - method jsonNodeToJson for unescaped json to json block.
@@ -58,8 +60,13 @@ public class MimeTypeConverter implements Converter {
      * @throws IOException - This method might throw IOException
      */
     @Override
-    public Object jsonToJson(String jsonString) throws IOException {
+    public Object stringToJson(String jsonString) throws IOException {
         return mapper.readValue(jsonString, JsonNode.class);
+    }
+
+    @Override
+    public Object jsonToJson(String jsonString) throws IOException {
+        return stringToJson(jsonString);
     }
 
     /**

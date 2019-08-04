@@ -2,6 +2,7 @@ package org.jsmart.zerocode.zerocodejavaexec;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import java.util.Arrays;
 import org.jsmart.zerocode.zerocodejavaexec.pojo.DbResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,20 @@ public class DbSqlExecutor {
     public Map<String, List<DbResult>> fetchDbCustomers(String sqlStatement){
 
         Map<String, List<DbResult>> results = executeSelectSql(sqlStatement);
+
+        return results;
+    }
+
+    public Map<String, List<DbResult>> fetchDbCustomersByName(String name){
+
+        Map<String, List<DbResult>> results = executeSelectSql("any sql");
+
+        DbResult foundResult = results.get(RESULTS_KEY).stream()
+                .filter(thisRecord -> thisRecord.getName().equals(name))
+                .findFirst()
+                .get();
+
+        results.put(RESULTS_KEY, Arrays.asList(foundResult));
 
         return results;
     }

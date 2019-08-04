@@ -1,0 +1,24 @@
+{
+    "scenarioName": "Fetch and assert GitHub userNames",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/users/${0}",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "${0}"
+                }
+            }
+        }
+    ],
+    "parameterized": {
+        "valueSource":[
+            "octocat",
+            "siddhagalaxy"
+        ]
+    }
+}

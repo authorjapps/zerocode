@@ -35,7 +35,7 @@ public class FieldHasEqualNumberValueAsserter implements JsonAsserter {
 
         return areEqual ?
                 AssertionReport.createFieldMatchesReport() :
-                AssertionReport.createFieldDoesNotMatchReport(path, expected, result);
+                AssertionReport.createFieldDoesNotMatchReport(path, expected+"(Number)", result+"(String)");
     }
 }
 

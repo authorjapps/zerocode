@@ -1,0 +1,28 @@
+{
+    "scenarioName": "Fetch and assert GitHub userIds by their userNames",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/users/${0}",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "${0}",
+                    "type" : "User",
+                    "name" : "${1}",
+                    "location" : "${2}",
+                    "id" : "$EQ.${3}"
+                }
+            }
+        }
+    ],
+    "parameterized": {
+        "csvSource":[
+            "octocat, The Octocat, San Francisco, 583231",
+            "siddhagalaxy, Sidd, UK, 33847730"
+        ]
+    }
+}

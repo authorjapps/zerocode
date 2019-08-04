@@ -9,7 +9,7 @@
 
     <artifactId>zerocode-tdd-parent</artifactId>
     <groupId>org.jsmart</groupId>
-    <version>1.3.9-SNAPSHOT</version>
+    <version>1.3.12-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>ZeroCode TDD Parent</name>
@@ -83,6 +83,7 @@
         <extentreports.version>4.0.9</extentreports.version>
         <version.kafka-clients>2.1.0</version.kafka-clients>
         <version.gson>2.6.2</version.gson>
+        <version.univocity-parsers>2.8.2</version.univocity-parsers>
         <!-- Maven plugins, build properties  -->
         <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
         <java-compiler-source.version>1.8</java-compiler-source.version>
@@ -247,6 +248,11 @@
                 <groupId>com.aventstack</groupId>
                 <artifactId>extentreports</artifactId>
                 <version>${extentreports.version}</version> <!-- extent community version -->
+            </dependency>
+            <dependency>
+                <groupId>com.univocity</groupId>
+                <artifactId>univocity-parsers</artifactId>
+                <version>${version.univocity-parsers}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
