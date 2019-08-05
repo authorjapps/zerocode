@@ -1,0 +1,68 @@
+{
+    "scenarioName": "templated wiremock",
+    "steps": [
+        {
+            "name": "templated_response",
+            "url": "/$MOCK",
+            "operation": "$USE.WIREMOCK",
+            "request": {
+                "mocks": [
+                    {
+                        "name": "Template 001",
+                        "operation": "GET",
+                        "request": {
+                            "urlPath": "/template/001"
+                        },
+                        "response": {
+                            "status": 200,
+                            "headers" : {
+                                "Content-Type" : "application/json"
+                            },
+                            "body": {
+                                // Showcases the use of WireMock's Response Templates
+                                // http://wiremock.org/docs/response-templating/
+                                // "fixed_date_time" is set by ZeroCode at mock-creation time, so it will remain the same accross subsequent calls
+                                // "dynamic_oneMinuteAgo", "dynamic_oneMinuteAhead" and "ucparam" are resolved at mock-response time, so they can be different per call
+                                // The templates are Handlebars Templates, where {{...}} delimits the templates, and inside you can put 'helpers'
+                                // localdatetime is one of those helpers that returns the current date (LocalDateTime, for compatibility with LOCAL.DATETIME.NOW)
+                                // and provides 'offset' to manipulate it. See the section 'Date and time helpers' on the WireMock-link for more info about offset.
+                                // upper is another helper, that uppercases it's argument (i.c. the first value of the request-parameter named 'param'
+                                "fixed_date_time": "${LOCAL.DATETIME.NOW:uuuu-MM-dd'T'HH:mm:ss.SSS}",
+                                "dynamic_oneMinuteAgo": "{{localdatetime offset='-1 minutes'}}",
+                                "dynamic_oneMinuteAhead": "{{localdatetime offset='+1 minutes'}}",
+                                "ucparam": "{{upper request.query.param[0]}}"
+                            }
+                        }
+                    }
+                ]
+            },
+            "assertions": {
+                "status": 200
+            }
+        },
+        {
+            "name": "GetTemplate",
+            "url": "/template/001",
+            "operation": "GET",
+            "loop": 3,
+            "request": {
+                "headers": {
+                    "Content-Type": "application/json;charset=UTF-8"
+                },
+                "queryParams": {
+                    "param": "lowerToUpper"
+                },
+                "body": {
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "ucparam": "LOWERTOUPPER",
+                    "fixed_date_time": "$LOCAL.DATETIME.AFTER:${$.GetTemplate.response.body.dynamic_oneMinuteAgo}",
+                    "fixed_date_time": "$LOCAL.DATETIME.BEFORE:${$.GetTemplate.response.body.dynamic_oneMinuteAhead}"
+                }
+            }
+        }
+    ]
+}

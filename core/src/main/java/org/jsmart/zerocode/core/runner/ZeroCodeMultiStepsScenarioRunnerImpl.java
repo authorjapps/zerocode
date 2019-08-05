@@ -33,7 +33,6 @@ import static org.jsmart.zerocode.core.domain.ZerocodeConstants.PROPERTY_KEY_POR
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
-import static org.jsmart.zerocode.core.utils.RunnerUtils.loopCount;
 import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.serviceType;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -121,9 +120,15 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             for (Step thisStep : parameterizedScenario.getSteps()) {
 
-                int stepLoopTimes;
-                stepLoopTimes = loopCount(thisStep);
-
+                boolean retryTillSuccess = false;
+                int retryDelay = 0;
+                int retryMaxTimes = 1;
+                if (thisStep.getRetry() != null) {
+                    retryMaxTimes = thisStep.getRetry().getMax();
+                    retryDelay = thisStep.getRetry().getDelay();
+                    retryTillSuccess = true;
+                }
+                final int stepLoopTimes = thisStep.getLoop() == null ? 1 : thisStep.getLoop();
                 for (int stepCount = 0; stepCount < stepLoopTimes; stepCount++) {
                     LOGGER.info("\n### Executing Step -->> Count No: " + stepCount);
                     logCorrelationshipPrinter = LogCorrelationshipPrinter.newInstance(LOGGER);
@@ -159,232 +164,253 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                     final String logPrefixRelationshipId = logCorrelationshipPrinter.createRelationshipId();
 
-                    try {
-                        String serviceName = parameterizedStep.getUrl();
-                        String operationName = parameterizedStep.getOperation();
+                    for ( int retryCounter = 0; retryCounter < retryMaxTimes; retryCounter++ ) {
+                        try {
+                            String serviceName = thisStep.getUrl();
+                            String operationName = thisStep.getOperation();
 
-                        // --------------------------------
-                        // Resolve the URL patterns if any
-                        // --------------------------------
-                        serviceName = zeroCodeJsonTestProcesor.resolveStringJson(
-                                serviceName,
-                                scenarioExecutionState.getResolvedScenarioState()
-                        );
+                            // --------------------------------
+                            // Resolve the URL patterns if any
+                            // --------------------------------
+                            serviceName = zeroCodeJsonTestProcesor.resolveStringJson(
+                                    serviceName,
+                                    scenarioExecutionState.getResolvedScenarioState()
+                            );
 
-                        final LocalDateTime requestTimeStamp = LocalDateTime.now();
-                        switch (serviceType(serviceName, operationName)) {
-                            case REST_CALL:
-                                serviceName = getFullyQualifiedUrl(serviceName, host, port, applicationContext);
-                                logCorrelationshipPrinter.aRequestBuilder()
-                                        .stepLoop(stepCount)
-                                        .relationshipId(logPrefixRelationshipId)
-                                        .requestTimeStamp(requestTimeStamp)
-                                        .step(thisStepName)
-                                        .url(serviceName)
-                                        .method(operationName)
-                                        .id(stepId)
-                                        .request(prettyPrintJson(resolvedRequestJson));
+                            final LocalDateTime requestTimeStamp = LocalDateTime.now();
+                            switch (serviceType(serviceName, operationName)) {
+                                case REST_CALL:
+                                    serviceName = getFullyQualifiedUrl(serviceName, host, port, applicationContext);
+                                    logCorrelationshipPrinter.aRequestBuilder()
+                                            .stepLoop(stepCount)
+                                            .relationshipId(logPrefixRelationshipId)
+                                            .requestTimeStamp(requestTimeStamp)
+                                            .step(thisStepName)
+                                            .url(serviceName)
+                                            .method(operationName)
+                                            .id(stepId)
+                                            .request(prettyPrintJson(resolvedRequestJson));
 
-                                executionResult = serviceExecutor.executeRESTService(serviceName, operationName, resolvedRequestJson);
-                                break;
+                                    executionResult = serviceExecutor.executeRESTService(serviceName, operationName, resolvedRequestJson);
+                                    break;
 
-                            case JAVA_CALL:
-                                logCorrelationshipPrinter.aRequestBuilder()
-                                        .stepLoop(stepCount)
-                                        .relationshipId(logPrefixRelationshipId)
-                                        .requestTimeStamp(requestTimeStamp)
-                                        .step(thisStepName)
-                                        .id(stepId)
-                                        .url(serviceName)
-                                        .method(operationName)
-                                        .request(prettyPrintJson(resolvedRequestJson));
+                                case JAVA_CALL:
+                                    logCorrelationshipPrinter.aRequestBuilder()
+                                            .stepLoop(stepCount)
+                                            .relationshipId(logPrefixRelationshipId)
+                                            .requestTimeStamp(requestTimeStamp)
+                                            .step(thisStepName)
+                                            .id(stepId)
+                                            .url(serviceName)
+                                            .method(operationName)
+                                            .request(prettyPrintJson(resolvedRequestJson));
 
-                                executionResult = serviceExecutor.executeJavaService(serviceName, operationName, resolvedRequestJson);
-                                break;
+                                    executionResult = serviceExecutor.executeJavaService(serviceName, operationName, resolvedRequestJson);
+                                    break;
 
-                            case KAFKA_CALL:
-                                if (kafkaServers == null) {
-                                    throw new RuntimeException(">>> 'kafka.bootstrap.servers' property can not be null for kafka operations");
-                                }
-                                printBrokerProperties();
-                                logCorrelationshipPrinter.aRequestBuilder()
-                                        .stepLoop(stepCount)
-                                        .relationshipId(logPrefixRelationshipId)
-                                        .requestTimeStamp(requestTimeStamp)
-                                        .step(thisStepName)
-                                        .url(serviceName)
-                                        .method(operationName)
-                                        .id(stepId)
-                                        .request(prettyPrintJson(resolvedRequestJson));
+                                case KAFKA_CALL:
+                                    if (kafkaServers == null) {
+                                        throw new RuntimeException(">>> 'kafka.bootstrap.servers' property can not be null for kafka operations");
+                                    }
+                                    printBrokerProperties();
+                                    logCorrelationshipPrinter.aRequestBuilder()
+                                            .stepLoop(stepCount)
+                                            .relationshipId(logPrefixRelationshipId)
+                                            .requestTimeStamp(requestTimeStamp)
+                                            .step(thisStepName)
+                                            .url(serviceName)
+                                            .method(operationName)
+                                            .id(stepId)
+                                            .request(prettyPrintJson(resolvedRequestJson));
 
-                                String topicName = serviceName.substring(KAFKA_TOPIC.length());
-                                executionResult = serviceExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJson);
-                                break;
+                                    String topicName = serviceName.substring(KAFKA_TOPIC.length());
+                                    executionResult = serviceExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJson);
+                                    break;
 
-                            case NONE:
-                                logCorrelationshipPrinter.aRequestBuilder()
-                                        .stepLoop(stepCount)
-                                        .relationshipId(logPrefixRelationshipId)
-                                        .requestTimeStamp(requestTimeStamp)
-                                        .step(thisStepName)
-                                        .id(stepId)
-                                        .url(serviceName)
-                                        .method(operationName)
-                                        .request(prettyPrintJson(resolvedRequestJson));
+                                case NONE:
+                                    logCorrelationshipPrinter.aRequestBuilder()
+                                            .stepLoop(stepCount)
+                                            .relationshipId(logPrefixRelationshipId)
+                                            .requestTimeStamp(requestTimeStamp)
+                                            .step(thisStepName)
+                                            .id(stepId)
+                                            .url(serviceName)
+                                            .method(operationName)
+                                            .request(prettyPrintJson(resolvedRequestJson));
 
-                                executionResult = prettyPrintJson(resolvedRequestJson);
-                                break;
+                                    executionResult = prettyPrintJson(resolvedRequestJson);
+                                    break;
 
-                            default:
-                                throw new RuntimeException("Oops! Service Type Undecided. If it is intentional, " +
-                                        "then keep the value as empty to receive the request in the response");
-                        }
+                                default:
+                                    throw new RuntimeException("Oops! Service Type Undecided. If it is intentional, " +
+                                            "then keep the value as empty to receive the request in the response");
+                            }
 
-                        // logging response
-                        final LocalDateTime responseTimeStamp = LocalDateTime.now();
-                        logCorrelationshipPrinter.aResponseBuilder()
-                                .relationshipId(logPrefixRelationshipId)
-                                .responseTimeStamp(responseTimeStamp)
-                                .response(executionResult);
+                            // logging response
+                            final LocalDateTime responseTimeStamp = LocalDateTime.now();
+                            logCorrelationshipPrinter.aResponseBuilder()
+                                    .relationshipId(logPrefixRelationshipId)
+                                    .responseTimeStamp(responseTimeStamp)
+                                    .response(executionResult);
 
-                        stepExecutionState.addResponse(executionResult);
-                        scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
+                            stepExecutionState.addResponse(executionResult);
+                            scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
 
-                        // ---------------------------------
-                        // Handle assertion section -START
-                        // ---------------------------------
-                        String resolvedAssertionJson = zeroCodeJsonTestProcesor.resolveStringJson(
-                                parameterizedStep.getAssertions().toString(),
-                                scenarioExecutionState.getResolvedScenarioState()
-                        );
+                            // ---------------------------------
+                            // Handle assertion section -START
+                            // ---------------------------------
+                            String resolvedAssertionJson = zeroCodeJsonTestProcesor.resolveStringJson(
+                                    thisStep.getAssertions().toString(),
+                                    scenarioExecutionState.getResolvedScenarioState()
+                            );
 
-                        // -----------------
-                        // logging assertion
-                        // -----------------
-                        List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createJsonAsserters(resolvedAssertionJson);
-                        List<AssertionReport> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
+                            // -----------------
+                            // logging assertion
+                            // -----------------
+                            List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createJsonAsserters(resolvedAssertionJson);
+                            List<AssertionReport> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
 
-                        if (!failureResults.isEmpty()) {
-                            StringBuilder builder = new StringBuilder();
+                            if (!failureResults.isEmpty()) {
+                                StringBuilder builder = new StringBuilder();
 
-                            // Print expected Payload along with assertion errors
-                            builder.append("Assumed Payload: \n" + prettyPrintJson(resolvedAssertionJson) + "\n");
-                            builder.append("Assertion Errors: \n");
+                                // Print expected Payload along with assertion errors
+                                builder.append("Assumed Payload: \n" + prettyPrintJson(resolvedAssertionJson) + "\n");
+                                builder.append("Assertion Errors: \n");
 
-                            failureResults.forEach(f -> {
-                                builder.append(f.toString() + "\n");
-                            });
-                            logCorrelationshipPrinter.assertion(builder.toString());
-                        } else {
+                                failureResults.forEach(f -> {
+                                    builder.append(f.toString() + "\n");
+                                });
+                                logCorrelationshipPrinter.assertion(builder.toString());
+                            } else {
 
-                            logCorrelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
-                        }
-                        // --------------------------------------------------------------------------------
-                        // Non dependent requests into a single JSON file (Issue-167 - Feature Implemented)
-                        // --------------------------------------------------------------------------------
-                        boolean ignoreStepFailures = parameterizedScenario.getIgnoreStepFailures() == null ? false : parameterizedScenario.getIgnoreStepFailures();
-                        if (ignoreStepFailures == true && !failureResults.isEmpty()) {
-                            stepOutcomeGreen = notificationHandler.handleAssertion(
-                                    notifier,
-                                    description,
-                                    parameterizedScenario.getScenarioName(),
-                                    thisStepName,
-                                    failureResults,
-                                    notificationHandler::handleAssertionFailed);
+                                logCorrelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
+                            }
 
-                            logCorrelationshipPrinter.result(stepOutcomeGreen);
+                            if (retryTillSuccess && (retryCounter + 1 < retryMaxTimes) && !failureResults.isEmpty()) {
+                                LOGGER.info("\n---------------------------------------\n" +
+                                        "        Retry: Attempt number: {}", retryCounter + 2 +
+                                        "\n---------------------------------------\n");
+                                waitForDelay(retryDelay);
+                                // ---------------------------------------------------------------------
+                                // Make it Green so that the report doesn't get generated again in the
+                                // finally block i.e. printToFile(). Once the scenario
+                                // get executed all reports(passed n failed) printed to file at once
+                                // ---------------------------------------------------------------------
+                                stepOutcomeGreen = true;
+                                continue;
+                            }
+                            // --------------------------------------------------------------------------------
+                            // Non dependent requests into a single JSON file (Issue-167 - Feature Implemented)
+                            // --------------------------------------------------------------------------------
+                            boolean ignoreStepFailures = scenario.getIgnoreStepFailures() == null ? false : scenario.getIgnoreStepFailures();
+                            if (ignoreStepFailures == true && !failureResults.isEmpty()) {
+                                stepOutcomeGreen = notificationHandler.handleAssertion(
+                                        notifier,
+                                        description,
+                                        scenario.getScenarioName(),
+                                        thisStepName,
+                                        failureResults,
+                                        notificationHandler::handleAssertionFailed);
 
-                            // ---------------------------------------------------------------------
-                            // Make it Green so that the report doesn't get generated again,
-                            // in the finally block i.e. printToFile. Once the scenario
-                            // get executed all reports(passed n failed) printed to file at once
-                            // ---------------------------------------------------------------------
-                            stepOutcomeGreen = true;
+                                logCorrelationshipPrinter.result(stepOutcomeGreen);
 
-                            // ---------------------------------------------------------------------
-                            // Do not stop execution after this step.
-                            // Continue to the next step after printing/logging the failure report.
-                            // ---------------------------------------------------------------------
-                            continue;
-                        }
-                        if (!failureResults.isEmpty()) {
+                                // ---------------------------------------------------------------------
+                                // Make it Green so that the report doesn't get generated again,
+                                // in the finally block i.e. printToFile. Once the scenario
+                                // get executed all reports(passed n failed) printed to file at once
+                                // ---------------------------------------------------------------------
+                                stepOutcomeGreen = true;
+
+                                // ---------------------------------------------------------------------
+                                // Do not stop execution after this step.
+                                // Continue to the next step after printing/logging the failure report.
+                                // ---------------------------------------------------------------------
+                                continue;
+                            }
+                            if (!failureResults.isEmpty()) {
+                                /*
+                                 * Step failed
+                                 */
+                                stepOutcomeGreen = notificationHandler.handleAssertion(
+                                        notifier,
+                                        description,
+                                        scenario.getScenarioName(),
+                                        thisStepName,
+                                        failureResults,
+                                        notificationHandler::handleAssertionFailed);
+
+                                logCorrelationshipPrinter.result(stepOutcomeGreen);
+
+                                return stepOutcomeGreen;
+                            }
+
                             /*
-                             * Step failed
+                             * Test step stepOutcomeGreen
                              */
                             stepOutcomeGreen = notificationHandler.handleAssertion(
                                     notifier,
                                     description,
-                                    parameterizedScenario.getScenarioName(),
+                                    scenario.getScenarioName(),
                                     thisStepName,
                                     failureResults,
-                                    notificationHandler::handleAssertionFailed);
+                                    notificationHandler::handleAssertionPassed);
+                            // ---------------------------------
+                            // Handle assertion section -END
+                            // ---------------------------------
+
+                            logCorrelationshipPrinter.result(stepOutcomeGreen);
+
+                            if (retryTillSuccess) {
+                                LOGGER.info("Retry: Leaving early with successful assertion");
+                                break;
+                            }
+
+                        } catch (Exception ex) {
+
+                            ex.printStackTrace();
+                            LOGGER.info("###Exception while executing a step in the zerocode dsl.");
+
+                            // logging exception message
+                            final LocalDateTime responseTimeStampEx = LocalDateTime.now();
+                            logCorrelationshipPrinter.aResponseBuilder()
+                                    .relationshipId(logPrefixRelationshipId)
+                                    .responseTimeStamp(responseTimeStampEx)
+                                    .response(executionResult)
+                                    .exceptionMessage(ex.getMessage());
+
+                            /*
+                             * Step threw an exception
+                             */
+                            stepOutcomeGreen = notificationHandler.handleAssertion(
+                                    notifier,
+                                    description,
+                                    scenario.getScenarioName(),
+                                    thisStepName,
+                                    (new RuntimeException("ZeroCode Step execution failed. Details:" + ex)),
+                                    notificationHandler::handleStepException);
 
                             logCorrelationshipPrinter.result(stepOutcomeGreen);
 
                             return stepOutcomeGreen;
+
+                        } finally {
+                            logCorrelationshipPrinter.print();
+
+                            /*
+                             * Build step report for each step
+                             * Add the report step to the result step list.
+                             */
+                            execResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
+
+                            /*
+                             * FAILED and Exception reports are generated here
+                             */
+                            if (!stepOutcomeGreen) {
+                                reportBuilder.result(execResultBuilder.build());
+                                reportBuilder.printToFile(scenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
+                            }
                         }
-
-                        /*
-                         * Test step stepOutcomeGreen
-                         */
-                        stepOutcomeGreen = notificationHandler.handleAssertion(
-                                notifier,
-                                description,
-                                parameterizedScenario.getScenarioName(),
-                                thisStepName,
-                                failureResults,
-                                notificationHandler::handleAssertionPassed);
-                        // ---------------------------------
-                        // Handle assertion section -END
-                        // ---------------------------------
-
-                        logCorrelationshipPrinter.result(stepOutcomeGreen);
-
-                    } catch (Exception ex) {
-
-                        ex.printStackTrace();
-                        LOGGER.info("###Exception while executing a step in the zerocode dsl.");
-
-                        // logging exception message
-                        final LocalDateTime responseTimeStampEx = LocalDateTime.now();
-                        logCorrelationshipPrinter.aResponseBuilder()
-                                .relationshipId(logPrefixRelationshipId)
-                                .responseTimeStamp(responseTimeStampEx)
-                                .response(executionResult)
-                                .exceptionMessage(ex.getMessage());
-
-                        /*
-                         * Step threw an exception
-                         */
-                        stepOutcomeGreen = notificationHandler.handleAssertion(
-                                notifier,
-                                description,
-                                parameterizedScenario.getScenarioName(),
-                                thisStepName,
-                                (new RuntimeException("ZeroCode Step execution failed. Details:" + ex)),
-                                notificationHandler::handleStepException);
-
-                        logCorrelationshipPrinter.result(stepOutcomeGreen);
-
-                        return stepOutcomeGreen;
-
-                    } finally {
-                        logCorrelationshipPrinter.print();
-
-                        /*
-                         * Build step report for each step
-                         * Add the report step to the result step list.
-                         */
-                        execResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
-
-                        /*
-                         * FAILED and Exception reports are generated here
-                         */
-                        if (!stepOutcomeGreen) {
-                            reportBuilder.result(execResultBuilder.build());
-                            reportBuilder.printToFile(parameterizedScenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
-                        }
-                    }
+                    } //<-- while retry
 
                 } //<-- for each step-stepLoopTimes
 
@@ -410,6 +436,15 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
          *  Red symbolises failure, but nothing has failed here.
          */
         return true;
+    }
+
+    private void waitForDelay(int delay) {
+        if ( delay > 0 ) {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException ignored) {
+            }
+        }
     }
 
     @Override

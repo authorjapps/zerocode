@@ -15,5 +15,11 @@ public class WireMockIntegrationTest {
     public void testWireMock() throws Exception {
 
     }
+
+    @Test
+    @JsonTestCase("wiremock_integration/wiremock_with_template.json")
+    public void testWireMockWithTemplate() {
+
+    }
 }
 
