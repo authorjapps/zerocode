@@ -102,7 +102,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImplRetryTest {
 
 
     private List<File> findScenarioReportFiles(String scenarioName) {
-        File[] files = new File(TARGET_REPORT_DIR).listFiles((dir, fileName) -> fileName.matches("^\\Q" + scenarioName + "\\E([a-f0-9-]*)\\.json$"));
+        File[] files = new File(TARGET_REPORT_DIR).listFiles((dir, fileName) -> fileName.matches(scenarioName + "([a-f0-9-]*)\\.json$"));
         if ( files == null ) {
             return new ArrayList<>();
         }

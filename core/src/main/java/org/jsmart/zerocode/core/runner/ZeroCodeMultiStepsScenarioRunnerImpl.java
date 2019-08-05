@@ -287,8 +287,16 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             }
 
                             if (retryTillSuccess && (retryCounter + 1 < retryMaxTimes) && !failureResults.isEmpty()) {
-                                LOGGER.info("Retry: Attempt number: {}", retryCounter + 2);
+                                LOGGER.info("\n---------------------------------------\n" +
+                                        "        Retry: Attempt number: {}", retryCounter + 2 +
+                                        "\n---------------------------------------\n");
                                 waitForDelay(retryDelay);
+                                // ---------------------------------------------------------------------
+                                // Make it Green so that the report doesn't get generated again in the
+                                // finally block i.e. printToFile(). Once the scenario
+                                // get executed all reports(passed n failed) printed to file at once
+                                // ---------------------------------------------------------------------
+                                stepOutcomeGreen = true;
                                 continue;
                             }
                             // --------------------------------------------------------------------------------
