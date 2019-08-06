@@ -1,10 +1,13 @@
 package org.jsmart.zerocode.core.engine.mocker;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.jknack.handlebars.Helper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
@@ -25,7 +28,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 public class RestEndPointMocker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApiServiceExecutorImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestEndPointMocker.class);
 
     public static WireMockServer wireMockServer;
 
@@ -67,9 +70,18 @@ public class RestEndPointMocker {
              */
             wireMockServer.stop();
         }
-        wireMockServer = new WireMockServer(wireMockConfig().port(dynamicPort)); // <-- Strange
+        wireMockServer = new WireMockServer(
+                wireMockConfig()
+                .extensions(new ResponseTemplateTransformer(true, getWiremockHelpers()))
+                .port(dynamicPort)); // <-- Strange
         wireMockServer.start();
         WireMock.configureFor("localhost", dynamicPort); // <-- Repetition of PORT was needed, this is a wireMock bug
+    }
+
+    private static Map<String, Helper> getWiremockHelpers() {
+        Map<String, Helper> helperMap = new HashedMap();
+        helperMap.put("localdatetime", new HandlebarsLocalDateHelper());
+        return helperMap;
     }
 
     public static void stopWireMockServer() {

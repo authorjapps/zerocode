@@ -6,18 +6,23 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
-
-import org.apache.commons.lang.text.StrSubstitutor;
-import org.jsmart.zerocode.core.engine.assertion.*;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import net.minidev.json.JSONArray;
+import org.apache.commons.lang.text.StrSubstitutor;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
+import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.assertion.array.ArrayIsEmptyAsserter;
 import org.jsmart.zerocode.core.engine.assertion.array.ArraySizeAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasDateAfterValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasDateBeforeValueAsserter;
@@ -34,7 +39,8 @@ import org.jsmart.zerocode.core.engine.assertion.field.FieldMatchesRegexPatternA
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
-import static org.jsmart.zerocode.core.utils.TokenUtils.*;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
+import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
@@ -121,18 +127,17 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     paramMap.put(thisPath, escapedString);
 
                 } else {
-                    // if it is a json block/node or array, this return value is LinkedHashMap.
-                    if (JsonPath.read(scenarioState, thisPath) instanceof LinkedHashMap) {
-                        final String pathValue = mapper.writeValueAsString(JsonPath.read(scenarioState, thisPath));
-                        String escapedPathValue = escapeJava(pathValue);
-                        paramMap.put(thisPath, escapedPathValue);
+                    Object jsonPathValue = JsonPath.read(scenarioState, thisPath);
+                    if (isPathValueJson(jsonPathValue)) {
+                        final String jsonAsString = mapper.writeValueAsString(jsonPathValue);
+                        String escapedJsonString = escapeJava(jsonAsString);
+                        paramMap.put(thisPath, escapedJsonString);
 
                     } else {
-                        // Usual flow
+
                         paramMap.put(thisPath, JsonPath.read(scenarioState, thisPath));
 
                     }
-
                 }
 
             } catch (Exception e) {
@@ -204,16 +209,16 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     asserter = new FieldHasSubStringIgnoreCaseValueAsserter(path, expected);
                 } else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_EQUAL_TO_NUMBER)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_EQUAL_TO_NUMBER.length());
-                    asserter = new FieldHasEqualNumberValueAsserter(path, new BigDecimal(expected));
+                    asserter = new FieldHasEqualNumberValueAsserter(path, numberValueOf(expected));
                 } else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_NOT_EQUAL_TO_NUMBER)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_NOT_EQUAL_TO_NUMBER.length());
-                    asserter = new FieldHasInEqualNumberValueAsserter(path, new BigDecimal(expected));
+                    asserter = new FieldHasInEqualNumberValueAsserter(path, numberValueOf(expected));
                 } else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_GREATER_THAN)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_GREATER_THAN.length());
-                    asserter = new FieldHasGreaterThanValueAsserter(path, new BigDecimal(expected));
+                    asserter = new FieldHasGreaterThanValueAsserter(path, numberValueOf(expected));
                 } else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_LESSER_THAN)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_LESSER_THAN.length());
-                    asserter = new FieldHasLesserThanValueAsserter(path, new BigDecimal(expected));
+                    asserter = new FieldHasLesserThanValueAsserter(path, numberValueOf(expected));
                 } else if (value instanceof String && (value.toString()).startsWith(ASSERT_LOCAL_DATETIME_AFTER)) {
                     String expected = ((String) value).substring(ASSERT_LOCAL_DATETIME_AFTER.length());
                     asserter = new FieldHasDateAfterValueAsserter(path, parseLocalDateTime(expected));
@@ -235,6 +240,16 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
         }
 
         return asserters;
+    }
+
+    private BigDecimal numberValueOf(String expected) {
+        try {
+            return new BigDecimal(expected);
+        } catch (Exception e) {
+            String msg = "\nValue '" + expected + "' can not be converted to number:" + e;
+            LOGGER.error(msg);
+            throw new RuntimeException(msg);
+        }
     }
 
     private Map<String, Object> createAssertionKV(JsonNode jsonNode, String pathDslPrefix) {
@@ -353,8 +368,13 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     private boolean isPropertyKey(String runTimeToken) {
         return propertyKeys.contains(runTimeToken);
     }
-    
-    private LocalDateTime parseLocalDateTime (String value){ 	
+
+    private LocalDateTime parseLocalDateTime (String value){
     	return LocalDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME);
     }
+
+    boolean isPathValueJson(Object jsonPathValue) {
+        return jsonPathValue instanceof LinkedHashMap || jsonPathValue instanceof JSONArray;
+    }
+
 }

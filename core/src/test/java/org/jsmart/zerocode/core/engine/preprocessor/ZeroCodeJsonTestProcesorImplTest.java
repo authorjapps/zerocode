@@ -1,10 +1,12 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.jayway.jsonpath.JsonPath;
 import org.jsmart.simulator.main.SimpleRestJsonSimulatorsMain;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
@@ -26,14 +28,16 @@ public class ZeroCodeJsonTestProcesorImplTest {
     Injector injector;
     SmartUtils smartUtils;
     SimpleRestJsonSimulatorsMain simulator ;
+    ObjectMapper mapper;
 
-    ZeroCodeJsonTestProcesor jsonPreProcessor;
+    ZeroCodeJsonTestProcesorImpl jsonPreProcessor;
 
     @Before
     public void setUpStuff() throws Exception {
         String serverEnvFileName = "config_hosts_test.properties";
         injector = Guice.createInjector(new ApplicationMainModule(serverEnvFileName));
         smartUtils = injector.getInstance(SmartUtils.class);
+        mapper = new ObjectMapperProvider().get();
         jsonPreProcessor = new ZeroCodeJsonTestProcesorImpl(smartUtils.getMapper(), serverEnvFileName);
     }
 
@@ -1006,4 +1010,65 @@ public class ZeroCodeJsonTestProcesorImplTest {
 
         assertThat(failedReports.size(), is(1));
     }
+
+    @Test
+    public void testJsonPathValue_isArray() throws Exception{
+        String scenarioStateJson = "{\n" +
+                "    \"type\": \"fuzzy\",\n" +
+                "    \"results\": [\n" +
+                "        {\n" +
+                "            \"id\": \"id-001\",\n" +
+                "            \"name\": \"Emma\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"id\": \"id-002\",\n" +
+                "            \"name\": \"Nikhi\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+        Object jsonPathValue = JsonPath.read(scenarioStateJson, "$.results");
+        assertThat(mapper.writeValueAsString(jsonPathValue), is("[{\"id\":\"id-001\",\"name\":\"Emma\"},{\"id\":\"id-002\",\"name\":\"Nikhi\"}]"));
+        assertThat(jsonPreProcessor.isPathValueJson(jsonPathValue), is(true));
+    }
+
+    @Test
+    public void testJsonPathValue_isObject() throws Exception {
+        String scenarioStateJson = "{\n" +
+                "    \"type\": \"fuzzy\",\n" +
+                "    \"results\": [\n" +
+                "        {\n" +
+                "            \"id\": \"id-001\",\n" +
+                "            \"name\": \"Emma\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"id\": \"id-002\",\n" +
+                "            \"name\": \"Nikhi\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+        Object jsonPathValue = JsonPath.read(scenarioStateJson, "$.results[0]");
+        assertThat(mapper.writeValueAsString(jsonPathValue), is("{\"id\":\"id-001\",\"name\":\"Emma\"}"));
+        assertThat(jsonPreProcessor.isPathValueJson(jsonPathValue), is(true));
+    }
+
+    @Test
+    public void testJsonPathValue_isSingleField() {
+        String scenarioStateJson = "{\n" +
+                "    \"type\": \"fuzzy\",\n" +
+                "    \"results\": [\n" +
+                "        {\n" +
+                "            \"id\": \"id-001\",\n" +
+                "            \"name\": \"Emma\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"id\": \"id-002\",\n" +
+                "            \"name\": \"Nikhi\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+        Object jsonPathValue = JsonPath.read(scenarioStateJson, "$.type");
+        assertThat(jsonPathValue+"", is("fuzzy"));
+        assertThat(jsonPreProcessor.isPathValueJson(jsonPathValue), is(false));
+    }
+
 }

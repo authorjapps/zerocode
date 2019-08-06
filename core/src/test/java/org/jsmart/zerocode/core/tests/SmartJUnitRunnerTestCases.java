@@ -54,6 +54,4 @@ public class SmartJUnitRunnerTestCases {
     public void restViaLoop() throws Exception {
 
     }
-
-
 }

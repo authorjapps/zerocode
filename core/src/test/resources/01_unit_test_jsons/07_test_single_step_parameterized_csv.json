@@ -1,0 +1,16 @@
+{
+    "name": "StepNameWithoutSpaceEgCREATE",
+    "url": "/persons",
+    "operation": "POST",
+    "request": {
+    },
+    "assertions": {
+        "body": {
+            "id": 1001
+        }
+    },
+    "parameterizedCsv": [
+        "1,    2,   3",
+        "11,  22, 33"
+    ]
+}

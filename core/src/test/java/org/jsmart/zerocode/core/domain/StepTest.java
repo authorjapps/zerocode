@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
+import com.univocity.parsers.csv.CsvParser;
+import java.util.List;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
@@ -19,10 +21,12 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
 
 @RunWith(JukitoRunner.class)
 // Or use - @UseModules(ApplicationMainModule.class)
 public class StepTest {
+
     public static class JukitoModule extends TestModule {
         @Override
         protected void configureTest() {
@@ -39,9 +43,12 @@ public class StepTest {
     @Inject
     private ObjectMapper mapper;
 
+    @Inject
+    private CsvParser csvParser;
+
     @Test
     public void shouldDeserializeSingleStep() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/01_test_json_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_unit_test_jsons/01_test_json_single_step.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
         assertThat(stepDeserialized, notNullValue());
         final String requestJsonAsString = stepDeserialized.getRequest().toString();
@@ -67,8 +74,49 @@ public class StepTest {
     }
 
     @Test
+    public void testVerifications_section() throws Exception {
+        String jsonDocumentAsString =
+                smartUtils.getJsonDocumentAsString("01_unit_test_jsons/00_test_json_single_step_verifications.json");
+        Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
+
+        assertThat(stepDeserialized.getVerifications().get("status").asText(), is("201"));
+        assertThat(stepDeserialized.getAssertions().get("status").asText(), is("201"));
+    }
+
+    @Test
+    public void testParameterized_values() throws Exception {
+        String jsonDocumentAsString =
+                smartUtils.getJsonDocumentAsString("01_unit_test_jsons/06_test_single_step_parameterized_value.json");
+        Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
+
+        assertThat(stepDeserialized.getParameterized().get(0), is("Hello"));
+        assertThat(stepDeserialized.getParameterized().get(1), is(123));
+        assertThat(stepDeserialized.getParameterized().get(2), is(true));
+    }
+
+    @Test
+    public void testParameterized_csv() throws Exception {
+
+        String jsonDocumentAsString =
+                smartUtils.getJsonDocumentAsString("01_unit_test_jsons/07_test_single_step_parameterized_csv.json");
+        Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
+
+        List<String> parameterizedCsv = stepDeserialized.getParameterizedCsv();
+        String[] parsedLine0 = csvParser.parseLine(parameterizedCsv.get(0) + LINE_SEPARATOR);
+        String[] parsedLine1 = csvParser.parseLine(parameterizedCsv.get(1) + LINE_SEPARATOR);
+
+        assertThat(parsedLine0[0], is("1"));
+        assertThat(parsedLine0[1], is("2"));
+        assertThat(parsedLine0[2], is("3"));
+
+        assertThat(parsedLine1[0], is("11"));
+        assertThat(parsedLine1[1], is("22"));
+        assertThat(parsedLine1[2], is("33"));
+    }
+
+    @Test
     public void testDeserExternalStepFile() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/05_test_external_step_reuse.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_unit_test_jsons/05_test_external_step_reuse.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
         assertThat(stepDeserialized, notNullValue());
         assertThat(stepDeserialized.getId(), is("step1"));
@@ -77,7 +125,7 @@ public class StepTest {
 
     @Test
     public void shouldSerializeSingleStep() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/01_test_json_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_unit_test_jsons/01_test_json_single_step.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
 
         JsonNode singleStepNode = mapper.valueToTree(stepDeserialized);

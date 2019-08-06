@@ -15,6 +15,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import javax.inject.Inject;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -49,60 +50,43 @@ public class ScenarioSpecTest {
     //@Description("JukitoDescription")
     @Test
     public void willDeserializeA_VanilaFlow() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/02_test_json_flow_single_step.json");
-        ScenarioSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_unit_test_jsons/02_test_json_flow_single_step.json");
+        ScenarioSpec scenarioDeserialized = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
-        assertThat(flowDeserialized, notNullValue());
-        assertThat(flowDeserialized.getSteps().size(), is(1));
-        assertThat(flowDeserialized.getLoop(), is(5));
-        assertThat(flowDeserialized.getScenarioName(), containsString("Given_When_Then-Flow"));
+        assertThat(scenarioDeserialized, notNullValue());
+        assertThat(scenarioDeserialized.getSteps().size(), is(1));
+        assertThat(scenarioDeserialized.getLoop(), is(5));
+        assertThat(scenarioDeserialized.getScenarioName(), containsString("Given_When_Then-Flow"));
     }
 
     @Test
     public void willDeserializeA_MultiSteps() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/03_test_json_flow_multi_step.json");
-        ScenarioSpec flowDeserialized = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_unit_test_jsons/03_test_json_flow_multi_step.json");
+        ScenarioSpec scenarioDeserialized = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
-        assertThat(flowDeserialized, notNullValue());
-        assertThat(flowDeserialized.getSteps().size(), is(2));
-        assertThat(flowDeserialized.getScenarioName(), containsString("Given_When_Then-Flow"));
-        assertThat(flowDeserialized.getSteps().get(1).getUrl(), containsString("/url2/path"));
+        assertThat(scenarioDeserialized, notNullValue());
+        assertThat(scenarioDeserialized.getSteps().size(), is(2));
+        assertThat(scenarioDeserialized.getScenarioName(), containsString("Given_When_Then-Flow"));
+        assertThat(scenarioDeserialized.getSteps().get(1).getUrl(), containsString("/url2/path"));
     }
 
     @Test
     public void shouldSerializeSingleFlow() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_test_smart_test_cases/03_test_json_flow_multi_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_unit_test_jsons/03_test_json_flow_multi_step.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
-        JsonNode flowSpecNode = mapper.valueToTree(scenarioSpec);
+        JsonNode scenarioSpecNode = mapper.valueToTree(scenarioSpec);
 
         /**
          * Note:
          * jayway json assertEquals has issues if json doc has got comments. So find out how to ignore or allow comments
          */
-        JSONAssert.assertEquals(flowSpecNode.toString(), jsonDocumentAsString, true);
+        JSONAssert.assertEquals(scenarioSpecNode.toString(), jsonDocumentAsString, true);
 
-        assertThat(flowSpecNode.get("scenarioName").asText(), containsString("Given_When_Then"));
-        assertThat(flowSpecNode.get("loop").asInt(), is(5));
+        assertThat(scenarioSpecNode.get("scenarioName").asText(), containsString("Given_When_Then"));
+        assertThat(scenarioSpecNode.get("loop").asInt(), is(5));
     }
 
-    @Test
-    @Ignore
-    public void willComplainForDuplicateNames_Step() throws Exception {
-        fail();
-    }
-
-    @Test
-    @Ignore
-    public void willComplainForDuplicateNames_Flow() throws Exception {
-        fail();
-    }
-
-    @Test
-    @Ignore
-    public void willReadAllJsonFiles_AND_Complain_for_Duplicate_names() throws Exception {
-        fail();
-    }
 
     @Test
     public void testJSOnAssert() throws Exception {
@@ -138,7 +122,7 @@ public class ScenarioSpecTest {
     @Test
     public void test_ignoreStepFailuresField() throws Exception {
         String jsonDocumentAsString = smartUtils
-                .getJsonDocumentAsString("01_test_smart_test_cases/04_ignoreStepFailures_in_multistep.json");
+                .getJsonDocumentAsString("01_unit_test_jsons/04_ignoreStepFailures_in_multistep.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         assertThat(scenarioSpec, notNullValue());
@@ -146,4 +130,13 @@ public class ScenarioSpecTest {
         assertThat(scenarioSpec.getIgnoreStepFailures(), is(true));
     }
 
+    @Test
+    public void testSerDe_parameterized() throws Exception {
+        String jsonDocumentAsString = smartUtils
+                .getJsonDocumentAsString("01_unit_test_jsons/09_scenario_parameterized.json");
+        ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+
+        assertThat(scenarioSpec.getParameterized().getValueSource(), hasItem("hello"));
+        assertThat(scenarioSpec.getParameterized().getCsvSource(), hasItem("1,        2,        200"));
+    }
 }
