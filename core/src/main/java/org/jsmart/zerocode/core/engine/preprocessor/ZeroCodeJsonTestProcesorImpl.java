@@ -19,23 +19,23 @@ import java.util.Map;
 import java.util.Properties;
 import net.minidev.json.JSONArray;
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.jsmart.zerocode.core.engine.assertion.ArrayIsEmptyAsserter;
-import org.jsmart.zerocode.core.engine.assertion.ArraySizeAsserter;
-import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasDateAfterValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasDateBeforeValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasEqualNumberValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasExactValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasGreaterThanValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasInEqualNumberValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasLesserThanValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasSubStringIgnoreCaseValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldHasSubStringValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldIsNotNullAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldIsNullAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldIsOneOfValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.FieldMatchesRegexPatternAsserter;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
+import org.jsmart.zerocode.core.engine.assertion.array.ArrayIsEmptyAsserter;
+import org.jsmart.zerocode.core.engine.assertion.array.ArraySizeAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasDateAfterValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasDateBeforeValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasEqualNumberValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasExactValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasGreaterThanValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasInEqualNumberValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasLesserThanValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasSubStringIgnoreCaseValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNotNullAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNullAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldIsOneOfValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldMatchesRegexPatternAsserter;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
@@ -200,7 +200,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     }
                 } else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_CONTAINS_STRING)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_CONTAINS_STRING.length());
-                    asserter = new FieldHasSubStringValueAsserter(path, expected);
+                    asserter = new FieldContainsStringAsserter(path, expected);
                 } else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_MATCHES_STRING)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_MATCHES_STRING.length());
                     asserter = new FieldMatchesRegexPatternAsserter(path, expected);
@@ -334,17 +334,17 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     }
 
     @Override
-    public List<AssertionReport> assertAllAndReturnFailed(List<JsonAsserter> asserters, String executionResult) {
+    public List<FieldAssertionMatcher> assertAllAndReturnFailed(List<JsonAsserter> asserters, String executionResult) {
 
-        List<AssertionReport> failedReports = new ArrayList<>();
+        List<FieldAssertionMatcher> failedReports = new ArrayList<>();
 
         asserters.forEach(asserter -> {
 
-            final AssertionReport assertionReport = asserter.assertWithJson(executionResult);
+            final FieldAssertionMatcher fieldMatcher = asserter.assertWithJson(executionResult);
 
-            if (!assertionReport.matches()) {
+            if (!fieldMatcher.matches()) {
 
-                failedReports.add(assertionReport);
+                failedReports.add(fieldMatcher);
 
             }
         });

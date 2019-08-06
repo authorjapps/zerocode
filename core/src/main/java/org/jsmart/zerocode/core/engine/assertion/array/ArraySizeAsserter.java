@@ -1,7 +1,12 @@
-package org.jsmart.zerocode.core.engine.assertion;
+
+package org.jsmart.zerocode.core.engine.assertion.array;
 
 import net.minidev.json.JSONArray;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
+import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
 import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesorImpl.*;
 
 public class ArraySizeAsserter implements JsonAsserter {
@@ -27,7 +32,7 @@ public class ArraySizeAsserter implements JsonAsserter {
     }
 
     @Override
-    public AssertionReport actualEqualsToExpected(Object result) {
+    public FieldAssertionMatcher actualEqualsToExpected(Object result) {
         if (result instanceof JSONArray) {
 
             final JSONArray actualArrayValue = (JSONArray) result;
@@ -40,45 +45,45 @@ public class ArraySizeAsserter implements JsonAsserter {
 
             if (actualArrayValue.size() == this.expectedSize) {
 
-                return AssertionReport.createFieldMatchesReport();
+                return createMatchingMessage();
             }
 
-            return AssertionReport.createFieldDoesNotMatchReport(
+            return createNotMatchingMessage(
                     path,
                     String.format("Array of size %d", expectedSize),
                     actualArrayValue.size());
 
         } else {
 
-            return AssertionReport.createFieldDoesNotMatchReport(path, "[]", result);
+            return createNotMatchingMessage(path, "[]", result);
 
         }
     }
 
-    public AssertionReport processRelationalExpression(JSONArray actualArrayValue) {
+    public FieldAssertionMatcher processRelationalExpression(JSONArray actualArrayValue) {
         if (expectedSizeExpression.startsWith(ASSERT_VALUE_GREATER_THAN)) {
             String greaterThan = this.expectedSizeExpression.substring(ASSERT_VALUE_GREATER_THAN.length());
             if (actualArrayValue.size() > Integer.parseInt(greaterThan)) {
-                return AssertionReport.createFieldMatchesReport();
+                return createMatchingMessage();
             }
         } else if (expectedSizeExpression.startsWith(ASSERT_VALUE_LESSER_THAN)) {
             String lesserThan = this.expectedSizeExpression.substring(ASSERT_VALUE_LESSER_THAN.length());
             if (actualArrayValue.size() < Integer.parseInt(lesserThan)) {
-                return AssertionReport.createFieldMatchesReport();
+                return createMatchingMessage();
             }
         } else if (expectedSizeExpression.startsWith(ASSERT_VALUE_EQUAL_TO_NUMBER)) {
             String equalTo = this.expectedSizeExpression.substring(ASSERT_VALUE_EQUAL_TO_NUMBER.length());
             if (actualArrayValue.size() == Integer.parseInt(equalTo)) {
-                return AssertionReport.createFieldMatchesReport();
+                return createMatchingMessage();
             }
         } else if (expectedSizeExpression.startsWith(ASSERT_VALUE_NOT_EQUAL_TO_NUMBER)) {
             String notEqualTo = this.expectedSizeExpression.substring(ASSERT_VALUE_NOT_EQUAL_TO_NUMBER.length());
             if (actualArrayValue.size() != Integer.parseInt(notEqualTo)) {
-                return AssertionReport.createFieldMatchesReport();
+                return createMatchingMessage();
             }
         }
 
-        return AssertionReport.createFieldDoesNotMatchReport(
+        return createNotMatchingMessage(
                 path,
                 String.format("Array of size %s", expectedSizeExpression),
                 actualArrayValue.size());

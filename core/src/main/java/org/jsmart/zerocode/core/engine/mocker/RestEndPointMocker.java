@@ -11,7 +11,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
-import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 public class RestEndPointMocker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceExecutorImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestEndPointMocker.class);
 
     public static WireMockServer wireMockServer;
 
@@ -63,7 +63,6 @@ public class RestEndPointMocker {
         });
     }
 
-
     public static void restartWireMock(int dynamicPort) {
         if ( wireMockServer != null ) {
             /*
@@ -84,6 +83,16 @@ public class RestEndPointMocker {
         helperMap.put("localdatetime", new HandlebarsLocalDateHelper());
         return helperMap;
     }
+
+    public static void stopWireMockServer() {
+        if (null != wireMockServer) {
+            wireMockServer.stop();
+            wireMockServer = null;
+            LOGGER.info("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
+        }
+    }
+
+
 
     private static MappingBuilder createPutRequestBuilder(MockStep mockStep) {
         final MappingBuilder requestBuilder = put(urlEqualTo(mockStep.getUrl()));

@@ -9,9 +9,6 @@ import org.junit.runner.notification.RunListener;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-/**
- * @author Siddha on 24-jul-2016
- */
 public class ZeroCodeTestReportListener extends RunListener {
     private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeTestReportListener.class);
 

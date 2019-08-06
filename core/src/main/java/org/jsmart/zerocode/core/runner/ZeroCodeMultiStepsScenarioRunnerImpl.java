@@ -14,9 +14,9 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultIoWriteBuilder;
-import org.jsmart.zerocode.core.engine.assertion.AssertionReport;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
-import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
@@ -54,7 +54,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     private ZeroCodeParameterizedProcessor parameterizedProcessor;
 
     @Inject
-    private JsonServiceExecutor serviceExecutor;
+    private ApiServiceExecutor serviceExecutor;
 
     @Inject
     private CsvParser csvParser;
@@ -83,7 +83,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private ZeroCodeExecResultIoWriteBuilder reportBuilder;
 
-    private ZeroCodeExecResultBuilder execResultBuilder;
+    private ZeroCodeExecResultBuilder reportResultBuilder;
 
     private Boolean stepOutcomeGreen;
 
@@ -106,7 +106,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         for (int scnCount = 0; scnCount < scenarioLoopTimes; scnCount++) {
 
             LOGGER.info("\n-------------------------------------------------------------------------" +
-                    "\n     Executing Scenario Count No. or parameter No. or Row No. | {} | {}", scnCount,
+                            "\n     Executing Scenario Count No. or parameter No. or Row No. | {} | {}", scnCount,
                     "\n-------------------------------------------------------------------------");
 
             ScenarioSpec parameterizedScenario = parameterizedProcessor.processParameterized(scenario, scnCount);
@@ -114,7 +114,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             // ---------------------------------
             // Build Report scenario for each k
             // ---------------------------------
-            execResultBuilder = newInstance()
+            reportResultBuilder = newInstance()
                     .loop(scnCount)
                     .scenarioName(parameterizedScenario.getScenarioName());
 
@@ -191,7 +191,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                             .id(stepId)
                                             .request(prettyPrintJson(resolvedRequestJson));
 
-                                    executionResult = serviceExecutor.executeRESTService(serviceName, operationName, resolvedRequestJson);
+                                    executionResult = serviceExecutor.executeHttpApi(serviceName, operationName, resolvedRequestJson);
                                     break;
 
                                 case JAVA_CALL:
@@ -205,7 +205,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                             .method(operationName)
                                             .request(prettyPrintJson(resolvedRequestJson));
 
-                                    executionResult = serviceExecutor.executeJavaService(serviceName, operationName, resolvedRequestJson);
+                                    executionResult = serviceExecutor.executeJavaOperation(serviceName, operationName, resolvedRequestJson);
                                     break;
 
                                 case KAFKA_CALL:
@@ -268,7 +268,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             // logging assertion
                             // -----------------
                             List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createJsonAsserters(resolvedAssertionJson);
-                            List<AssertionReport> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
+                            List<FieldAssertionMatcher> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
 
                             if (!failureResults.isEmpty()) {
                                 StringBuilder builder = new StringBuilder();
@@ -400,13 +400,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                              * Build step report for each step
                              * Add the report step to the result step list.
                              */
-                            execResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
+                            reportResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
 
                             /*
                              * FAILED and Exception reports are generated here
                              */
                             if (!stepOutcomeGreen) {
-                                reportBuilder.result(execResultBuilder.build());
+                                reportBuilder.result(reportResultBuilder.build());
                                 reportBuilder.printToFile(scenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
                             }
                         }
@@ -416,7 +416,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             } //<--- steps for-each
 
-            reportBuilder.result(execResultBuilder.build());
+            reportBuilder.result(reportResultBuilder.build());
 
         } //<-- Scenario Loop
 
@@ -466,30 +466,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     public void overrideApplicationContext(String applicationContext) {
         this.applicationContext = applicationContext;
-    }
-
-    private String getFullyQualifiedRestUrl(String serviceEndPoint) {
-
-        if (host == null || port == null) {
-            throw new RuntimeException("'" + PROPERTY_KEY_HOST + "' or 'port' - can not be null");
-        }
-
-        if (applicationContext == null) {
-            throw new RuntimeException("'" + PROPERTY_KEY_PORT + "' key must be present even if empty or blank");
-        }
-
-        if (serviceEndPoint.startsWith("http://") || serviceEndPoint.startsWith("https://")) {
-
-            return serviceEndPoint;
-
-        } else {
-            /*
-             * Make sure your property file contains context-path with a front slash like "/google-map".
-             * -OR-
-             * Empty context path is also ok if it requires. In this case do not put a front slash.
-             */
-            return String.format("%s:%s%s%s", host, port, applicationContext, serviceEndPoint);
-        }
     }
 
     private void stopWireMockServer() {

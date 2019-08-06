@@ -14,9 +14,9 @@ public interface JsonAsserter {
      */
     String getPath();
 
-    AssertionReport actualEqualsToExpected(Object result);
+    FieldAssertionMatcher actualEqualsToExpected(Object result);
 
-    default AssertionReport assertWithJson(String jsonSource) {
+    default FieldAssertionMatcher assertWithJson(String jsonSource) {
 
         Object result = null;
         try{

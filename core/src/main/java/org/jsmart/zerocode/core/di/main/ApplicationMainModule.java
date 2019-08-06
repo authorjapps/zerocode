@@ -1,6 +1,5 @@
 package org.jsmart.zerocode.core.di.main;
 
-
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import org.jsmart.zerocode.core.di.module.CsvParserModule;
@@ -8,10 +7,12 @@ import org.jsmart.zerocode.core.di.module.GsonModule;
 import org.jsmart.zerocode.core.di.module.HttpClientModule;
 import org.jsmart.zerocode.core.di.module.ObjectMapperModule;
 import org.jsmart.zerocode.core.di.module.PropertiesInjectorModule;
-import org.jsmart.zerocode.core.engine.executor.JavaExecutor;
-import org.jsmart.zerocode.core.engine.executor.JavaExecutorImpl;
-import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
-import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.httpapi.HttpApiExecutor;
+import org.jsmart.zerocode.core.engine.executor.httpapi.HttpApiExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.javaapi.JavaMethodExecutor;
+import org.jsmart.zerocode.core.engine.executor.javaapi.JavaMethodExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
@@ -53,8 +54,9 @@ public class ApplicationMainModule extends AbstractModule {
          * Bind Direct classes, classes to interfaces etc
          */
         bind(ZeroCodeMultiStepsScenarioRunner.class).to(ZeroCodeMultiStepsScenarioRunnerImpl.class);
-        bind(JsonServiceExecutor.class).to(JsonServiceExecutorImpl.class);
-        bind(JavaExecutor.class).to(JavaExecutorImpl.class);
+        bind(ApiServiceExecutor.class).to(ApiServiceExecutorImpl.class);
+        bind(HttpApiExecutor.class).to(HttpApiExecutorImpl.class);
+        bind(JavaMethodExecutor.class).to(JavaMethodExecutorImpl.class);
         bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
         bind(ZeroCodeExternalFileProcessor.class).to(ZeroCodeExternalFileProcessorImpl.class);
@@ -87,17 +89,17 @@ public class ApplicationMainModule extends AbstractModule {
 
     private void checkAndLoadOldProperties(Properties properties) {
 
-        if(properties.get(WEB_APPLICATION_ENDPOINT_HOST) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST) != null){
+        if (properties.get(WEB_APPLICATION_ENDPOINT_HOST) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST) != null) {
             Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST);
             properties.setProperty(WEB_APPLICATION_ENDPOINT_HOST, oldPropertyValue != null ? oldPropertyValue.toString() : null);
         }
 
-        if(properties.get(WEB_APPLICATION_ENDPOINT_PORT) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT) != null){
+        if (properties.get(WEB_APPLICATION_ENDPOINT_PORT) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT) != null) {
             Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT);
             properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, oldPropertyValue != null ? oldPropertyValue.toString() : null);
         }
 
-        if(properties.get(WEB_APPLICATION_ENDPOINT_CONTEXT) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT) != null){
+        if (properties.get(WEB_APPLICATION_ENDPOINT_CONTEXT) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT) != null) {
             Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT);
             properties.setProperty(WEB_APPLICATION_ENDPOINT_CONTEXT, oldPropertyValue != null ? oldPropertyValue.toString() : null);
         }

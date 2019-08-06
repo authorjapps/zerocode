@@ -181,7 +181,6 @@ public class BasicHttpClient {
      * @return  : A http response compatible with Charset received from the http server e.g. UTF-8, UTF-16 etc
      * @throws IOException
      *
-     * @author santhoshkumar santhoshTpixler
      */
     public Response createCharsetResponse(CloseableHttpResponse httpResponse) throws IOException {
         HttpEntity entity = httpResponse.getEntity();
@@ -215,7 +214,6 @@ public class BasicHttpClient {
      * @param queryParams - Query parameters to pass
      * @return : Effective url
      *
-     * @author santhoshkumar santhoshTpixler (Fixed empty queryParams map handling)
      */
     public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) throws IOException {
         if ((queryParams != null) && (!queryParams.isEmpty())) {

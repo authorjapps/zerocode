@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 public class ConverterEndToEndTest {
     
     /**
-     * Mock end points are in test/resources: simulators/test_purpose_end_points.json
+     * Mocked/Stubbed end points are in test/resources: simulators/test_purpose_end_points.json
      */
 
     @Test
