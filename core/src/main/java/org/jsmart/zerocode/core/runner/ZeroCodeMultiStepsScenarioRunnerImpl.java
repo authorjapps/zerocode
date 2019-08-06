@@ -9,10 +9,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.jsmart.zerocode.core.domain.Parameterized;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultIoWriteBuilder;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
@@ -81,7 +83,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private ZeroCodeExecResultIoWriteBuilder reportBuilder;
 
-    private ZeroCodeExecResultBuilder execResultBuilder;
+    private ZeroCodeExecResultBuilder reportResultBuilder;
 
     private Boolean stepOutcomeGreen;
 
@@ -104,7 +106,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         for (int scnCount = 0; scnCount < scenarioLoopTimes; scnCount++) {
 
             LOGGER.info("\n-------------------------------------------------------------------------" +
-                    "\n     Executing Scenario Count No. or parameter No. or Row No. | {} | {}", scnCount,
+                            "\n     Executing Scenario Count No. or parameter No. or Row No. | {} | {}", scnCount,
                     "\n-------------------------------------------------------------------------");
 
             ScenarioSpec parameterizedScenario = parameterizedProcessor.processParameterized(scenario, scnCount);
@@ -112,7 +114,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             // ---------------------------------
             // Build Report scenario for each k
             // ---------------------------------
-            execResultBuilder = newInstance()
+            reportResultBuilder = newInstance()
                     .loop(scnCount)
                     .scenarioName(parameterizedScenario.getScenarioName());
 
@@ -189,8 +191,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                             .id(stepId)
                                             .request(prettyPrintJson(resolvedRequestJson));
 
-                                executionResult = serviceExecutor.executeHttpApi(serviceName, operationName, resolvedRequestJson);
-                                break;
+                                    executionResult = serviceExecutor.executeHttpApi(serviceName, operationName, resolvedRequestJson);
+                                    break;
 
                                 case JAVA_CALL:
                                     logCorrelationshipPrinter.aRequestBuilder()
@@ -203,8 +205,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                             .method(operationName)
                                             .request(prettyPrintJson(resolvedRequestJson));
 
-                                executionResult = serviceExecutor.executeJavaOperation(serviceName, operationName, resolvedRequestJson);
-                                break;
+                                    executionResult = serviceExecutor.executeJavaOperation(serviceName, operationName, resolvedRequestJson);
+                                    break;
 
                                 case KAFKA_CALL:
                                     if (kafkaServers == null) {
@@ -262,24 +264,24 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                     scenarioExecutionState.getResolvedScenarioState()
                             );
 
-                        // -----------------
-                        // logging assertion
-                        // -----------------
-                        List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createJsonAsserters(resolvedAssertionJson);
-                        List<FieldAssertionMatcher> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
+                            // -----------------
+                            // logging assertion
+                            // -----------------
+                            List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createJsonAsserters(resolvedAssertionJson);
+                            List<FieldAssertionMatcher> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
 
-                        if (!failureResults.isEmpty()) {
-                            StringBuilder builder = new StringBuilder();
+                            if (!failureResults.isEmpty()) {
+                                StringBuilder builder = new StringBuilder();
 
-                            // Print expected Payload along with assertion errors
-                            builder.append("Assumed Payload: \n" + prettyPrintJson(resolvedAssertionJson) + "\n");
-                            builder.append("Assertion Errors: \n");
+                                // Print expected Payload along with assertion errors
+                                builder.append("Assumed Payload: \n" + prettyPrintJson(resolvedAssertionJson) + "\n");
+                                builder.append("Assertion Errors: \n");
 
-                            failureResults.forEach(f -> {
-                                builder.append(f.toString() + "\n");
-                            });
-                            logCorrelationshipPrinter.assertion(builder.toString());
-                        } else {
+                                failureResults.forEach(f -> {
+                                    builder.append(f.toString() + "\n");
+                                });
+                                logCorrelationshipPrinter.assertion(builder.toString());
+                            } else {
 
                                 logCorrelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
                             }
@@ -398,13 +400,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                              * Build step report for each step
                              * Add the report step to the result step list.
                              */
-                            execResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
+                            reportResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
 
                             /*
                              * FAILED and Exception reports are generated here
                              */
                             if (!stepOutcomeGreen) {
-                                reportBuilder.result(execResultBuilder.build());
+                                reportBuilder.result(reportResultBuilder.build());
                                 reportBuilder.printToFile(scenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
                             }
                         }
@@ -414,7 +416,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             } //<--- steps for-each
 
-            reportBuilder.result(execResultBuilder.build());
+            reportBuilder.result(reportResultBuilder.build());
 
         } //<-- Scenario Loop
 
@@ -464,39 +466,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     public void overrideApplicationContext(String applicationContext) {
         this.applicationContext = applicationContext;
-    }
-
-    private Step createFromStepFile(Step thisStep, String stepId) {
-        if (thisStep.getStepFile() != null) {
-            try {
-                thisStep = objectMapper.treeToValue(thisStep.getStepFile(), Step.class);
-            } catch (JsonProcessingException e) {
-                LOGGER.error("\n### Error while parsing for stepId - {}, stepFile - {}",
-                        stepId, thisStep.getStepFile());
-                throw new RuntimeException(e);
-            }
-    private String getFullyQualifiedRestUrl(String serviceEndPoint) {
-
-        if (host == null || port == null) {
-            throw new RuntimeException("'" + PROPERTY_KEY_HOST + "' or 'port' - can not be null");
-        }
-
-        if (applicationContext == null) {
-            throw new RuntimeException("'" + PROPERTY_KEY_PORT + "' key must be present even if empty or blank");
-        }
-
-        if (serviceEndPoint.startsWith("http://") || serviceEndPoint.startsWith("https://")) {
-
-            return serviceEndPoint;
-
-        } else {
-            /*
-             * Make sure your property file contains context-path with a front slash like "/google-map".
-             * -OR-
-             * Empty context path is also ok if it requires. In this case do not put a front slash.
-             */
-            return String.format("%s:%s%s%s", host, port, applicationContext, serviceEndPoint);
-        }
     }
 
     private void stopWireMockServer() {
