@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaProduceUniqueClientIdTest {
 
-    @Test
-    @JsonTestCase("kafka/produce/test_kafka_produce.json")
-    public void testProduce() throws Exception {
-    }
-
+  @Test
+  @JsonTestCase("kafka/produce/test_kafka_produce.json")
+  public void testProduce() throws Exception {}
 }

@@ -1,9 +1,28 @@
 package org.jsmart.zerocode.core.kafka.receive;
 
+import static java.time.Duration.ofMillis;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.createConsumer;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.deriveEffectiveConfigs;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.getMaxTimeOuts;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.getPollTime;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.handleCommitSyncAsync;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.handleSeekOffset;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.prepareResult;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.readConsumerLocalTestProperties;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.readJson;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.readRaw;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaFileRecordHelper.handleRecordsDump;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -13,98 +32,88 @@ import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import static java.time.Duration.ofMillis;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.*;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaFileRecordHelper.handleRecordsDump;
-
 @Singleton
 public class KafkaReceiver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaReceiver.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(KafkaReceiver.class);
 
-    private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
+  private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
-    @Inject(optional = true)
-    @Named("kafka.consumer.properties")
-    private String consumerPropertyFile;
+  @Inject(optional = true)
+  @Named("kafka.consumer.properties")
+  private String consumerPropertyFile;
 
-    @Inject
-    private ConsumerCommonConfigs consumerCommonConfigs;
+  @Inject private ConsumerCommonConfigs consumerCommonConfigs;
 
-    public String receive(String kafkaServers, String topicName, String requestJsonWithConfig) throws IOException {
+  public String receive(String kafkaServers, String topicName, String requestJsonWithConfig)
+      throws IOException {
 
-        ConsumerLocalConfigs consumerLocalConfigs = readConsumerLocalTestProperties(requestJsonWithConfig);
+    ConsumerLocalConfigs consumerLocalConfigs =
+        readConsumerLocalTestProperties(requestJsonWithConfig);
 
-        ConsumerLocalConfigs effectiveLocal = deriveEffectiveConfigs(consumerLocalConfigs, consumerCommonConfigs);
+    ConsumerLocalConfigs effectiveLocal =
+        deriveEffectiveConfigs(consumerLocalConfigs, consumerCommonConfigs);
 
-        LOGGER.info("\n### Kafka Consumer Effective configs:{}\n", effectiveLocal);
+    LOGGER.info("\n### Kafka Consumer Effective configs:{}\n", effectiveLocal);
 
-        Consumer consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
+    Consumer consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
 
-        final List<ConsumerRecord> rawRecords = new ArrayList<>();
-        final List<ConsumerJsonRecord> jsonRecords = new ArrayList<>();
+    final List<ConsumerRecord> rawRecords = new ArrayList<>();
+    final List<ConsumerJsonRecord> jsonRecords = new ArrayList<>();
 
-        int noOfTimeOuts = 0;
+    int noOfTimeOuts = 0;
 
-        handleSeekOffset(effectiveLocal, consumer);
+    handleSeekOffset(effectiveLocal, consumer);
 
-        while (true) {
-            LOGGER.info("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
+    while (true) {
+      LOGGER.info("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
 
-            final ConsumerRecords records = consumer.poll(ofMillis(getPollTime(effectiveLocal)));
+      final ConsumerRecords records = consumer.poll(ofMillis(getPollTime(effectiveLocal)));
 
-            if (records.count() == 0) {
-                noOfTimeOuts++;
-                if (noOfTimeOuts > getMaxTimeOuts(effectiveLocal)) {
-                    break;
-                } else {
-                    continue;
-                }
-            } else {
-                LOGGER.info("Got {} records after {} timeouts\n", records.count(), noOfTimeOuts);
-                // -----------------------------------
-                // reset after it fetched some records
-                // -----------------------------------
-                noOfTimeOuts = 0;
-            }
-
-            if (records != null) {
-                Iterator recordIterator = records.iterator();
-
-                LOGGER.info("Consumer chosen recordType: " + effectiveLocal.getRecordType());
-
-                switch (effectiveLocal.getRecordType()) {
-                    case RAW:
-                        readRaw(rawRecords, recordIterator);
-                        break;
-
-                    case JSON:
-                        readJson(jsonRecords, recordIterator);
-                        break;
-
-                    default:
-                        throw new RuntimeException("Unsupported record type - '" + effectiveLocal.getRecordType()
-                                + "'. Supported values are 'JSON','RAW'");
-                }
-
-            }
-
-            handleCommitSyncAsync(consumer, consumerCommonConfigs, effectiveLocal);
+      if (records.count() == 0) {
+        noOfTimeOuts++;
+        if (noOfTimeOuts > getMaxTimeOuts(effectiveLocal)) {
+          break;
+        } else {
+          continue;
         }
+      } else {
+        LOGGER.info("Got {} records after {} timeouts\n", records.count(), noOfTimeOuts);
+        // -----------------------------------
+        // reset after it fetched some records
+        // -----------------------------------
+        noOfTimeOuts = 0;
+      }
 
-        consumer.close();
+      if (records != null) {
+        Iterator recordIterator = records.iterator();
 
-        handleRecordsDump(effectiveLocal, rawRecords, jsonRecords);
+        LOGGER.info("Consumer chosen recordType: " + effectiveLocal.getRecordType());
 
-        return prepareResult(effectiveLocal, jsonRecords, rawRecords);
+        switch (effectiveLocal.getRecordType()) {
+          case RAW:
+            readRaw(rawRecords, recordIterator);
+            break;
 
+          case JSON:
+            readJson(jsonRecords, recordIterator);
+            break;
+
+          default:
+            throw new RuntimeException(
+                "Unsupported record type - '"
+                    + effectiveLocal.getRecordType()
+                    + "'. Supported values are 'JSON','RAW'");
+        }
+      }
+
+      handleCommitSyncAsync(consumer, consumerCommonConfigs, effectiveLocal);
     }
 
+    consumer.close();
+
+    handleRecordsDump(effectiveLocal, rawRecords, jsonRecords);
+
+    return prepareResult(effectiveLocal, jsonRecords, rawRecords);
+  }
 }

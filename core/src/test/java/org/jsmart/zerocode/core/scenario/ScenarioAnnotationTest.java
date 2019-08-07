@@ -10,10 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(TestOnlyZeroCodeUnitRunner.class)
 public class ScenarioAnnotationTest {
 
-    @Test
-    @Scenario("01_verification_test_cases/05_number_equals_test.json")
-    public void willPassIfEqualsToSame_number() throws Exception {
-
-    }
+  @Test
+  @Scenario("01_verification_test_cases/05_number_equals_test.json")
+  public void willPassIfEqualsToSame_number() throws Exception {}
 }
-

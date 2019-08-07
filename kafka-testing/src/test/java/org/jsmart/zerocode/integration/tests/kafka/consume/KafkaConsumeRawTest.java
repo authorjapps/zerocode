@@ -10,8 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaConsumeRawTest {
 
-    @Test
-    @JsonTestCase("kafka/consume/test_kafka_consume_raw_msg.json")
-    public void testKafkaConsume_raw() throws Exception {
-    }
+  @Test
+  @JsonTestCase("kafka/consume/test_kafka_consume_raw_msg.json")
+  public void testKafkaConsume_raw() throws Exception {}
 }

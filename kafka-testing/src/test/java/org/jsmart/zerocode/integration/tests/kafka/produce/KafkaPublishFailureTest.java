@@ -11,11 +11,10 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaPublishFailureTest {
 
-    @Ignore("Sometimes - 2018-10-06 23:33:15,673 [main] WARN org.apache.kafka.common.utils.AppInfoParser - Error registering AppInfo mbean\n" +
-            "javax.management.InstanceAlreadyExistsException: kafka.producer:type=app-info,id=zerocode-producer\n")
-    @Test
-    @JsonTestCase("kafka/produce/test_kafka_publish_failed.json")
-    public void testPublish() throws Exception {
-    }
-
+  @Ignore(
+      "Sometimes - 2018-10-06 23:33:15,673 [main] WARN org.apache.kafka.common.utils.AppInfoParser - Error registering AppInfo mbean\n"
+          + "javax.management.InstanceAlreadyExistsException: kafka.producer:type=app-info,id=zerocode-producer\n")
+  @Test
+  @JsonTestCase("kafka/produce/test_kafka_publish_failed.json")
+  public void testPublish() throws Exception {}
 }

@@ -10,10 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class GitHubHelloWorldTest {
 
-    @Test
-    @JsonTestCase("helloworld_github_REST_api/GitHub_REST_api_sample_assertions.json")
-    public void testGitGubSample_RESTApi() throws Exception {
-
-    }
-
+  @Test
+  @JsonTestCase("helloworld_github_REST_api/GitHub_REST_api_sample_assertions.json")
+  public void testGitGubSample_RESTApi() throws Exception {}
 }

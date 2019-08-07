@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaProduceToPartitionTest {
 
-    @Test
-    @JsonTestCase("kafka/produce/test_kafka_produce_to_partition.json")
-    public void testProdoceTo_partition() throws Exception {
-    }
-
+  @Test
+  @JsonTestCase("kafka/produce/test_kafka_produce_to_partition.json")
+  public void testProdoceTo_partition() throws Exception {}
 }

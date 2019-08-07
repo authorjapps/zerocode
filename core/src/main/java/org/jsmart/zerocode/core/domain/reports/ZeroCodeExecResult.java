@@ -3,44 +3,47 @@ package org.jsmart.zerocode.core.domain.reports;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ZeroCodeExecResult {
-    private String scenarioName;
-    private Integer loop;
-    private List<ZeroCodeReportStep> steps = new ArrayList<>();
+  private String scenarioName;
+  private Integer loop;
+  private List<ZeroCodeReportStep> steps = new ArrayList<>();
 
-    @JsonCreator
-    public ZeroCodeExecResult(
-            @JsonProperty("scenarioName")String scenarioName,
-            @JsonProperty("stepLoop")Integer loop,
-            @JsonProperty("steps")List<ZeroCodeReportStep> steps) {
-        this.scenarioName = scenarioName;
-        this.loop = loop;
-        this.steps = steps;
-    }
+  @JsonCreator
+  public ZeroCodeExecResult(
+      @JsonProperty("scenarioName") String scenarioName,
+      @JsonProperty("stepLoop") Integer loop,
+      @JsonProperty("steps") List<ZeroCodeReportStep> steps) {
+    this.scenarioName = scenarioName;
+    this.loop = loop;
+    this.steps = steps;
+  }
 
-    public String getScenarioName() {
-        return scenarioName;
-    }
+  public String getScenarioName() {
+    return scenarioName;
+  }
 
-    public Integer getLoop() {
-        return loop;
-    }
+  public Integer getLoop() {
+    return loop;
+  }
 
-    public List<ZeroCodeReportStep> getSteps() {
-        return steps;
-    }
+  public List<ZeroCodeReportStep> getSteps() {
+    return steps;
+  }
 
-    @Override
-    public String toString() {
-        return "ZeroCodeExecResult{" +
-                "scenarioName='" + scenarioName + '\'' +
-                ", stepLoop=" + loop +
-                ", steps=" + steps +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "ZeroCodeExecResult{"
+        + "scenarioName='"
+        + scenarioName
+        + '\''
+        + ", stepLoop="
+        + loop
+        + ", steps="
+        + steps
+        + '}';
+  }
 }

@@ -11,14 +11,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith({ParallelLoadExtension.class})
 public class JUnit5LoadTest {
 
-    @Test
-    @LoadWith("load_generation.properties")
-    @TestMappings({
-            @TestMapping(testClass = JUnit5Test.class, testMethod = "testX"),
-            @TestMapping(testClass = JUnit5Test.class, testMethod = "testY")
-    })
-    public void testLoad() {
-        /* No code needed here */
-    }
-
+  @Test
+  @LoadWith("load_generation.properties")
+  @TestMappings({
+    @TestMapping(testClass = JUnit5Test.class, testMethod = "testX"),
+    @TestMapping(testClass = JUnit5Test.class, testMethod = "testY")
+  })
+  public void testLoad() {
+    /* No code needed here */
+  }
 }

@@ -1,11 +1,11 @@
-//package org.jsmart.zerocode.core.di.provider;
+// package org.jsmart.zerocode.core.di.provider;
 //
-//import org.jsmart.zerocode.core.kafka.KafkaService;
-//import org.jsmart.zerocode.core.kafka.KafkaServiceImpl;
+// import org.jsmart.zerocode.core.kafka.KafkaService;
+// import org.jsmart.zerocode.core.kafka.KafkaServiceImpl;
 //
-//import javax.inject.Provider;
+// import javax.inject.Provider;
 //
-//public class KafkaServicesProvider implements Provider<KafkaService> {
+// public class KafkaServicesProvider implements Provider<KafkaService> {
 //
 //    @Override
 //    public KafkaService get() {
@@ -16,4 +16,4 @@
 //        return kafkaService;
 //    }
 //
-//}
+// }

@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(TestOnlyZeroCodeUnitRunner.class)
 public class SmartJUnitNavigatorReportGen {
 
-    @Test
-    @JsonTestCase("11_reports/02.1_loop_scenario_only.json")
-    public void willGeneratReport_multiSceneMultiSteps() throws Exception {
-
-    }
+  @Test
+  @JsonTestCase("11_reports/02.1_loop_scenario_only.json")
+  public void willGeneratReport_multiSceneMultiSteps() throws Exception {}
 }

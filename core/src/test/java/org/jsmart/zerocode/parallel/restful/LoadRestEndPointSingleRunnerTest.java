@@ -8,6 +8,4 @@ import org.junit.runner.RunWith;
 @LoadWith("load_config_test.properties")
 @TestMapping(testClass = JunitRestTestSample.class, testMethod = "testGetCallToHome_pass")
 @RunWith(ZeroCodeLoadRunner.class)
-public class LoadRestEndPointSingleRunnerTest {
-
-}
+public class LoadRestEndPointSingleRunnerTest {}

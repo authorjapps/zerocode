@@ -7,8 +7,6 @@ import org.junit.runner.RunWith;
 
 @TargetEnv("dev_test.properties")
 @TestPackageRoot("01_verification_test_cases")
-//@RunWith(ZeroCodePackageRunner.class)
+// @RunWith(ZeroCodePackageRunner.class)
 @RunWith(TestOnlyZeroCodePackageRunner.class)
-public class ZeroCodePackageRunnerVerification {
-
-}
+public class ZeroCodePackageRunnerVerification {}

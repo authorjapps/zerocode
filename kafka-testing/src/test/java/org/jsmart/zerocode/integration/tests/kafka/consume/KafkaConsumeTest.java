@@ -11,23 +11,17 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaConsumeTest {
 
-    @Test
-    @JsonTestCase("kafka/consume/test_kafka_consume.json")
-    public void testKafkaConsume() throws Exception {
-    }
+  @Test
+  @JsonTestCase("kafka/consume/test_kafka_consume.json")
+  public void testKafkaConsume() throws Exception {}
 
-    @Ignore("TODO wip_")
-    @Test
-    @JsonTestCase("kafka/consume/WIP_test_kafka_consume_with_properties.json")
-    public void testKafkaLocalProperties() throws Exception {
-    }
+  @Ignore("TODO wip_")
+  @Test
+  @JsonTestCase("kafka/consume/WIP_test_kafka_consume_with_properties.json")
+  public void testKafkaLocalProperties() throws Exception {}
 
-    @Ignore("TODO wip_")
-    @Test
-    @JsonTestCase("kafka/consume/file_dump/WIP_test_kafka_consume_json_dump.json")
-    public void testKafkaJsonDump() throws Exception {
-    }
-
-
-
+  @Ignore("TODO wip_")
+  @Test
+  @JsonTestCase("kafka/consume/file_dump/WIP_test_kafka_consume_json_dump.json")
+  public void testKafkaJsonDump() throws Exception {}
 }

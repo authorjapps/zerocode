@@ -10,11 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class SecurityHeaderTokenDynamicTest {
 
-    @Test
-    @JsonTestCase("helloworldjavaexec/hello_world_security_token_for_header_test.json")
-    public void testNewHeaderToken() throws Exception {
-
-    }
-
-
+  @Test
+  @JsonTestCase("helloworldjavaexec/hello_world_security_token_for_header_test.json")
+  public void testNewHeaderToken() throws Exception {}
 }

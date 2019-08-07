@@ -8,9 +8,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class JavaMethodExecTest {
 
-    @Test
-    @JsonTestCase("05_test_java_service/02_test_json_java_service_method_no_param.json")
-    public void testJavaMethod_noParams() throws Exception {
-    }
+  @Test
+  @JsonTestCase("05_test_java_service/02_test_json_java_service_method_no_param.json")
+  public void testJavaMethod_noParams() throws Exception {}
 }
-

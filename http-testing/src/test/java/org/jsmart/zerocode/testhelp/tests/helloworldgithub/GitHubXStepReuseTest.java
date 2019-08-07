@@ -13,10 +13,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class GitHubXStepReuseTest {
 
-    @Test
-    @JsonTestCase("helloworld_github_REST_api/GitHub_REST_api_step_reuse.json")
-    public void gitHubRestApi_externalStepReuse() throws Exception {
-
-    }
-
+  @Test
+  @JsonTestCase("helloworld_github_REST_api/GitHub_REST_api_step_reuse.json")
+  public void gitHubRestApi_externalStepReuse() throws Exception {}
 }

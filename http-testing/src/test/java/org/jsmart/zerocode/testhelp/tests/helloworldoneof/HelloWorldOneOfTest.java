@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class HelloWorldOneOfTest {
 
-    @Test
-    @JsonTestCase("helloworld_one_of/hello_world_one_of_test.json")
-    public void testValueOneOf() throws Exception {
-
-    }
+  @Test
+  @JsonTestCase("helloworld_one_of/hello_world_one_of_test.json")
+  public void testValueOneOf() throws Exception {}
 }

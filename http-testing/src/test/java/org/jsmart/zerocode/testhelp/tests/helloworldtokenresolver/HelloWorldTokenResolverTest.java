@@ -10,10 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class HelloWorldTokenResolverTest {
 
-    @Test
-    @JsonTestCase("helloworld_token_resolving/helloworld_token_resolving_ok.json")
-    public void testHelloWorldTokenResolving_RESTApi() throws Exception {
-    	
-    }
-
+  @Test
+  @JsonTestCase("helloworld_token_resolving/helloworld_token_resolving_ok.json")
+  public void testHelloWorldTokenResolving_RESTApi() throws Exception {}
 }

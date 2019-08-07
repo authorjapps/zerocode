@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaProduceSyncFromFileJsonTest {
 
-    @Test
-    @JsonTestCase("kafka/produce/file_produce/test_kafka_produce_sync_from_file_json.json")
-    public void testProduceAnd_syncFromFileJson() throws Exception {
-    }
-
+  @Test
+  @JsonTestCase("kafka/produce/file_produce/test_kafka_produce_sync_from_file_json.json")
+  public void testProduceAnd_syncFromFileJson() throws Exception {}
 }

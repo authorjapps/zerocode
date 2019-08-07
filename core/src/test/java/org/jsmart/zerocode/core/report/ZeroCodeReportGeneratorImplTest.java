@@ -1,5 +1,8 @@
 package org.jsmart.zerocode.core.report;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.junit.Before;
@@ -8,72 +11,65 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-
 public class ZeroCodeReportGeneratorImplTest {
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+  @Rule public ExpectedException expectedException = ExpectedException.none();
 
+  private ZeroCodeReportGeneratorImpl zeroCodeReportGenerator;
 
-    private ZeroCodeReportGeneratorImpl zeroCodeReportGenerator;
+  ObjectMapper mapper = new ObjectMapperProvider().get();
 
-    ObjectMapper mapper = new ObjectMapperProvider().get();
+  @Before
+  public void setItUp() throws Exception {
 
-    @Before
-    public void setItUp() throws Exception {
+    zeroCodeReportGenerator = new ZeroCodeReportGeneratorImpl(mapper);
+  }
 
-        zeroCodeReportGenerator = new ZeroCodeReportGeneratorImpl(mapper);
+  @Test
+  public void testReportFolderNotPresentInTarget_validation() throws Exception {
+    final String reportsFolder = "/target/helloooo";
 
-    }
+    expectedException.expect(RuntimeException.class);
+    expectedException.expectMessage(
+        "Somehow the '/target/helloooo' is not present or has no report JSON files");
+    expectedException.expectMessage(
+        "1) No tests were activated or made to run via ZeroCode runner.");
+    zeroCodeReportGenerator.readZeroCodeReportsByPath(reportsFolder);
+  }
 
-    @Test
-    public void testReportFolderNotPresentInTarget_validation() throws Exception {
-        final String reportsFolder = "/target/helloooo";
+  @Ignore(
+      "mvn clean install - removes target folder. So this passes when run without 'clean'"
+          + "To fix it create a temp folder, assign to reportsFolder variable and run")
+  @Test
+  public void testReportFolderPresentInTargetNormalFlow() throws Exception {
+    final String reportsFolder = "target/zerocode-test-reports";
 
-        expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Somehow the '/target/helloooo' is not present or has no report JSON files");
-        expectedException.expectMessage("1) No tests were activated or made to run via ZeroCode runner.");
-        zeroCodeReportGenerator.readZeroCodeReportsByPath(reportsFolder);
+    zeroCodeReportGenerator.validateReportsFolderAndTheFilesExists(reportsFolder);
+  }
 
-    }
+  @Test
+  public void testAuthorJiraStyle() throws Exception {
+    String author;
 
-    @Ignore("mvn clean install - removes target folder. So this passes when run without 'clean'" +
-            "To fix it create a temp folder, assign to reportsFolder variable and run")
-    @Test
-    public void testReportFolderPresentInTargetNormalFlow() throws Exception {
-        final String reportsFolder = "target/zerocode-test-reports";
+    author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter@@");
+    assertThat(author, is("Peter"));
 
-        zeroCodeReportGenerator.validateReportsFolderAndTheFilesExists(reportsFolder);
+    author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch @@payment @@Peter@@");
+    assertThat(author, is("payment "));
 
-    }
+    author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter Gibson@@");
+    assertThat(author, is("Peter Gibson"));
 
-    @Test
-    public void testAuthorJiraStyle() throws Exception {
-        String author;
+    author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter Gibson");
+    assertThat(author, is("Peter"));
 
-        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter@@");
-        assertThat(author, is("Peter"));
+    author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter");
+    assertThat(author, is("Peter"));
 
-        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch @@payment @@Peter@@");
-        assertThat(author, is("payment "));
+    author = zeroCodeReportGenerator.optionalAuthor("@@Peter, PayPal One touch payment ");
+    assertThat(author, is("Peter"));
 
-        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter Gibson@@");
-        assertThat(author, is("Peter Gibson"));
-
-        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter Gibson");
-        assertThat(author, is("Peter"));
-
-        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter");
-        assertThat(author, is("Peter"));
-
-        author = zeroCodeReportGenerator.optionalAuthor("@@Peter, PayPal One touch payment ");
-        assertThat(author, is("Peter"));
-
-        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment");
-        assertThat(author, is("Anonymous"));
-
-    }
-
+    author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment");
+    assertThat(author, is("Anonymous"));
+  }
 }

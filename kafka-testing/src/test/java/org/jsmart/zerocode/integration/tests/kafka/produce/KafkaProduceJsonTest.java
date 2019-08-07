@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaProduceJsonTest {
 
-    @Test
-    @JsonTestCase("kafka/produce/test_kafka_produce_json_record.json")
-    public void testProduce_json() throws Exception {
-    }
-
+  @Test
+  @JsonTestCase("kafka/produce/test_kafka_produce_json_record.json")
+  public void testProduce_json() throws Exception {}
 }

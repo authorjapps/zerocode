@@ -13,10 +13,7 @@ import org.junit.runner.RunWith;
 @RunWith(TestOnlyZeroCodeUnitRunner.class)
 public class SslTrustUseHttpClientTest {
 
-    @Test
-    @JsonTestCase("01_verification_test_cases/21_ssl_trust.json")
-    public void testASmartTestCase_createUpdate() throws Exception {
-
-    }
+  @Test
+  @JsonTestCase("01_verification_test_cases/21_ssl_trust.json")
+  public void testASmartTestCase_createUpdate() throws Exception {}
 }
-

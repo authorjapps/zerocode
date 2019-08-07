@@ -1,5 +1,3 @@
 package org.jsmart.zerocode.zerocodejavaexec.utils;
 
-public class ExampleUtils {
-
-}
+public class ExampleUtils {}
