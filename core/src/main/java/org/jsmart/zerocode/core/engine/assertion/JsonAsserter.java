@@ -39,7 +39,7 @@ public interface JsonAsserter {
         return actualEqualsToExpected(result);
     }
 
-    default FieldAssertionMatcher assertionMessage(Object actualResult, boolean areEqual) {
+    default FieldAssertionMatcher defaultAssertionMessage(Object actualResult, boolean areEqual) {
         return areEqual ? aMatchingMessage() : aNotMatchingMessage(getPath(), getExpected(), actualResult);
     }
 

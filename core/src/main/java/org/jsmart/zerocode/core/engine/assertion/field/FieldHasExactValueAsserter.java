@@ -50,7 +50,7 @@ public class FieldHasExactValueAsserter implements JsonAsserter {
 
         }
 
-        return assertionMessage(actualResult, areEqual);
+        return defaultAssertionMessage(actualResult, areEqual);
     }
 
     public FieldHasExactValueAsserter(String path, Object expected) {
