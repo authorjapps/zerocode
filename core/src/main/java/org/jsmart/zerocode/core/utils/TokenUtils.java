@@ -67,6 +67,11 @@ public class TokenUtils {
                             String propertyName = runTimeToken.substring(SYSTEM_PROPERTY.length());
                             paramaMap.put(runTimeToken, System.getProperty(propertyName));
 
+                        }else if (runTimeToken.startsWith(SYSTEM_ENV)) {
+
+                            String propertyName = runTimeToken.substring(SYSTEM_ENV.length());
+                            paramaMap.put(runTimeToken, System.getenv(propertyName));
+
                         } else if (runTimeToken.startsWith(XML_FILE)) {
                             String xmlFileResource = runTimeToken.substring(XML_FILE.length());
                             final String xmlString = getXmlContent(xmlFileResource);
@@ -134,4 +139,6 @@ public class TokenUtils {
                     + "', details:" + e);
         }
     }
+
+
 }

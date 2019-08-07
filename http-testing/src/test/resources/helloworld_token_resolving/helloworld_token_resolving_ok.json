@@ -8,6 +8,7 @@
             "request": {
             	"headers":{
             		"x-random-number": "${RANDOM.NUMBER}",
+                "x-system-env": "${SYSTEM.ENV:USER}",
             		"x-fixed-length2-number": "${RANDOM.NUMBER:2}",
             		"x-fixed-length4-number1": "${RANDOM.NUMBER:4}",
             		"x-fixed-length4-number2": "${RANDOM.NUMBER:4}",
