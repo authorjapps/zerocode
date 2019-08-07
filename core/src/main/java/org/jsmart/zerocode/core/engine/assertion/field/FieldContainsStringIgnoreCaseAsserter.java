@@ -4,11 +4,11 @@ package org.jsmart.zerocode.core.engine.assertion.field;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 
-public class FieldHasSubStringIgnoreCaseValueAsserter implements JsonAsserter {
+public class FieldContainsStringIgnoreCaseAsserter implements JsonAsserter {
     private final String path;
     private final String expected;
 
-    public FieldHasSubStringIgnoreCaseValueAsserter(String path, String expected) {
+    public FieldContainsStringIgnoreCaseAsserter(String path, String expected) {
         this.path = path;
         this.expected = expected;
     }
@@ -16,6 +16,11 @@ public class FieldHasSubStringIgnoreCaseValueAsserter implements JsonAsserter {
     @Override
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public Object getExpected() {
+        return expected;
     }
 
     @Override
@@ -30,7 +35,7 @@ public class FieldHasSubStringIgnoreCaseValueAsserter implements JsonAsserter {
         }
 
         return areEqual ?
-                FieldAssertionMatcher.createMatchingMessage() :
-                FieldAssertionMatcher.createNotMatchingMessage(path, "containing sub-string with ignoring case:" + expected, result);
+                FieldAssertionMatcher.aMatchingMessage() :
+                FieldAssertionMatcher.aNotMatchingMessage(path, "containing sub-string with ignoring case:" + expected, result);
     }
 }

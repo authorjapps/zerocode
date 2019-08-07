@@ -5,7 +5,7 @@ import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 
 import java.util.List;
 
-public interface ZeroCodeJsonTestProcesor {
+public interface ZeroCodeAssertionsProcessor {
 
     String resolveStringJson(String requestJsonAsString, String resolvedScenarioState);
 

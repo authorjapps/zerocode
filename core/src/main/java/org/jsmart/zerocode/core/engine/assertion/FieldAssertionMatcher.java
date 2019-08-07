@@ -23,14 +23,14 @@ public class FieldAssertionMatcher {
     }
 
 
-    public static FieldAssertionMatcher createMatchingMessage() {
+    public static FieldAssertionMatcher aMatchingMessage() {
         // -------------------------------------------------------------------
         // Because the values were matching, path is not relevant in this case
         // -------------------------------------------------------------------
         return new FieldAssertionMatcher(null);
     }
 
-    public static FieldAssertionMatcher createNotMatchingMessage(String path, Object expected, Object actual) {
+    public static FieldAssertionMatcher aNotMatchingMessage(String path, Object expected, Object actual) {
         return new FieldAssertionMatcher(path, expected, actual);
     }
 

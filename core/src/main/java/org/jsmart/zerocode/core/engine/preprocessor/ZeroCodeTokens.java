@@ -5,11 +5,11 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 public class ZeroCodeTokens {
-    /*
-     * General place holders
-     */
-    public static final String JSON_PAYLOAD_FILE = "JSON.FILE:";
 
+    // ----------------------
+    // General place holders
+    // ----------------------
+    public static final String JSON_PAYLOAD_FILE = "JSON.FILE:";
     public static final String PREFIX_ASU = "ASU";
     public static final String XML_FILE = "XML.FILE:";
     public static final String RANDOM_UU_ID = "RANDOM.UUID";
@@ -20,7 +20,6 @@ public class ZeroCodeTokens {
     public static final String LOCALDATE_TODAY = "LOCAL.DATE.TODAY:";
     public static final String LOCALDATETIME_NOW = "LOCAL.DATETIME.NOW:";
     public static final String SYSTEM_PROPERTY = "SYSTEM.PROPERTY:";
-
 
     public static List<String> getKnownTokens() {
         return asList(

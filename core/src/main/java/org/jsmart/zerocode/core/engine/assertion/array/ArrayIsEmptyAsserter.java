@@ -5,8 +5,8 @@ import net.minidev.json.JSONArray;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
 
 public class ArrayIsEmptyAsserter implements JsonAsserter {
     private final String path;
@@ -21,6 +21,11 @@ public class ArrayIsEmptyAsserter implements JsonAsserter {
     }
 
     @Override
+    public Object getExpected() {
+        return "[]";
+    }
+
+    @Override
     public FieldAssertionMatcher actualEqualsToExpected(Object result) {
         if(result instanceof JSONArray){
 
@@ -28,14 +33,14 @@ public class ArrayIsEmptyAsserter implements JsonAsserter {
 
             if(actualArrayValue.isEmpty()){
 
-                return createMatchingMessage();
+                return aMatchingMessage();
             }
 
-            return createNotMatchingMessage(path, "[]", result);
+            return aNotMatchingMessage(path, "[]", result);
 
         } else {
 
-            return createNotMatchingMessage(path, "[]", result);
+            return aNotMatchingMessage(path, "[]", result);
 
         }
     }

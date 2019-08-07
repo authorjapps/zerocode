@@ -20,7 +20,7 @@ import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
-import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
 import org.jsmart.zerocode.core.logbuilder.LogCorrelationshipPrinter;
 import org.junit.runner.Description;
@@ -28,8 +28,6 @@ import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.KAFKA_TOPIC;
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.PROPERTY_KEY_HOST;
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.PROPERTY_KEY_PORT;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
@@ -45,7 +43,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
     @Inject
-    private ZeroCodeJsonTestProcesor zeroCodeJsonTestProcesor;
+    private ZeroCodeAssertionsProcessor zeroCodeAssertionsProcessor;
 
     @Inject
     private ZeroCodeExternalFileProcessor extFileProcessor;
@@ -154,7 +152,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                     stepExecutionState.addStep(thisStepName);
 
-                    String resolvedRequestJson = zeroCodeJsonTestProcesor.resolveStringJson(
+                    String resolvedRequestJson = zeroCodeAssertionsProcessor.resolveStringJson(
                             requestJsonAsString,
                             scenarioExecutionState.getResolvedScenarioState()
                     );
@@ -172,7 +170,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             // --------------------------------
                             // Resolve the URL patterns if any
                             // --------------------------------
-                            serviceName = zeroCodeJsonTestProcesor.resolveStringJson(
+                            serviceName = zeroCodeAssertionsProcessor.resolveStringJson(
                                     serviceName,
                                     scenarioExecutionState.getResolvedScenarioState()
                             );
@@ -259,7 +257,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             // ---------------------------------
                             // Handle assertion section -START
                             // ---------------------------------
-                            String resolvedAssertionJson = zeroCodeJsonTestProcesor.resolveStringJson(
+                            String resolvedAssertionJson = zeroCodeAssertionsProcessor.resolveStringJson(
                                     thisStep.getAssertions().toString(),
                                     scenarioExecutionState.getResolvedScenarioState()
                             );
@@ -267,8 +265,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             // -----------------
                             // logging assertion
                             // -----------------
-                            List<JsonAsserter> asserters = zeroCodeJsonTestProcesor.createJsonAsserters(resolvedAssertionJson);
-                            List<FieldAssertionMatcher> failureResults = zeroCodeJsonTestProcesor.assertAllAndReturnFailed(asserters, executionResult);
+                            List<JsonAsserter> asserters = zeroCodeAssertionsProcessor.createJsonAsserters(resolvedAssertionJson);
+                            List<FieldAssertionMatcher> failureResults = zeroCodeAssertionsProcessor.assertAllAndReturnFailed(asserters, executionResult);
 
                             if (!failureResults.isEmpty()) {
                                 StringBuilder builder = new StringBuilder();

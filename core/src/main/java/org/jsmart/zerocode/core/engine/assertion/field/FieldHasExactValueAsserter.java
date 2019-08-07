@@ -5,9 +5,6 @@ import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.assertion.NumberComparator;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
-
 public class FieldHasExactValueAsserter implements JsonAsserter {
     private final String path;
     final Object expected;
@@ -15,6 +12,11 @@ public class FieldHasExactValueAsserter implements JsonAsserter {
     @Override
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public Object getExpected() {
+        return expected;
     }
 
     @Override
@@ -48,9 +50,7 @@ public class FieldHasExactValueAsserter implements JsonAsserter {
 
         }
 
-        return areEqual ?
-                createMatchingMessage() :
-                createNotMatchingMessage(path, expected, actualResult);
+        return assertionMessage(actualResult, areEqual);
     }
 
     public FieldHasExactValueAsserter(String path, Object expected) {

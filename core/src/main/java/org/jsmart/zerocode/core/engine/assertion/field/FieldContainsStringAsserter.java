@@ -4,8 +4,8 @@ package org.jsmart.zerocode.core.engine.assertion.field;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
 
 public class FieldContainsStringAsserter implements JsonAsserter {
     private final String path;
@@ -22,6 +22,11 @@ public class FieldContainsStringAsserter implements JsonAsserter {
     }
 
     @Override
+    public Object getExpected() {
+        return expected;
+    }
+
+    @Override
     public FieldAssertionMatcher actualEqualsToExpected(Object result) {
         boolean areEqual;
         if (result instanceof String && expected instanceof String) {
@@ -33,7 +38,7 @@ public class FieldContainsStringAsserter implements JsonAsserter {
         }
 
         return areEqual ?
-                createMatchingMessage() :
-                createNotMatchingMessage(path, "containing sub-string:" + expected, result);
+                aMatchingMessage() :
+                aNotMatchingMessage(path, "containing sub-string:" + expected, result);
     }
 }

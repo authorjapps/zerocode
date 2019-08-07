@@ -31,7 +31,7 @@ import org.jsmart.zerocode.core.engine.assertion.field.FieldHasExactValueAsserte
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasGreaterThanValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasInEqualNumberValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasLesserThanValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldHasSubStringIgnoreCaseValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringIgnoreCaseAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNotNullAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNullAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldIsOneOfValueAsserter;
@@ -43,9 +43,9 @@ import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
+public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProcessor {
 
-    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeJsonTestProcesorImpl.class);
+    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeAssertionsProcessorImpl.class);
 
     final List<String> propertyKeys = new ArrayList<>();
     final Properties properties = new Properties();
@@ -54,7 +54,9 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     // Assertion place holders
     // -----------------------
     public static final String ASSERT_VALUE_NOT_NULL = "$NOT.NULL";
+    public static final String ASSERT_VALUE_IS_NOT_NULL = "$IS.NOTNULL";
     public static final String ASSERT_VALUE_NULL = "$NULL";
+    public static final String ASSERT_VALUE_IS_NULL = "$IS.NULL";
     public static final String ASSERT_VALUE_EMPTY_ARRAY = "$[]";
     public static final String ASSERT_PATH_SIZE = ".SIZE";
     public static final String ASSERT_VALUE_CONTAINS_STRING = "$CONTAINS.STRING:";
@@ -67,6 +69,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     public static final String ASSERT_LOCAL_DATETIME_AFTER = "$LOCAL.DATETIME.AFTER:";
     public static final String ASSERT_LOCAL_DATETIME_BEFORE = "$LOCAL.DATETIME.BEFORE:";
     public static final String ASSERT_VALUE_ONE_OF = "$ONE.OF:";
+    public static final String ASSERT_VALUE_IS_ONE_OF = "$IS.ONE.OF:";
     public static final String ASSERT_PATH_VALUE_NODE = "$";
     public static final String RAW_BODY = ".rawBody";
 
@@ -74,7 +77,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     private final String hostFileName;
 
     @Inject
-    public ZeroCodeJsonTestProcesorImpl(ObjectMapper mapper, @Named("HostFileName") String hostFileName) {
+    public ZeroCodeAssertionsProcessorImpl(ObjectMapper mapper, @Named("HostFileName") String hostFileName) {
         this.mapper = mapper;
         this.hostFileName = hostFileName;
         loadAnnotatedHostProperties();
@@ -164,11 +167,6 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
         return jsonPaths;
     }
 
-    /**
-     * Use skyscreamer-JSONAssert lib for the below JSON assertions.
-     * Then we stop maintaining these following assertion code.
-     * Raise a Tech-Debt ticket(TODO)
-     */
     @Override
     public List<JsonAsserter> createJsonAsserters(String resolvedAssertionJson) {
         List<JsonAsserter> asserters = new ArrayList<>();
@@ -183,9 +181,9 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 Object value = entry.getValue();
 
                 JsonAsserter asserter;
-                if (ASSERT_VALUE_NOT_NULL.equals(value)) {
+                if (ASSERT_VALUE_NOT_NULL.equals(value) || ASSERT_VALUE_IS_NOT_NULL.equals(value)) {
                     asserter = new FieldIsNotNullAsserter(path);
-                } else if (ASSERT_VALUE_NULL.equals(value)) {
+                } else if (ASSERT_VALUE_NULL.equals(value) || ASSERT_VALUE_IS_NULL.equals(value)) {
                     asserter = new FieldIsNullAsserter(path);
                 } else if (ASSERT_VALUE_EMPTY_ARRAY.equals(value)) {
                     asserter = new ArrayIsEmptyAsserter(path);
@@ -206,7 +204,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                     asserter = new FieldMatchesRegexPatternAsserter(path, expected);
                 } else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE.length());
-                    asserter = new FieldHasSubStringIgnoreCaseValueAsserter(path, expected);
+                    asserter = new FieldContainsStringIgnoreCaseAsserter(path, expected);
                 } else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_EQUAL_TO_NUMBER)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_EQUAL_TO_NUMBER.length());
                     asserter = new FieldHasEqualNumberValueAsserter(path, numberValueOf(expected));
@@ -225,7 +223,8 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
                 }else if (value instanceof String && (value.toString()).startsWith(ASSERT_LOCAL_DATETIME_BEFORE)) {
                     String expected = ((String) value).substring(ASSERT_LOCAL_DATETIME_BEFORE.length());
                     asserter = new FieldHasDateBeforeValueAsserter(path, parseLocalDateTime(expected));
-                }else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_ONE_OF)) {
+                }else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_ONE_OF) ||
+                        value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_IS_ONE_OF) ) {
                     String expected = ((String) value).substring(ASSERT_VALUE_ONE_OF.length());
                     asserter = new FieldIsOneOfValueAsserter(path, expected);
                 }
@@ -253,7 +252,7 @@ public class ZeroCodeJsonTestProcesorImpl implements ZeroCodeJsonTestProcesor {
     }
 
     private Map<String, Object> createAssertionKV(JsonNode jsonNode, String pathDslPrefix) {
-        HashMap<String, Object> resultMap = new HashMap<String, Object>();
+        HashMap<String, Object> resultMap = new HashMap<>();
 
         if (jsonNode.getNodeType().equals(JsonNodeType.OBJECT)) {
             jsonNode.fieldNames().forEachRemaining(fieldName -> {

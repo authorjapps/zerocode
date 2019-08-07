@@ -23,14 +23,14 @@ import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
-public class ZeroCodeJsonTestProcesorImplTest {
+public class ZeroCodeAssertionsProcessorImplTest {
     ApiServiceExecutorImpl jsonServiceExecutor;
     Injector injector;
     SmartUtils smartUtils;
     SimpleRestJsonSimulatorsMain simulator ;
     ObjectMapper mapper;
 
-    ZeroCodeJsonTestProcesorImpl jsonPreProcessor;
+    ZeroCodeAssertionsProcessorImpl jsonPreProcessor;
 
     @Before
     public void setUpStuff() throws Exception {
@@ -38,7 +38,7 @@ public class ZeroCodeJsonTestProcesorImplTest {
         injector = Guice.createInjector(new ApplicationMainModule(serverEnvFileName));
         smartUtils = injector.getInstance(SmartUtils.class);
         mapper = new ObjectMapperProvider().get();
-        jsonPreProcessor = new ZeroCodeJsonTestProcesorImpl(smartUtils.getMapper(), serverEnvFileName);
+        jsonPreProcessor = new ZeroCodeAssertionsProcessorImpl(smartUtils.getMapper(), serverEnvFileName);
     }
 
     @Test
