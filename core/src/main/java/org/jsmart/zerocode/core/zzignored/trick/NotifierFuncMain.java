@@ -4,47 +4,49 @@ import org.jsmart.zerocode.core.runner.Notifier;
 
 public class NotifierFuncMain {
 
-    /*
-     * overloaded functions
-     */
-    public <A, B, C, D, E, R> R callAdd(A a, B b, C c, D d, E e, Notifier<A, B, C, D, E, R> notifier){
+  /*
+   * overloaded functions
+   */
+  public <A, B, C, D, E, R> R callAdd(
+      A a, B b, C c, D d, E e, Notifier<A, B, C, D, E, R> notifier) {
 
-        R result = notifier.apply(a, b, c, d, e);
+    R result = notifier.apply(a, b, c, d, e);
 
-        return result;
-    }
+    return result;
+  }
 
-    public <A, B, C, D, E, R> R callAdd2(A a, B b, C c, Notifier<A, B, C, D, E, R> notifier){
+  public <A, B, C, D, E, R> R callAdd2(A a, B b, C c, Notifier<A, B, C, D, E, R> notifier) {
 
-        R result = notifier.apply(a, b, c, null, null);
+    R result = notifier.apply(a, b, c, null, null);
 
-        return result;
-    }
+    return result;
+  }
 
-    public <A, B, C, D, E, R> R callAdd3(A a, B b, Notifier<A, B, C, D, E, R> notifier){
+  public <A, B, C, D, E, R> R callAdd3(A a, B b, Notifier<A, B, C, D, E, R> notifier) {
 
-        R result = notifier.apply(a, b, null, null, null);
+    R result = notifier.apply(a, b, null, null, null);
 
-        return result;
-    }
+    return result;
+  }
 
+  public Integer addThreeNums(
+      Integer int1, Integer int2, Integer int3, Integer int4, Integer int5) {
 
-    public Integer addThreeNums(Integer int1, Integer int2, Integer int3, Integer int4, Integer int5){
+    return int1 + int2 + int3;
+  }
 
-        return int1 + int2 + int3;
-    }
+  public Boolean addThreeNumsSucceeded(
+      Integer int1, Integer int2, Integer int3, String str4, Float flt5) {
 
-    public Boolean addThreeNumsSucceeded(Integer int1, Integer int2, Integer int3, String str4, Float flt5){
+    return false;
+  }
 
-        return false;
-    }
+  public static void main(String[] args) {
 
-    public static void main(String[] args) {
+    NotifierFuncMain adderImpl = new NotifierFuncMain();
 
-        NotifierFuncMain adderImpl = new NotifierFuncMain();
+    final int result = adderImpl.callAdd(1, 2, 3, 4, null, adderImpl::addThreeNums);
 
-        final int result = adderImpl.callAdd(1, 2, 3, 4, null, adderImpl::addThreeNums);
-
-        Boolean isSuccess = adderImpl.callAdd2(1, 2, 3, adderImpl::addThreeNumsSucceeded);
-    }
+    Boolean isSuccess = adderImpl.callAdd2(1, 2, 3, adderImpl::addThreeNumsSucceeded);
+  }
 }

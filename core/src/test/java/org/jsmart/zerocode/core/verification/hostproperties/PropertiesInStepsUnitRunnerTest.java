@@ -10,10 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(TestOnlyZeroCodeUnitRunner.class)
 public class PropertiesInStepsUnitRunnerTest {
 
-    @Test
-    @JsonTestCase("host_keys/property_reading_into_test_step_test.json")
-    public void testReading_propertyValuesViaKey() throws Exception {
-
-    }
+  @Test
+  @JsonTestCase("host_keys/property_reading_into_test_step_test.json")
+  public void testReading_propertyValuesViaKey() throws Exception {}
 }
-

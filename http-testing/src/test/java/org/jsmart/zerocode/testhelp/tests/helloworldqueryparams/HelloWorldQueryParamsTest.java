@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class HelloWorldQueryParamsTest {
 
-    @Test
-    @JsonTestCase("helloworld_queryparams/github_get_repos_by_query_params.json")
-    public void testGetBy_queryParams() throws Exception {
-    }
-
+  @Test
+  @JsonTestCase("helloworld_queryparams/github_get_repos_by_query_params.json")
+  public void testGetBy_queryParams() throws Exception {}
 }

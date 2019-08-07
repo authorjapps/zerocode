@@ -6,30 +6,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public interface JsonAsserter {
-    Logger logger = LoggerFactory.getLogger(JsonAsserter.class);
+  Logger logger = LoggerFactory.getLogger(JsonAsserter.class);
 
-    /*
-     * Every asserter must provide implementation and
-     * return the field-path whose value is to be asserted
-     */
-    String getPath();
+  /*
+   * Every asserter must provide implementation and
+   * return the field-path whose value is to be asserted
+   */
+  String getPath();
 
-    FieldAssertionMatcher actualEqualsToExpected(Object result);
+  FieldAssertionMatcher actualEqualsToExpected(Object result);
 
-    default FieldAssertionMatcher assertWithJson(String jsonSource) {
+  default FieldAssertionMatcher assertWithJson(String jsonSource) {
 
-        Object result = null;
-        try{
-            result = JsonPath.read(jsonSource, getPath());
+    Object result = null;
+    try {
+      result = JsonPath.read(jsonSource, getPath());
 
-        } catch(PathNotFoundException pEx){
+    } catch (PathNotFoundException pEx) {
 
-            logger.warn("Path: {} was not found in the response. Hence this value was treated as null.", getPath());
-
-        }
-
-        return actualEqualsToExpected(result);
+      logger.warn(
+          "Path: {} was not found in the response. Hence this value was treated as null.",
+          getPath());
     }
 
-
+    return actualEqualsToExpected(result);
+  }
 }

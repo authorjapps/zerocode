@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class HelloWorldDateAfterBeforeTest {
 
-    @Test
-    @JsonTestCase("helloworld_date/hello_world_date_after_before_test.json")
-    public void testCreatedDateAfterBefore() throws Exception {
-
-    }
+  @Test
+  @JsonTestCase("helloworld_date/hello_world_date_after_before_test.json")
+  public void testCreatedDateAfterBefore() throws Exception {}
 }

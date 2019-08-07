@@ -13,10 +13,8 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class SslTrustCorporateProxyHttpClientTest {
 
-    @Ignore("this is only a usage example using dummy proxy details")
-    @Test
-    @JsonTestCase("01_verification_test_cases/21_ssl_trust.json")
-    public void testASmartTestCase_createUpdate() throws Exception {
-
-    }
+  @Ignore("this is only a usage example using dummy proxy details")
+  @Test
+  @JsonTestCase("01_verification_test_cases/21_ssl_trust.json")
+  public void testASmartTestCase_createUpdate() throws Exception {}
 }

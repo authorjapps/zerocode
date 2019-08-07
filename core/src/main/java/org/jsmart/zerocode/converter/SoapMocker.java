@@ -6,17 +6,17 @@ import org.jsmart.zerocode.core.utils.SmartUtils;
 
 public class SoapMocker {
 
-    public Object soapResponseXml(String nothing){
+  public Object soapResponseXml(String nothing) {
 
-        try {
-            final String rawBody = SmartUtils.readJsonAsString("soap_response/mock_soap_response.xml");
-            Map<String, String> singleKeyValueMap = new HashMap<>();
-            singleKeyValueMap.put("rawBody", rawBody);
+    try {
+      final String rawBody = SmartUtils.readJsonAsString("soap_response/mock_soap_response.xml");
+      Map<String, String> singleKeyValueMap = new HashMap<>();
+      singleKeyValueMap.put("rawBody", rawBody);
 
-            return singleKeyValueMap;
+      return singleKeyValueMap;
 
-        } catch (RuntimeException  e) {
-            throw new RuntimeException("something wrong happened here" + e);
-        }
+    } catch (RuntimeException e) {
+      throw new RuntimeException("something wrong happened here" + e);
     }
+  }
 }

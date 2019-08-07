@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class HelloWorldParameterizedValueTest {
 
-    @Test
-    @Scenario("parameterized_value/hello_world_test_parameterized_value.json")
-    public void testGetByUserNames() throws Exception {
-    }
-
+  @Test
+  @Scenario("parameterized_value/hello_world_test_parameterized_value.json")
+  public void testGetByUserNames() throws Exception {}
 }

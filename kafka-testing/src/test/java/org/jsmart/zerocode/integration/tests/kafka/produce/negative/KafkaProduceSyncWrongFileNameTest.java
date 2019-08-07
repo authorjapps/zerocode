@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaProduceSyncWrongFileNameTest {
 
-    @Test
-    @JsonTestCase("kafka/produce/negative/test_kafka_produce_from_worng_filename.json")
-    public void testProduceAnd_wrongFileName() throws Exception {
-    }
-
+  @Test
+  @JsonTestCase("kafka/produce/negative/test_kafka_produce_from_worng_filename.json")
+  public void testProduceAnd_wrongFileName() throws Exception {}
 }

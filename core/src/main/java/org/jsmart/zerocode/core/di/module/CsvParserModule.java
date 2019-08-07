@@ -8,9 +8,8 @@ import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 
 public class CsvParserModule implements Module {
 
-    @Override
-    public void configure(Binder binder) {
-        binder.bind(CsvParser.class).toProvider(CsvParserProvider.class).in(Singleton.class);
-    }
+  @Override
+  public void configure(Binder binder) {
+    binder.bind(CsvParser.class).toProvider(CsvParserProvider.class).in(Singleton.class);
+  }
 }
-

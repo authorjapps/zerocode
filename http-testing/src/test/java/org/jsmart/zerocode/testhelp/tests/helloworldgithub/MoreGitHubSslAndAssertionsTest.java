@@ -13,10 +13,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class MoreGitHubSslAndAssertionsTest {
 
-    @Test
-    @JsonTestCase("helloworld_github_REST_api/GitHub_REST_api_more_assertions.json")
-    public void testGitGubVersionRESTApiWith_easyAssertions() throws Exception {
-
-    }
-
+  @Test
+  @JsonTestCase("helloworld_github_REST_api/GitHub_REST_api_more_assertions.json")
+  public void testGitGubVersionRESTApiWith_easyAssertions() throws Exception {}
 }

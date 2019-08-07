@@ -10,8 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class ParameterisedDemoTest {
 
-    @Test
-    @JsonTestCase("parameterized/parameterized_sample_test.json")
-    public void testParameterized() throws Exception {
-    }
+  @Test
+  @JsonTestCase("parameterized/parameterized_sample_test.json")
+  public void testParameterized() throws Exception {}
 }

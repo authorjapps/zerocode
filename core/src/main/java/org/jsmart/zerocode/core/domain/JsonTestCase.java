@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable( value = JsonTestCases.class )
+@Repeatable(value = JsonTestCases.class)
 public @interface JsonTestCase {
-    String value();
+  String value();
 }

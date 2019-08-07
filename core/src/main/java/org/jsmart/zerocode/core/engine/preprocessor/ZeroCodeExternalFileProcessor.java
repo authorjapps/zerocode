@@ -4,7 +4,7 @@ import org.jsmart.zerocode.core.domain.Step;
 
 public interface ZeroCodeExternalFileProcessor {
 
-    Step resolveExtJsonFile(Step thisStep);
+  Step resolveExtJsonFile(Step thisStep);
 
-    Step createFromStepFile(Step thisStep, String stepId);
+  Step createFromStepFile(Step thisStep, String stepId);
 }

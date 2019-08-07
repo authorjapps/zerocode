@@ -10,11 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class HelloWorldRegexMatchDateTest {
 
-
-    @Test
-    @JsonTestCase("helloworld_regex_match/hello_world_matches_string_regex_test.json")
-    public void testRegexStringMatch() throws Exception {
-
-    }
-
+  @Test
+  @JsonTestCase("helloworld_regex_match/hello_world_matches_string_regex_test.json")
+  public void testRegexStringMatch() throws Exception {}
 }

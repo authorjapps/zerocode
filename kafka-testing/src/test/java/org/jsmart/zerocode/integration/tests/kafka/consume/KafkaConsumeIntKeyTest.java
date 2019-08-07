@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaConsumeIntKeyTest {
 
-    @Test
-    @JsonTestCase("kafka/consume/test_kafka_consume_int_key.json")
-    public void testKafkaConsume_intKey() throws Exception {
-    }
-
+  @Test
+  @JsonTestCase("kafka/consume/test_kafka_consume_int_key.json")
+  public void testKafkaConsume_intKey() throws Exception {}
 }

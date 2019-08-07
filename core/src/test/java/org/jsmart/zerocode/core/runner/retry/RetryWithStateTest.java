@@ -1,5 +1,13 @@
 package org.jsmart.zerocode.core.runner.retry;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
+import static java.lang.Thread.sleep;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -14,71 +22,60 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
-import static java.lang.Thread.sleep;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 @TargetEnv("dev_test.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class RetryWithStateTest {
 
-    static String basePath;
-    static String fullPath;
-    static int port = 8383;
+  static String basePath;
+  static String fullPath;
+  static int port = 8383;
 
-    static WireMockServer mockServer = new WireMockServer(port);
+  static WireMockServer mockServer = new WireMockServer(port);
 
-    @BeforeClass
-    public static void setUpWireMock() throws Exception {
-        basePath = "http://localhost:" + port;
-        String path = "/retry/ids/1";
-        fullPath = basePath + path;
+  @BeforeClass
+  public static void setUpWireMock() throws Exception {
+    basePath = "http://localhost:" + port;
+    String path = "/retry/ids/1";
+    fullPath = basePath + path;
 
-        mockServer.start();
+    mockServer.start();
 
-        mockServer.stubFor(get(urlEqualTo(path))
-                .inScenario("Retry Scenario")
-                .whenScenarioStateIs(STARTED)
-                .willReturn(aResponse()
-                        .withStatus(500))
-                .willSetStateTo("retry")
-        );
+    mockServer.stubFor(
+        get(urlEqualTo(path))
+            .inScenario("Retry Scenario")
+            .whenScenarioStateIs(STARTED)
+            .willReturn(aResponse().withStatus(500))
+            .willSetStateTo("retry"));
 
-        mockServer.stubFor(get(urlEqualTo(path))
-                .inScenario("Retry Scenario")
-                .whenScenarioStateIs("retry")
-                .willReturn(aResponse()
-                        .withStatus(200))
-        );
-    }
+    mockServer.stubFor(
+        get(urlEqualTo(path))
+            .inScenario("Retry Scenario")
+            .whenScenarioStateIs("retry")
+            .willReturn(aResponse().withStatus(200)));
+  }
 
-    @AfterClass
-    public static void tearDown() {
-        mockServer.shutdown();
-    }
+  @AfterClass
+  public static void tearDown() {
+    mockServer.shutdown();
+  }
 
-    @Test
-    @JsonTestCase("20_retry_test_cases/04_REST_retry_with_state_test.json")
-    public void testRetryScenario() {
-    }
+  @Test
+  @JsonTestCase("20_retry_test_cases/04_REST_retry_with_state_test.json")
+  public void testRetryScenario() {}
 
-    @Ignore("Only for sanity")
-    @Test
-    public void testRetry() throws Exception {
+  @Ignore("Only for sanity")
+  @Test
+  public void testRetry() throws Exception {
 
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet request = new HttpGet(fullPath);
+    CloseableHttpClient httpClient = HttpClients.createDefault();
+    HttpGet request = new HttpGet(fullPath);
 
-        HttpResponse response = httpClient.execute(request);
-        assertThat(response.getStatusLine().getStatusCode(), is(500));
+    HttpResponse response = httpClient.execute(request);
+    assertThat(response.getStatusLine().getStatusCode(), is(500));
 
-        sleep(1000);
+    sleep(1000);
 
-        response = httpClient.execute(request);
-        assertThat(response.getStatusLine().getStatusCode(), is(200));
-    }
+    response = httpClient.execute(request);
+    assertThat(response.getStatusLine().getStatusCode(), is(200));
+  }
 }

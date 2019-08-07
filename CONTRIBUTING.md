@@ -34,6 +34,7 @@ ISSUE-14 # SSL enabled http client
   1. Please maintain well-formed-ness and consistency for each commit. 
      Avoid including any special chars in the commit messages. Do not make it verbose.
 
+  1. Format the code according to the [code style](#code-style)
   1. Finally, push the commits to your fork and submit a [pull request][].
 
   1. Please join our [mailing-lists][] and [gitter chat room][] for seeking community help.
@@ -47,4 +48,8 @@ Any contribution submitted by an author for inclusion in this repository shall b
 [gitter chat room]: https://gitter.im/zerocode-testing/help-and-usage
 
 
+## Code style
+
+This project compiles with [Google java style](https://google.github.io/styleguide/javaguide.html) for Java source code. 
+Tools for formatting can be downloaded from [google-java-format](https://github.com/google/google-java-format)
 

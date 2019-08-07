@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaProduceAsyncFromFileRawTest {
 
-    @Test
-    @JsonTestCase("kafka/produce/file_produce/test_kafka_produce_async_from_file.json")
-    public void testProduceAnd_asyncFromFile() throws Exception {
-    }
-
+  @Test
+  @JsonTestCase("kafka/produce/file_produce/test_kafka_produce_async_from_file.json")
+  public void testProduceAnd_asyncFromFile() throws Exception {}
 }

@@ -10,6 +10,4 @@ import org.junit.runner.RunWith;
 @TargetEnv("dev_test.properties")
 @TestPackageRoot("01_verification_test_cases")
 @RunWith(TestOnlyZeroCodePackageRunner.class)
-public class ZeroCodePackageRunnerIgnoreTest {
-
-}
+public class ZeroCodePackageRunnerIgnoreTest {}

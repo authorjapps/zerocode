@@ -10,10 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class HelloWorldArrayElementPickerTest {
 
-    @Test
-    @JsonTestCase("helloworld_array_dynamic_element/dynamic_array_element_picker_test.json")
-    public void testArrayDynamicElementPick() throws Exception {
-
-    }
-
+  @Test
+  @JsonTestCase("helloworld_array_dynamic_element/dynamic_array_element_picker_test.json")
+  public void testArrayDynamicElementPick() throws Exception {}
 }

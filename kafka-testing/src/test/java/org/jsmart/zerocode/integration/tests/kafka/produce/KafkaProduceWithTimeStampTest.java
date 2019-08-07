@@ -10,9 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaProduceWithTimeStampTest {
 
-    @Test
-    @JsonTestCase("kafka/produce/test_kafka_produce_with_timestamp.json")
-    public void testProduceWith_timestamp() throws Exception {
-    }
-
+  @Test
+  @JsonTestCase("kafka/produce/test_kafka_produce_with_timestamp.json")
+  public void testProduceWith_timestamp() throws Exception {}
 }

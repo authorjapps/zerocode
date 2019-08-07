@@ -9,6 +9,4 @@ import org.junit.runner.RunWith;
 @LoadWith("load_config_sample.properties")
 @TestMapping(testClass = TestGitGubEndPoint.class, testMethod = "testGitHubGET_load")
 @RunWith(ZeroCodeLoadRunner.class)
-public class LoadGetEndPointTest {
-
-}
+public class LoadGetEndPointTest {}

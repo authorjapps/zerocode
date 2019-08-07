@@ -10,16 +10,11 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class WireMockIntegrationTest {
 
-    @Test
-    @JsonTestCase("wiremock_integration/mock_via_wiremock_then_test_the_end_point.json")
-    public void testWireMock() throws Exception {
+  @Test
+  @JsonTestCase("wiremock_integration/mock_via_wiremock_then_test_the_end_point.json")
+  public void testWireMock() throws Exception {}
 
-    }
-
-    @Test
-    @JsonTestCase("wiremock_integration/wiremock_with_template.json")
-    public void testWireMockWithTemplate() {
-
-    }
+  @Test
+  @JsonTestCase("wiremock_integration/wiremock_with_template.json")
+  public void testWireMockWithTemplate() {}
 }
-

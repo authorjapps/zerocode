@@ -8,6 +8,4 @@ import org.junit.runner.RunWith;
 @TargetEnv("config_hosts.properties")
 @TestPackageRoot("07_some_test_cases")
 @RunWith(TestOnlyZeroCodePackageRunner.class)
-public class SmartPackagedTestCases {
-
-}
+public class SmartPackagedTestCases {}

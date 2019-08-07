@@ -1,5 +1,8 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.univocity.parsers.csv.CsvParser;
 import javax.inject.Inject;
@@ -14,77 +17,75 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 @RunWith(JukitoRunner.class)
 public class ZeroCodeParameterizedProcessorImplTest {
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+  @Rule public ExpectedException expectedException = ExpectedException.none();
 
-    public static class JukitoModule extends TestModule {
-        @Override
-        protected void configureTest() {
-            ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test.properties");
-            install(applicationMainModule);
-        }
+  public static class JukitoModule extends TestModule {
+    @Override
+    protected void configureTest() {
+      ApplicationMainModule applicationMainModule =
+          new ApplicationMainModule("config_hosts_test.properties");
+      install(applicationMainModule);
     }
+  }
 
-    @Inject
-    SmartUtils smartUtils;
+  @Inject SmartUtils smartUtils;
 
-    @Inject
-    private ObjectMapper mapper;
+  @Inject private ObjectMapper mapper;
 
-    @Inject
-    private CsvParser csvParser;
+  @Inject private CsvParser csvParser;
 
+  private ZeroCodeParameterizedProcessorImpl parameterizedProcessor;
 
-    private ZeroCodeParameterizedProcessorImpl parameterizedProcessor;
+  @Before
+  public void setUp() {
+    parameterizedProcessor = new ZeroCodeParameterizedProcessorImpl(mapper, csvParser);
+  }
 
-    @Before
-    public void setUp() {
-        parameterizedProcessor = new ZeroCodeParameterizedProcessorImpl(mapper, csvParser);
-    }
+  @Test
+  public void testProcessParameterized_wrongDsl() throws Exception {
+    String jsonDocumentAsString =
+        smartUtils.getJsonDocumentAsString(
+            "01_unit_test_jsons/12_scenario_parameterized_wrong_dsl.json");
+    ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
-    @Test
-    public void testProcessParameterized_wrongDsl() throws Exception {
-        String jsonDocumentAsString = smartUtils
-                .getJsonDocumentAsString("01_unit_test_jsons/12_scenario_parameterized_wrong_dsl.json");
-        ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+    expectedException.expectMessage("Scenario spec was invalid. Please check the DSL format");
+    ScenarioSpec scenarioSpecResolved =
+        parameterizedProcessor.processParameterized(scenarioSpec, 0);
+  }
 
-        expectedException.expectMessage("Scenario spec was invalid. Please check the DSL format");
-        ScenarioSpec scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 0);
-    }
+  @Test
+  public void testProcessParameterized_values() throws Exception {
+    String jsonDocumentAsString =
+        smartUtils.getJsonDocumentAsString(
+            "01_unit_test_jsons/10_scenario_parameterized_values.json");
+    ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
-    @Test
-    public void testProcessParameterized_values() throws Exception {
-        String jsonDocumentAsString = smartUtils
-                .getJsonDocumentAsString("01_unit_test_jsons/10_scenario_parameterized_values.json");
-        ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+    ScenarioSpec scenarioSpecResolved =
+        parameterizedProcessor.processParameterized(scenarioSpec, 0);
+    assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/hello"));
 
-        ScenarioSpec scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 0);
-        assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/hello"));
+    scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 1);
+    assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/123"));
+  }
 
-        scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 1);
-        assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/123"));
+  @Test
+  public void testProcessParameterized_csv() throws Exception {
+    String jsonDocumentAsString =
+        smartUtils.getJsonDocumentAsString("01_unit_test_jsons/11_scenario_parameterized_csv.json");
+    ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
-    }
+    ScenarioSpec scenarioSpecResolved =
+        parameterizedProcessor.processParameterized(scenarioSpec, 0);
+    assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/1/2"));
+    assertThat(
+        scenarioSpecResolved.getSteps().get(0).getAssertions().get("status").asInt(), is(200));
 
-    @Test
-    public void testProcessParameterized_csv() throws Exception {
-        String jsonDocumentAsString = smartUtils
-                .getJsonDocumentAsString("01_unit_test_jsons/11_scenario_parameterized_csv.json");
-        ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
-
-        ScenarioSpec scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 0);
-        assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/1/2"));
-        assertThat(scenarioSpecResolved.getSteps().get(0).getAssertions().get("status").asInt(), is(200));
-
-        scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 1);
-        assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/11/22"));
-        assertThat(scenarioSpecResolved.getSteps().get(0).getAssertions().get("status").asInt(), is(400));
-
-    }
+    scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 1);
+    assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/11/22"));
+    assertThat(
+        scenarioSpecResolved.getSteps().get(0).getAssertions().get("status").asInt(), is(400));
+  }
 }

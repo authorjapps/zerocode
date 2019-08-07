@@ -10,10 +10,8 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class HelloWorldIgnoreStepFailuresTest {
 
-    // final outcome is Fail, but all steps executed
-    @Test
-    @JsonTestCase("helloworld_ignore_step_failures/ignore_step_failures_exec_all.json")
-    public void testMultiStepIgnoreStepFailures_execAll() throws Exception {
-    }
-
+  // final outcome is Fail, but all steps executed
+  @Test
+  @JsonTestCase("helloworld_ignore_step_failures/ignore_step_failures_exec_all.json")
+  public void testMultiStepIgnoreStepFailures_execAll() throws Exception {}
 }

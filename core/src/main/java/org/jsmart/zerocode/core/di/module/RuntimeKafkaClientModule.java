@@ -6,13 +6,13 @@ import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
 
 public class RuntimeKafkaClientModule implements Module {
 
-    private final Class<? extends BasicKafkaClient> customKafkaClientClazz;
+  private final Class<? extends BasicKafkaClient> customKafkaClientClazz;
 
-    public RuntimeKafkaClientModule(Class<? extends BasicKafkaClient> customKafkaClientClazz) {
-        this.customKafkaClientClazz = customKafkaClientClazz;
-    }
+  public RuntimeKafkaClientModule(Class<? extends BasicKafkaClient> customKafkaClientClazz) {
+    this.customKafkaClientClazz = customKafkaClientClazz;
+  }
 
-    public void configure(Binder binder) {
-        binder.bind(BasicKafkaClient.class).to(customKafkaClientClazz);
-    }
+  public void configure(Binder binder) {
+    binder.bind(BasicKafkaClient.class).to(customKafkaClientClazz);
+  }
 }

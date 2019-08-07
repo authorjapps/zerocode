@@ -8,7 +8,4 @@ import org.junit.runner.RunWith;
 @TargetEnv("dev_test.properties")
 @TestPackageRoot("host_keys")
 @RunWith(TestOnlyZeroCodePackageRunner.class)
-public class PropertiesInStepsPackageRunnerTest {
-
-}
-
+public class PropertiesInStepsPackageRunnerTest {}

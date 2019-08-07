@@ -1,4 +1,3 @@
 package org.jsmart.zerocode.core.domain;
 
-public class QueryParams {
-}
+public class QueryParams {}

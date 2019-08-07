@@ -6,17 +6,17 @@ import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runners.model.InitializationError;
 
 public class NewPortTestZeroCodeUnitRunner extends ZeroCodePackageRunner {
-    SimpleRestJsonSimulatorsMain simulator ;
-    public static final int PORT = 9997;
+  SimpleRestJsonSimulatorsMain simulator;
+  public static final int PORT = 9997;
 
-    public NewPortTestZeroCodeUnitRunner(Class<?> testClass) throws InitializationError {
-        super(testClass);
-        simulator = new SimpleRestJsonSimulatorsMain(PORT);
-        simulator.start();
-    }
+  public NewPortTestZeroCodeUnitRunner(Class<?> testClass) throws InitializationError {
+    super(testClass);
+    simulator = new SimpleRestJsonSimulatorsMain(PORT);
+    simulator.start();
+  }
 
-    public NewPortTestZeroCodeUnitRunner(Class<?> testClass, SmartUtils smartUtils) throws InitializationError {
-        super(testClass, smartUtils);
-    }
-
+  public NewPortTestZeroCodeUnitRunner(Class<?> testClass, SmartUtils smartUtils)
+      throws InitializationError {
+    super(testClass, smartUtils);
+  }
 }

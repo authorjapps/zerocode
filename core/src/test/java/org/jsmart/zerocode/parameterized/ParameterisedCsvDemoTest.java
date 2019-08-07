@@ -10,8 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class ParameterisedCsvDemoTest {
 
-    @Test
-    @JsonTestCase("parameterized/parameterized_sample_csv_test.json")
-    public void testParameterizedCsv() throws Exception {
-    }
+  @Test
+  @JsonTestCase("parameterized/parameterized_sample_csv_test.json")
+  public void testParameterizedCsv() throws Exception {}
 }

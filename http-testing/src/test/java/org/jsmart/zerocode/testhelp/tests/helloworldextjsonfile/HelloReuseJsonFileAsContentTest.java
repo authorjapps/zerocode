@@ -10,19 +10,15 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class HelloReuseJsonFileAsContentTest {
 
-    @Test
-    @JsonTestCase("helloworld_ext_file_json/hello_world_jsonfile_as_request_body.json")
-    public void testHelloWorld_jsonFileAsBody() throws Exception {
-    }
+  @Test
+  @JsonTestCase("helloworld_ext_file_json/hello_world_jsonfile_as_request_body.json")
+  public void testHelloWorld_jsonFileAsBody() throws Exception {}
 
-    @Test
-    @JsonTestCase("helloworld_ext_file_json/hello_world_jsonfile_as_response_body.json")
-    public void testHello_jsonFileAsResponseBody() throws Exception {
-    }
+  @Test
+  @JsonTestCase("helloworld_ext_file_json/hello_world_jsonfile_as_response_body.json")
+  public void testHello_jsonFileAsResponseBody() throws Exception {}
 
-    @Test
-    @JsonTestCase("helloworld_ext_file_json/hello_world_jsonfile_as_part_payload.json")
-    public void testHello_jsonFileAsPartPayload() throws Exception {
-    }
-
+  @Test
+  @JsonTestCase("helloworld_ext_file_json/hello_world_jsonfile_as_part_payload.json")
+  public void testHello_jsonFileAsPartPayload() throws Exception {}
 }

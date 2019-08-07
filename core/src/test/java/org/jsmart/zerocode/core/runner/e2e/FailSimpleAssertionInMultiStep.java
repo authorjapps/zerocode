@@ -6,14 +6,11 @@ import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodeUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@HostProperties(host="http://localhost", port=9998, context = "")
+@HostProperties(host = "http://localhost", port = 9998, context = "")
 @RunWith(TestOnlyZeroCodeUnitRunner.class)
 public class FailSimpleAssertionInMultiStep {
-	
-	@Test
-    @JsonTestCase("19_fail_tests/01_two_step_one_fail.json")
-    public void testFailSimpleAssertionInMultiStep_execAll() throws Exception {
-    	
-    }
-	
+
+  @Test
+  @JsonTestCase("19_fail_tests/01_two_step_one_fail.json")
+  public void testFailSimpleAssertionInMultiStep_execAll() throws Exception {}
 }

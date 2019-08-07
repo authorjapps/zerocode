@@ -23,5 +23,8 @@ before_install:
 #No need for package or install, as there is no use in creating a jar and putting them into local cache. 
 #Making use of the default install and script tag provided by the Travis.
 #Hence the following script is implicit and not needed to be configured.
-#script:
-#   - mvn install -B
+script:
+  - wget https://github.com/google/google-java-format/releases/download/google-java-format-1.7/google-java-format-1.7-all-deps.jar
+  - java -jar google-java-format-1.7-all-deps.jar --set-exit-if-changed -n $(find . -type f -name "*.java")
+  - mvn test -B
+

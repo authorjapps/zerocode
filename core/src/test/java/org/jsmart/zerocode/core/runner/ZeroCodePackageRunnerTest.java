@@ -1,5 +1,10 @@
 package org.jsmart.zerocode.core.runner;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.List;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.TestPackageRoot;
 import org.junit.Before;
@@ -10,101 +15,91 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class ZeroCodePackageRunnerTest {
 
-    ZeroCodePackageRunner zeroCodePackageRunner;
+  ZeroCodePackageRunner zeroCodePackageRunner;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+  @Rule public ExpectedException expectedException = ExpectedException.none();
 
-    @TestPackageRoot("03_test_one_multi_steps")
-    public static class ScenarioTestFlowExampleTest {
-    }
+  @TestPackageRoot("03_test_one_multi_steps")
+  public static class ScenarioTestFlowExampleTest {}
 
-    @Before
-    public void initializeRunner() throws Exception {
-        zeroCodePackageRunner = new ZeroCodePackageRunner(ScenarioTestFlowExampleTest.class);
-    }
+  @Before
+  public void initializeRunner() throws Exception {
+    zeroCodePackageRunner = new ZeroCodePackageRunner(ScenarioTestFlowExampleTest.class);
+  }
 
-    @Test
-    public void willHaveListOf_TestCases_Here() throws Exception {
-        List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
-        assertThat(children.size(), is(2));
-    }
+  @Test
+  public void willHaveListOf_TestCases_Here() throws Exception {
+    List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
+    assertThat(children.size(), is(2));
+  }
 
-    @Test
-    public void willHaveListOf_TestCases_Frompackage() throws Exception {
-        zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExamplePackagePickerClass.class);
-        List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
-        assertThat(children.size(), is(2));
-    }
+  @Test
+  public void willHaveListOf_TestCases_Frompackage() throws Exception {
+    zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExamplePackagePickerClass.class);
+    List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
+    assertThat(children.size(), is(2));
+  }
 
-    @Test
-    public void willComplain_If_Annotation_Missing() throws Exception {
-        expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Annotate your Test Suite class with");
-        expectedException.expectMessage("@TestPackageRoot(");
-        expectedException.expectMessage("@JsonTestCases({");
-        expectedException.expectMessage("usual 'Junit Suite'");
-        zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExampleWithoutAnnotationClass.class);
-        zeroCodePackageRunner.getChildren();
-    }
+  @Test
+  public void willComplain_If_Annotation_Missing() throws Exception {
+    expectedException.expect(RuntimeException.class);
+    expectedException.expectMessage("Annotate your Test Suite class with");
+    expectedException.expectMessage("@TestPackageRoot(");
+    expectedException.expectMessage("@JsonTestCases({");
+    expectedException.expectMessage("usual 'Junit Suite'");
+    zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExampleWithoutAnnotationClass.class);
+    zeroCodePackageRunner.getChildren();
+  }
 
-    @Test
-    public void testCanDescribeAChild_oldFashined() throws Exception {
-        zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExamplePackagePickerClass.class);
+  @Test
+  public void testCanDescribeAChild_oldFashined() throws Exception {
+    zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExamplePackagePickerClass.class);
 
-        List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
-        Description childDescription = zeroCodePackageRunner.describeChild(children.get(0));
+    List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
+    Description childDescription = zeroCodePackageRunner.describeChild(children.get(0));
 
-        assertThat(childDescription.getDisplayName(), containsString("Given_When_Then-Flow name"));
+    assertThat(childDescription.getDisplayName(), containsString("Given_When_Then-Flow name"));
+  }
 
-    }
+  @Test
+  @Ignore
+  public void testCanDescribeAChild_RightClick_And_Runnable() throws Exception {}
 
-    @Test
-    @Ignore
-    public void testCanDescribeAChild_RightClick_And_Runnable() throws Exception {
+  @Test
+  public void testWillFireASingleStep_Child() throws Exception {
+    // Injection done
+    zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExamplePackagePickerClass.class);
 
-    }
+    // Now prepare the steps as if they were run via junit
+    List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
+    zeroCodePackageRunner.describeChild(children.get(0));
+    RunNotifier notifier = new RunNotifier();
+    zeroCodePackageRunner.runChild(children.get(0), notifier);
 
-    @Test
-    public void testWillFireASingleStep_Child() throws Exception {
-        //Injection done
-        zeroCodePackageRunner = new ZeroCodePackageRunner(FlowExamplePackagePickerClass.class);
+    // assertion sections
+    assertThat(zeroCodePackageRunner.testRunCompleted, is(true));
+    assertThat(
+        zeroCodePackageRunner.isPassed(),
+        is(false)); // <--- Not necessary to test as this can change dependeing on test
+  }
 
-        // Now prepare the steps as if they were run via junit
-        List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
-        zeroCodePackageRunner.describeChild(children.get(0));
-        RunNotifier notifier = new RunNotifier();
-        zeroCodePackageRunner.runChild(children.get(0), notifier);
+  @Test
+  public void testWillResolve_PlaceHolders_InASingleStep_Child() throws Exception {
+    // Injection done
+    zeroCodePackageRunner = new ZeroCodePackageRunner(MultiStepWithPlaceHolderTestClass.class);
 
-        //assertion sections
-        assertThat(zeroCodePackageRunner.testRunCompleted, is(true));
-        assertThat(zeroCodePackageRunner.isPassed(), is(false)); //<--- Not necessary to test as this can change dependeing on test
-    }
+    // Now prepare the steps as if they were run via junit
+    List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
+    zeroCodePackageRunner.describeChild(children.get(0));
+    RunNotifier notifier = new RunNotifier();
+    zeroCodePackageRunner.runChild(children.get(0), notifier);
 
-    @Test
-    public void testWillResolve_PlaceHolders_InASingleStep_Child() throws Exception {
-        //Injection done
-        zeroCodePackageRunner = new ZeroCodePackageRunner(MultiStepWithPlaceHolderTestClass.class);
+    // assertion sections
+    assertThat(zeroCodePackageRunner.testRunCompleted, is(true));
+  }
 
-        // Now prepare the steps as if they were run via junit
-        List<ScenarioSpec> children = zeroCodePackageRunner.getChildren();
-        zeroCodePackageRunner.describeChild(children.get(0));
-        RunNotifier notifier = new RunNotifier();
-        zeroCodePackageRunner.runChild(children.get(0), notifier);
-
-        //assertion sections
-        assertThat(zeroCodePackageRunner.testRunCompleted, is(true));
-    }
-
-    @TestPackageRoot("06_test_with_place_holders")
-    public class MultiStepWithPlaceHolderTestClass {
-    }
+  @TestPackageRoot("06_test_with_place_holders")
+  public class MultiStepWithPlaceHolderTestClass {}
 }

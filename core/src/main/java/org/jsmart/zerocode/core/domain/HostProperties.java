@@ -13,8 +13,9 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface HostProperties {
 
-    String host() default "http://localhost";
-    int port() default 8080;
-    String context() default "";
+  String host() default "http://localhost";
 
+  int port() default 8080;
+
+  String context() default "";
 }

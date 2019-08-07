@@ -10,10 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(TestOnlyZeroCodeUnitRunner.class)
 public class ZeroCodeUnitNumberEqualsTest {
 
-    @Test
-    @JsonTestCase("01_verification_test_cases/05_number_equals_test.json")
-    public void willPassIfEqualsToSame_number() throws Exception {
-
-    }
+  @Test
+  @JsonTestCase("01_verification_test_cases/05_number_equals_test.json")
+  public void willPassIfEqualsToSame_number() throws Exception {}
 }
-

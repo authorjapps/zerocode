@@ -13,18 +13,15 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class GitHubSslHttpsTest {
 
-    @Test
-    @JsonTestCase("helloworld_github_REST_api/GitHub_REST_api_sample_assertions.json")
-    public void testGitGubSample_RESTApi() throws Exception {
-    }
+  @Test
+  @JsonTestCase("helloworld_github_REST_api/GitHub_REST_api_sample_assertions.json")
+  public void testGitGubSample_RESTApi() throws Exception {}
 
-    // -------------------------------------------------------------------
-    // This test has been added simply to check whether the same instance
-    // of the custom Http client has been used to invoke the API
-    // -------------------------------------------------------------------
-    @Test
-    @JsonTestCase("helloworld_github_REST_api/GitHub_REST_api_sample_assertions.json")
-    public void testGitHub_GetAgain() throws Exception {
-    }
-
+  // -------------------------------------------------------------------
+  // This test has been added simply to check whether the same instance
+  // of the custom Http client has been used to invoke the API
+  // -------------------------------------------------------------------
+  @Test
+  @JsonTestCase("helloworld_github_REST_api/GitHub_REST_api_sample_assertions.json")
+  public void testGitHub_GetAgain() throws Exception {}
 }

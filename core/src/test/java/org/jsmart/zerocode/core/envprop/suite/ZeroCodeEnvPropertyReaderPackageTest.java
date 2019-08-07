@@ -12,7 +12,5 @@ import org.junit.runner.RunWith;
 @TargetEnv("package_properties/app_config.properties")
 @TestPackageRoot("14_env_prop")
 @RunWith(NewPortTestZeroCodeUnitRunner.class)
-//@RunWith(ZeroCodePackageRunner.class)
-public class ZeroCodeEnvPropertyReaderPackageTest {
-
-}
+// @RunWith(ZeroCodePackageRunner.class)
+public class ZeroCodeEnvPropertyReaderPackageTest {}
