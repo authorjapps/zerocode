@@ -18,8 +18,8 @@ import java.util.concurrent.Executors;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class ZeroCodeExecResultIoWriteBuilder {
-    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeExecResultIoWriteBuilder.class);
+public class ZeroCodeIoWriteBuilder {
+    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeIoWriteBuilder.class);
     public static final int REPORT_WRITING_THREAD_POOL = 5;
 
     private LocalDateTime timeStamp;
@@ -28,8 +28,8 @@ public class ZeroCodeExecResultIoWriteBuilder {
 
     private ExecutorService executorService = Executors.newFixedThreadPool(REPORT_WRITING_THREAD_POOL);
 
-    public static ZeroCodeExecResultIoWriteBuilder newInstance() {
-        return new ZeroCodeExecResultIoWriteBuilder();
+    public static ZeroCodeIoWriteBuilder newInstance() {
+        return new ZeroCodeIoWriteBuilder();
     }
 
     public ZeroCodeReport build() {
@@ -39,17 +39,17 @@ public class ZeroCodeExecResultIoWriteBuilder {
         return built;
     }
 
-    public ZeroCodeExecResultIoWriteBuilder timeStamp(LocalDateTime timeStamp) {
+    public ZeroCodeIoWriteBuilder timeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
         return this;
     }
 
-    public ZeroCodeExecResultIoWriteBuilder results(List<ZeroCodeExecResult> results) {
+    public ZeroCodeIoWriteBuilder results(List<ZeroCodeExecResult> results) {
         this.results = results;
         return this;
     }
 
-    public ZeroCodeExecResultIoWriteBuilder result(ZeroCodeExecResult result) {
+    public ZeroCodeIoWriteBuilder result(ZeroCodeExecResult result) {
         this.results.add(result);
         return this;
     }

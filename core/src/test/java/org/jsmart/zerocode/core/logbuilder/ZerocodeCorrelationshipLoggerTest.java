@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 import static java.time.LocalDateTime.parse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.jsmart.zerocode.core.logbuilder.LogCorrelationshipPrinter.durationMilliSecBetween;
+import static org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger.durationMilliSecBetween;
 
-public class LogCorrelationshipPrinterTest {
+public class ZerocodeCorrelationshipLoggerTest {
 
     @Test
     public void testResponseDelayInMilliSec() throws Exception {

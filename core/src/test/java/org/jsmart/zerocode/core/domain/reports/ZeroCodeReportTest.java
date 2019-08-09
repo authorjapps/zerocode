@@ -3,9 +3,9 @@ package org.jsmart.zerocode.core.domain.reports;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultIoWriteBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportStepBuilder;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -32,9 +32,9 @@ public class ZeroCodeReportTest {
     @Test
     public void willSerialize_ToJson() throws Exception {
 
-        ZeroCodeReport javaBuilt = ZeroCodeExecResultIoWriteBuilder.newInstance()
+        ZeroCodeReport javaBuilt = ZeroCodeIoWriteBuilder.newInstance()
                 .timeStamp(LocalDateTime.now())
-                .results(Arrays.asList(ZeroCodeExecResultBuilder.newInstance()
+                .results(Arrays.asList(ZeroCodeExecReportBuilder.newInstance()
                         .scenarioName("scenario name")
                         .loop(1)
                         .steps(Arrays.asList(ZeroCodeReportStepBuilder.newInstance()

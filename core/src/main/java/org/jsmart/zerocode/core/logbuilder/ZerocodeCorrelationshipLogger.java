@@ -1,5 +1,8 @@
 package org.jsmart.zerocode.core.logbuilder;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportStepBuilder;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 import org.slf4j.Logger;
@@ -14,7 +17,7 @@ import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.R
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TEST_STEP_CORRELATION_ID;
 
-public class LogCorrelationshipPrinter {
+public class ZerocodeCorrelationshipLogger {
     private static final String DISPLAY_DEMARCATION_ = "\n--------- " + TEST_STEP_CORRELATION_ID + " %s ---------";
 
     private Logger logger;
@@ -26,30 +29,37 @@ public class LogCorrelationshipPrinter {
     private Boolean result;
     private Double responseDelay;
 
+    private List<ZeroCodeReportStep> steps = Collections.synchronizedList(new ArrayList());
 
-    public LogCorrelationshipPrinter(Logger logger) {
+    public ZerocodeCorrelationshipLogger step(ZeroCodeReportStep step) {
+        this.steps.add(step);
+        return this;
+    }
+
+
+    public ZerocodeCorrelationshipLogger(Logger logger) {
         this.logger = logger;
     }
 
-    public static LogCorrelationshipPrinter newInstance(Logger logger) {
-        return new LogCorrelationshipPrinter(logger);
+    public static ZerocodeCorrelationshipLogger newInstance(Logger logger) {
+        return new ZerocodeCorrelationshipLogger(logger);
     }
 
     public RequestLogBuilder aRequestBuilder() {
         return requestLogBuilder;
     }
 
-    public LogCorrelationshipPrinter assertion(String assertionJson){
+    public ZerocodeCorrelationshipLogger assertion(String assertionJson){
         responseLogBuilder.assertionSection(assertionJson);
         return this;
     }
 
-    public LogCorrelationshipPrinter stepLoop(Integer stepLoop) {
+    public ZerocodeCorrelationshipLogger stepLoop(Integer stepLoop) {
         this.stepLoop = stepLoop;
         return this;
     }
 
-    public LogCorrelationshipPrinter result(Boolean result) {
+    public ZerocodeCorrelationshipLogger result(Boolean result) {
         this.result = result;
         return this;
     }
@@ -90,20 +100,6 @@ public class LogCorrelationshipPrinter {
         return scenarioLogBuilder;
     }
 
-    public void print() {
-
-        buildResponseDelay();
-
-        logger.info(format("%s %s \n*Response delay:%s milli-secs \n%s \n-done-\n",
-                requestLogBuilder.toString(),
-                responseLogBuilder.toString(),
-                responseDelay,
-                "---------> Assertion: <----------\n" + responseLogBuilder.getAssertion()
-                )
-        );
-
-    }
-
     public void buildResponseDelay() {
         responseDelay = durationMilliSecBetween(
                 requestLogBuilder.getRequestTimeStamp(),
@@ -130,6 +126,17 @@ public class LogCorrelationshipPrinter {
         return correlationId;
     }
 
+    public void print() {
 
+        buildResponseDelay();
+
+        logger.info(format("%s %s \n*Response delay:%s milli-secs \n%s \n-done-\n",
+                requestLogBuilder.toString(),
+                responseLogBuilder.toString(),
+                responseDelay,
+                "---------> Expected Response: <----------\n" + responseLogBuilder.getAssertion()
+                )
+        );
+    }
 
 }

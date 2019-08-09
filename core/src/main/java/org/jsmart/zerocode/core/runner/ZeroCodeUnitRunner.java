@@ -18,14 +18,14 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.UseHttpClient;
 import org.jsmart.zerocode.core.domain.UseKafkaClient;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultIoWriteBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
 import org.jsmart.zerocode.core.kafka.client.ZerocodeCustomKafkaClient;
-import org.jsmart.zerocode.core.logbuilder.LogCorrelationshipPrinter;
+import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.internal.AssumptionViolatedException;
@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.System.getProperty;
-import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
+import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.CHARTS_AND_CSV;
 import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.ZEROCODE_JUNIT;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
@@ -60,7 +60,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private int port;
     private List<String> smartTestCaseNames = new ArrayList<>();
     private String currentTestCase;
-    private LogCorrelationshipPrinter logCorrelationshipPrinter;
+    private ZerocodeCorrelationshipLogger zerocodeCorrelationshipLogger;
     protected boolean testRunCompleted;
     protected boolean passed;
 
@@ -295,31 +295,31 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     private void buildReportAndPrintToFile(Description description) {
-        ZeroCodeExecResultBuilder reportResultBuilder = newInstance().loop(0).scenarioName(description.getClassName());
-        reportResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
+        ZeroCodeExecReportBuilder reportResultBuilder = newInstance().loop(0).scenarioName(description.getClassName());
+        reportResultBuilder.step(zerocodeCorrelationshipLogger.buildReportSingleStep());
 
-        ZeroCodeExecResultIoWriteBuilder reportBuilder = ZeroCodeExecResultIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
+        ZeroCodeIoWriteBuilder reportBuilder = ZeroCodeIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
         reportBuilder.result(reportResultBuilder.build());
-        reportBuilder.printToFile(description.getClassName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
+        reportBuilder.printToFile(description.getClassName() + zerocodeCorrelationshipLogger.getCorrelationId() + ".json");
     }
 
     private void prepareResponseReport(String logPrefixRelationshipId) {
         LocalDateTime timeNow = LocalDateTime.now();
         LOGGER.info("JUnit *responseTimeStamp:{}, \nJUnit Response:{}", timeNow, logPrefixRelationshipId);
-        logCorrelationshipPrinter.aResponseBuilder()
+        zerocodeCorrelationshipLogger.aResponseBuilder()
                 .relationshipId(logPrefixRelationshipId)
                 .responseTimeStamp(timeNow);
 
-        logCorrelationshipPrinter.result(passed);
-        logCorrelationshipPrinter.buildResponseDelay();
+        zerocodeCorrelationshipLogger.result(passed);
+        zerocodeCorrelationshipLogger.buildResponseDelay();
     }
 
     private String prepareRequestReport(Description description) {
-        logCorrelationshipPrinter = LogCorrelationshipPrinter.newInstance(LOGGER);
-        logCorrelationshipPrinter.stepLoop(0);
-        final String logPrefixRelationshipId = logCorrelationshipPrinter.createRelationshipId();
+        zerocodeCorrelationshipLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
+        zerocodeCorrelationshipLogger.stepLoop(0);
+        final String logPrefixRelationshipId = zerocodeCorrelationshipLogger.createRelationshipId();
         LocalDateTime timeNow = LocalDateTime.now();
-        logCorrelationshipPrinter.aRequestBuilder()
+        zerocodeCorrelationshipLogger.aRequestBuilder()
                 .stepLoop(0)
                 .relationshipId(logPrefixRelationshipId)
                 .requestTimeStamp(timeNow)

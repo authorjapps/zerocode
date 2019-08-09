@@ -8,12 +8,11 @@ import com.univocity.parsers.csv.CsvParser;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
-import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.Parameterized;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultIoWriteBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
@@ -22,14 +21,15 @@ import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
-import org.jsmart.zerocode.core.logbuilder.LogCorrelationshipPrinter;
+import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.KAFKA_TOPIC;
-import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
+import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.serviceType;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
@@ -40,7 +40,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private static final Logger LOGGER = getLogger(ZeroCodeMultiStepsScenarioRunnerImpl.class);
 
-    private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
+    @Inject
+    private ObjectMapper objectMapper;
 
     @Inject
     private ZeroCodeAssertionsProcessor zeroCodeAssertionsProcessor;
@@ -75,13 +76,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     //guice -ends
 
-    private LogCorrelationshipPrinter logCorrelationshipPrinter;
+    private ZerocodeCorrelationshipLogger correlLogger;
 
     private static StepNotificationHandler notificationHandler = new StepNotificationHandler();
 
-    private ZeroCodeExecResultIoWriteBuilder reportBuilder;
+    private ZeroCodeIoWriteBuilder ioWriterBuilder;
 
-    private ZeroCodeExecResultBuilder reportResultBuilder;
+    private ZeroCodeExecReportBuilder resultReportBuilder;
 
     private Boolean stepOutcomeGreen;
 
@@ -90,21 +91,19 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         LOGGER.info("\n-------------------------- BDD: Scenario:{} -------------------------\n", scenario.getScenarioName());
 
-        reportBuilder = ZeroCodeExecResultIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
+        ioWriterBuilder = ZeroCodeIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
 
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
-        // ---------------------------------------------------------------------
-        // Override scenario loop count with parameterized value size if present
-        // ---------------------------------------------------------------------
         int scenarioLoopTimes = scenario.getLoop() == null ? 1 : scenario.getLoop();
         int parameterSize = getParameterSize(scenario.getParameterized());
         scenarioLoopTimes = parameterSize != 0 ? parameterSize: scenarioLoopTimes;
 
         for (int scnCount = 0; scnCount < scenarioLoopTimes; scnCount++) {
 
-            LOGGER.info("\n-------------------------------------------------------------------------" +
-                            "\n     Executing Scenario Count No. or parameter No. or Row No. | {} | {}", scnCount,
+            LOGGER.info("{}\n     Executing Scenario Count No. or parameter No. or Row No. | {} | {}",
+                    "\n-------------------------------------------------------------------------",
+                    scnCount,
                     "\n-------------------------------------------------------------------------");
 
             ScenarioSpec parameterizedScenario = parameterizedProcessor.processParameterized(scenario, scnCount);
@@ -112,7 +111,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             // ---------------------------------
             // Build Report scenario for each k
             // ---------------------------------
-            reportResultBuilder = newInstance()
+            resultReportBuilder = newInstance()
                     .loop(scnCount)
                     .scenarioName(parameterizedScenario.getScenarioName());
 
@@ -129,18 +128,15 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 final int stepLoopTimes = thisStep.getLoop() == null ? 1 : thisStep.getLoop();
                 for (int stepCount = 0; stepCount < stepLoopTimes; stepCount++) {
                     LOGGER.info("\n### Executing Step -->> Count No: " + stepCount);
-                    logCorrelationshipPrinter = LogCorrelationshipPrinter.newInstance(LOGGER);
-                    logCorrelationshipPrinter.stepLoop(stepCount);
+                    correlLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
+                    correlLogger.stepLoop(stepCount);
 
                     thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
 
                     String stepId = thisStep.getId();
                     thisStep = extFileProcessor.createFromStepFile(thisStep, stepId);
 
-                    //Step parameterizedStep = parameterizedProcessor.processParameterized(thisStep, i);
-                    Step parameterizedStep = thisStep;
-
-                    final String requestJsonAsString = parameterizedStep.getRequest().toString();
+                    final String requestJsonAsString = thisStep.getRequest().toString();
 
                     StepExecutionState stepExecutionState = new StepExecutionState();
 
@@ -148,7 +144,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                      * Create the step name as it is for the 1st stepLoopTimes i.e. i=0.
                      * Rest of the loops suffix as i ie stepName1, stepName2, stepName3 etc
                      */
-                    final String thisStepName = parameterizedStep.getName() + (stepCount == 0 ? "" : stepCount);
+                    final String thisStepName = thisStep.getName() + (stepCount == 0 ? "" : stepCount);
 
                     stepExecutionState.addStep(thisStepName);
 
@@ -160,7 +156,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                     String executionResult = "-response not decided-";
 
-                    final String logPrefixRelationshipId = logCorrelationshipPrinter.createRelationshipId();
+                    final String logPrefixRelationshipId = correlLogger.createRelationshipId();
 
                     for ( int retryCounter = 0; retryCounter < retryMaxTimes; retryCounter++ ) {
                         try {
@@ -179,7 +175,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             switch (serviceType(serviceName, operationName)) {
                                 case REST_CALL:
                                     serviceName = getFullyQualifiedUrl(serviceName, host, port, applicationContext);
-                                    logCorrelationshipPrinter.aRequestBuilder()
+                                    correlLogger.aRequestBuilder()
                                             .stepLoop(stepCount)
                                             .relationshipId(logPrefixRelationshipId)
                                             .requestTimeStamp(requestTimeStamp)
@@ -193,7 +189,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                     break;
 
                                 case JAVA_CALL:
-                                    logCorrelationshipPrinter.aRequestBuilder()
+                                    correlLogger.aRequestBuilder()
                                             .stepLoop(stepCount)
                                             .relationshipId(logPrefixRelationshipId)
                                             .requestTimeStamp(requestTimeStamp)
@@ -210,8 +206,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                     if (kafkaServers == null) {
                                         throw new RuntimeException(">>> 'kafka.bootstrap.servers' property can not be null for kafka operations");
                                     }
-                                    printBrokerProperties();
-                                    logCorrelationshipPrinter.aRequestBuilder()
+                                    printBrokerProperties(kafkaServers);
+                                    correlLogger.aRequestBuilder()
                                             .stepLoop(stepCount)
                                             .relationshipId(logPrefixRelationshipId)
                                             .requestTimeStamp(requestTimeStamp)
@@ -226,7 +222,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                     break;
 
                                 case NONE:
-                                    logCorrelationshipPrinter.aRequestBuilder()
+                                    correlLogger.aRequestBuilder()
                                             .stepLoop(stepCount)
                                             .relationshipId(logPrefixRelationshipId)
                                             .requestTimeStamp(requestTimeStamp)
@@ -246,7 +242,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                             // logging response
                             final LocalDateTime responseTimeStamp = LocalDateTime.now();
-                            logCorrelationshipPrinter.aResponseBuilder()
+                            correlLogger.aResponseBuilder()
                                     .relationshipId(logPrefixRelationshipId)
                                     .responseTimeStamp(responseTimeStamp)
                                     .response(executionResult);
@@ -278,10 +274,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                 failureResults.forEach(f -> {
                                     builder.append(f.toString() + "\n");
                                 });
-                                logCorrelationshipPrinter.assertion(builder.toString());
+                                correlLogger.assertion(builder.toString());
                             } else {
 
-                                logCorrelationshipPrinter.assertion(prettyPrintJson(resolvedAssertionJson));
+                                correlLogger.assertion(prettyPrintJson(resolvedAssertionJson));
                             }
 
                             if (retryTillSuccess && (retryCounter + 1 < retryMaxTimes) && !failureResults.isEmpty()) {
@@ -310,7 +306,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                         failureResults,
                                         notificationHandler::handleAssertionFailed);
 
-                                logCorrelationshipPrinter.result(stepOutcomeGreen);
+                                correlLogger.result(stepOutcomeGreen);
 
                                 // ---------------------------------------------------------------------
                                 // Make it Green so that the report doesn't get generated again,
@@ -337,7 +333,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                         failureResults,
                                         notificationHandler::handleAssertionFailed);
 
-                                logCorrelationshipPrinter.result(stepOutcomeGreen);
+                                correlLogger.result(stepOutcomeGreen);
 
                                 return stepOutcomeGreen;
                             }
@@ -356,7 +352,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             // Handle assertion section -END
                             // ---------------------------------
 
-                            logCorrelationshipPrinter.result(stepOutcomeGreen);
+                            correlLogger.result(stepOutcomeGreen);
 
                             if (retryTillSuccess) {
                                 LOGGER.info("Retry: Leaving early with successful assertion");
@@ -370,7 +366,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                             // logging exception message
                             final LocalDateTime responseTimeStampEx = LocalDateTime.now();
-                            logCorrelationshipPrinter.aResponseBuilder()
+                            correlLogger.aResponseBuilder()
                                     .relationshipId(logPrefixRelationshipId)
                                     .responseTimeStamp(responseTimeStampEx)
                                     .response(executionResult)
@@ -387,25 +383,25 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                     (new RuntimeException("ZeroCode Step execution failed. Details:" + ex)),
                                     notificationHandler::handleStepException);
 
-                            logCorrelationshipPrinter.result(stepOutcomeGreen);
+                            correlLogger.result(stepOutcomeGreen);
 
                             return stepOutcomeGreen;
 
                         } finally {
-                            logCorrelationshipPrinter.print();
+                            correlLogger.print();
 
                             /*
                              * Build step report for each step
                              * Add the report step to the result step list.
                              */
-                            reportResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
+                            resultReportBuilder.step(correlLogger.buildReportSingleStep());
 
                             /*
                              * FAILED and Exception reports are generated here
                              */
                             if (!stepOutcomeGreen) {
-                                reportBuilder.result(reportResultBuilder.build());
-                                reportBuilder.printToFile(scenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
+                                ioWriterBuilder.result(resultReportBuilder.build());
+                                ioWriterBuilder.printToFile(scenario.getScenarioName() + correlLogger.getCorrelationId() + ".json");
                             }
                         }
                     } //<-- while retry
@@ -414,7 +410,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             } //<--- steps for-each
 
-            reportBuilder.result(reportResultBuilder.build());
+            ioWriterBuilder.result(resultReportBuilder.build());
 
         } //<-- Scenario Loop
 
@@ -427,7 +423,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         /*
          * PASSED reports are generated here
          */
-        reportBuilder.printToFile(scenario.getScenarioName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
+        ioWriterBuilder.printToFile(scenario.getScenarioName() + correlLogger.getCorrelationId() + ".json");
 
         /*
          *  There were no steps to execute and the framework will display the test status as Green than Red.
@@ -472,14 +468,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             wireMockServer = null;
             LOGGER.info("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
         }
-    }
-
-    private void printBrokerProperties() {
-
-        System.out.println("---------------------------------------------------------");
-        System.out.println(String.format("kafka.bootstrap.servers - %s", kafkaServers));
-        System.out.println("---------------------------------------------------------");
-
     }
 
     private int getParameterSize(Parameterized parameterized) {
