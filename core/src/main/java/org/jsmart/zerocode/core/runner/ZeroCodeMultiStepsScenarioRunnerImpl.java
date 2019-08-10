@@ -31,6 +31,7 @@ import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.getParameterSize;
 import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -95,9 +96,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
-        int scenarioLoopTimes = scenario.getLoop() == null ? 1 : scenario.getLoop();
-        int parameterSize = getParameterSize(scenario.getParameterized());
-        scenarioLoopTimes = parameterSize != 0 ? parameterSize : scenarioLoopTimes;
+        int scenarioLoopTimes = deriveScenarioLoopTimes(scenario);
 
         for (int scnCount = 0; scnCount < scenarioLoopTimes; scnCount++) {
 
@@ -491,17 +490,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         }
     }
 
-    private int getParameterSize(Parameterized parameterized) {
-        if (parameterized == null) {
-            return 0;
-        }
-
-        List<Object> valueSource = parameterized.getValueSource();
-        List<String> csvSource = parameterized.getCsvSource();
-
-        return valueSource != null ? valueSource.size() :
-                (csvSource != null ? csvSource.size() : 0);
+    private int deriveScenarioLoopTimes(ScenarioSpec scenario) {
+        int scenarioLoopTimes = scenario.getLoop() == null ? 1 : scenario.getLoop();
+        int parameterSize = getParameterSize(scenario.getParameterized());
+        scenarioLoopTimes = parameterSize != 0 ? parameterSize : scenarioLoopTimes;
+        return scenarioLoopTimes;
     }
-
-
 }
