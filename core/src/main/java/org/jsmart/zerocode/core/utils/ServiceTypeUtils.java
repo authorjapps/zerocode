@@ -7,7 +7,7 @@ import static org.jsmart.zerocode.core.domain.ZerocodeConstants.KAFKA;
 
 public class ServiceTypeUtils {
 
-    public static ServiceType serviceType(String serviceName, String methodName) {
+    public static ServiceType apiType(String serviceName, String methodName) {
         ServiceType serviceType;
 
         if (StringUtils.isEmpty(serviceName) || isEmpty(methodName)) {

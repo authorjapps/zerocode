@@ -41,30 +41,28 @@ public class ZeroCodeMultiStepsScenarioRunnerImplRetryTest {
         assertThat(result.getRunCount(), is(3));
 
         ZeroCodeReport restWithRetryReport = getScenarioReport(SCENARIO_RETRY);
-        // loop: 1, retry-max: 12
+        // loop: 0, retry-max: 12
         // the first attempts fails, the second one succeeds, which ends the retry mechanism
         // note that the first step in all scenarios is the call to wiremock, hence the index starts at 1
         assertStepFailed(restWithRetryReport, 1);
         assertStepSucceeded(restWithRetryReport, 2);
 
-
         ZeroCodeReport restWithRetryWithinLoopReport = getScenarioReport(SCENARIO_RETRY_LOOP);
-        // loop: 2, retry-max: 3
+        // loop: 0, retry-max: 3
         // in the first loop-iteration, the first attempt fails. The second one succeeds, ending this loop-iteration
-        // in the second loop-iteration, the first attempt immediately succeeds, ending the second loop-iteration
         assertStepFailed(restWithRetryReport, 1);
         assertStepSucceeded(restWithRetryWithinLoopReport, 2);
-        assertStepSucceeded(restWithRetryWithinLoopReport, 3);
-        assertStepCount(restWithRetryWithinLoopReport, 4);
+        assertStepCount(restWithRetryWithinLoopReport, 3);
 
         ZeroCodeReport failingRestWithRetryWithinLoopReport = getScenarioReport(SCENARIO_FAILED_RETRY_LOOP);
-        // loop: 2, retry-max: 3
+        // loop: 0, retry-max: 3
         // all requests fail: it retries 3 times in the first loop-iteration
         // This makes the first loop-iteration fail, so the second is not executed
         // so we expect to see only 3 failed attempts
         assertStepFailed(failingRestWithRetryWithinLoopReport, 1);
         assertStepFailed(failingRestWithRetryWithinLoopReport, 2);
         assertStepFailed(failingRestWithRetryWithinLoopReport, 3);
+
         assertStepCount(failingRestWithRetryWithinLoopReport, 4);
 
     }

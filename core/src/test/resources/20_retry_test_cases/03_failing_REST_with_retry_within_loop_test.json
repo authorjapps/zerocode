@@ -24,7 +24,6 @@
       }
     },
     {
-      "loop": 2,
       "retry": {"max": 3, "delay": 0},
       "name": "GetFailingRequest",
       "url": "http://localhost:8888/retry/003",

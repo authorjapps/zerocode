@@ -62,7 +62,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
     }
 
     @Override
-    public ScenarioSpec processParameterized(ScenarioSpec scenario, int iteration) {
+    public ScenarioSpec resolveParameterized(ScenarioSpec scenario, int iteration) {
 
         if(scenario.getParameterized() == null){
 

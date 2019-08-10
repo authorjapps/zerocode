@@ -55,7 +55,7 @@ public class ZeroCodeParameterizedProcessorImplTest {
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         expectedException.expectMessage("Scenario spec was invalid. Please check the DSL format");
-        ScenarioSpec scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 0);
+        ScenarioSpec scenarioSpecResolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 0);
     }
 
     @Test
@@ -64,10 +64,10 @@ public class ZeroCodeParameterizedProcessorImplTest {
                 .getJsonDocumentAsString("01_unit_test_jsons/10_scenario_parameterized_values.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
-        ScenarioSpec scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 0);
+        ScenarioSpec scenarioSpecResolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 0);
         assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/hello"));
 
-        scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 1);
+        scenarioSpecResolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 1);
         assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/123"));
 
     }
@@ -78,11 +78,11 @@ public class ZeroCodeParameterizedProcessorImplTest {
                 .getJsonDocumentAsString("01_unit_test_jsons/11_scenario_parameterized_csv.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
-        ScenarioSpec scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 0);
+        ScenarioSpec scenarioSpecResolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 0);
         assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/1/2"));
         assertThat(scenarioSpecResolved.getSteps().get(0).getAssertions().get("status").asInt(), is(200));
 
-        scenarioSpecResolved = parameterizedProcessor.processParameterized(scenarioSpec, 1);
+        scenarioSpecResolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 1);
         assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/11/22"));
         assertThat(scenarioSpecResolved.getSteps().get(0).getAssertions().get("status").asInt(), is(400));
 

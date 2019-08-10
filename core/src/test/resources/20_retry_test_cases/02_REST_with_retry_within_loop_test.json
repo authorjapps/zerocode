@@ -26,7 +26,6 @@
       }
     },
     {
-      "loop": 2,
       "retry": {"max": 3, "delay": 1000},
       "name": "GetDatesRequest",
       "url": "http://localhost:8888/retry/002",

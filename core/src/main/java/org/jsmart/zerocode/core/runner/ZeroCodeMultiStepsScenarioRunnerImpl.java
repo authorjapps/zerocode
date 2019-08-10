@@ -31,7 +31,7 @@ import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
-import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.serviceType;
+import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -53,7 +53,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     private ZeroCodeParameterizedProcessor parameterizedProcessor;
 
     @Inject
-    private ApiServiceExecutor serviceExecutor;
+    private ApiServiceExecutor apiExecutor;
 
     @Inject
     private CsvParser csvParser;
@@ -106,23 +106,24 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     scnCount,
                     "\n-------------------------------------------------------------------------");
 
-            ScenarioSpec parameterizedScenario = parameterizedProcessor.processParameterized(scenario, scnCount);
+            ScenarioSpec parameterizedScenario = parameterizedProcessor.resolveParameterized(scenario, scnCount);
 
-            // ---------------------------------
-            // Build Report scenario for each k
-            // ---------------------------------
+            // ---------------------------------------
+            // Build Report scenario for each scnCount
+            // ---------------------------------------
             resultReportBuilder = newInstance()
                     .loop(scnCount)
                     .scenarioName(parameterizedScenario.getScenarioName());
 
             boolean didPass = executeSteps(notifier, description, scenarioExecutionState, parameterizedScenario);
+
             if (didPass) {
                 return stepOutcomeGreen;
             }
 
             ioWriterBuilder.result(resultReportBuilder.build());
 
-        } //<-- Scenario Loop
+        }
 
         /*
          * Completed executing all steps?
@@ -151,56 +152,23 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         for (Step thisStep : parameterizedScenario.getSteps()) {
 
-            final int stepLoopTimes = thisStep.getLoop() == null ? 1 : thisStep.getLoop();
-            for (int stepCount = 0; stepCount < stepLoopTimes; stepCount++) {
-                LOGGER.info("\n### Executing Step -->> Count No: " + stepCount);
-                correlLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
-                correlLogger.stepLoop(stepCount);
+            correlLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
 
-                thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
+            thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
+            thisStep = extFileProcessor.createFromStepFile(thisStep, thisStep.getId());
 
-                String stepId = thisStep.getId();
-                thisStep = extFileProcessor.createFromStepFile(thisStep, stepId);
+            Boolean didPass = executeRetry(notifier,
+                    description,
+                    scenarioExecutionState,
+                    scenario,
+                    thisStep);
 
-                final String requestJsonAsString = thisStep.getRequest().toString();
+            if (didPass != null) {
+                return didPass;
+            }
 
-                StepExecutionState stepExecutionState = new StepExecutionState();
+        }
 
-                /*
-                 * Create the step name as it is for the 1st stepLoopTimes i.e. i=0.
-                 * Rest of the loops suffix as i ie stepName1, stepName2, stepName3 etc
-                 */
-                final String thisStepName = thisStep.getName() + (stepCount == 0 ? "" : stepCount);
-
-                stepExecutionState.addStep(thisStepName);
-
-                String resolvedRequestJson = zeroCodeAssertionsProcessor.resolveStringJson(
-                        requestJsonAsString,
-                        scenarioExecutionState.getResolvedScenarioState()
-                );
-                stepExecutionState.addRequest(resolvedRequestJson);
-
-                String executionResult = "-response not decided-";
-
-                final String logPrefixRelationshipId = correlLogger.createRelationshipId();
-
-                Boolean didPass = executeRetry(notifier,
-                        description,
-                        scenarioExecutionState,
-                        scenario, thisStep,
-                        stepCount,
-                        stepId,
-                        stepExecutionState,
-                        resolvedRequestJson,
-                        executionResult,
-                        logPrefixRelationshipId);
-                if (didPass != null) {
-                    return didPass;
-                }
-
-            } //<-- for each step-stepLoopTimes
-
-        } //<--- steps for-each
         return false;
     }
 
@@ -208,14 +176,26 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                  Description description,
                                  ScenarioExecutionState scenarioExecutionState,
                                  ScenarioSpec scenario,
-                                 Step thisStep,
-                                 int stepCount,
-                                 String stepId,
-                                 StepExecutionState stepExecutionState,
-                                 String resolvedRequestJson,
-                                 String executionResult,
-                                 String logPrefixRelationshipId) {
+                                 Step thisStep) {
 
+        final String logPrefixRelationshipId = correlLogger.createRelationshipId();
+        String executionResult = "-response not decided-";
+        String stepId = thisStep.getId();
+
+        // --------------------------------------
+        // Save step execution state in a context
+        // --------------------------------------
+        final String requestJsonAsString = thisStep.getRequest().toString();
+        StepExecutionState stepExecutionState = new StepExecutionState();
+        stepExecutionState.addStep(thisStep.getName());
+        String resolvedRequestJson = zeroCodeAssertionsProcessor.resolveStringJson(
+                requestJsonAsString,
+                scenarioExecutionState.getResolvedScenarioState());
+        stepExecutionState.addRequest(resolvedRequestJson);
+
+        // -----------------------
+        // Handle retry mechanism
+        // -----------------------
         boolean retryTillSuccess = false;
         int retryDelay = 0;
         int retryMaxTimes = 1;
@@ -229,46 +209,44 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         for (int retryCounter = 0; retryCounter < retryMaxTimes; retryCounter++) {
             try {
-                String serviceName = thisStep.getUrl();
+                String url = thisStep.getUrl();
                 String operationName = thisStep.getOperation();
 
                 // --------------------------------
                 // Resolve the URL patterns if any
                 // --------------------------------
-                serviceName = zeroCodeAssertionsProcessor.resolveStringJson(
-                        serviceName,
+                url = zeroCodeAssertionsProcessor.resolveStringJson(
+                        url,
                         scenarioExecutionState.getResolvedScenarioState()
                 );
 
                 final LocalDateTime requestTimeStamp = LocalDateTime.now();
-                switch (serviceType(serviceName, operationName)) {
+                switch (apiType(url, operationName)) {
                     case REST_CALL:
-                        serviceName = getFullyQualifiedUrl(serviceName, host, port, applicationContext);
+                        url = getFullyQualifiedUrl(url, host, port, applicationContext);
                         correlLogger.aRequestBuilder()
-                                .stepLoop(stepCount)
                                 .relationshipId(logPrefixRelationshipId)
                                 .requestTimeStamp(requestTimeStamp)
                                 .step(thisStepName)
-                                .url(serviceName)
+                                .url(url)
                                 .method(operationName)
                                 .id(stepId)
                                 .request(prettyPrintJson(resolvedRequestJson));
 
-                        executionResult = serviceExecutor.executeHttpApi(serviceName, operationName, resolvedRequestJson);
+                        executionResult = apiExecutor.executeHttpApi(url, operationName, resolvedRequestJson);
                         break;
 
                     case JAVA_CALL:
                         correlLogger.aRequestBuilder()
-                                .stepLoop(stepCount)
                                 .relationshipId(logPrefixRelationshipId)
                                 .requestTimeStamp(requestTimeStamp)
                                 .step(thisStepName)
                                 .id(stepId)
-                                .url(serviceName)
+                                .url(url)
                                 .method(operationName)
                                 .request(prettyPrintJson(resolvedRequestJson));
 
-                        executionResult = serviceExecutor.executeJavaOperation(serviceName, operationName, resolvedRequestJson);
+                        executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJson);
                         break;
 
                     case KAFKA_CALL:
@@ -277,27 +255,25 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         }
                         printBrokerProperties(kafkaServers);
                         correlLogger.aRequestBuilder()
-                                .stepLoop(stepCount)
                                 .relationshipId(logPrefixRelationshipId)
                                 .requestTimeStamp(requestTimeStamp)
                                 .step(thisStepName)
-                                .url(serviceName)
+                                .url(url)
                                 .method(operationName)
                                 .id(stepId)
                                 .request(prettyPrintJson(resolvedRequestJson));
 
-                        String topicName = serviceName.substring(KAFKA_TOPIC.length());
-                        executionResult = serviceExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJson);
+                        String topicName = url.substring(KAFKA_TOPIC.length());
+                        executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJson);
                         break;
 
                     case NONE:
                         correlLogger.aRequestBuilder()
-                                .stepLoop(stepCount)
                                 .relationshipId(logPrefixRelationshipId)
                                 .requestTimeStamp(requestTimeStamp)
                                 .step(thisStepName)
                                 .id(stepId)
-                                .url(serviceName)
+                                .url(url)
                                 .method(operationName)
                                 .request(prettyPrintJson(resolvedRequestJson));
 
@@ -473,7 +449,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     ioWriterBuilder.printToFile(scenario.getScenarioName() + correlLogger.getCorrelationId() + ".json");
                 }
             }
-        } //<-- while retry
+        }
         return null;
     }
 
