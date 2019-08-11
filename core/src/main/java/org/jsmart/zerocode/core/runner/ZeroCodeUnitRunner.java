@@ -60,7 +60,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private int port;
     private List<String> smartTestCaseNames = new ArrayList<>();
     private String currentTestCase;
-    private ZerocodeCorrelationshipLogger zerocodeCorrelationshipLogger;
+    private ZerocodeCorrelationshipLogger corrLogger;
     protected boolean testRunCompleted;
     protected boolean passed;
 
@@ -296,30 +296,30 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     private void buildReportAndPrintToFile(Description description) {
         ZeroCodeExecReportBuilder reportResultBuilder = newInstance().loop(0).scenarioName(description.getClassName());
-        reportResultBuilder.step(zerocodeCorrelationshipLogger.buildReportSingleStep());
+        reportResultBuilder.step(corrLogger.buildReportSingleStep());
 
         ZeroCodeIoWriteBuilder reportBuilder = ZeroCodeIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
         reportBuilder.result(reportResultBuilder.build());
-        reportBuilder.printToFile(description.getClassName() + zerocodeCorrelationshipLogger.getCorrelationId() + ".json");
+        reportBuilder.printToFile(description.getClassName() + corrLogger.getCorrelationId() + ".json");
     }
 
     private void prepareResponseReport(String logPrefixRelationshipId) {
         LocalDateTime timeNow = LocalDateTime.now();
         LOGGER.info("JUnit *responseTimeStamp:{}, \nJUnit Response:{}", timeNow, logPrefixRelationshipId);
-        zerocodeCorrelationshipLogger.aResponseBuilder()
+        corrLogger.aResponseBuilder()
                 .relationshipId(logPrefixRelationshipId)
                 .responseTimeStamp(timeNow);
 
-        zerocodeCorrelationshipLogger.result(passed);
-        zerocodeCorrelationshipLogger.buildResponseDelay();
+        corrLogger.stepOutcome(passed);
+        corrLogger.buildResponseDelay();
     }
 
     private String prepareRequestReport(Description description) {
-        zerocodeCorrelationshipLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
-        zerocodeCorrelationshipLogger.stepLoop(0);
-        final String logPrefixRelationshipId = zerocodeCorrelationshipLogger.createRelationshipId();
+        corrLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
+        corrLogger.stepLoop(0);
+        final String logPrefixRelationshipId = corrLogger.createRelationshipId();
         LocalDateTime timeNow = LocalDateTime.now();
-        zerocodeCorrelationshipLogger.aRequestBuilder()
+        corrLogger.aRequestBuilder()
                 .stepLoop(0)
                 .relationshipId(logPrefixRelationshipId)
                 .requestTimeStamp(timeNow)

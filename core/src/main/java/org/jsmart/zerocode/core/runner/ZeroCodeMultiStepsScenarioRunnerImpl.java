@@ -8,7 +8,6 @@ import com.univocity.parsers.csv.CsvParser;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
-import org.jsmart.zerocode.core.domain.Parameterized;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
@@ -337,9 +336,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     stepOutcomeGreen = true;
                     continue;
                 }
-                // --------------------------------------------------------------------------------
-                // Non dependent requests into a single JSON file (Issue-167 - Feature Implemented)
-                // --------------------------------------------------------------------------------
+                // -------------------
+                // ignoreStepFailures
+                // -------------------
                 boolean ignoreStepFailures = scenario.getIgnoreStepFailures() == null ? false : scenario.getIgnoreStepFailures();
                 if (ignoreStepFailures == true && !failureResults.isEmpty()) {
                     stepOutcomeGreen = notificationHandler.handleAssertion(
@@ -350,7 +349,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             failureResults,
                             notificationHandler::handleAssertionFailed);
 
-                    correlLogger.result(stepOutcomeGreen);
+                    correlLogger.stepOutcome(stepOutcomeGreen);
 
                     // ---------------------------------------------------------------------
                     // Make it Green so that the report doesn't get generated again,
@@ -377,7 +376,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             failureResults,
                             notificationHandler::handleAssertionFailed);
 
-                    correlLogger.result(stepOutcomeGreen);
+                    correlLogger.stepOutcome(stepOutcomeGreen);
 
                     return true;
                 }
@@ -396,7 +395,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 // Handle assertion section -END
                 // ---------------------------------
 
-                correlLogger.result(stepOutcomeGreen);
+                correlLogger.stepOutcome(stepOutcomeGreen);
 
                 if (retryTillSuccess) {
                     LOGGER.info("Retry: Leaving early with successful assertion");
@@ -427,7 +426,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         (new RuntimeException("ZeroCode Step execution failed. Details:" + ex)),
                         notificationHandler::handleStepException);
 
-                correlLogger.result(stepOutcomeGreen);
+                correlLogger.stepOutcome(stepOutcomeGreen);
 
                 return true;
 
@@ -436,7 +435,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                 /*
                  * Build step report for each step
-                 * Add the report step to the result step list.
+                 * Add the report step to the stepOutcome step list.
                  */
                 resultReportBuilder.step(correlLogger.buildReportSingleStep());
 

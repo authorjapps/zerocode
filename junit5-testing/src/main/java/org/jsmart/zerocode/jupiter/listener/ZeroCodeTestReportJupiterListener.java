@@ -35,7 +35,7 @@ public class ZeroCodeTestReportJupiterListener implements TestExecutionListener 
     private final String testMethod;
     private String testDescription;
 
-    private ZerocodeCorrelationshipLogger correlationshipPrettyLogger;
+    private ZerocodeCorrelationshipLogger corrLogger;
     private String logPrefixRelationshipId;
     private boolean passed=true;
 
@@ -64,11 +64,11 @@ public class ZeroCodeTestReportJupiterListener implements TestExecutionListener 
     }
 
     private String prepareRequestReport(String description) {
-        correlationshipPrettyLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
-        correlationshipPrettyLogger.stepLoop(0);
-        final String logPrefixRelationshipId = correlationshipPrettyLogger.createRelationshipId();
+        corrLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
+        corrLogger.stepLoop(0);
+        final String logPrefixRelationshipId = corrLogger.createRelationshipId();
         LocalDateTime timeNow = now();
-        correlationshipPrettyLogger.aRequestBuilder()
+        corrLogger.aRequestBuilder()
                 .stepLoop(0)
                 .relationshipId(logPrefixRelationshipId)
                 .requestTimeStamp(timeNow)
@@ -80,21 +80,21 @@ public class ZeroCodeTestReportJupiterListener implements TestExecutionListener 
     private void prepareResponseReport(String logPrefixRelationshipId) {
         LocalDateTime timeNow = now();
         LOGGER.info("JUnit5 *responseTimeStamp:{}, \nJUnit Response:{}", timeNow, logPrefixRelationshipId);
-        correlationshipPrettyLogger.aResponseBuilder()
+        corrLogger.aResponseBuilder()
                 .relationshipId(logPrefixRelationshipId)
                 .responseTimeStamp(timeNow);
-        correlationshipPrettyLogger.result(passed);
-        correlationshipPrettyLogger.buildResponseDelay();
+        corrLogger.stepOutcome(passed);
+        corrLogger.buildResponseDelay();
     }
 
     private void buildReportAndPrintToFile(String description) {
         ZeroCodeExecReportBuilder reportResultBuilder = newInstance().loop(0).scenarioName(testClass.getName());
-        reportResultBuilder.step(correlationshipPrettyLogger.buildReportSingleStep());
+        reportResultBuilder.step(corrLogger.buildReportSingleStep());
 
         ZeroCodeIoWriteBuilder reportBuilder = ZeroCodeIoWriteBuilder.newInstance().timeStamp(now());
         reportBuilder.result(reportResultBuilder.build());
 
-        reportBuilder.printToFile(description + correlationshipPrettyLogger.getCorrelationId() + ".json");
+        reportBuilder.printToFile(description + corrLogger.getCorrelationId() + ".json");
     }
 
 }

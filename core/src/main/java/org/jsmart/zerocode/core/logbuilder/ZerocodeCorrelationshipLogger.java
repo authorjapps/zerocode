@@ -59,7 +59,7 @@ public class ZerocodeCorrelationshipLogger {
         return this;
     }
 
-    public ZerocodeCorrelationshipLogger result(Boolean result) {
+    public ZerocodeCorrelationshipLogger stepOutcome(Boolean result) {
         this.result = result;
         return this;
     }
