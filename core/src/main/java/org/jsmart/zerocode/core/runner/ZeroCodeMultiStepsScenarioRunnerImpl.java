@@ -31,7 +31,7 @@ import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMock
 import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getParameterSize;
-import static org.jsmart.zerocode.core.utils.ServiceTypeUtils.apiType;
+import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -113,9 +113,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     .loop(scnCount)
                     .scenarioName(parameterizedScenario.getScenarioName());
 
-            boolean didPass = executeSteps(notifier, description, scenarioExecutionState, parameterizedScenario);
+            boolean wasExecSuccessful = executeSteps(notifier, description, scenarioExecutionState, parameterizedScenario);
 
-            if (didPass) {
+            if (wasExecSuccessful) {
                 return stepOutcomeGreen;
             }
 
@@ -155,14 +155,14 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
             thisStep = extFileProcessor.createFromStepFile(thisStep, thisStep.getId());
 
-            Boolean didPass = executeRetry(notifier,
+            Boolean wasExecSuccess = executeRetry(notifier,
                     description,
                     scenarioExecutionState,
                     scenario,
                     thisStep);
 
-            if (didPass != null) {
-                return didPass;
+            if (wasExecSuccess != null) {
+                return wasExecSuccess;
             }
 
         }
@@ -254,46 +254,14 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             "        Retry: Attempt number: {}", retryCounter + 2 +
                             "\n---------------------------------------\n");
                     waitForDelay(retryDelay);
-                    // ---------------------------------------------------------------------
-                    // Make it Green so that the report doesn't get generated again in the
-                    // finally block i.e. printToFile(). Once the scenario
-                    // get executed all reports(passed n failed) printed to file at once
-                    // ---------------------------------------------------------------------
+
+                    // Set stepOutcomeGreen to true - Not to write report at finally with printToFile().
                     stepOutcomeGreen = true;
                     continue;
                 }
-                // -------------------
-                // ignoreStepFailures
-                // -------------------
+
                 boolean ignoreStepFailures = scenario.getIgnoreStepFailures() == null ? false : scenario.getIgnoreStepFailures();
-                if (ignoreStepFailures == true && !failureResults.isEmpty()) {
-                    stepOutcomeGreen = notificationHandler.handleAssertion(
-                            notifier,
-                            description,
-                            scenario.getScenarioName(),
-                            thisStepName,
-                            failureResults,
-                            notificationHandler::handleAssertionFailed);
-
-                    correlLogger.stepOutcome(stepOutcomeGreen);
-
-                    // ---------------------------------------------------------------------
-                    // Make it Green so that the report doesn't get generated again,
-                    // in the finally block i.e. printToFile. Once the scenario
-                    // get executed all reports(passed n failed) printed to file at once
-                    // ---------------------------------------------------------------------
-                    stepOutcomeGreen = true;
-
-                    // ---------------------------------------------------------------------
-                    // Do not stop execution after this step.
-                    // Continue to the next step after printing/logging the failure report.
-                    // ---------------------------------------------------------------------
-                    continue;
-                }
                 if (!failureResults.isEmpty()) {
-                    /*
-                     * Step failed
-                     */
                     stepOutcomeGreen = notificationHandler.handleAssertion(
                             notifier,
                             description,
@@ -303,13 +271,23 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                             notificationHandler::handleAssertionFailed);
 
                     correlLogger.stepOutcome(stepOutcomeGreen);
+
+                    if(ignoreStepFailures == true){
+                        // ---------------------------------------------------------------------
+                        // Make it Green so that the report doesn't get generated again,
+                        // in the finally block i.e. printToFile. Once the scenario
+                        // get executed all reports(passed n failed) printed to file at once
+                        // ---------------------------------------------------------------------
+                        stepOutcomeGreen = true;
+
+                        // Do not stop execution. Continue to the next step
+                        continue;
+                    }
 
                     return true;
                 }
 
-                /*
-                 * Test step stepOutcomeGreen
-                 */
+                // Handle PASS cases
                 stepOutcomeGreen = notificationHandler.handleAssertion(
                         notifier,
                         description,
@@ -341,9 +319,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .response(executionResult)
                         .exceptionMessage(ex.getMessage());
 
-                /*
-                 * Step threw an exception
-                 */
+                // Step threw an exception. Handle Exception cases
                 stepOutcomeGreen = notificationHandler.handleAssertion(
                         notifier,
                         description,
@@ -374,6 +350,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 }
             }
         }
+
         return null;
     }
 

@@ -5,26 +5,26 @@ import org.apache.commons.lang.StringUtils;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.KAFKA;
 
-public class ServiceTypeUtils {
+public class ApiTypeUtils {
 
-    public static ServiceType apiType(String serviceName, String methodName) {
-        ServiceType serviceType;
+    public static ApiType apiType(String serviceName, String methodName) {
+        ApiType apiType;
 
         if (StringUtils.isEmpty(serviceName) || isEmpty(methodName)) {
-            serviceType = ServiceType.NONE;
+            apiType = ApiType.NONE;
 
         } else if (serviceName != null && serviceName.contains("/")) {
-            serviceType = ServiceType.REST_CALL;
+            apiType = ApiType.REST_CALL;
 
         } else if (serviceName != null && serviceName.contains(KAFKA)) {
-            serviceType = ServiceType.KAFKA_CALL;
+            apiType = ApiType.KAFKA_CALL;
 
         } else {
-            serviceType = ServiceType.JAVA_CALL;
+            apiType = ApiType.JAVA_CALL;
 
         }
 
-        return serviceType;
+        return apiType;
     }
 
 }

@@ -56,7 +56,7 @@ public class StepNotificationHandler {
                     String scenarioName,
                     String stepName,
                     List<FieldAssertionMatcher> failureReportList) {
-        LOGGER.info(String.format("\n***Step PASSED:%s->%s", scenarioName, stepName));
+        LOGGER.info("\n***Step PASSED - Scenario:{} -> {}", scenarioName, stepName);
         
         return true;
     }
