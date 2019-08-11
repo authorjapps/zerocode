@@ -97,6 +97,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         int scenarioLoopTimes = deriveScenarioLoopTimes(scenario);
 
+        boolean wasExecSuccessful = false;
+
         for (int scnCount = 0; scnCount < scenarioLoopTimes; scnCount++) {
 
             LOGGER.info("{}\n     Executing Scenario Count No. or parameter No. or Row No. | {} | {}",
@@ -106,37 +108,27 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             ScenarioSpec parameterizedScenario = parameterizedProcessor.resolveParameterized(scenario, scnCount);
 
-            // ---------------------------------------
-            // Build Report scenario for each scnCount
-            // ---------------------------------------
             resultReportBuilder = newInstance()
                     .loop(scnCount)
                     .scenarioName(parameterizedScenario.getScenarioName());
 
-            boolean wasExecSuccessful = executeSteps(notifier, description, scenarioExecutionState, parameterizedScenario);
-
-            if (wasExecSuccessful) {
-                return stepOutcomeGreen;
-            }
+            wasExecSuccessful = executeSteps(notifier, description, scenarioExecutionState, parameterizedScenario);
 
             ioWriterBuilder.result(resultReportBuilder.build());
-
         }
 
-        /*
-         * Completed executing all steps?
-         * Then stop the wiremock server, so that its ready for next scenario.
-         */
-        stopWireMockServer();
+        stopIfWireMockServerRunning();
 
-        /*
-         * PASSED reports are generated here
-         */
         ioWriterBuilder.printToFile(scenario.getScenarioName() + correlLogger.getCorrelationId() + ".json");
+
+        if (wasExecSuccessful) {
+            return stepOutcomeGreen;
+        }
 
         /*
          *  There were no steps to execute and the framework will display the test status as Green than Red.
          *  Red symbolises failure, but nothing has failed here.
+         *  This behaviour can be changed if user demands by doing 'return false'.
          */
         return true;
     }
@@ -164,7 +156,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             if (wasExecSuccess != null) {
                 return wasExecSuccess;
             }
-
         }
 
         return false;
@@ -272,22 +263,24 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                     correlLogger.stepOutcome(stepOutcomeGreen);
 
-                    if(ignoreStepFailures == true){
+                    if (ignoreStepFailures == true) {
                         // ---------------------------------------------------------------------
                         // Make it Green so that the report doesn't get generated again,
-                        // in the finally block i.e. printToFile. Once the scenario
-                        // get executed all reports(passed n failed) printed to file at once
+                        // in the finally block i.e. printToFile. Once the scenario completes
+                        // execution, all reports(passed n failed) wriitten to file at once.
                         // ---------------------------------------------------------------------
                         stepOutcomeGreen = true;
 
-                        // Do not stop execution. Continue to the next step
+                        // Do not stop execution. Force-continue to the next step
                         continue;
                     }
 
                     return true;
                 }
 
+                // -----------------
                 // Handle PASS cases
+                // -----------------
                 stepOutcomeGreen = notificationHandler.handleAssertion(
                         notifier,
                         description,
@@ -335,18 +328,16 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             } finally {
                 correlLogger.print();
 
-                /*
-                 * Build step report for each step
-                 * Add the report step to the stepOutcome step list.
-                 */
+                // Build step report for each step. Add the report step to the step list.
                 resultReportBuilder.step(correlLogger.buildReportSingleStep());
 
                 /*
                  * FAILED and Exception reports are generated here
+                 * TODO- Remove this block in the future release - After testing exception cases
                  */
                 if (!stepOutcomeGreen) {
-                    ioWriterBuilder.result(resultReportBuilder.build());
-                    ioWriterBuilder.printToFile(scenario.getScenarioName() + correlLogger.getCorrelationId() + ".json");
+                    //ioWriterBuilder.result(resultReportBuilder.build());
+                    //ioWriterBuilder.printToFile(scenario.getScenarioName() + correlLogger.getCorrelationId() + ".json");
                 }
             }
         }
@@ -433,7 +424,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 break;
 
             default:
-                throw new RuntimeException("Oops! Service Type Undecided. If it is intentional, " +
+                throw new RuntimeException("Oops! API Type Undecided. If it is intentional, " +
                         "then keep the value as empty to receive the request in the response");
         }
 
@@ -470,7 +461,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         this.applicationContext = applicationContext;
     }
 
-    private void stopWireMockServer() {
+    private void stopIfWireMockServerRunning() {
         if (null != wireMockServer) {
             wireMockServer.stop();
             wireMockServer = null;
