@@ -177,8 +177,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                  Step thisStep) {
 
         final String logPrefixRelationshipId = correlLogger.createRelationshipId();
-        String executionResult = "-response not decided-";
-        String stepId = thisStep.getId();
+        String executionResult = "-response unavailable-";
 
         // --------------------------------------
         // Save step execution state in a context
@@ -207,81 +206,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
         for (int retryCounter = 0; retryCounter < retryMaxTimes; retryCounter++) {
             try {
-                String url = thisStep.getUrl();
-                String operationName = thisStep.getOperation();
 
-                // --------------------------------
-                // Resolve the URL patterns if any
-                // --------------------------------
-                url = zeroCodeAssertionsProcessor.resolveStringJson(
-                        url,
-                        scenarioExecutionState.getResolvedScenarioState()
-                );
-
-                final LocalDateTime requestTimeStamp = LocalDateTime.now();
-                switch (apiType(url, operationName)) {
-                    case REST_CALL:
-                        url = getFullyQualifiedUrl(url, host, port, applicationContext);
-                        correlLogger.aRequestBuilder()
-                                .relationshipId(logPrefixRelationshipId)
-                                .requestTimeStamp(requestTimeStamp)
-                                .step(thisStepName)
-                                .url(url)
-                                .method(operationName)
-                                .id(stepId)
-                                .request(prettyPrintJson(resolvedRequestJson));
-
-                        executionResult = apiExecutor.executeHttpApi(url, operationName, resolvedRequestJson);
-                        break;
-
-                    case JAVA_CALL:
-                        correlLogger.aRequestBuilder()
-                                .relationshipId(logPrefixRelationshipId)
-                                .requestTimeStamp(requestTimeStamp)
-                                .step(thisStepName)
-                                .id(stepId)
-                                .url(url)
-                                .method(operationName)
-                                .request(prettyPrintJson(resolvedRequestJson));
-
-                        executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJson);
-                        break;
-
-                    case KAFKA_CALL:
-                        if (kafkaServers == null) {
-                            throw new RuntimeException(">>> 'kafka.bootstrap.servers' property can not be null for kafka operations");
-                        }
-                        printBrokerProperties(kafkaServers);
-                        correlLogger.aRequestBuilder()
-                                .relationshipId(logPrefixRelationshipId)
-                                .requestTimeStamp(requestTimeStamp)
-                                .step(thisStepName)
-                                .url(url)
-                                .method(operationName)
-                                .id(stepId)
-                                .request(prettyPrintJson(resolvedRequestJson));
-
-                        String topicName = url.substring(KAFKA_TOPIC.length());
-                        executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJson);
-                        break;
-
-                    case NONE:
-                        correlLogger.aRequestBuilder()
-                                .relationshipId(logPrefixRelationshipId)
-                                .requestTimeStamp(requestTimeStamp)
-                                .step(thisStepName)
-                                .id(stepId)
-                                .url(url)
-                                .method(operationName)
-                                .request(prettyPrintJson(resolvedRequestJson));
-
-                        executionResult = prettyPrintJson(resolvedRequestJson);
-                        break;
-
-                    default:
-                        throw new RuntimeException("Oops! Service Type Undecided. If it is intentional, " +
-                                "then keep the value as empty to receive the request in the response");
-                }
+                executionResult = executeApi(logPrefixRelationshipId, thisStep, resolvedRequestJson, scenarioExecutionState);
 
                 // logging response
                 final LocalDateTime responseTimeStamp = LocalDateTime.now();
@@ -449,6 +375,92 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             }
         }
         return null;
+    }
+
+    private String executeApi(String logPrefixRelationshipId,
+                              Step thisStep,
+                              String resolvedRequestJson,
+                              ScenarioExecutionState scenarioExecutionState) {
+
+        String url = thisStep.getUrl();
+        String operationName = thisStep.getOperation();
+        String stepId = thisStep.getId();
+        String thisStepName = thisStep.getName();
+
+        // --------------------------------
+        // Resolve the URL patterns if any
+        // --------------------------------
+        url = zeroCodeAssertionsProcessor.resolveStringJson(url, scenarioExecutionState.getResolvedScenarioState());
+
+        final LocalDateTime requestTimeStamp = LocalDateTime.now();
+
+        String executionResult;
+
+        switch (apiType(url, operationName)) {
+            case REST_CALL:
+                url = getFullyQualifiedUrl(url, host, port, applicationContext);
+                correlLogger.aRequestBuilder()
+                        .relationshipId(logPrefixRelationshipId)
+                        .requestTimeStamp(requestTimeStamp)
+                        .step(thisStepName)
+                        .url(url)
+                        .method(operationName)
+                        .id(stepId)
+                        .request(prettyPrintJson(resolvedRequestJson));
+
+                executionResult = apiExecutor.executeHttpApi(url, operationName, resolvedRequestJson);
+                break;
+
+            case JAVA_CALL:
+                correlLogger.aRequestBuilder()
+                        .relationshipId(logPrefixRelationshipId)
+                        .requestTimeStamp(requestTimeStamp)
+                        .step(thisStepName)
+                        .id(stepId)
+                        .url(url)
+                        .method(operationName)
+                        .request(prettyPrintJson(resolvedRequestJson));
+
+                executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJson);
+                break;
+
+            case KAFKA_CALL:
+                if (kafkaServers == null) {
+                    throw new RuntimeException(">>> 'kafka.bootstrap.servers' property can not be null for kafka operations");
+                }
+                printBrokerProperties(kafkaServers);
+                correlLogger.aRequestBuilder()
+                        .relationshipId(logPrefixRelationshipId)
+                        .requestTimeStamp(requestTimeStamp)
+                        .step(thisStepName)
+                        .url(url)
+                        .method(operationName)
+                        .id(stepId)
+                        .request(prettyPrintJson(resolvedRequestJson));
+
+                String topicName = url.substring(KAFKA_TOPIC.length());
+                executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJson);
+                break;
+
+            case NONE:
+                correlLogger.aRequestBuilder()
+                        .relationshipId(logPrefixRelationshipId)
+                        .requestTimeStamp(requestTimeStamp)
+                        .step(thisStepName)
+                        .id(stepId)
+                        .url(url)
+                        .method(operationName)
+                        .request(prettyPrintJson(resolvedRequestJson));
+
+                executionResult = prettyPrintJson(resolvedRequestJson);
+                break;
+
+            default:
+                throw new RuntimeException("Oops! Service Type Undecided. If it is intentional, " +
+                        "then keep the value as empty to receive the request in the response");
+        }
+
+        return executionResult;
     }
 
     private void waitForDelay(int delay) {
