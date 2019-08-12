@@ -1,0 +1,16 @@
+{
+    "name": "create_emp",
+    "url": "/api/test/v1/employess",
+    "operation": "POST",
+    "request": {
+        "headers": "${JSON.FILE:unit_test_files/filebody_unit_test/common/common_content.json}",
+        "body": {
+            "name": "Mr Gates",
+            "addresses": "${JSON.FILE:unit_test_files/filebody_unit_test/common/comm_addresses.json}"
+        }
+    },
+    "assertions": {
+        "status": 201,
+        "body": "${JSON.FILE:unit_test_files/filebody_unit_test/common/common_content.json}"
+    }
+}

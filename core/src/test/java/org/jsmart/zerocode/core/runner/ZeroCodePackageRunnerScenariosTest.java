@@ -18,13 +18,13 @@ public class ZeroCodePackageRunnerScenariosTest {
     ZeroCodePackageRunner zeroCodePackageRunner;
 
     @Scenarios({
-            @Scenario("unit_tests/folder_a/test_case_1.json"), //any valid path
-            @Scenario("unit_tests/folder_b/test_case_2.json"), //any valid path
+            @Scenario("unit_test_files/cherry_pick_tests/folder_a/test_case_1.json"), //any valid path
+            @Scenario("unit_test_files/cherry_pick_tests/folder_b/test_case_2.json"), //any valid path
     })
     public static class ScenarioTestFlowExampleSelectedTest {
     }
 
-    @TestPackageRoot("03_test_one_multi_steps")
+    @TestPackageRoot("unit_test_files/test_scenario_multi_steps")
     public static class ScenarioTestFlowSelectedExampleTest {
     }
 

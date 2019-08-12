@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 public class ParameterisedDemoTest {
 
     @Test
-    @JsonTestCase("parameterized/parameterized_sample_test.json")
+    @JsonTestCase("integration_test_files/parameterized/parameterized_sample_test.json")
     public void testParameterized() throws Exception {
     }
 }

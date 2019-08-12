@@ -7,8 +7,8 @@ import java.time.format.DateTimeParseException;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
 
 public class FieldHasDateBeforeValueAsserter implements JsonAsserter {
     private final String path;
@@ -22,6 +22,11 @@ public class FieldHasDateBeforeValueAsserter implements JsonAsserter {
     @Override
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public Object getExpected() {
+        return expected;
     }
 
     @Override
@@ -43,7 +48,7 @@ public class FieldHasDateBeforeValueAsserter implements JsonAsserter {
             }
         }
 
-        return areEqual ? createMatchingMessage()
-                : createNotMatchingMessage(path, "Date Before:" + expected, result);
+        return areEqual ? aMatchingMessage()
+                : aNotMatchingMessage(path, "Date Before:" + expected, result);
     }
 }

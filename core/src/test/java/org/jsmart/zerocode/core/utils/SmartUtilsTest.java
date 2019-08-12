@@ -51,16 +51,16 @@ public class SmartUtilsTest {
 
     @Test
     public void testJsonToJavaFor_jsonFileName() throws Exception {
-        Step stepJava = smartUtils.jsonFileToJava("01_unit_test_jsons/01_test_json_single_step.json", Step.class);
+        Step stepJava = smartUtils.jsonFileToJava("unit_test_files/engine_unit_test_jsons/01_test_json_single_step.json", Step.class);
         assertThat(stepJava.getLoop(), is(3));
 
-        ScenarioSpec scenarioJava = smartUtils.jsonFileToJava("01_unit_test_jsons/02_test_json_flow_single_step.json", ScenarioSpec.class);
+        ScenarioSpec scenarioJava = smartUtils.jsonFileToJava("unit_test_files/engine_unit_test_jsons/02_test_json_flow_single_step.json", ScenarioSpec.class);
         assertThat(scenarioJava.getLoop(), is(5));
     }
 
     @Test
     public void willGetJsonFileIntoA_JavaString() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_unit_test_jsons/01_test_json_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/01_test_json_single_step.json");
         assertThat(jsonDocumentAsString, containsString("assertions"));
         assertThat(jsonDocumentAsString, containsString("request"));
         assertThat(jsonDocumentAsString, containsString("{"));
@@ -69,14 +69,14 @@ public class SmartUtilsTest {
 
     @Test
     public void willReadAllfileNamesFrom_TestResource() throws Exception {
-        List<String> allTestCaseFiles = SmartUtils.getAllEndPointFiles("01_unit_test_jsons");
+        List<String> allTestCaseFiles = SmartUtils.getAllEndPointFiles("unit_test_files/engine_unit_test_jsons");
         assertThat(allTestCaseFiles.size(), is(14));
-        assertThat(allTestCaseFiles.get(0), is("01_unit_test_jsons/00_test_json_single_step_verifications.json"));
+        assertThat(allTestCaseFiles.get(0), is("unit_test_files/engine_unit_test_jsons/00_test_json_single_step_verifications.json"));
     }
 
     @Test
     public void willReadAllfileNames_AND_return_FlowSpecList() throws Exception {
-        List<ScenarioSpec> allTestCaseFiles = smartUtils.getScenarioSpecListByPackage("04_test_flow_cases");
+        List<ScenarioSpec> allTestCaseFiles = smartUtils.getScenarioSpecListByPackage("unit_test_files/test_scenario_cases");
 
         assertThat(allTestCaseFiles.size(), is(3));
         assertThat(allTestCaseFiles.get(0).getScenarioName(), is("Given_When_Then_1"));
@@ -86,14 +86,14 @@ public class SmartUtilsTest {
 
     @Test(expected = RuntimeException.class)
     public void willReadAllfiles_find_DuplicatesScenarioNamenames_old_style() throws Exception {
-        smartUtils.checkDuplicateScenarios("04_test_flow_cases");
+        smartUtils.checkDuplicateScenarios("unit_test_files/test_scenario_cases");
     }
 
     @Test
     public void willReadAllfiles_find_DuplicateScenarioNames() throws Exception {
         expectedException.expect(RuntimeException.class);
         expectedException.expectMessage("Oops! Can not run with multiple Scenarios with same name.");
-        smartUtils.checkDuplicateScenarios("04_test_flow_cases");
+        smartUtils.checkDuplicateScenarios("unit_test_files/test_scenario_cases");
     }
 
     @Test

@@ -1,9 +1,9 @@
 package org.jsmart.zerocode.jupiter.listener;
 
 import java.time.LocalDateTime;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultIoWriteBuilder;
-import org.jsmart.zerocode.core.logbuilder.LogCorrelationshipPrinter;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
+import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
@@ -11,7 +11,7 @@ import org.junit.platform.launcher.TestPlan;
 import org.slf4j.Logger;
 
 import static java.time.LocalDateTime.now;
-import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
+import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import static org.junit.platform.engine.TestExecutionResult.Status.FAILED;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -35,7 +35,7 @@ public class ZeroCodeTestReportJupiterListener implements TestExecutionListener 
     private final String testMethod;
     private String testDescription;
 
-    private LogCorrelationshipPrinter correlationshipPrettyLogger;
+    private ZerocodeCorrelationshipLogger corrLogger;
     private String logPrefixRelationshipId;
     private boolean passed=true;
 
@@ -64,11 +64,11 @@ public class ZeroCodeTestReportJupiterListener implements TestExecutionListener 
     }
 
     private String prepareRequestReport(String description) {
-        correlationshipPrettyLogger = LogCorrelationshipPrinter.newInstance(LOGGER);
-        correlationshipPrettyLogger.stepLoop(0);
-        final String logPrefixRelationshipId = correlationshipPrettyLogger.createRelationshipId();
+        corrLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
+        corrLogger.stepLoop(0);
+        final String logPrefixRelationshipId = corrLogger.createRelationshipId();
         LocalDateTime timeNow = now();
-        correlationshipPrettyLogger.aRequestBuilder()
+        corrLogger.aRequestBuilder()
                 .stepLoop(0)
                 .relationshipId(logPrefixRelationshipId)
                 .requestTimeStamp(timeNow)
@@ -80,21 +80,21 @@ public class ZeroCodeTestReportJupiterListener implements TestExecutionListener 
     private void prepareResponseReport(String logPrefixRelationshipId) {
         LocalDateTime timeNow = now();
         LOGGER.info("JUnit5 *responseTimeStamp:{}, \nJUnit Response:{}", timeNow, logPrefixRelationshipId);
-        correlationshipPrettyLogger.aResponseBuilder()
+        corrLogger.aResponseBuilder()
                 .relationshipId(logPrefixRelationshipId)
                 .responseTimeStamp(timeNow);
-        correlationshipPrettyLogger.result(passed);
-        correlationshipPrettyLogger.buildResponseDelay();
+        corrLogger.stepOutcome(passed);
+        corrLogger.buildResponseDelay();
     }
 
     private void buildReportAndPrintToFile(String description) {
-        ZeroCodeExecResultBuilder reportResultBuilder = newInstance().loop(0).scenarioName(testClass.getName());
-        reportResultBuilder.step(correlationshipPrettyLogger.buildReportSingleStep());
+        ZeroCodeExecReportBuilder reportResultBuilder = newInstance().loop(0).scenarioName(testClass.getName());
+        reportResultBuilder.step(corrLogger.buildReportSingleStep());
 
-        ZeroCodeExecResultIoWriteBuilder reportBuilder = ZeroCodeExecResultIoWriteBuilder.newInstance().timeStamp(now());
+        ZeroCodeIoWriteBuilder reportBuilder = ZeroCodeIoWriteBuilder.newInstance().timeStamp(now());
         reportBuilder.result(reportResultBuilder.build());
 
-        reportBuilder.printToFile(description + correlationshipPrettyLogger.getCorrelationId() + ".json");
+        reportBuilder.printToFile(description + corrLogger.getCorrelationId() + ".json");
     }
 
 }

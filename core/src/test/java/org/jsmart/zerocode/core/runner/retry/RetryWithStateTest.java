@@ -62,7 +62,7 @@ public class RetryWithStateTest {
     }
 
     @Test
-    @JsonTestCase("20_retry_test_cases/04_REST_retry_with_state_test.json")
+    @JsonTestCase("integration_test_files/retry_test_cases/04_REST_retry_with_state_test.json")
     public void testRetryScenario() {
     }
 

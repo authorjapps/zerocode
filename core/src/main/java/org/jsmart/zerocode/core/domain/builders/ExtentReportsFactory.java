@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.REPORT_DISPLAY_NAME_DEFAULT;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.REPORT_TITLE_DEFAULT;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.REPORT_DISPLAY_NAME_DEFAULT;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.REPORT_TITLE_DEFAULT;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ExtentReportsFactory {

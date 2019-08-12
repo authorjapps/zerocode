@@ -15,12 +15,12 @@ public class ZeroCodeRunTwoScenariosForReport {
      */
 
     @Test
-    @JsonTestCase("reports_e2e/two_step_scenario_1.json")
+    @JsonTestCase("integration_test_files/reports_e2e/two_step_scenario_1.json")
     public void test_scene1() throws Exception {
     }
 
     @Test
-    @JsonTestCase("reports_e2e/two_step_scenario_2.json")
+    @JsonTestCase("integration_test_files/reports_e2e/two_step_scenario_2.json")
     public void test_scene2() throws Exception {
     }
 

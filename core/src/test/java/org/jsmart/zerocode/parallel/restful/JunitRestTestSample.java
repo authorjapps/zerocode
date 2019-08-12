@@ -18,13 +18,13 @@ public class JunitRestTestSample {
      */
 
     @Test
-    @JsonTestCase("load/simple_load_at_localhost.json")
+    @JsonTestCase("load_test_files/simple_load_at_localhost.json")
     public void testGetCallToHome_pass() throws Exception {
 
     }
 
     @Test
-    @JsonTestCase("load/simple_load_at_localhost_fail.json")
+    @JsonTestCase("load_test_files/simple_load_at_localhost_fail.json")
     public void testGetCallToHome_fail() throws Exception {
 
     }

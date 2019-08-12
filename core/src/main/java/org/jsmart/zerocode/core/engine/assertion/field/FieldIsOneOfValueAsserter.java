@@ -18,6 +18,11 @@ public class FieldIsOneOfValueAsserter implements JsonAsserter {
 	}
 
 	@Override
+	public Object getExpected() {
+		return expected;
+	}
+
+	@Override
 	public FieldAssertionMatcher actualEqualsToExpected(Object actualResult) {
 		boolean areEqual;
 
@@ -58,8 +63,8 @@ public class FieldIsOneOfValueAsserter implements JsonAsserter {
 			}
 		}
 
-		return areEqual ? FieldAssertionMatcher.createMatchingMessage()
-				: FieldAssertionMatcher.createNotMatchingMessage(path, "One Of:" + expected, actualResult);
+		return areEqual ? FieldAssertionMatcher.aMatchingMessage()
+				: FieldAssertionMatcher.aNotMatchingMessage(path, "One Of:" + expected, actualResult);
 	}
 
 	public FieldIsOneOfValueAsserter(String path, Object expected) {

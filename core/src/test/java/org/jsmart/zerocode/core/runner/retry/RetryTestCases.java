@@ -11,19 +11,19 @@ import org.junit.runner.RunWith;
 public class RetryTestCases {
 
     @Test
-    @JsonTestCase("20_retry_test_cases/01_REST_with_retry_test.json")
+    @JsonTestCase("integration_test_files/retry_test_cases/01_REST_with_retry_test.json")
     public void restRetry() {
 
     }
 
     @Test
-    @JsonTestCase("20_retry_test_cases/02_REST_with_retry_within_loop_test.json")
+    @JsonTestCase("integration_test_files/retry_test_cases/02_REST_with_retry_within_loop_test.json")
     public void restRetryWithinLoop() {
 
     }
 
     @Test
-    @JsonTestCase("20_retry_test_cases/03_failing_REST_with_retry_within_loop_test.json")
+    @JsonTestCase("integration_test_files/retry_test_cases/03_failing_REST_with_retry_within_loop_test.json")
     public void failingRestRetryWithinLoop() {
 
     }

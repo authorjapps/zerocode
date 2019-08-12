@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 public class SmartJUnitNavigatorReportGenFailureStep {
 
     @Test
-    @JsonTestCase("11_reports/02.2_loop_scenario_only_one_failing_step.json")
+    @JsonTestCase("unit_test_files/reports/02.2_loop_scenario_only_one_failing_step.json")
     public void willGeneratReport_multiSceneMultiSteps() throws Exception {
 
     }

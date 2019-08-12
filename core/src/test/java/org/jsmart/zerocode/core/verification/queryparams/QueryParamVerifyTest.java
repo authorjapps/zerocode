@@ -15,7 +15,7 @@ public class QueryParamVerifyTest {
      */
 
     @Test
-    @JsonTestCase("query_params/request_with_query_paramas_map_test.json")
+    @JsonTestCase("integration_test_files/query_params/request_with_query_paramas_map_test.json")
     public void testQueryParamsAsMap() throws Exception {
     
     }

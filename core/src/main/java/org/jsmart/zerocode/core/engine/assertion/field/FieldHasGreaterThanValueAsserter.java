@@ -5,8 +5,8 @@ import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.assertion.NumberComparator;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createMatchingMessage;
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.createNotMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
 
 public class FieldHasGreaterThanValueAsserter implements JsonAsserter {
     private final String path;
@@ -20,6 +20,11 @@ public class FieldHasGreaterThanValueAsserter implements JsonAsserter {
     @Override
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public Object getExpected() {
+        return expected;
     }
 
     @Override
@@ -44,10 +49,9 @@ public class FieldHasGreaterThanValueAsserter implements JsonAsserter {
 
         }
 
-
         return areEqual ?
-                createMatchingMessage() :
-                createNotMatchingMessage(path, "Greater Than:" + expected, result);
+                aMatchingMessage() :
+                aNotMatchingMessage(path, "Greater Than:" + expected, result);
     }
 }
 
