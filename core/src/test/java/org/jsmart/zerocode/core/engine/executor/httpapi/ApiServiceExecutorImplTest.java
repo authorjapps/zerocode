@@ -84,7 +84,7 @@ public class ApiServiceExecutorImplTest {
         /*
          * End-point available: http://localhost:9998/home/bathroom/1
          */
-        String scenariosJsonAsString = SmartUtils.readJsonAsString("06_test_with_place_holders/02_REST_end_point_GET.json");
+        String scenariosJsonAsString = SmartUtils.readJsonAsString("unit_test_files/06_test_with_place_holders/02_REST_end_point_GET.json");
         final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
 
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();
@@ -122,7 +122,7 @@ public class ApiServiceExecutorImplTest {
 
     @Test
     public void willExecuteARESTCallForA_POST() throws Exception {
-        String scenariosJsonAsString = SmartUtils.readJsonAsString("06_test_with_place_holders/03_REST_end_point_POST.json");
+        String scenariosJsonAsString = SmartUtils.readJsonAsString("unit_test_files/06_test_with_place_holders/03_REST_end_point_POST.json");
         final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
 
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();
@@ -135,7 +135,7 @@ public class ApiServiceExecutorImplTest {
     
     @Test
     public void willReturnRESTResult_textNodeJson() throws Exception {
-        String scenariosJsonAsString = SmartUtils.readJsonAsString("06_test_with_place_holders/04_REST_end_point_textNodeJson_response.json");
+        String scenariosJsonAsString = SmartUtils.readJsonAsString("unit_test_files/06_test_with_place_holders/04_REST_end_point_textNodeJson_response.json");
         final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
         
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();
@@ -151,7 +151,7 @@ public class ApiServiceExecutorImplTest {
     
     @Test
     public void willReturnRESTResult_nonJsonString() throws Exception {
-        String scenariosJsonAsString = SmartUtils.readJsonAsString("06_test_with_place_holders/05_REST_end_point_nonJson_response.json");
+        String scenariosJsonAsString = SmartUtils.readJsonAsString("unit_test_files/06_test_with_place_holders/05_REST_end_point_nonJson_response.json");
         final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
     
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();

@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 public class JavaMethodExecTest {
 
     @Test
-    @JsonTestCase("05_test_java_service/02_test_json_java_service_method_no_param.json")
+    @JsonTestCase("unit_test_files/05_test_java_service/02_test_json_java_service_method_no_param.json")
     public void testJavaMethod_noParams() throws Exception {
     }
 }

@@ -6,7 +6,7 @@ import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodePackageRunner
 import org.junit.runner.RunWith;
 
 @TargetEnv("dev_test.properties")
-@TestPackageRoot("host_keys")
+@TestPackageRoot("integration_test_files/host_keys")
 @RunWith(TestOnlyZeroCodePackageRunner.class)
 public class PropertiesInStepsPackageRunnerTest {
 

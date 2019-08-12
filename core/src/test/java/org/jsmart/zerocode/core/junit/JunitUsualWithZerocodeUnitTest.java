@@ -61,7 +61,7 @@ public class JunitUsualWithZerocodeUnitTest {
      * @RunWith(TestOnlyZeroCodeUnitRunner.class) : starts these mocks first before running the tests
      */
     @Test
-    @JsonTestCase("get_api/simple_get_api_test.json")
+    @JsonTestCase("integration_test_files/get_api/simple_get_api_test.json")
     public void testSimpleGetApi() throws Exception {
     
     }

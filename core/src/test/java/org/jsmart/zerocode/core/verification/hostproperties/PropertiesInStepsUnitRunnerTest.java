@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 public class PropertiesInStepsUnitRunnerTest {
 
     @Test
-    @JsonTestCase("host_keys/property_reading_into_test_step_test.json")
+    @JsonTestCase("integration_test_files/host_keys/property_reading_into_test_step_test.json")
     public void testReading_propertyValuesViaKey() throws Exception {
 
     }

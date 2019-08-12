@@ -51,7 +51,7 @@ public class ZeroCodeParameterizedProcessorImplTest {
     @Test
     public void testProcessParameterized_wrongDsl() throws Exception {
         String jsonDocumentAsString = smartUtils
-                .getJsonDocumentAsString("01_unit_test_jsons/12_scenario_parameterized_wrong_dsl.json");
+                .getJsonDocumentAsString("unit_test_files/01_unit_test_jsons/12_scenario_parameterized_wrong_dsl.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         expectedException.expectMessage("Scenario spec was invalid. Please check the DSL format");
@@ -61,7 +61,7 @@ public class ZeroCodeParameterizedProcessorImplTest {
     @Test
     public void testProcessParameterized_values() throws Exception {
         String jsonDocumentAsString = smartUtils
-                .getJsonDocumentAsString("01_unit_test_jsons/10_scenario_parameterized_values.json");
+                .getJsonDocumentAsString("unit_test_files/01_unit_test_jsons/10_scenario_parameterized_values.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         ScenarioSpec scenarioSpecResolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 0);
@@ -75,7 +75,7 @@ public class ZeroCodeParameterizedProcessorImplTest {
     @Test
     public void testProcessParameterized_csv() throws Exception {
         String jsonDocumentAsString = smartUtils
-                .getJsonDocumentAsString("01_unit_test_jsons/11_scenario_parameterized_csv.json");
+                .getJsonDocumentAsString("unit_test_files/01_unit_test_jsons/11_scenario_parameterized_csv.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         ScenarioSpec scenarioSpecResolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 0);

@@ -20,7 +20,7 @@ public class ZeroCodeExternalFileProcessorImplTest {
 
     @Test(expected = RuntimeException.class)
     public void test_wrongFileException() throws IOException {
-        String jsonAsString = readJsonAsString("filebody_unit_test/json_step_test_wrong_file_ref.json");
+        String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_test_wrong_file_ref.json");
         Map<String, Object> map = objectMapper.readValue(jsonAsString, new TypeReference<Map<String, Object>>() {});
 
         externalFileProcessor.digReplaceContent(map);
@@ -28,7 +28,7 @@ public class ZeroCodeExternalFileProcessorImplTest {
 
     @Test
     public void test_deepHashMapTraverse() throws IOException {
-        String jsonAsString = readJsonAsString("filebody_unit_test/json_step_test_file.json");
+        String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_test_file.json");
         Map<String, Object> map = objectMapper.readValue(jsonAsString, new TypeReference<Map<String, Object>>() {});
 
         externalFileProcessor.digReplaceContent(map);
@@ -41,7 +41,7 @@ public class ZeroCodeExternalFileProcessorImplTest {
 
     @Test
     public void test_addressArray() throws IOException {
-        String jsonAsString = readJsonAsString("filebody_unit_test/json_step_test_address_array.json");
+        String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_test_address_array.json");
         Map<String, Object> map = objectMapper.readValue(jsonAsString, new TypeReference<Map<String, Object>>() {});
 
         externalFileProcessor.digReplaceContent(map);
@@ -53,7 +53,7 @@ public class ZeroCodeExternalFileProcessorImplTest {
 
     @Test
     public void test_NoExtJsonFile() throws IOException {
-        String jsonAsString = readJsonAsString("filebody_unit_test/json_step_no_ext_json_test_file.json");
+        String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_no_ext_json_test_file.json");
         Map<String, Object> map = objectMapper.readValue(jsonAsString, new TypeReference<Map<String, Object>>() {});
 
         externalFileProcessor.digReplaceContent(map);
@@ -65,18 +65,18 @@ public class ZeroCodeExternalFileProcessorImplTest {
 
     @Test
     public void test_NoExtFileCheckDigNeeded() throws IOException {
-        String jsonAsString = readJsonAsString("filebody_unit_test/json_step_no_ext_json_test_file.json");
+        String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_no_ext_json_test_file.json");
         Step step = objectMapper.readValue(jsonAsString, Step.class);
         assertThat(externalFileProcessor.checkDigNeeded(step), is(false));
 
-        jsonAsString = readJsonAsString("filebody_unit_test/json_step_text_node_ext_json_file_test.json");
+        jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_text_node_ext_json_file_test.json");
         step = objectMapper.readValue(jsonAsString, Step.class);
         assertThat(externalFileProcessor.checkDigNeeded(step), is(true));
     }
 
     @Test
     public void test_textNode() throws IOException {
-        String jsonAsString = readJsonAsString("filebody_unit_test/json_step_text_request.json");
+        String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_text_request.json");
         Step step = objectMapper.readValue(jsonAsString, Step.class);
 
         externalFileProcessor.resolveExtJsonFile(step);
@@ -87,7 +87,7 @@ public class ZeroCodeExternalFileProcessorImplTest {
 
     @Test
     public void test_textNodeExtFile() throws IOException {
-        String jsonAsString = readJsonAsString("filebody_unit_test/json_step_text_node_ext_json_file_test.json");
+        String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_text_node_ext_json_file_test.json");
         Step step = objectMapper.readValue(jsonAsString, Step.class);
 
         Step effectiveStep = externalFileProcessor.resolveExtJsonFile(step);

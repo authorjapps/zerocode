@@ -21,7 +21,7 @@ public class MockStepTest {
 
     @Test
     public void testSerDeSer() throws Exception {
-        final String aMock = SmartUtils.readJsonAsString("wiremock/test_mock_step.json");
+        final String aMock = SmartUtils.readJsonAsString("unit_test_files/wiremock/test_mock_step.json");
 
         final MockStep mockStep = objectMapper.readValue(aMock, MockStep.class);
 
@@ -34,7 +34,7 @@ public class MockStepTest {
 
     @Test
     public void testSerDeSer_headers() throws Exception {
-        final String aMock = SmartUtils.readJsonAsString("wiremock/test_mock_step_request_headers.json");
+        final String aMock = SmartUtils.readJsonAsString("unit_test_files/wiremock/test_mock_step_request_headers.json");
 
         final MockStep mockStep = objectMapper.readValue(aMock, MockStep.class);
 
@@ -49,7 +49,7 @@ public class MockStepTest {
 
     @Test
     public void testSerDeSer_body() throws Exception {
-        final String aMock = SmartUtils.readJsonAsString("wiremock/test_mock_step_request_body.json");
+        final String aMock = SmartUtils.readJsonAsString("unit_test_files/wiremock/test_mock_step_request_body.json");
 
         final MockStep mockStep = objectMapper.readValue(aMock, MockStep.class);
 
