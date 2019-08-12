@@ -14,7 +14,7 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.slf4j.Logger;
 
 import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.DSL_FORMAT;
+import static org.jsmart.zerocode.core.constants.ZerocodeConstants.DSL_FORMAT;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**

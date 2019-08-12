@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.domain;
+package org.jsmart.zerocode.core.constants;
 
 import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
 

@@ -14,16 +14,16 @@ import org.apache.commons.lang.text.StrSubstitutor;
 
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.LOCALDATETIME_NOW;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.LOCALDATE_TODAY;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.RANDOM_NUMBER;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.RANDOM_STRING_PREFIX;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.RANDOM_UU_ID;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.STATIC_ALPHABET;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.SYSTEM_ENV;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.SYSTEM_PROPERTY;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.XML_FILE;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.getKnownTokens;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATETIME_NOW;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATE_TODAY;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_STRING_PREFIX;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_UU_ID;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.STATIC_ALPHABET;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.SYSTEM_ENV;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.SYSTEM_PROPERTY;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.XML_FILE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.getKnownTokens;
 
 public class TokenUtils {
 

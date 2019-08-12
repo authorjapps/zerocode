@@ -25,8 +25,8 @@ import org.jsmart.zerocode.core.kafka.send.message.ProducerRawRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.FAILED;
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.OK;
+import static org.jsmart.zerocode.core.constants.ZerocodeConstants.FAILED;
+import static org.jsmart.zerocode.core.constants.ZerocodeConstants.OK;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RECORD_TYPE_JSON_PATH;

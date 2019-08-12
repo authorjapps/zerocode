@@ -1,14 +1,14 @@
-package org.jsmart.zerocode.core.engine.preprocessor;
+package org.jsmart.zerocode.core.engine.tokens;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
 
-public class ZeroCodeTokens {
-
-    // ----------------------
-    // General place holders
-    // ----------------------
+/**
+ * This class contains Dynamic Placeholder Value Tokens.
+ * These are replaced by their actual value in runtime
+ */
+public class ZeroCodeValueTokens {
     public static final String JSON_PAYLOAD_FILE = "JSON.FILE:";
     public static final String PREFIX_ASU = "ASU";
     public static final String XML_FILE = "XML.FILE:";

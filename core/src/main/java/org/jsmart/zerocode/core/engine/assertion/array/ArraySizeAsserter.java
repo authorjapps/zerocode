@@ -7,10 +7,10 @@ import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessorImpl.ASSERT_VALUE_EQUAL_TO_NUMBER;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessorImpl.ASSERT_VALUE_GREATER_THAN;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessorImpl.ASSERT_VALUE_LESSER_THAN;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessorImpl.ASSERT_VALUE_NOT_EQUAL_TO_NUMBER;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_EQUAL_TO_NUMBER;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_GREATER_THAN;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_LESSER_THAN;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NOT_EQUAL_TO_NUMBER;
 
 public class ArraySizeAsserter implements JsonAsserter {
     private final String path;

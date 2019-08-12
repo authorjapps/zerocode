@@ -13,9 +13,9 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_FAIL;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TEST_STEP_CORRELATION_ID;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_FAIL;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_PASS;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TEST_STEP_CORRELATION_ID;
 
 public class ZerocodeCorrelationshipLogger {
     private static final String DISPLAY_DEMARCATION_ = "\n--------- " + TEST_STEP_CORRELATION_ID + " %s ---------";

@@ -38,17 +38,17 @@ import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang.StringUtils.substringBetween;
 import static org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory.getReportName;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.ANONYMOUS_AUTHOR;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.AUTHOR_MARKER;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.DEFAULT_REGRESSION_CATEGORY;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.HIGH_CHART_HTML_FILE_NAME;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.LINK_LABEL_NAME;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.RESULT_PASS;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FILE_NAME;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FULL_REPORT_CSV_FILE_NAME;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FULL_REPORT_DIR;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TEST_STEP_CORRELATION_ID;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ANONYMOUS_AUTHOR;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.AUTHOR_MARKER;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.DEFAULT_REGRESSION_CATEGORY;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.HIGH_CHART_HTML_FILE_NAME;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.LINK_LABEL_NAME;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_PASS;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FILE_NAME;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FULL_REPORT_CSV_FILE_NAME;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FULL_REPORT_DIR;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_REPORT_DIR;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TEST_STEP_CORRELATION_ID;
 
 public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeReportGeneratorImpl.class);

@@ -3,7 +3,7 @@ package org.jsmart.zerocode.core.utils;
 import org.apache.commons.lang.StringUtils;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.KAFKA;
+import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA;
 
 public class ApiTypeUtils {
 

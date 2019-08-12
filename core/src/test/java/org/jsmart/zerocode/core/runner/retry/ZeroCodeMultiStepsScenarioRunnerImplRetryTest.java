@@ -3,7 +3,7 @@ package org.jsmart.zerocode.core.runner.retry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
-import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties;
+import org.jsmart.zerocode.core.constants.ZeroCodeReportConstants;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_REPORT_DIR;
 
 public class ZeroCodeMultiStepsScenarioRunnerImplRetryTest {
 
@@ -82,12 +82,12 @@ public class ZeroCodeMultiStepsScenarioRunnerImplRetryTest {
 
     private void assertStepSucceeded(ZeroCodeReport report, int stepIndex) {
         ZeroCodeReportStep step = getStep(report, stepIndex);
-        assertThat(step.getResult(), is(ZeroCodeReportProperties.RESULT_PASS));
+        assertThat(step.getResult(), is(ZeroCodeReportConstants.RESULT_PASS));
     }
 
     private void assertStepFailed(ZeroCodeReport report, int stepIndex) {
         ZeroCodeReportStep step = getStep(report, stepIndex);
-        assertThat(step.getResult(), is(ZeroCodeReportProperties.RESULT_FAIL));
+        assertThat(step.getResult(), is(ZeroCodeReportConstants.RESULT_FAIL));
     }
 
     private void assertStepCount(ZeroCodeReport report, int stepCount) {

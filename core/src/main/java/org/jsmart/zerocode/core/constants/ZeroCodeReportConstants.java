@@ -1,6 +1,6 @@
-package org.jsmart.zerocode.core.domain.reports;
+package org.jsmart.zerocode.core.constants;
 
-public interface ZeroCodeReportProperties {
+public interface ZeroCodeReportConstants {
     String RESULT_PASS = "PASSED";
     String RESULT_FAIL = "FAILED";
     String TEST_STEP_CORRELATION_ID = "TEST-STEP-CORRELATION-ID:";

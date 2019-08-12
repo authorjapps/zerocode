@@ -25,7 +25,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 
-import static org.jsmart.zerocode.core.domain.ZerocodeConstants.KAFKA_TOPIC;
+import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
@@ -128,7 +128,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         /*
          *  There were no steps to execute and the framework will display the test status as Green than Red.
          *  Red symbolises failure, but nothing has failed here.
-         *  This behaviour can be changed if user demands by doing 'return false'.
+         *
+         *  Note-This behaviour can be changed on user demands by doing 'return false'.
          */
         return true;
     }

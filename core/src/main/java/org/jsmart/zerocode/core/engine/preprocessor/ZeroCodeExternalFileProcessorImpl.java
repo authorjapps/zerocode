@@ -6,13 +6,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.univocity.parsers.csv.CsvParser;
 import java.util.List;
 import java.util.Map;
 import org.jsmart.zerocode.core.domain.Step;
 import org.slf4j.Logger;
 
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.JSON_PAYLOAD_FILE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.JSON_PAYLOAD_FILE;
 import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.slf4j.LoggerFactory.getLogger;

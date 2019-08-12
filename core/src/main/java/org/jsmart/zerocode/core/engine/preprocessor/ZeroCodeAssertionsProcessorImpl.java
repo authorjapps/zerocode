@@ -24,6 +24,7 @@ import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.assertion.array.ArrayIsEmptyAsserter;
 import org.jsmart.zerocode.core.engine.assertion.array.ArraySizeAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringIgnoreCaseAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasDateAfterValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasDateBeforeValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasEqualNumberValueAsserter;
@@ -31,7 +32,6 @@ import org.jsmart.zerocode.core.engine.assertion.field.FieldHasExactValueAsserte
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasGreaterThanValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasInEqualNumberValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasLesserThanValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringIgnoreCaseAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNotNullAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNullAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldIsOneOfValueAsserter;
@@ -39,6 +39,24 @@ import org.jsmart.zerocode.core.engine.assertion.field.FieldMatchesRegexPatternA
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_LOCAL_DATETIME_AFTER;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_LOCAL_DATETIME_BEFORE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_PATH_SIZE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_CONTAINS_STRING;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_EMPTY_ARRAY;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_EQUAL_TO_NUMBER;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_GREATER_THAN;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_IS_NOT_NULL;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_IS_NULL;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_IS_ONE_OF;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_LESSER_THAN;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_MATCHES_STRING;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NOT_EQUAL_TO_NUMBER;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NOT_NULL;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NULL;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_ONE_OF;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.RAW_BODY;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -49,29 +67,6 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
 
     final List<String> propertyKeys = new ArrayList<>();
     final Properties properties = new Properties();
-
-    // -----------------------
-    // Assertion place holders
-    // -----------------------
-    public static final String ASSERT_VALUE_NOT_NULL = "$NOT.NULL";
-    public static final String ASSERT_VALUE_IS_NOT_NULL = "$IS.NOTNULL";
-    public static final String ASSERT_VALUE_NULL = "$NULL";
-    public static final String ASSERT_VALUE_IS_NULL = "$IS.NULL";
-    public static final String ASSERT_VALUE_EMPTY_ARRAY = "$[]";
-    public static final String ASSERT_PATH_SIZE = ".SIZE";
-    public static final String ASSERT_VALUE_CONTAINS_STRING = "$CONTAINS.STRING:";
-    public static final String ASSERT_VALUE_MATCHES_STRING = "$MATCHES.STRING:";
-    public static final String ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE = "$CONTAINS.STRING.IGNORECASE:";
-    public static final String ASSERT_VALUE_EQUAL_TO_NUMBER = "$EQ.";
-    public static final String ASSERT_VALUE_NOT_EQUAL_TO_NUMBER = "$NOT.EQ.";
-    public static final String ASSERT_VALUE_GREATER_THAN = "$GT.";
-    public static final String ASSERT_VALUE_LESSER_THAN = "$LT.";
-    public static final String ASSERT_LOCAL_DATETIME_AFTER = "$LOCAL.DATETIME.AFTER:";
-    public static final String ASSERT_LOCAL_DATETIME_BEFORE = "$LOCAL.DATETIME.BEFORE:";
-    public static final String ASSERT_VALUE_ONE_OF = "$ONE.OF:";
-    public static final String ASSERT_VALUE_IS_ONE_OF = "$IS.ONE.OF:";
-    public static final String ASSERT_PATH_VALUE_NODE = "$";
-    public static final String RAW_BODY = ".rawBody";
 
     private final ObjectMapper mapper;
     private final String hostFileName;

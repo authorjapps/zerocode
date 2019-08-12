@@ -43,8 +43,8 @@ import org.slf4j.LoggerFactory;
 
 import static java.lang.System.getProperty;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.CHARTS_AND_CSV;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.ZEROCODE_JUNIT;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ZEROCODE_JUNIT;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
 public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
