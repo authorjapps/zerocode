@@ -6,6 +6,12 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.net.URL;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -19,17 +25,16 @@ import org.jsmart.zerocode.core.kafka.send.message.ProducerRawRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.net.URL;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.FAILED;
 import static org.jsmart.zerocode.core.domain.ZerocodeConstants.OK;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.*;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.*;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.RECORD_TYPE_JSON_PATH;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.createProducer;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.prepareJsonRecordToSend;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.prepareRecordToSend;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.readRecordType;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.validateProduceRecord;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 @Singleton

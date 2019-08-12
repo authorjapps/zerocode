@@ -2,21 +2,23 @@ package org.jsmart.zerocode.core.di.main;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+import java.util.Properties;
+import java.util.logging.Logger;
 import org.jsmart.zerocode.core.di.module.CsvParserModule;
 import org.jsmart.zerocode.core.di.module.GsonModule;
 import org.jsmart.zerocode.core.di.module.HttpClientModule;
 import org.jsmart.zerocode.core.di.module.ObjectMapperModule;
 import org.jsmart.zerocode.core.di.module.PropertiesInjectorModule;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
 import org.jsmart.zerocode.core.engine.executor.httpapi.HttpApiExecutor;
 import org.jsmart.zerocode.core.engine.executor.httpapi.HttpApiExecutorImpl;
 import org.jsmart.zerocode.core.engine.executor.javaapi.JavaMethodExecutor;
 import org.jsmart.zerocode.core.engine.executor.javaapi.JavaMethodExecutorImpl;
-import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
-import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
-import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
-import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessorImpl;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessorImpl;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
@@ -24,10 +26,12 @@ import org.jsmart.zerocode.core.report.ZeroCodeReportGeneratorImpl;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunner;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunnerImpl;
 
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import static org.jsmart.zerocode.core.di.PropertyKeys.*;
+import static org.jsmart.zerocode.core.di.PropertyKeys.RESTFUL_APPLICATION_ENDPOINT_CONTEXT;
+import static org.jsmart.zerocode.core.di.PropertyKeys.RESTFUL_APPLICATION_ENDPOINT_HOST;
+import static org.jsmart.zerocode.core.di.PropertyKeys.RESTFUL_APPLICATION_ENDPOINT_PORT;
+import static org.jsmart.zerocode.core.di.PropertyKeys.WEB_APPLICATION_ENDPOINT_CONTEXT;
+import static org.jsmart.zerocode.core.di.PropertyKeys.WEB_APPLICATION_ENDPOINT_HOST;
+import static org.jsmart.zerocode.core.di.PropertyKeys.WEB_APPLICATION_ENDPOINT_PORT;
 
 public class ApplicationMainModule extends AbstractModule {
     private static final Logger LOGGER = Logger.getLogger(ApplicationMainModule.class.getName());

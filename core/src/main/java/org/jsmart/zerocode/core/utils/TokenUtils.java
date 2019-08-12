@@ -1,10 +1,5 @@
 package org.jsmart.zerocode.core.utils;
 
-import static java.util.UUID.randomUUID;
-import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
-import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.*;
-
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,8 +10,20 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang.text.StrSubstitutor;
+
+import static java.util.UUID.randomUUID;
+import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.LOCALDATETIME_NOW;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.LOCALDATE_TODAY;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.RANDOM_NUMBER;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.RANDOM_STRING_PREFIX;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.RANDOM_UU_ID;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.STATIC_ALPHABET;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.SYSTEM_ENV;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.SYSTEM_PROPERTY;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.XML_FILE;
+import static org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeTokens.getKnownTokens;
 
 public class TokenUtils {
 

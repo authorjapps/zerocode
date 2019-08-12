@@ -1,14 +1,17 @@
 package org.jsmart.zerocode.core.kafka.send;
 
 import com.google.gson.Gson;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.kafka.send.message.ProducerRawRecords;
 import org.junit.Test;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

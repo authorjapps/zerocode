@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -13,15 +17,19 @@ import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import static java.time.Duration.ofMillis;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.*;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.createConsumer;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.deriveEffectiveConfigs;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.getMaxTimeOuts;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.getPollTime;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.handleCommitSyncAsync;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.handleSeekOffset;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.prepareResult;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.readConsumerLocalTestProperties;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.readJson;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.readRaw;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaFileRecordHelper.handleRecordsDump;
 
 @Singleton
