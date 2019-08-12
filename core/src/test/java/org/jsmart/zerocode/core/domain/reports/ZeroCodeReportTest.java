@@ -59,7 +59,7 @@ public class ZeroCodeReportTest {
     public void willDeSerialize_FromJson() throws Exception {
 
         ZeroCodeReport jsonDeDone = mapper.readValue(
-                SmartUtils.readJsonAsString("11_reports/01_basic_report_for_test.json"),
+                SmartUtils.readJsonAsString("unit_test_files/reports/01_basic_report_for_test.json"),
                 ZeroCodeReport.class
         );
 

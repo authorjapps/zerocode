@@ -24,7 +24,7 @@ public class ZeroCodePackageRunnerSelectedTest {
     public static class ScenarioTestFlowExampleSelectedTest {
     }
 
-    @TestPackageRoot("unit_test_files/03_test_one_multi_steps")
+    @TestPackageRoot("unit_test_files/test_scenario_multi_steps")
     public static class ScenarioTestFlowSelectedExampleTest {
     }
 

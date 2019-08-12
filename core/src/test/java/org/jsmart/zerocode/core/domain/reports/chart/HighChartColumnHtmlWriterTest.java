@@ -14,7 +14,7 @@ public class HighChartColumnHtmlWriterTest {
     public void willGenerateHtmlTextString() throws Exception {
 
         highChartColumnHtmlWriter =
-                new HighChartColumnHtmlWriter("12_report_velocity/01_high_chart_column_test.vm");
+                new HighChartColumnHtmlWriter("unit_test_files/reports_velocity/01_high_chart_column_test.vm");
 
         HighChartColumnHtml highChartColumnHtml = new HighChartColumnHtml(
                 "ZC Page Title",

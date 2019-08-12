@@ -57,7 +57,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void willResolveWithParamMap() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-                "unit_test_files/09_test_engine/01_request_with_place_holders.json", ScenarioSpec.class);
+                "unit_test_files/test_engine/01_request_with_place_holders.json", ScenarioSpec.class);
     final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();
 
     final String resolvedRequestJson =
@@ -73,7 +73,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void willCaptureAllPlaceHolders() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-                "unit_test_files/09_test_engine/01_request_with_place_holders.json", ScenarioSpec.class);
+                "unit_test_files/test_engine/01_request_with_place_holders.json", ScenarioSpec.class);
     final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();
 
     final List<String> placeHolders = getTestCaseTokens(requestJsonAsString);
@@ -84,7 +84,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
     assertThat(resolvedRequestJson, containsString("\"staticName\":\"abcde\""));
 
     String specAsString =
-        smartUtils.getJsonDocumentAsString("unit_test_files/09_test_engine/01_request_with_place_holders.json");
+        smartUtils.getJsonDocumentAsString("unit_test_files/test_engine/01_request_with_place_holders.json");
     final String resolvedSpecString =
         jsonPreProcessor.resolveStringJson(specAsString, specAsString);
     assertThat(resolvedSpecString, containsString("\"url\": \"/persons/abc\""));
@@ -93,7 +93,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   @Test
   public void willResolveJsonPathOfJayWay() throws Exception {
     String specAsString =
-        smartUtils.getJsonDocumentAsString("unit_test_files/09_test_engine/01_request_with_place_holders.json");
+        smartUtils.getJsonDocumentAsString("unit_test_files/test_engine/01_request_with_place_holders.json");
 
     final List<String> jsonPaths = jsonPreProcessor.getAllJsonPathTokens(specAsString);
     assertThat(jsonPaths.size(), is(2));
@@ -112,7 +112,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void willResolveJsonPathOfJayWayWith_SuppliedScenarioState() throws Exception {
     String specAsString =
         smartUtils.getJsonDocumentAsString(
-                "unit_test_files/09_test_engine/02_1_two_requests_with_json_path_assertion.json");
+                "unit_test_files/test_engine/02_1_two_requests_with_json_path_assertion.json");
 
     final List<String> jsonPaths = jsonPreProcessor.getAllJsonPathTokens(specAsString);
     assertThat(jsonPaths.size(), is(3));
@@ -147,7 +147,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void willResolveJsonPathOfJayWayFor_AssertionSection() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-                "unit_test_files/09_test_engine/02_1_two_requests_with_json_path_assertion.json", ScenarioSpec.class);
+                "unit_test_files/test_engine/02_1_two_requests_with_json_path_assertion.json", ScenarioSpec.class);
 
     // Get the 2nd step
     final String assertionsSectionAsString =
@@ -177,7 +177,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
     // start assertion
     String sapmleExecutionResult =
         smartUtils.getJsonDocumentAsString(
-                "unit_test_files/09_test_engine/02_2_sample_resolved_execution_response.json");
+                "unit_test_files/test_engine/02_2_sample_resolved_execution_response.json");
     List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
     assertThat(asserters.size(), is(17));
 
@@ -303,7 +303,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testLocalDate_formatter() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "15_localdatetime/00_local_date_time_place_holders_unit_test.json", ScenarioSpec.class);
+                "unit_test_files/localdatetime/00_local_date_time_place_holders_unit_test.json", ScenarioSpec.class);
 
     final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();
 
@@ -320,7 +320,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testLocalDateTime_formatter() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "15_localdatetime/00_local_date_time_place_holders_unit_test.json", ScenarioSpec.class);
+                "unit_test_files/localdatetime/00_local_date_time_place_holders_unit_test.json", ScenarioSpec.class);
 
     final String requestJsonAsString = scenarioSpec.getSteps().get(0).getRequest().toString();
 
@@ -356,7 +356,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testIgnoreCaseWith_containsNoMatch() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "18_ignore_case/test_string_match_withIgnoring_case.json", ScenarioSpec.class);
+                "unit_test_files/ignore_case/test_string_match_withIgnoring_case.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -391,7 +391,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testIgnoreCaseWith_containsMatch() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "18_ignore_case/test_string_match_withIgnoring_case.json", ScenarioSpec.class);
+                "unit_test_files/ignore_case/test_string_match_withIgnoring_case.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -421,7 +421,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   @Test
   public void testString_regexMatch() throws Exception {
     ScenarioSpec scenarioSpec =
-        smartUtils.jsonFileToJava("regex_match/string_matches_regex_test.json", ScenarioSpec.class);
+        smartUtils.jsonFileToJava("unit_test_files/regex_match/string_matches_regex_test.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -453,7 +453,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testArraySize_numberOnly() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "array_size/array_size_number_only_test.json", ScenarioSpec.class);
+                "unit_test_files/array_size/array_size_number_only_test.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -490,7 +490,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testArraySize_numberOnlyNegative() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "array_size/array_size_number_only_test.json", ScenarioSpec.class);
+                "unit_test_files/array_size/array_size_number_only_test.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -524,7 +524,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testArraySize_expressionGT() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "array_size/array_size_expresssion_test_GT.json", ScenarioSpec.class);
+                "unit_test_files/array_size/array_size_expresssion_test_GT.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -561,7 +561,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testArraySize_expressionFailTest() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "array_size/array_size_expresssion_fail_test_GT.json", ScenarioSpec.class);
+                "unit_test_files/array_size/array_size_expresssion_fail_test_GT.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -602,7 +602,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testArraySize_expressionLT() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "array_size/array_size_expresssion_test_LT.json", ScenarioSpec.class);
+                "unit_test_files/array_size/array_size_expresssion_test_LT.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -639,7 +639,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testArraySize_expressionFailLT() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "array_size/array_size_expresssion_test_fail_LT.json", ScenarioSpec.class);
+                "unit_test_files/array_size/array_size_expresssion_test_fail_LT.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -680,7 +680,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testArraySize_expressionEQ() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "array_size/array_size_expresssion_test_EQ.json", ScenarioSpec.class);
+                "unit_test_files/array_size/array_size_expresssion_test_EQ.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -717,7 +717,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testArraySize_expressionFailEQ() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "array_size/array_size_expresssion_test_fail_EQ.json", ScenarioSpec.class);
+                "unit_test_files/array_size/array_size_expresssion_test_fail_EQ.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -758,7 +758,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testArraySize_expressionNotEQ() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "array_size/array_size_expresssion_test_NotEQ.json", ScenarioSpec.class);
+                "unit_test_files/array_size/array_size_expresssion_test_NotEQ.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -795,7 +795,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testArraySize_expressionFailNotEQ() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "array_size/array_size_expresssion_test_fail_NotEQ.json", ScenarioSpec.class);
+                "unit_test_files/array_size/array_size_expresssion_test_fail_NotEQ.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -836,7 +836,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testDateAfterBefore_both() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "date_after_before/dateAfterBefore_test_both.json", ScenarioSpec.class);
+                "unit_test_files/date_after_before/dateAfterBefore_test_both.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -874,7 +874,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testDateAfterBefore_fail_both() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "date_after_before/dateAfterBefore_test_fail_both.json", ScenarioSpec.class);
+                "unit_test_files/date_after_before/dateAfterBefore_test_fail_both.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -923,7 +923,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testDateAfterBefore_fail_afterSameDate() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "date_after_before/dateAfterBefore_test_fail_afterSameDate.json", ScenarioSpec.class);
+                "unit_test_files/date_after_before/dateAfterBefore_test_fail_afterSameDate.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();
@@ -963,7 +963,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
   public void testDateAfterBefore_fail_beforeSameDate() throws Exception {
     ScenarioSpec scenarioSpec =
         smartUtils.jsonFileToJava(
-            "date_after_before/dateAfterBefore_test_fail_beforeSameDate.json", ScenarioSpec.class);
+                "unit_test_files/date_after_before/dateAfterBefore_test_fail_beforeSameDate.json", ScenarioSpec.class);
 
     final String assertionsSectionAsString =
         scenarioSpec.getSteps().get(0).getAssertions().toString();

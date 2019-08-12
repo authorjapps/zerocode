@@ -49,7 +49,7 @@ public class ScenarioSpecTest {
     //@Description("JukitoDescription")
     @Test
     public void willDeserializeA_VanilaFlow() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/01_unit_test_jsons/02_test_json_flow_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/02_test_json_flow_single_step.json");
         ScenarioSpec scenarioDeserialized = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         assertThat(scenarioDeserialized, notNullValue());
@@ -60,7 +60,7 @@ public class ScenarioSpecTest {
 
     @Test
     public void willDeserializeA_MultiSteps() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/01_unit_test_jsons/03_test_json_flow_multi_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/03_test_json_flow_multi_step.json");
         ScenarioSpec scenarioDeserialized = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         assertThat(scenarioDeserialized, notNullValue());
@@ -71,7 +71,7 @@ public class ScenarioSpecTest {
 
     @Test
     public void shouldSerializeSingleFlow() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/01_unit_test_jsons/03_test_json_flow_multi_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/03_test_json_flow_multi_step.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         JsonNode scenarioSpecNode = mapper.valueToTree(scenarioSpec);
@@ -121,7 +121,7 @@ public class ScenarioSpecTest {
     @Test
     public void test_ignoreStepFailuresField() throws Exception {
         String jsonDocumentAsString = smartUtils
-                .getJsonDocumentAsString("unit_test_files/01_unit_test_jsons/04_ignoreStepFailures_in_multistep.json");
+                .getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/04_ignoreStepFailures_in_multistep.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         assertThat(scenarioSpec, notNullValue());
@@ -132,7 +132,7 @@ public class ScenarioSpecTest {
     @Test
     public void testSerDe_parameterized() throws Exception {
         String jsonDocumentAsString = smartUtils
-                .getJsonDocumentAsString("unit_test_files/01_unit_test_jsons/09_scenario_parameterized.json");
+                .getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/09_scenario_parameterized.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         assertThat(scenarioSpec.getParameterized().getValueSource(), hasItem("hello"));

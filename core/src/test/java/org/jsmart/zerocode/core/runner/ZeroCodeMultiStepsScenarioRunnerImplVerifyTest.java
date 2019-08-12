@@ -16,7 +16,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImplVerifyTest {
      */
 
     @Test
-    @JsonTestCase("13_headers/10_response_with_headers.json")
+    @JsonTestCase("integration_test_files/headers/10_response_with_headers.json")
     public void willGetResponse_headers() throws Exception {
     
     }

@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 public class FailSimpleAssertionInMultiStep {
 	
 	@Test
-    @JsonTestCase("19_fail_tests/01_two_step_one_fail.json")
+    @JsonTestCase("integration_test_files/failed_steps/01_two_step_one_fail.json")
     public void testFailSimpleAssertionInMultiStep_execAll() throws Exception {
     	
     }

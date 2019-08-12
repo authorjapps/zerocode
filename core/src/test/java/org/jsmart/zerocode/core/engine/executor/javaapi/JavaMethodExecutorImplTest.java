@@ -81,7 +81,7 @@ public class JavaMethodExecutorImplTest {
 
     @Test
     public void willExecuteJsonRequestForJavaMethod_noParam() throws Exception {
-        String scenariosJsonAsString = SmartUtils.readJsonAsString("unit_test_files/05_test_java_service/02_test_json_java_service_method_no_param.json");
+        String scenariosJsonAsString = SmartUtils.readJsonAsString("unit_test_files/java_apis/02_test_json_java_service_method_no_param.json");
         final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
 
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();
@@ -94,7 +94,7 @@ public class JavaMethodExecutorImplTest {
 
     @Test
     public void willExecuteJsonRequestFor_java_method_viaDsl() throws Exception {
-        String scenariosJsonAsString = SmartUtils.readJsonAsString("unit_test_files/05_test_java_service/01_test_json_java_service_method_Integer.json");
+        String scenariosJsonAsString = SmartUtils.readJsonAsString("unit_test_files/java_apis/01_test_json_java_service_method_Integer.json");
         final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
 
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();
@@ -110,7 +110,7 @@ public class JavaMethodExecutorImplTest {
 
     @Test
     public void willExecuteJsonRequestFor_CustomObject_java_method() throws Exception {
-        String scenariosJsonAsString = SmartUtils.readJsonAsString("unit_test_files/05_test_java_service/01_test_json_java_service_method_MyNumber.json");
+        String scenariosJsonAsString = SmartUtils.readJsonAsString("unit_test_files/java_apis/01_test_json_java_service_method_MyNumber.json");
         final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
 
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();

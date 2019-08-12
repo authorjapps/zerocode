@@ -37,7 +37,7 @@ public class ParameterizedTest {
     @Test
     public void testSerDe_valueSource() throws Exception {
         String jsonDocumentAsString =
-                smartUtils.getJsonDocumentAsString("unit_test_files/01_unit_test_jsons/08_parameterized.json");
+                smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/08_parameterized.json");
         Parameterized parameterized = mapper.readValue(jsonDocumentAsString, Parameterized.class);
 
         assertThat(parameterized.getValueSource(), hasItem("hello"));
@@ -51,7 +51,7 @@ public class ParameterizedTest {
     @Test
     public void testSerDe_csvSource() throws Exception {
         String jsonDocumentAsString =
-                smartUtils.getJsonDocumentAsString("unit_test_files/01_unit_test_jsons/08_parameterized.json");
+                smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/08_parameterized.json");
         Parameterized parameterized = mapper.readValue(jsonDocumentAsString, Parameterized.class);
 
         assertThat(parameterized.getCsvSource(), hasItem("1,        2,        200"));

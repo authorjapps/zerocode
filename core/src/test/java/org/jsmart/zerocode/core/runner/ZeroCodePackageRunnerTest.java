@@ -23,7 +23,7 @@ public class ZeroCodePackageRunnerTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    @TestPackageRoot("unit_test_files/03_test_one_multi_steps")
+    @TestPackageRoot("unit_test_files/test_scenario_multi_steps")
     public static class ScenarioTestFlowExampleTest {
     }
 
@@ -104,7 +104,7 @@ public class ZeroCodePackageRunnerTest {
         assertThat(zeroCodePackageRunner.testRunCompleted, is(true));
     }
 
-    @TestPackageRoot("unit_test_files/06_test_with_place_holders")
+    @TestPackageRoot("unit_test_files/place_holders")
     public class MultiStepWithPlaceHolderTestClass {
     }
 }

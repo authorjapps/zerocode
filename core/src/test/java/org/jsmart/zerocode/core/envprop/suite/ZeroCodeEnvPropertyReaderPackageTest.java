@@ -9,8 +9,8 @@ import org.junit.runner.RunWith;
 // If not found, then defaults to "app_config.properties"
 
 @EnvProperty("_${ENV_NAME}")
-@TargetEnv("package_properties/app_config.properties")
-@TestPackageRoot("14_env_prop")
+@TargetEnv("env_config_properties/app_config.properties")
+@TestPackageRoot("integration_test_files/env_prop")
 @RunWith(NewPortTestZeroCodeUnitRunner.class)
 //@RunWith(ZeroCodePackageRunner.class)
 public class ZeroCodeEnvPropertyReaderPackageTest {

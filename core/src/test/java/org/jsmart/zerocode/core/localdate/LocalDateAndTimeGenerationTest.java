@@ -15,7 +15,7 @@ public class LocalDateAndTimeGenerationTest {
      */
 
     @Test
-    @JsonTestCase("15_localdatetime/10_local_date_generation.json")
+    @JsonTestCase("unit_test_files/localdatetime/10_local_date_generation.json")
     public void willGetResponse_headers() throws Exception {
     
     }

@@ -6,7 +6,7 @@
             "url": "/home/bathroom",
             "operation": "POST",
             "request": {
-                "body" : "${JSON.FILE:filebody/bodyonly/request_body.json}"
+                "body" : "${JSON.FILE:integration_test_files/filebody/bodyonly/request_body.json}"
             },
             "assertions": {
                 "status": 201
@@ -20,7 +20,11 @@
             },
             "assertions": {
                 "status": 200,
-                "body" : "${JSON.FILE:filebody/bodyonly/response_body.json}"
+                "body": {
+                    "id" : 1,
+                    "name" : "Shower",
+                    "availability" : true
+                }
             }
         }
     ]

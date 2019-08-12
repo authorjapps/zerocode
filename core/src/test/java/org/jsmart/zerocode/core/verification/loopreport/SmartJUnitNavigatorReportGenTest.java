@@ -36,7 +36,7 @@ public class SmartJUnitNavigatorReportGenTest {
                 .get();
 
         JSONAssert.assertEquals(
-                SmartUtils.readJsonAsString("11_reports/03_multi_scenario_expected_report.json"),
+                SmartUtils.readJsonAsString("unit_test_files/reports/03_multi_scenario_expected_report.json"),
                 //mapper.readValue(new File(TARGET_REPORT_DIR + "Will Get A bath Room Multi Multi.json"), JsonNode.class).toString(),
                 mapper.readValue(new File(reportFileUnderTest), JsonNode.class).toString(),
                 false);
