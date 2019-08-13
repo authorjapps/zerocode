@@ -199,7 +199,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
         ScenarioSpec child = null;
         try {
-            child = smartUtils.jsonFileToJava(currentTestCase, ScenarioSpec.class);
+            child = smartUtils.scenarioFileToJava(currentTestCase, ScenarioSpec.class);
 
             LOGGER.debug("### Found currentTestCase : -" + child);
 

@@ -9,6 +9,7 @@ import com.google.classpath.RegExpResourceFilter;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -33,6 +34,9 @@ public class SmartUtils {
     @Inject
     private ObjectMapper mapper; //<--- remember the static methods can not use this objectMapper. So make the methods non-static if you want to use this objectMapper.
 
+    @Inject @Named("YamlMapper")
+    private ObjectMapper yamlMapper;
+
     public <T> String getItRight() throws IOException {
         String jsonAsString = mapper.toString();
         return jsonAsString;
@@ -43,14 +47,17 @@ public class SmartUtils {
         return jsonAsString;
     }
 
-    public static String readJsonAsString(String jsonFileName){
+    public static String readJsonAsString(String jsonFile){
         try {
-            return Resources.toString(Resources.getResource(jsonFileName), defaultCharset());
+            return Resources.toString(Resources.getResource(jsonFile), defaultCharset());
         } catch (IOException e) {
-            throw new RuntimeException("Exception occurred while reading the JSON file - " + jsonFileName);
+            throw new RuntimeException("Exception occurred while reading the JSON file - " + jsonFile);
         }
     }
 
+    public static String readYamlAsString(String yamlFile){
+        return readJsonAsString(yamlFile);
+    }
 
     public Map<String, Object> readJsonStringAsMap(String json) throws IOException {
         Map<String, Object> map = new HashMap<>();
@@ -71,8 +78,12 @@ public class SmartUtils {
     }
 
 
-    public <T> T jsonFileToJava(String jsonFileName, Class<T> clazz) throws IOException {
-        return mapper.readValue(readJsonAsString(jsonFileName), clazz);
+    public <T> T scenarioFileToJava(String scenarioFile, Class<T> clazz) throws IOException {
+        if(scenarioFile.endsWith(".yml") || scenarioFile.endsWith(".yaml")){
+            return yamlMapper.readValue(readYamlAsString(scenarioFile), clazz);
+        }
+
+        return mapper.readValue(readJsonAsString(scenarioFile), clazz);
     }
 
     public List<ScenarioSpec> getScenarioSpecListByPackage(String packageName) {
@@ -80,7 +91,7 @@ public class SmartUtils {
         List<ScenarioSpec> scenarioSpecList = allEndPointFiles.stream()
                 .map(testResource -> {
                     try {
-                        return jsonFileToJava(testResource, ScenarioSpec.class);
+                        return scenarioFileToJava(testResource, ScenarioSpec.class);
                     } catch (IOException e) {
                         throw new RuntimeException("Exception while deserializing to Spec. Details: " + e);
                     }

@@ -95,7 +95,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
             return allEndPointFiles.stream()
                     .map(testResource -> {
                         try {
-                            return smartUtils.jsonFileToJava(testResource, ScenarioSpec.class);
+                            return smartUtils.scenarioFileToJava(testResource, ScenarioSpec.class);
                         } catch (IOException e) {
                             throw new RuntimeException("Exception while deserializing to Spec. Details: " + e);
                         }
