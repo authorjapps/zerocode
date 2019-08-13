@@ -51,10 +51,10 @@ public class SmartUtilsTest {
 
     @Test
     public void testJsonToJavaFor_jsonFileName() throws Exception {
-        Step stepJava = smartUtils.jsonFileToJava("unit_test_files/engine_unit_test_jsons/01_test_json_single_step.json", Step.class);
+        Step stepJava = smartUtils.scenarioFileToJava("unit_test_files/engine_unit_test_jsons/01_test_json_single_step.json", Step.class);
         assertThat(stepJava.getLoop(), is(3));
 
-        ScenarioSpec scenarioJava = smartUtils.jsonFileToJava("unit_test_files/engine_unit_test_jsons/02_test_json_flow_single_step.json", ScenarioSpec.class);
+        ScenarioSpec scenarioJava = smartUtils.scenarioFileToJava("unit_test_files/engine_unit_test_jsons/02_test_json_flow_single_step.json", ScenarioSpec.class);
         assertThat(scenarioJava.getLoop(), is(5));
     }
 

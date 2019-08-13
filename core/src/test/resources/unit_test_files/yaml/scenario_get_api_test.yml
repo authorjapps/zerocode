@@ -1,0 +1,20 @@
+---
+scenarioName: A simple GET API Scenario
+steps:
+- name: "find_match"
+  url: "/api/v1/persons/p001"
+  operation: "GET"
+  request:
+    headers:
+      x-api-key: "Ama-zing-key"
+      x-api-secret: "Sec-ret-stuff"
+  verifications:
+    status: 200
+    body:
+      exactMatches: true
+      name: "Mr Bean"
+      addresses:
+      - type: "office"
+        line1: "10 Random St"
+      - type: "home"
+        line1: "300 Random St"
