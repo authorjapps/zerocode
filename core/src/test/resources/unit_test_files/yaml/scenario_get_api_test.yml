@@ -1,5 +1,5 @@
 ---
-scenarioName: A simple GET API Scenario
+scenarioName: "A simple GET API Scenario" #comments allowed
 steps:
 - name: "find_match"
   url: "/api/v1/persons/p001"
@@ -9,7 +9,7 @@ steps:
       x-api-key: "Ama-zing-key"
       x-api-secret: "Sec-ret-stuff"
   verifications:
-    status: 200
+    status: 200 #comment - a http status code as int value
     body:
       exactMatches: true
       name: "Mr Bean"

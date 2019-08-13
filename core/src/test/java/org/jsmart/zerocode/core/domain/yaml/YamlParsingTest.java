@@ -1,7 +1,6 @@
 package org.jsmart.zerocode.core.domain.yaml;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.IOException;
 import org.jsmart.zerocode.core.di.provider.YamlObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
