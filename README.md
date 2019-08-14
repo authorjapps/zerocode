@@ -531,7 +531,7 @@ Usge and Help - Table of Contents
 * [Generating random strings, random numbers and static strings](#generating-random-strings-random-numbers-and-static-strings)
 * [Asserting general and exception messages](#asserting-general-and-exception-messages)
 * [Asserting with $GT or $LT](#asserting-with-gt-or-lt)
-* [Asserting an empty array(#asserting-an-empty-array-with-)
+* [Asserting an empty array](#asserting-an-empty-array-with-)
 * [Asserting an array SIZE](#asserting-an-array-size)
 * [Calling java methods(apis) for doing specific tasks:](#calling-java-methodsapis-for-doing-specific-tasks)
 * [Overriding with Custom HttpClient with Project demand](#overriding-with-custom-httpclient-with-project-demand)
