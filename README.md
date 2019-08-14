@@ -11,10 +11,36 @@ Zerocode makes it easy to create and maintain automated tests with absolute mini
 
 Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode/blob/master/README.md#smart-projects-using-zerocode) to achieve accurate production drop of their micro-services.
 
-It is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the step-chaining, request payload handling and response assertions at the same time, same place using [JSON Path](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
+Table of Contents
+===
+
+   * [Introduction and Quick Overview](#introduction)
+   * [Maven and CI <g-emoji class="g-emoji" alias="hammer" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f528.png">🔨</g-emoji>](#maven-and-ci-)
+   * [Configuring Custom Http Client](#configuring-custom-http-client)
+   * [Running a Single Scenario Test](#running-a-single-scenario-test)
+   * [Running a Suite of Tests](#running-a-suite-of-tests)
+   * [YAML DSL](#yaml-dsl)
+   * [Python](#python)
+   * [Load Testing](#load-testing)
+   * [Maven Dependencies](#maven-dependencies)
+   * [Declarative TestCase - Hooking BDD Scenario Steps](#declarative-testcase---hooking-bdd-scenario-steps)
+   * [Hello World <g-emoji class="g-emoji" alias="raised_hands" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f64c.png">🙌</g-emoji>](#hello-world-)
+   * [Upcoming Releases <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>](#upcoming-releases-)
+   * [Supported testing frameworks](#supported-testing-frameworks)
+   * [Kafka Testing](#kafka-testing)
+   * [DataBase(DB) Integration Testing](#databasedb-integration-testing)
+   * [Smart Projects Using Zerocode](#smart-projects-using-zerocode)
+   * [Latest news/releases/features](#latest-newsreleasesfeatures)
+   * [Getting started ⛹‍♂](#getting-started-)
+   * [Usge and Help - Table of Contents](#usge-and-help---table-of-contents)
+   
+Introduction
+===
+Zerocode is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON or YAML format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the response validations, target API invocations with  payload and test-scenario steps-chaining at the same time, same place using [Jayway JsonPath](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
 For example, if our REST API returns the following from URL `https://localhost:8080/api/v1/customers/123` with `http` status `200(OK)`,
 ```javaScript
+Response:
 {
     "id": 123,
     "type": "Premium High Value",
@@ -54,47 +80,26 @@ then, we can easily validate the above API using `Zerocode` like below.
     }
 }
 ```
-Or
 
-```javaScript
-{
-    ...
-    "verifications": {
-        "body": {
-            "id": "$NOT.NULL",  // A not-null indeterministic value
-            "addresses.SIZE": "$GT.0"  // Only the length validation(not the contents) - Greater Than 0. 
-        }
-    }
-}
+Or using [YAML DSL](https://github.com/authorjapps/zerocode/wiki/YAML-DSL-For-Test-Scenarios) described as below,
+
+```yaml
+---
+url: api/v1/customers/123
+operation: GET
+request:
+  auth_token: a_valid_token
+verifications:
+  status: 200
+  body:
+    id: 123
+    type: Premium High Value
+    addresses:
+    - type: holiday
+      line1: Mars
 ```
 
-Or
-
-```javaScript
-{
-    ...
-    "verifications": {
-        "body": {
-            "type": "$CONTAINS.STRING:High Value"  // Matches only part of the value
-        }
-    }
-}
-```
-
-Or
-
-```javaScript
-{
-    ...
-    "verifications": {
-        "body": {
-	    "addresses[?(@.type=='Holiday')].line1.SIZE": 1  // Indeterministic element position in an array
-        }
-    }
-}
-```
-
-and run it simply by pointing to the above JSON file from a "JUnit" @Test method.
+and run it simply by pointing to the above JSON/YAML file from a JUnit `@Test` method.
 
 ```java
    @Test
@@ -173,13 +178,13 @@ public class HelloWorldSelectedGitHubSuite {
 
 Python
 ===
-If you are looking for simillar REST API testing DSL in Python(YAML),
+If you are looking for simillar REST API testing DSL in Python(YAML/JSON),
 Then visit this open-source [pyresttest](https://github.com/svanoort/pyresttest#sample-test) lib in the GitHub.
 
 In the below example -
 - `name` is equivalent to `scenarioName`
 - `method` is equivalent to `operation`
-- `validators` is equivalent to `verifications` or `assertions` of Zerocode
+- `validators` is equivalent to `verifications` feature of Zerocode
 
 ```yaml
 - test: # create entity by PUT
@@ -199,6 +204,10 @@ The [Quick-Start](https://github.com/svanoort/pyresttest/blob/master/quickstart.
 Load Testing
 ===
 Use Zerocode declarative [parallel load generation](https://github.com/authorjapps/zerocode/blob/master/README.md#generating-load-for-performance-testing-aka-stress-testing) on the target system.
+
+YAML DSL
+===
+Zerocode supports YAML DSLs for writing Test Scenarios. Please visit [YAML Wiki](https://github.com/authorjapps/zerocode/wiki/YAML-DSL-For-Test-Scenarios) page for usages and examples.
 
 Declarative TestCase - Hooking BDD Scenario Steps
 ===
@@ -257,7 +266,8 @@ Maven and CI 🔨
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 **Mailing List:** [Mailing List](https://groups.google.com/forum/#!forum/zerocode-automation) <br/>
-**Chat Room:** [Gitter Chat ](https://gitter.im/zerocode-testing/help-and-usage) <br/>
+**Chat Room:** [Gitter(unused)](https://gitter.im/zerocode-testing/help-and-usage) <br/>
+**Chat Room:** [Slack(active)](https://join.slack.com/t/zerocode-workspace/shared_invite/enQtNzIyNDUwOTg2NDUzLWQ3ZTM1YTBhNjJmNzY3NmU0Y2I4NWIwZDVjYjk4M2JhYWY5NzA3ZWEwMWIwOTIwOWFjNTg2YzFmNzZhYTUyYzI) <br/>
 
 > The purpose of Zerocode lib is to make our API tests easy to **write**, easy to **change**, easy to **share**.
 
@@ -388,7 +398,7 @@ Follow us(Twitter)
 Getting started ⛹‍♂
 ===
 
-Add these `two` maven dependencies:
+Add these `two` maven dependencies in `test` scope:
 ```xml
 <dependency>
     <groupId>org.jsmart</groupId>
@@ -405,8 +415,8 @@ Add these `two` maven dependencies:
 </dependency>
 ```
 
-Then annotate our `JUnit` test method pointing to the JSON file as below and `run` as a unit test. 
-That's it. Done.
+Then annotate our `JUnit` test method pointing to the JSON/YAML file as below and `run` as a unit test. 
+That's it really.
 
 ```java
 @TargetEnv("github_host.properties")
@@ -420,7 +430,7 @@ public class JustHelloWorldTest {
     }
 }
 ```
-Where, We just need the below `hello_world_status_ok_assertions.json`.
+Where, the `hello_world_status_ok_assertions.json` looks like below.
 
 ```javaScript
 {
@@ -436,7 +446,6 @@ Where, We just need the below `hello_world_status_ok_assertions.json`.
                 "status": 200,
                 "body": {
                     "login" : "octocat",
-                    "id" : 33847731,
                     "type" : "User"
                 }
             }
@@ -452,7 +461,9 @@ web.application.endpoint.port=443
 web.application.endpoint.context=
 ```
 
-And the assertThat(...), GIVEN-WHEN-THEN steps become implicit. We don't have to deal with them explicitly as the framework handles these complexities and makes the testing very very easy <br/>
+Note the `assertThat(...)`, `GIVEN-WHEN-THEN` statements have become implicit here and we have overcome two major overheads. 
+
+We don't have to deal with them explicitly as the framework handles these complexities and makes the testing cycle very very easy for us <br/>
 
 ~~GIVEN- the GitHub REST api GET end point,~~ <br/>
 ~~WHEN- I invoke the API,~~ <br/>
@@ -498,7 +509,9 @@ or
 
 See more usages and examples below.
 
-## Table of Contents - 
+Usge and Help - Table of Contents
+===
+
 - [Help and usage](#1)
 - [Overriding with Custom HttpClient with Project demand, See also SSL Trusted Http Client](#16)
 - [Externalize host and port to properties files](#17)
