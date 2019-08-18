@@ -20,9 +20,10 @@ Table of Contents
    * [Configuring Custom Http Client](#configuring-custom-http-client)
    * [Running a Single Scenario Test](#running-a-single-scenario-test)
    * [Running a Suite of Tests](#running-a-suite-of-tests)
-   * [YAML DSL](#yaml-dsl)
-   * [Python](#python)
    * [Load Testing](#load-testing)
+   * [YAML DSL](#yaml-dsl)
+   * [JSON DSL](#json-dsl)
+   * [Python](#python)
    * [Maven Dependencies](#maven-dependencies)
    * [Declarative TestCase - Hooking BDD Scenario Steps](#declarative-testcase---hooking-bdd-scenario-steps)
    * [Hello World <g-emoji class="g-emoji" alias="raised_hands" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f64c.png">🙌</g-emoji>](#hello-world-)
@@ -56,8 +57,27 @@ Response:
 
 then, we can easily validate the above API using `Zerocode` like below.
 
-> _The beauty here is, we can use the JSON payload structure as it is without any manipulation._
+Using YAML described as below,
 
+> _The beauty here is, we can use the payload structure as it is without any manipulation._
+
+```yaml
+---
+url: api/v1/customers/123
+operation: GET
+request:
+  auth_token: a_valid_token
+verifications:
+  status: 200
+  body:
+    id: 123
+    type: Premium High Value
+    addresses:
+    - type: holiday
+      line1: Mars
+```
+
+Using JSON DSL described as below,
 
 ```javaScript
 {
@@ -80,24 +100,6 @@ then, we can easily validate the above API using `Zerocode` like below.
         }
     }
 }
-```
-
-Or using [YAML DSL](https://github.com/authorjapps/zerocode/wiki/YAML-DSL-For-Test-Scenarios) described as below,
-
-```yaml
----
-url: api/v1/customers/123
-operation: GET
-request:
-  auth_token: a_valid_token
-verifications:
-  status: 200
-  body:
-    id: 123
-    type: Premium High Value
-    addresses:
-    - type: holiday
-      line1: Mars
 ```
 
 and run it simply by pointing to the above JSON/YAML file from a JUnit `@Test` method.
@@ -208,7 +210,11 @@ Use Zerocode declarative [parallel load generation](https://github.com/authorjap
 
 YAML DSL
 ===
-Zerocode supports YAML DSLs for writing Test Scenarios. Please visit [YAML Wiki](https://github.com/authorjapps/zerocode/wiki/YAML-DSL-For-Test-Scenarios) page for usages and examples.
+Zerocode supports YAML DSLs for writing Test Scenarios. Please visit [YAML Example](https://github.com/authorjapps/zerocode/wiki/YAML-DSL-For-Test-Scenarios) page for usages and examples.
+
+JSON DSL
+===
+Zerocode supports JSON DSLs for writing Test Scenarios. Please visit [JSON Example](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) page for usages and examples.
 
 Declarative TestCase - Hooking BDD Scenario Steps
 ===
@@ -3882,12 +3888,15 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 
 #### General place holders
 
+Visit the [Zerocode Tokens Wiki](https://github.com/authorjapps/zerocode/wiki#zerocode-tokens) for details.
+
 | Place Holder  | Output        | More  |
 | ------------- |:-------------| -----|
 | ${RANDOM.NUMBER}       | Replaces with a random number | Random number is generated using current timestamp in milli-sec |
 | ${RANDOM.UUID}       | Replaces with a random UUID | Random number is generated using java.util.UUID e.g. 077e6162-3b6f-4ae2-a371-2470b63dgg00 |
 | ${RANDOM.STRING:10}       | Replaces a random string consists of ten english alpphabets | The length can be dynamic |
 | ${RANDOM.STRING:4}       | Replaces with a random string consists of four english alpphabets | The length can be dynamic |
+| ${RANDOM.ALPHANUMERIC:4}       | Replaces with a random alpha-numeric string consists of four chars and numbers | The length can be dynamic |
 | ${STATIC.ALPHABET:5}       | Replaces with abcde ie Static string of length 5| String starts from "a" and continues, repeats after "z"|
 | ${STATIC.ALPHABET:7}       | Replaces with abcdefg ie Static string of length 7| String starts from a"" and continues, repeats after "z"|
 | ${SYSTEM.PROPERTY:java.vendor}       | Replaces with the value of the system property. E.g. `java.vendor` resolves to `Oracle Corporation` or `Azul Systems, Inc.` | If no property exists then the place holder remains in place i.e. `java.vendor` |
