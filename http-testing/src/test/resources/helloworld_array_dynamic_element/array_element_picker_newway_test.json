@@ -46,7 +46,20 @@
                     }
                 ]
             }
+        },
+        {
+            "name": "get_by_name_index_1",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "operation": "fetchDbCustomersByName",
+            "request": "${$.get_records.response.results[?(@.id < 5)].name.$VALUE[1]}", //<-- Picked the 2nd item from the  array
+            "assertions": {
+                "results": [
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+            }
         }
-
     ]
 }
