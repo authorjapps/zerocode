@@ -7,17 +7,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.text.StrSubstitutor;
 
 import static java.util.UUID.randomUUID;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATETIME_NOW;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATE_TODAY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_STRING_PREFIX;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_STRING_ALPHA;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_STRING_ALPHA_NUMERIC;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_UU_ID;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.STATIC_ALPHABET;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.SYSTEM_ENV;
@@ -51,9 +53,13 @@ public class TokenUtils {
                                 paramaMap.put(runTimeToken, System.currentTimeMillis());
                             }
 
-                        } else if (runTimeToken.startsWith(RANDOM_STRING_PREFIX)) {
-                            int length = Integer.parseInt(runTimeToken.substring(RANDOM_STRING_PREFIX.length()));
+                        } else if (runTimeToken.startsWith(RANDOM_STRING_ALPHA)) {
+                            int length = Integer.parseInt(runTimeToken.substring(RANDOM_STRING_ALPHA.length()));
                             paramaMap.put(runTimeToken, createRandomAlphaString(length));
+
+                        } else if (runTimeToken.startsWith(RANDOM_STRING_ALPHA_NUMERIC)) {
+                            int length = Integer.parseInt(runTimeToken.substring(RANDOM_STRING_ALPHA_NUMERIC.length()));
+                            paramaMap.put(runTimeToken, createRandomAlphaNumericString(length));
 
                         } else if (runTimeToken.startsWith(STATIC_ALPHABET)) {
                             int length = Integer.parseInt(runTimeToken.substring(STATIC_ALPHABET.length()));
@@ -114,13 +120,11 @@ public class TokenUtils {
     }
 
     public static String createRandomAlphaString(int length) {
-        StringBuilder builder = new StringBuilder();
-        Random r = new Random();
-        for (int i = 0; i < length; i++) {
-            builder.append((char) ('a' + r.nextInt(26)));
-        }
-        String randomString = builder.toString();
-        return randomString;
+        return randomAlphabetic(length);
+    }
+
+    public static String createRandomAlphaNumericString(int length) {
+        return randomAlphanumeric(length);
     }
 
     public static String createStaticAlphaString(int length) {

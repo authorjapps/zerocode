@@ -359,6 +359,42 @@ public class ZeroCodeAssertionsProcessorImplTest {
     }
 
     @Test
+    public void testRandom_alpha() throws Exception {
+
+        final String requestJsonAsString = "{\n" + "\t\"onlineOrderId\": \"${RANDOM.STRING:2}\"\n" + "}";
+
+        final List<String> placeHolders = getTestCaseTokens(requestJsonAsString);
+        assertThat(placeHolders.size(), is(1));
+
+        final String resolvedRequestJson =
+                jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
+        assertThat(resolvedRequestJson.indexOf("RANDOM.STRING:"), is(-1));
+
+        final HashMap<String, String> hashMap =
+                smartUtils.getMapper().readValue(resolvedRequestJson, HashMap.class);
+
+        assertThat( hashMap.get("onlineOrderId").length(), is(2));
+    }
+
+    @Test
+    public void testRandom_alphanumeric() throws Exception {
+
+        final String requestJsonAsString = "{\n" + "\t\"onlineOrderId\": \"${RANDOM.ALPHANUMERIC:2}\"\n" + "}";
+
+        final List<String> placeHolders = getTestCaseTokens(requestJsonAsString);
+        assertThat(placeHolders.size(), is(1));
+
+        final String resolvedRequestJson =
+                jsonPreProcessor.resolveStringJson(requestJsonAsString, requestJsonAsString);
+        assertThat(resolvedRequestJson.indexOf("RANDOM.ALPHANUMERIC:"), is(-1));
+
+        final HashMap<String, String> hashMap =
+                smartUtils.getMapper().readValue(resolvedRequestJson, HashMap.class);
+
+        assertThat( hashMap.get("onlineOrderId").length(), is(2));
+    }
+
+    @Test
     public void testIgnoreCaseWith_containsNoMatch() throws Exception {
         ScenarioSpec scenarioSpec =
                 smartUtils.scenarioFileToJava(
