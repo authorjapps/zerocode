@@ -17,7 +17,7 @@ public class HelloWorldArrayElementPickerTest {
     }
 
     @Test
-    @JsonTestCase("helloworld_array_dynamic_element/dynamic_array_element_picker_test.json")
+    @JsonTestCase("helloworld_array_dynamic_element/array_element_picker_old_fashioned_test.json")
     public void testArrayDynamicElementPick_oldFashioned() throws Exception {
 
     }
