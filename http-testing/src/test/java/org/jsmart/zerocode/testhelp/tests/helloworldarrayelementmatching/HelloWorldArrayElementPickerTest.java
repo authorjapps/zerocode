@@ -11,8 +11,14 @@ import org.junit.runner.RunWith;
 public class HelloWorldArrayElementPickerTest {
 
     @Test
-    @JsonTestCase("helloworld_array_dynamic_element/dynamic_array_element_picker_test.json")
+    @JsonTestCase("helloworld_array_dynamic_element/array_element_picker_newway_test.json")
     public void testArrayDynamicElementPick() throws Exception {
+
+    }
+
+    @Test
+    @JsonTestCase("helloworld_array_dynamic_element/dynamic_array_element_picker_test.json")
+    public void testArrayDynamicElementPick_oldFashioned() throws Exception {
 
     }
 

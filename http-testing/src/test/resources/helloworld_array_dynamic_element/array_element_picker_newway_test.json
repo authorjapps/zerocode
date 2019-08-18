@@ -1,0 +1,52 @@
+{
+    "scenarioName": "Pick a value from returned array for matching JSON Path ",
+    "steps": [
+        {
+            "name": "get_records",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "operation": "fetchDbCustomers",
+            "request": "select id, name from customers",
+            "assertions": {
+                "results": [
+                    {
+                        "id": 1,
+                        "name": "Elon Musk"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "get_by_name",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "operation": "fetchDbCustomersByName",
+            "request": "${$.get_records.response.results[?(@.id=='2')].name.$VALUE}", //<-- Picked the field from the  array
+            "assertions": {
+                "results": [
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "get_by_name_index_0",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "operation": "fetchDbCustomersByName",
+            "request": "${$.get_records.response.results[?(@.id=='2')].name.$VALUE[0]}", //<-- Picked the 1st item from the  array
+            "assertions": {
+                "results": [
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+            }
+        }
+
+    ]
+}

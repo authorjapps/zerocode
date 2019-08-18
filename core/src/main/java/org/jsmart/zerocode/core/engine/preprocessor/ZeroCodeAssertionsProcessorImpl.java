@@ -37,8 +37,10 @@ import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNullAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldIsOneOfValueAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldMatchesRegexPatternAsserter;
 
+import static java.lang.Integer.valueOf;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
+import static org.apache.commons.lang.StringUtils.substringBetween;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_LOCAL_DATETIME_AFTER;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_LOCAL_DATETIME_BEFORE;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_PATH_SIZE;
@@ -57,6 +59,7 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASS
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NULL;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_ONE_OF;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.RAW_BODY;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.$VALUE;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -108,6 +111,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
     public String resolveJsonPaths(String jsonString, String scenarioState) {
         List<String> jsonPaths = getAllJsonPathTokens(jsonString);
         Map<String, String> paramMap = new HashMap<>();
+        final String LEAF_VAL_REGEX = "\\$[.](.*)\\$VALUE\\[\\d\\]";
 
         jsonPaths.forEach(thisPath -> {
             try {
@@ -124,6 +128,10 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
                     String escapedString = escapeJava(JsonPath.read(scenarioState, thisPath));
                     paramMap.put(thisPath, escapedString);
 
+                } else if (thisPath.matches(LEAF_VAL_REGEX) || thisPath.endsWith($VALUE)) {
+
+                    resolveLeafOnlyNodeValue(scenarioState, paramMap, thisPath);
+
                 } else {
                     Object jsonPathValue = JsonPath.read(scenarioState, thisPath);
                     if (isPathValueJson(jsonPathValue)) {
@@ -139,7 +147,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
                 }
 
             } catch (Exception e) {
-                throw new RuntimeException("\nJSON:" + jsonString + "\nPossibly comments in the JSON found or bad JSON path found: " + thisPath + ", Details: " + e);
+                throw new RuntimeException("\nJSON:" + jsonString + "\nPossibly comments in the JSON found or bad JSON path found: " + thisPath + ",\nDetails: " + e);
             }
         });
 
@@ -369,6 +377,22 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
 
     boolean isPathValueJson(Object jsonPathValue) {
         return jsonPathValue instanceof LinkedHashMap || jsonPathValue instanceof JSONArray;
+    }
+
+    void resolveLeafOnlyNodeValue(String scenarioState, Map<String, String> paramMap, String thisPath) {
+        String actualPath = thisPath.substring(0, thisPath.indexOf($VALUE));
+        int index = findArrayIndex(thisPath, actualPath);
+
+        List<String> leafValuesAsArray = JsonPath.read(scenarioState, actualPath);
+        paramMap.put(thisPath, leafValuesAsArray.get(index));
+    }
+
+    private int findArrayIndex(String thisPath, String actualPath) {
+        String valueExpr = thisPath.substring(actualPath.length());
+        if($VALUE.equals(valueExpr)){
+            return 0;
+        }
+        return valueOf(substringBetween( valueExpr, "[", "]"));
     }
 
 }

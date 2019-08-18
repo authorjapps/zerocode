@@ -21,6 +21,7 @@ public class ZeroCodeValueTokens {
     public static final String LOCALDATETIME_NOW = "LOCAL.DATETIME.NOW:";
     public static final String SYSTEM_PROPERTY = "SYSTEM.PROPERTY:";
     public static final String SYSTEM_ENV = "SYSTEM.ENV:";
+    public static final String $VALUE = ".$VALUE";
 
     public static List<String> getKnownTokens() {
         return asList(
