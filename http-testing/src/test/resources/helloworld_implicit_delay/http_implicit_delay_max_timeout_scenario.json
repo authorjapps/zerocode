@@ -1,5 +1,5 @@
 {
-   "scenarioName": "Validate Http Implicit Delay",
+   "scenarioName": "Validate Http Implicit Delay or Max Timeout",
    "steps": [
       {
          "name": "verify_mock",

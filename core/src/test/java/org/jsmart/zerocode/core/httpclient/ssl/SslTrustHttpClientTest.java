@@ -42,6 +42,10 @@ public class SslTrustHttpClientTest {
 
     static WireMockServer mockServer = new WireMockServer(port);
 
+    public static final int SERVER_DELAY = 2000;
+    public static final int MAX_IMPLICIT_WAIT_HIGH = 3000;
+    public static final int MAX_IMPLICIT_WAIT_LOW = 1500;
+
     @BeforeClass
     public static void setUpWireMock() throws Exception {
         basePath = "http://localhost:" + port;
@@ -54,7 +58,7 @@ public class SslTrustHttpClientTest {
                 get(urlEqualTo(path))
                         .willReturn(aResponse()
                                 .withStatus(200)
-                                .withFixedDelay(2000)
+                                .withFixedDelay(SERVER_DELAY)
                         ));
 
     }
@@ -85,7 +89,7 @@ public class SslTrustHttpClientTest {
     @Test
     public void testImplicitDelay() throws Exception {
         SslTrustHttpClient sslTrustHttpClient = new SslTrustHttpClient();
-        sslTrustHttpClient.setImplicitWait(3000); //Ok - More than the implicit
+        sslTrustHttpClient.setImplicitWait(MAX_IMPLICIT_WAIT_HIGH); //Ok - More than the implicit
 
         CloseableHttpClient httpClient = sslTrustHttpClient.createHttpClient();
 
@@ -98,7 +102,7 @@ public class SslTrustHttpClientTest {
     @Test(expected = SocketTimeoutException.class)
     public void testImplicitDelay_timeout() throws Exception {
         SslTrustHttpClient sslTrustHttpClient = new SslTrustHttpClient();
-        sslTrustHttpClient.setImplicitWait(1500); //Timeout - Less than the implicit
+        sslTrustHttpClient.setImplicitWait(MAX_IMPLICIT_WAIT_LOW); //Timeout - Less than the implicit
 
         CloseableHttpClient httpClient = sslTrustHttpClient.createHttpClient();
 

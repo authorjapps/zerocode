@@ -23,7 +23,7 @@ public class SslTrustHttpClient extends BasicHttpClient {
 
     /**
      * This is an optional config for the HttpClient.
-     * If this is configured, then the client will implicitly wait for configured
+     * If this is configured, then the client will implicitly wait till the configured
      * amount of time for the server response.
      * If it doesn't receive the response from the server within that time,
      * then it will throw java.net.SocketTimeoutException.
@@ -33,7 +33,7 @@ public class SslTrustHttpClient extends BasicHttpClient {
      * e.g. if the server takes more time to respond, the client will keep on waiting
      * till the server responds or till a network-timeout occurs.
      */
-    public static final String IMPLICIT_WAIT = "http.connection.implicit.wait.milliseconds";
+    public static final String IMPLICIT_WAIT = "http.max.timeout.milliseconds";
 
     @Inject(optional = true)
     @Named(IMPLICIT_WAIT)

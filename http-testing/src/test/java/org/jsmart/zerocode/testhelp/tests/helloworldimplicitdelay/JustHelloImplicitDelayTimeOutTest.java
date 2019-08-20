@@ -10,9 +10,12 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeWireMockRunner.class)
 public class JustHelloImplicitDelayTimeOutTest {
 
+    /**
+     *
+     */
     @Test
-    @Scenario("helloworld_implicit_delay/http_implicit_delay.json")
-    public void testImplicitDelay_timeOut() throws Exception {
+    @Scenario("helloworld_implicit_delay/http_implicit_delay_max_timeout_scenario.json")
+    public void testImplicitDelay_max1Sec() {
     }
 
 }
