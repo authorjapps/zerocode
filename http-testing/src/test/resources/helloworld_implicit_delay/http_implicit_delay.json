@@ -1,0 +1,16 @@
+{
+   "scenarioName": "Validate Http Implicit Delay",
+   "steps": [
+      {
+         "name": "verify_mock",
+         "url": "/delay/ids/2",
+         "operation": "GET",
+         "request": {
+         },
+         "assertions": {
+            "status": 200
+         }
+      }
+
+   ]
+}
