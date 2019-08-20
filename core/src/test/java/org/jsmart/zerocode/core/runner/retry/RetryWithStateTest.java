@@ -13,6 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -25,10 +27,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @TargetEnv("dev_test.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class RetryWithStateTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RetryWithStateTest.class);
 
     static String basePath;
     static String fullPath;
-    static int port = 8383;
+    static int port = 8484;
 
     static WireMockServer mockServer = new WireMockServer(port);
 
@@ -58,7 +61,10 @@ public class RetryWithStateTest {
 
     @AfterClass
     public static void tearDown() {
+        LOGGER.info("##Stopping the mock server and then shutting down");
+        mockServer.stop();
         mockServer.shutdown();
+        LOGGER.info("##Successfully stopped the mock server and then SHUTDOWN.");
     }
 
     @Test

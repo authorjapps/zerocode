@@ -11,7 +11,10 @@ import org.junit.runner.RunWith;
 public class JustHelloImplicitDelayTimeOutTest {
 
     /**
-     *
+     * Server response delay = 2000 milli sec (2sec) - See the WireMock delay
+     * Max timeout = 1000 milli sec (1 sec) - See the localhost_app.properties
+     *  - The below test fails due to Max-timeout config
+     *  - You can tweak this to different value and make it/Pass/Fail
      */
     @Test
     @Scenario("helloworld_implicit_delay/http_implicit_delay_max_timeout_scenario.json")
