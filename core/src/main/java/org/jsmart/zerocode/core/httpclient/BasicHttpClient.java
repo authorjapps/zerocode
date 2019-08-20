@@ -405,7 +405,7 @@ public class BasicHttpClient {
                 return createFormUrlEncodedRequestBuilder(httpUrl, methodName, reqBodyAsString);
             }
             // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-            // Extention- Any other header types to be specially handled here
+            // Extension - Any other header types to be specially handled here
             // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
             // else if(contentType.equals("OTHER-TYPES")){
             //    Handling logic
