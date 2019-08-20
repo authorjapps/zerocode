@@ -33,10 +33,11 @@ public class RetryWithStateTest {
     static String fullPath;
     static int port = 8484;
 
-    static WireMockServer mockServer = new WireMockServer(port);
+    static WireMockServer mockServer;
 
     @BeforeClass
     public static void setUpWireMock() throws Exception {
+        mockServer = new WireMockServer(port);
         basePath = "http://localhost:" + port;
         String path = "/retry/ids/1";
         fullPath = basePath + path;
