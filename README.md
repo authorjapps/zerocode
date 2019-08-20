@@ -947,7 +947,7 @@ Then you can assert many ways for the desired result-
 etc
 ```
 
-See more SIZE examples [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld_array_size/hello_world_array_size_assertions_test.json) in the [hello-world repo](https://github.com/authorjapps/zerocode-hello-world).
+See more SIZE examples [here](https://github.com/authorjapps/zerocode-hello-world/blob/master/src/test/resources/helloworld_array_size/hello_world_array_n_size_assertions_test.json) in the [hello-world repo](https://github.com/authorjapps/zerocode-hello-world).
 
 ### Chaining multiple steps for a scenario
 Chaining steps: Multi-Step REST calls with the earlier response(IDs etc) as input to next step
