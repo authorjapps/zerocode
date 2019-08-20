@@ -33,10 +33,10 @@ public class SslTrustHttpClient extends BasicHttpClient {
      * e.g. if the server takes more time to respond, the client will keep on waiting
      * till the server responds or till a network-timeout occurs.
      */
-    public static final String IMPLICIT_WAIT = "http.max.timeout.milliseconds";
+    public static final String HTTP_MAX_TIMEOUT_MILLISECONDS = "http.max.timeout.milliseconds";
 
     @Inject(optional = true)
-    @Named(IMPLICIT_WAIT)
+    @Named(HTTP_MAX_TIMEOUT_MILLISECONDS)
     private Integer implicitWait;
 
     public SslTrustHttpClient() {
@@ -66,7 +66,7 @@ public class SslTrustHttpClient extends BasicHttpClient {
 
         CookieStore cookieStore = new BasicCookieStore();
 
-        RequestConfig timeOutConfig = createImplicitTimeOutConfig();
+        RequestConfig timeOutConfig = createMaxTimeOutConfig();
 
         return HttpClients.custom()
                 .setSSLContext(sslContext)
@@ -84,14 +84,14 @@ public class SslTrustHttpClient extends BasicHttpClient {
      *
      * @return RequestConfig
      */
-    private RequestConfig createImplicitTimeOutConfig() {
+    private RequestConfig createMaxTimeOutConfig() {
         RequestConfig timeOutConfig;
         if (implicitWait == null) {
             timeOutConfig = RequestConfig.DEFAULT;
             LOGGER.warn("\n*Implicit-Wait/Connection-Timeout not configured.*" +
                             "\nE.g. to configure it for 10sec, use: '{}={}' in the host-config properties. " +
                             "\n**You can safely ignore this warning to retain the default httpClient behavior**\n",
-                    IMPLICIT_WAIT, 10000);
+                    HTTP_MAX_TIMEOUT_MILLISECONDS, 10000);
         } else {
             int timeout = implicitWait.intValue();
             timeOutConfig = RequestConfig.custom()
