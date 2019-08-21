@@ -7,7 +7,7 @@
             "operation": "GET",
             "request": {
             },
-            "assertions": {
+            "verifications": {
                 "status": 200,
                 "body": {
                     "login" : "octocat",

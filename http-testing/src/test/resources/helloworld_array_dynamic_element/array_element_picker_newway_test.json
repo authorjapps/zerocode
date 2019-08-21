@@ -6,7 +6,7 @@
             "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
             "operation": "fetchDbCustomers",
             "request": "select id, name from customers",
-            "assertions": {
+            "verifications": {
                 "results": [
                     {
                         "id": 1,
@@ -24,7 +24,7 @@
             "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
             "operation": "fetchDbCustomersByName",
             "request": "${$.get_records.response.results[?(@.id=='2')].name.$VALUE}", //<-- Picked the field from the  array
-            "assertions": {
+            "verifications": {
                 "results": [
                     {
                         "id": 2,
@@ -38,7 +38,7 @@
             "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
             "operation": "fetchDbCustomersByName",
             "request": "${$.get_records.response.results[?(@.id=='2')].name.$VALUE[0]}", //<-- Picked the 1st item from the  array
-            "assertions": {
+            "verifications": {
                 "results": [
                     {
                         "id": 2,
@@ -52,7 +52,7 @@
             "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
             "operation": "fetchDbCustomersByName",
             "request": "${$.get_records.response.results[?(@.id < 5)].name.$VALUE[1]}", //<-- Picked the 2nd item from the  array
-            "assertions": {
+            "verifications": {
                 "results": [
                     {
                         "id": 2,
