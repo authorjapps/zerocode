@@ -21,8 +21,8 @@ import net.minidev.json.JSONArray;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
-import org.jsmart.zerocode.core.engine.assertion.array.ArrayIsEmptyAsserter;
-import org.jsmart.zerocode.core.engine.assertion.array.ArraySizeAsserter;
+import org.jsmart.zerocode.core.engine.assertion.array.ArrayIsEmptyAsserterImpl;
+import org.jsmart.zerocode.core.engine.assertion.array.ArraySizeAsserterImpl;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringIgnoreCaseAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldHasDateAfterValueAsserter;
@@ -189,13 +189,13 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
                 } else if (ASSERT_VALUE_NULL.equals(value) || ASSERT_VALUE_IS_NULL.equals(value)) {
                     asserter = new FieldIsNullAsserter(path);
                 } else if (ASSERT_VALUE_EMPTY_ARRAY.equals(value)) {
-                    asserter = new ArrayIsEmptyAsserter(path);
+                    asserter = new ArrayIsEmptyAsserterImpl(path);
                 } else if (path.endsWith(ASSERT_PATH_SIZE)) {
                     path = path.substring(0, path.length() - ASSERT_PATH_SIZE.length());
                     if (value instanceof Number) {
-                        asserter = new ArraySizeAsserter(path, ((Integer) value).intValue());
+                        asserter = new ArraySizeAsserterImpl(path, ((Integer) value).intValue());
                     } else if (value instanceof String) {
-                        asserter = new ArraySizeAsserter(path, (String) value);
+                        asserter = new ArraySizeAsserterImpl(path, (String) value);
                     } else {
                         throw new RuntimeException(format("Oops! Unsupported value for .SIZE: %s", value));
                     }

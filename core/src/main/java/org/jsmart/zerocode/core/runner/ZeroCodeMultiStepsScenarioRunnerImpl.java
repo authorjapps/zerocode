@@ -21,6 +21,7 @@ import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcesso
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
 import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
+import org.jsmart.zerocode.core.utils.ApiTypeUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
@@ -57,6 +58,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     @Inject
     private CsvParser csvParser;
+
+    @Inject
+    private ApiTypeUtils apiTypeUtils;
 
     @Inject(optional = true)
     @Named("web.application.endpoint.host")
@@ -390,6 +394,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .method(operationName)
                         .request(prettyPrintJson(resolvedRequestJson));
 
+                url = apiTypeUtils.getQualifiedJavaApi(url);
                 executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJson);
                 break;
 

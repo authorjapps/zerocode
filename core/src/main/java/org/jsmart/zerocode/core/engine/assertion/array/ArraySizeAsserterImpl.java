@@ -12,18 +12,18 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASS
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_LESSER_THAN;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NOT_EQUAL_TO_NUMBER;
 
-public class ArraySizeAsserter implements JsonAsserter {
+public class ArraySizeAsserterImpl implements JsonAsserter {
     private final String path;
     private final int expectedSize;
     private final String expectedSizeExpression;
 
-    public ArraySizeAsserter(String path, int size) {
+    public ArraySizeAsserterImpl(String path, int size) {
         this.path = path;
         expectedSize = size;
         expectedSizeExpression = null;
     }
 
-    public ArraySizeAsserter(String path, String expression) {
+    public ArraySizeAsserterImpl(String path, String expression) {
         this.path = path;
         expectedSizeExpression = expression;
         expectedSize = -1;
