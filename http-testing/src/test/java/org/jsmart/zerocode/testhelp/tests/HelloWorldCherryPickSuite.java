@@ -15,5 +15,5 @@ import org.junit.runner.RunWith;
         @JsonTestCase("no_server/no_server_call_simple.json"),
         @JsonTestCase("no_server/no_server_call_multi.json"),
 })
-public class HelloWorldSelectedGitHubSuite {
+public class HelloWorldCherryPickSuite {
 }

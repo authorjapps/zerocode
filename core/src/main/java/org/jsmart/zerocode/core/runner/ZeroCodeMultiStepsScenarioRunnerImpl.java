@@ -21,6 +21,7 @@ import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcesso
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
 import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
+import org.jsmart.zerocode.core.utils.ApiTypeUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
@@ -57,6 +58,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     @Inject
     private CsvParser csvParser;
+
+    @Inject
+    private ApiTypeUtils apiTypeUtils;
 
     @Inject(optional = true)
     @Named("web.application.endpoint.host")
@@ -381,6 +385,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 break;
 
             case JAVA_CALL:
+                url = apiTypeUtils.getQualifiedJavaApi(url);
                 correlLogger.aRequestBuilder()
                         .relationshipId(logPrefixRelationshipId)
                         .requestTimeStamp(requestTimeStamp)

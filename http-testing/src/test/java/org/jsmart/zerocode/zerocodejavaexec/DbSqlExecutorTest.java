@@ -33,7 +33,5 @@ public class DbSqlExecutorTest {
         String json = objectMapper.writeValueAsString(resultMap);
 
         assertThat(json, is("{\"results\":[{\"id\":1,\"name\":\"Elon Musk\"},{\"id\":2,\"name\":\"Jeff Bezos\"}]}"));
-        System.out.println("json: " + json);
-
     }
 }

@@ -1,0 +1,24 @@
+{
+    "scenarioName": "Java method return as JSON assertions",
+    "steps": [
+        {
+            "name": "execute_java_method",
+            "url": "pg://v1/sql-executor",
+            "operation": "fetchDbCustomers",
+            "request": "select id, name from customers",
+            "assertions": {
+                "results": [
+                    {
+                        "id": 1,
+                        "name": "Elon Musk"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+
+            }
+        }
+    ]
+}

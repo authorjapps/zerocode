@@ -8,10 +8,10 @@ import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
 
-public class ArrayIsEmptyAsserter implements JsonAsserter {
+public class ArrayIsEmptyAsserterImpl implements JsonAsserter {
     private final String path;
 
-    public ArrayIsEmptyAsserter(String path) {
+    public ArrayIsEmptyAsserterImpl(String path) {
         this.path = path;
     }
 
