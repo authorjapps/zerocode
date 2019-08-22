@@ -54,11 +54,12 @@ public class ApiTypeUtils {
         if (!url.contains("://")){
             return url;
         }
-        LOGGER.info("Locating protocol service mapping for - '{}'", url);
         return findMapping(javaApiProtoMappings, url);
     }
 
     private String findMapping(String javaApiProtoMappings, String url) {
+        LOGGER.info("Locating protocol service mapping for - '{}'", url);
+
         if (isEmpty(javaApiProtoMappings)) {
             LOGGER.error("Protocol mapping was null or empty. Please create the mappings first and then rerun");
             throw new RuntimeException("\nProtocol mapping was null or empty.");
