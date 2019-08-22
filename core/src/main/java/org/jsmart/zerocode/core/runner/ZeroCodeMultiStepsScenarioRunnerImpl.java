@@ -385,7 +385,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 break;
 
             case JAVA_CALL:
-                url = apiTypeUtils.getQualifiedJavaApi(url);
                 correlLogger.aRequestBuilder()
                         .relationshipId(logPrefixRelationshipId)
                         .requestTimeStamp(requestTimeStamp)
@@ -395,6 +394,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .method(operationName)
                         .request(prettyPrintJson(resolvedRequestJson));
 
+                url = apiTypeUtils.getQualifiedJavaApi(url);
                 executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJson);
                 break;
 

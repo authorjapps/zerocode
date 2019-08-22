@@ -69,7 +69,9 @@ public class ApiTypeUtils {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("\nurl '" + url + "' Not found"));
 
-        LOGGER.info("Found protocol mapping for - '{}'", url);
-        return foundMapping.split("\\|")[1];
+        String qualifiedClazz = foundMapping.split("\\|")[1];
+        LOGGER.info("Found protocol mapping for - '{} -> {}'", url, qualifiedClazz);
+
+        return qualifiedClazz;
     }
 }

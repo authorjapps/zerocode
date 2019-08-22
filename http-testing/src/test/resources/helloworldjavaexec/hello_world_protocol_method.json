@@ -19,6 +19,26 @@
                 ]
 
             }
+        },
+        {
+            "name": "execute_gremlin_ql",
+            "url": "bar2://v1/gremlin-exe",
+            "operation": "fetchDbCustomers",
+            "request": "select id, name from customers",
+            "assertions": {
+                "results": [
+                    {
+                        "id": 1,
+                        "name": "Elon Musk"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+
+            }
         }
+
     ]
 }
