@@ -9,7 +9,7 @@
 
 Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. Jump to the [quick-start section](https://github.com/authorjapps/zerocode/blob/master/README.md#getting-started-) or [HelloWorld](https://github.com/authorjapps/zerocode/blob/master/README.md#hello-world-) section to explore more. 
 
-Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode/blob/master/README.md#smart-projects-using-zerocode) to achieve accurate production drop of their micro-services.
+Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [others](https://github.com/authorjapps/zerocode/blob/master/README.md#smart-projects-using-zerocode) to achieve accurate production drop of their micro-services. It has got best of best ideas and practices from the community to keep it super simple and the adoption is rapidly growing among the developer/tester community.
 
 Table of Contents
 ===
@@ -214,52 +214,21 @@ To write Test-Scenarios using YAML, please visit [YAML Example](https://github.c
 
 JSON DSL
 ===
-Zerocode supports JSON DSLs for writing Test Scenarios. Please visit [JSON Example](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) page for usages and examples.
+Zerocode supports JSON DSLs. For writing Test Scenarios. Please visit [JSON Example](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) page for usages and examples.
 
 Declarative TestCase - Hooking BDD Scenario Steps
 ===
 
-![declarative_reduced](https://user-images.githubusercontent.com/12598420/53393304-ee26b280-3993-11e9-8522-983635c054d7.png)
+With the  **declarative** JSON/YAML DSL, the state of `request/response` payload/headers is available for the subsequent steps via the `JSON Path`.
 
-It eliminates the repetitive code such as Java step definitions, test assertions, payload parsing, API calls such as Http, Kafka, DB Services and much more. See an example [how](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details). It's powerful JSON comparison and assertions make the testing cycle a lot easy and clean.
++ YAML
+<img width="521" alt="YAML large" src="https://user-images.githubusercontent.com/12598420/63574532-29f0ac80-c5b2-11e9-8631-f33b2ce1889a.png">
 
-It has got best of best ideas and practices from the community to keep it super simple and the adoption is rapidly growing among the developer/tester community. It alleviates pain and brings the simplicity in validating the APIs.
++ JSON
+<img width="521" alt="JSON online" src="https://user-images.githubusercontent.com/12598420/63574794-d599fc80-c5b2-11e9-87bd-51d9e1c714a1.png">
 
-It also helps in mocking/stubbing interfacing APIs during the testing cycle in a declarative-fashion. 
-
-Its approach to IDE based performance testing to generate load/stress on the target application is quite simple, flexible and efficient - Enables us to simply reuse the test(s) from our regression pack.
-
-Here the host and port are maintained in a properties file to enable easy environment-switching.
-```
-host_env1.properties
---------------------
-web.application.endpoint.host=https://api.github.com
-web.application.endpoint.port=443
-```
-
-e.g. Our below User-Journey or AC(Acceptance Criteria) or a Scenario,
-```JSON
-AC1:
-GIVEN- the POST api end point '/api/v1/users' to create an user,     
-WHEN- I invoke the API,     
-THEN- I will receive the 201 response status with the a {created-User-Id}
-AND- I will validate the response
-
-AC2:
-GIVEN- the REST api GET end point '/api/v1/users/${id}',     
-WHEN- I invoke the API,     
-THEN- I will receive the 200(Ok) response status with body(user details) and headers
-AND- I will validate the response
-```
-translates to the below executable JSON steps in `Zerocode` - Simple and clean ! <br/>
-_(See here [a full blown CRUD operation scenario](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details) with POST, PUT, GET, DELETE example.)_ <br/>
-
-<img width="624" alt="post_get_user" src="https://user-images.githubusercontent.com/12598420/47145467-bc089400-d2c1-11e8-8707-8e2d2e8c3127.png">
-
-That's it, the simple JSON steps. No other step definition coding needed. <br/>
+That's it, the simple YAML/JSON steps. No other BDD step definition coding needed. <br/>
 ~~_No feature files, no extra plugins, no assertThat(...), no statements or grammar syntax overhead._~~ 
-
-And it is **declarative** JSON DSL, with the `request/response` fields available for the step chaining via the `JSON Path`.
 
 See the [Table Of Contents](https://github.com/authorjapps/zerocode#table-of-contents--) for usages and examples.
 
