@@ -627,6 +627,28 @@ Because we are asserting with an expected status as 500, but the end point actua
   ]
 }
 ```
+Using the gremlin query in Zero Code
+{
+    "scenarioName": "Gremlin HelloWorld query",
+    "steps": [
+        {
+           
+	   "name": "Using_Gremliquery"
+            "url": "/tinkerpop/gremlin",
+            "operation": "POST",
+	    "request": {
+	    	"body": {
+		"g.V().has('name', 'helloworld').values('name')"
+		}
+	    },
+            "assertions": {
+                   "status": 201
+            }
+        }
+    ]
+}
+
+We can also pass the gremlin query from extral file location using ${XML.FILE: gremlinquery.txt}
 
 ### Generating load for performance testing aka stress testing
 + Browse or clone this [sample performance-tests repo](https://github.com/authorjapps/performance-tests) with examples.
