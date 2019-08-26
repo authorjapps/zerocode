@@ -1,0 +1,27 @@
+{
+    "scenarioName": "Parameterized test scenario demo Typecast",
+    "steps": [
+        {
+            "name": "get_user",
+            "url": "/home/bathroom/${0}",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": "(int)${0}",
+                    "availability": "(boolean)${1}"
+                }
+            }
+        }
+    ],
+    "parameterized": {
+        "csvSource":[
+            "1,  true",
+            "21, true"
+        ]
+    }
+
+}
+

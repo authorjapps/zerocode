@@ -373,7 +373,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
         final HashMap<String, String> hashMap =
                 smartUtils.getMapper().readValue(resolvedRequestJson, HashMap.class);
 
-        assertThat( hashMap.get("onlineOrderId").length(), is(2));
+        assertThat(hashMap.get("onlineOrderId").length(), is(2));
     }
 
     @Test
@@ -391,7 +391,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
         final HashMap<String, String> hashMap =
                 smartUtils.getMapper().readValue(resolvedRequestJson, HashMap.class);
 
-        assertThat( hashMap.get("onlineOrderId").length(), is(2));
+        assertThat(hashMap.get("onlineOrderId").length(), is(2));
     }
 
     @Test
@@ -1361,7 +1361,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
                 "                \"author\": \"Nigel Rees\",\n" +
                 "                \"title\": \"Sayings of the Century\",\n" +
                 "                \"price\": 8.95\n" +
-                "            }"+
+                "            }" +
                 "        ]\n" +
                 "    }\n" +
                 "}";

@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
@@ -60,6 +61,8 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASS
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_ONE_OF;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.RAW_BODY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.$VALUE;
+import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.digTypeCast;
+import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.fieldTypes;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -84,7 +87,8 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
     @Override
     public String resolveStringJson(String requestJsonOrAnyString, String scenarioStateJson) {
         String resolvedFromTemplate = resolveKnownTokensAndProperties(requestJsonOrAnyString);
-        return resolveJsonPaths(resolvedFromTemplate, scenarioStateJson);
+        String resolvedJson = resolveJsonPaths(resolvedFromTemplate, scenarioStateJson);
+        return resolveFieldTypes(resolvedJson);
     }
 
     @Override
@@ -223,15 +227,14 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
                 } else if (value instanceof String && (value.toString()).startsWith(ASSERT_LOCAL_DATETIME_AFTER)) {
                     String expected = ((String) value).substring(ASSERT_LOCAL_DATETIME_AFTER.length());
                     asserter = new FieldHasDateAfterValueAsserter(path, parseLocalDateTime(expected));
-                }else if (value instanceof String && (value.toString()).startsWith(ASSERT_LOCAL_DATETIME_BEFORE)) {
+                } else if (value instanceof String && (value.toString()).startsWith(ASSERT_LOCAL_DATETIME_BEFORE)) {
                     String expected = ((String) value).substring(ASSERT_LOCAL_DATETIME_BEFORE.length());
                     asserter = new FieldHasDateBeforeValueAsserter(path, parseLocalDateTime(expected));
-                }else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_ONE_OF) ||
-                        value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_IS_ONE_OF) ) {
+                } else if (value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_ONE_OF) ||
+                        value instanceof String && (value.toString()).startsWith(ASSERT_VALUE_IS_ONE_OF)) {
                     String expected = ((String) value).substring(ASSERT_VALUE_ONE_OF.length());
                     asserter = new FieldIsOneOfValueAsserter(path, expected);
-                }
-                else {
+                } else {
                     asserter = new FieldHasExactValueAsserter(path, value);
                 }
 
@@ -371,8 +374,8 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
         return propertyKeys.contains(runTimeToken);
     }
 
-    private LocalDateTime parseLocalDateTime (String value){
-    	return LocalDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME);
+    private LocalDateTime parseLocalDateTime(String value) {
+        return LocalDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME);
     }
 
     boolean isPathValueJson(Object jsonPathValue) {
@@ -389,10 +392,33 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
 
     private int findArrayIndex(String thisPath, String actualPath) {
         String valueExpr = thisPath.substring(actualPath.length());
-        if($VALUE.equals(valueExpr)){
+        if ($VALUE.equals(valueExpr)) {
             return 0;
         }
-        return valueOf(substringBetween( valueExpr, "[", "]"));
+        return valueOf(substringBetween(valueExpr, "[", "]"));
     }
+
+    private String resolveFieldTypes(String resolvedJson) {
+        try {
+            if (hasNoTypeCast(resolvedJson)) {
+                return resolvedJson;
+            }
+
+            Map<String, Object> fieldMap = mapper.readValue(resolvedJson, new TypeReference<Map<String, Object>>() { });
+            digTypeCast(fieldMap);
+
+            return mapper.writeValueAsString(fieldMap);
+
+        } catch (Exception ex) {
+            LOGGER.error("Field Type conversion exception. \nDetails:" + ex);
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private boolean hasNoTypeCast(String resolvedJson) {
+        long foundCount = fieldTypes.stream().filter(thisType -> resolvedJson.contains(thisType)).count();
+        return foundCount <= 0 ? true : false;
+    }
+
 
 }

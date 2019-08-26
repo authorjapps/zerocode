@@ -38,13 +38,15 @@ public class ExtentReportsFactory {
         final String osName = systemProperties.get("os.name");
         final String osArchitecture = systemProperties.get("os.arch");
         final String javaVersion = systemProperties.get("java.version");
+        final String javaVendor = systemProperties.get("java.vendor");
 
-        LOGGER.info("Where were the tests fired? Ans: OS:{}, Architecture:{}, Java:{}",
-                osName, osArchitecture, javaVersion);
+        LOGGER.info("Where were the tests fired? Ans: OS:{}, Architecture:{}, Java:{}, Vendor:{}",
+                osName, osArchitecture, javaVersion, javaVendor);
 
         extentReports.setSystemInfo("OS : ", osName);
         extentReports.setSystemInfo("OS Architecture : ", osArchitecture);
         extentReports.setSystemInfo("Java Version : ", javaVersion);
+        extentReports.setSystemInfo("Java Vendor : ", javaVendor);
     }
 
     public static ExtentHtmlReporter createExtentHtmlReporter(String reportFileName) {
