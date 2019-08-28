@@ -2213,6 +2213,8 @@ Visit the [Wiki](https://github.com/authorjapps/zerocode/wiki) for more details.
 
 
 ### JSON Slice And Dice - Solved
+Handy JSON and YAML slice/dice, format conversion, JSON Path evaluations tools can be found below:
++ [JSON to YAML and vice versa](https://www.json2yaml.com/)
 + [Exapnd, Collapse, Remove Node and Traverse etc](https://jsoneditoronline.org/)
   + Tree structure viewing - Good for array traversing
   + Remove a node -> Click on left arrow
