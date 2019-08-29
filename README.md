@@ -66,12 +66,15 @@ then, we can easily validate the above API using `Zerocode` like below.
 url: api/v1/customers/123
 operation: GET
 request:
-  auth_token: secret_token
+	headers:
+  	auth_token: a_valid_token
 retry:
   max: 3
-  delay: 0
+  delay: 2000
 verifications:
   status: 200
+	headers:
+  	corr-id: corr_uuid
   body:
     id: 123
     type: Premium High Value
@@ -84,28 +87,33 @@ verifications:
 
 ```javaScript
 {
-    "url": "api/v1/customers/123",
-    "operation": "GET",
-    "request": {
-        "auth_token": "secret_token"
-    },
-    "retry": {
-        "max": 3,
-        "delay": 2000
-    },
-    "verifications": {
-        "status": 200,
-        "body": {
-            "id": 123,
-            "type": "Premium High Value",
-            "addresses": [
-                {
-                    "type": "home",
-                    "line1": "10 Random St"
-                }
-            ]
-        }
+  "url": "api/v1/customers/123",
+  "operation": "GET",
+  "request": {
+    "headers": {
+      "auth_token": "a_valid_token"
     }
+  },
+  "retry": {
+    "max": 3,
+    "delay": 2000
+  },
+  "verifications": {
+    "status": 200,
+    "headers": {
+      "corr-id": "corr_uuid"
+    },
+    "body": {
+      "id": 123,
+      "type": "Premium High Value",
+      "addresses": [
+        {
+          "type": "home",
+          "line1": "10 Random St"
+        }
+      ]
+    }
+  }
 }
 ```
 
