@@ -66,7 +66,10 @@ then, we can easily validate the above API using `Zerocode` like below.
 url: api/v1/customers/123
 operation: GET
 request:
-  auth_token: a_valid_token
+  auth_token: secret_token
+retry:
+  max: 3
+  delay: 0
 verifications:
   status: 200
   body:
@@ -84,7 +87,11 @@ verifications:
     "url": "api/v1/customers/123",
     "operation": "GET",
     "request": {
-        "auth_token":"a_valid_token"
+        "auth_token": "secret_token"
+    },
+    "retry": {
+        "max": 3,
+        "delay": 2000
     },
     "verifications": {
         "status": 200,
@@ -93,8 +100,8 @@ verifications:
             "type": "Premium High Value",
             "addresses": [
                 {
-                    "type":"home",
-                    "line1":"10 Random St"
+                    "type": "home",
+                    "line1": "10 Random St"
                 }
             ]
         }
