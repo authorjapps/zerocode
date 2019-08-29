@@ -66,15 +66,15 @@ then, we can easily validate the above API using `Zerocode` like below.
 url: api/v1/customers/123
 operation: GET
 request:
-	headers:
-  	auth_token: a_valid_token
+  headers:
+    auth_token: a_valid_token
 retry:
   max: 3
   delay: 2000
 verifications:
   status: 200
-	headers:
-  	corr-id: corr_uuid
+  headers:
+    corr-id: corr_uuid
   body:
     id: 123
     type: Premium High Value
