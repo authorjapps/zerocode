@@ -22,8 +22,8 @@
     ],
     "parameterized": {
         "csvSource":[
-            "octocat, The Octocat, San Francisco, 583231, false",
-            "siddhagalaxy, Sidd, UK, 33847730, false"
+            "octocat,      The Octocat, San Francisco, 583231,   false",
+            "siddhagalaxy, Sidd,        UK,            33847730, false"
         ]
     }
 }
