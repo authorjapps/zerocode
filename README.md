@@ -66,9 +66,15 @@ then, we can easily validate the above API using `Zerocode` like below.
 url: api/v1/customers/123
 operation: GET
 request:
-  auth_token: a_valid_token
+  headers:
+    auth_token: a_valid_token
+retry:
+  max: 3
+  delay: 2000
 verifications:
   status: 200
+  headers:
+    corr-id: corr_uuid
   body:
     id: 123
     type: Premium High Value
@@ -81,24 +87,33 @@ verifications:
 
 ```javaScript
 {
-    "url": "api/v1/customers/123",
-    "operation": "GET",
-    "request": {
-        "auth_token":"a_valid_token"
-    },
-    "verifications": {
-        "status": 200,
-        "body": {
-            "id": 123,
-            "type": "Premium High Value",
-            "addresses": [
-                {
-                    "type":"home",
-                    "line1":"10 Random St"
-                }
-            ]
-        }
+  "url": "api/v1/customers/123",
+  "operation": "GET",
+  "request": {
+    "headers": {
+      "auth_token": "a_valid_token"
     }
+  },
+  "retry": {
+    "max": 3,
+    "delay": 2000
+  },
+  "verifications": {
+    "status": 200,
+    "headers": {
+      "corr-id": "corr_uuid"
+    },
+    "body": {
+      "id": 123,
+      "type": "Premium High Value",
+      "addresses": [
+        {
+          "type": "home",
+          "line1": "10 Random St"
+        }
+      ]
+    }
+  }
 }
 ```
 
@@ -764,6 +779,13 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
 
 ### Paramterized scenario
 To run the scenario steps for each parameter from a list of values or CSV rows.
+
+Examples:
++ YAML
+<img width="460" alt="para yaml" src="https://user-images.githubusercontent.com/12598420/63848014-35304780-c9b9-11e9-85da-8419b5e49ded.png">
+
++ JSON
+<img width="470" alt="para json" src="https://user-images.githubusercontent.com/12598420/63848012-35304780-c9b9-11e9-9e49-99b475ed0fa8.png">
 
 Visit Wiki for details.
 + [Parameters as values - Wiki](https://github.com/authorjapps/zerocode/wiki/Parameterized-Testing-From-List-of-Values)
@@ -2162,9 +2184,11 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 | $USE.WIREMOCK      | Framework will use wiremock APIs to mock the end points defined in "mocks" section | Can use other mechanisms e.g. local REST api simulators |
 
 ### General place holders
+Visit the [Wiki](https://github.com/authorjapps/zerocode/wiki) for more details.
 
 | Place Holder  | Output        | More  |
 | ------------- |:-------------| -----|
+| ${RANDOM.NUMBER:n}       | Replaces with a random number | Random number is of length `n`(1 to 19) |
 | ${RANDOM.NUMBER}       | Replaces with a random number | Random number is generated using current timestamp in milli-sec |
 | ${RANDOM.UUID}       | Replaces with a random UUID | Random number is generated using java.util.UUID e.g. 077e6162-3b6f-4ae2-a371-2470b63dgg00 |
 | ${RANDOM.STRING:10}       | Replaces a random string consists of ten english alpphabets | The length can be dynamic |
@@ -2176,19 +2200,20 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 | ${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ss.nnnnnnnnn}       | Resolves this today's datetime stamp in any supplied format| See format examples here https://github.com/authorjapps/helpme/blob/master/zerocode-rest-help/src/test/resources/tests/00_sample_test_scenarios/18_date_and_datetime_today_generator.json |
 
 ### Assertion place holders
+Visit the [Wiki](https://github.com/authorjapps/zerocode/wiki) for more details.
 
 | Place Holder  | Output        | More  |
 | ------------- |:-------------| -----|
-| $NOT.NULL       | Assertion passes if a not null value was present in the response | Otherwise fails |
-| $NULL      | Assertion passes if a null value was present in the response | Otherwise fails |
+| $CONTAINS.STRING:id was cust-001       | Assertion passes if the node response contains string "id was cust-001" | Otherwise fails |
+| $CONTAINS.STRING.IGNORECASE:id WaS CuSt-001       | Assertion passes if the response value contains string "id was cust-001" with case insensitive | Otherwise fails |
+| $MATCHES.STRING:`\\d{4}-\\d{2}-\\d{2}`       | Assertion passes if the response value contains e.g. `"1989-07-09"` matching regex `\\d{4}-\\d{2}-\\d{2}` | Otherwise fails |
+| $IS.NOTNULL       | Assertion passes if a not null value was present in the response | Same as $NULL |
+| $IS.NULL      | Assertion passes if a null value was present in the response | Same as $IS.NOTNULL |
 | $[]       | Assertion passes if an empty array was present in the response | Otherwise fails |
 | $EQ.99       | Assertion passes if a numeric value equals to 99 was present in the response | Can be any int, long, float etc |
 | $NOT.EQ.99       | Assertion passes if a numeric value is not equals to 99 was present in the response | Can be any int, long, float etc |
 | $GT.99       | Assertion passes if a value greater than 99 was present in the response | Can be any int, long, float etc |
 | $LT.99       | Assertion passes if a value lesser than 99 was present in the response | Can be any int, long, float etc |
-| $CONTAINS.STRING:id was cust-001       | Assertion passes if the node response contains string "id was cust-001" | Otherwise fails |
-| $CONTAINS.STRING.IGNORECASE:id WaS CuSt-001       | Assertion passes if the response value contains string "id was cust-001" with case insensitive | Otherwise fails |
-| $MATCHES.STRING:`\\d{4}-\\d{2}-\\d{2}`       | Assertion passes if the response value contains e.g. `"1989-07-09"` matching regex `\\d{4}-\\d{2}-\\d{2}` | Otherwise fails |
 | $LOCAL.DATETIME.BEFORE:2017-09-14T09:49:34.000Z       | Assertion passes if the actual date is earlier than this date | Otherwise fails |
 | $LOCAL.DATETIME.AFTER:2016-09-14T09:49:34.000Z       | Assertion passes if the actual date is later than this date | Otherwise fails |
 | $ONE.OF:[First Val, Second Val, Nth Val]       | Assertion passes if `currentStatus` actual value is one of the expected values supplied in the `array` | Otherwise fails. E.g. `"currentStatus": "$ONE.OF:[Found, Searching, Not Found]"` |
@@ -2203,16 +2228,14 @@ See below both the examples( See this in the hello-world repo in action i.e. the
 
 
 ### JSON Slice And Dice - Solved
+Handy JSON and YAML slice/dice, format conversion, JSON Path evaluations tools can be found below:
++ [JSON to YAML and vice versa](https://www.json2yaml.com/)
 + [Exapnd, Collapse, Remove Node and Traverse etc](https://jsoneditoronline.org/)
   + Tree structure viewing - Good for array traversing
   + Remove a node -> Click on left arrow
 + [Beautify, Minify, Copy Jayway JSON Pth](http://jsonpathfinder.com/)
 + [JSON Path Evaluator](http://jsonpath.herokuapp.com/?path=$.store.book[*].author)
 
-### Video tutorials
-* [RESTful testing with test cases in JSON](https://youtu.be/nSWq5SuyqxE) - YouTube
-* [Zerocode - Simple and powerful testing library - HelloWorld](https://www.youtube.com/watch?v=YCV1cqGt5e0) - YouTube
-* [Zerocode Query Params Demo](https://www.youtube.com/watch?v=a7JhwMxVcCM) - YouTube
 
 ### References, Dicussions and articles
 * [Performance testing using JUnit and maven](https://www.codeproject.com/Articles/1251046/How-to-do-performance-testing-using-JUnit-and-Mave) - Codeproject
