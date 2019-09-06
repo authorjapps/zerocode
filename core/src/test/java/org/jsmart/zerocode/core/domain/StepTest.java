@@ -126,12 +126,12 @@ public class StepTest {
     @Test
     public void shouldSerializeSingleStep() throws Exception {
         String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/01_test_json_single_step.json");
-        Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
+        Step stepJava = mapper.readValue(jsonDocumentAsString, Step.class);
 
-        JsonNode singleStepNode = mapper.valueToTree(stepDeserialized);
+        JsonNode singleStepNode = mapper.valueToTree(stepJava);
         String singleStepNodeString = mapper.writeValueAsString(singleStepNode);
 
-        JSONAssert.assertEquals(singleStepNodeString, jsonDocumentAsString, true);
+        JSONAssert.assertEquals(jsonDocumentAsString,singleStepNodeString, false);
 
         assertThat(singleStepNode.get("name").asText(), is("StepNameWithoutSpaceEgCREATE"));
         assertThat(singleStepNode.get("loop").asInt(), is(3));
@@ -153,4 +153,15 @@ public class StepTest {
          */
     }
 
+    @Test
+    public void shouldSerializeSingleStep_method() throws Exception {
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/01.1_test_json_single_step_method.json");
+        Step stepJava = mapper.readValue(jsonDocumentAsString, Step.class);
+
+        JsonNode singleStepNode = mapper.valueToTree(stepJava);
+        String singleStepNodeString = mapper.writeValueAsString(singleStepNode);
+
+        JSONAssert.assertEquals(jsonDocumentAsString,singleStepNodeString, false);
+        assertThat(singleStepNode.get("method").asText(), is("POST"));
+    }
 }

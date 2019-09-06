@@ -16,6 +16,7 @@ public class Step {
     private final Integer loop;
     private final Retry retry;
     private final String name;
+    private final String method;
     private final String operation;
     private final String url;
     private JsonNode request;
@@ -40,6 +41,10 @@ public class Step {
 
     public String getOperation() {
         return operation;
+    }
+
+    public String getMethod() {
+        return method;
     }
 
     public String getUrl() {
@@ -96,6 +101,7 @@ public class Step {
             @JsonProperty("retry") Retry retry,
             @JsonProperty("name") String name,
             @JsonProperty("operation") String operation,
+            @JsonProperty("method") String method,
             @JsonProperty("url") String url,
             @JsonProperty("request") JsonNode request,
             @JsonProperty("assertions") JsonNode assertions,
@@ -103,7 +109,8 @@ public class Step {
         this.loop = loop;
         this.retry = retry;
         this.name = name;
-        this.operation = operation;
+        this.operation = operation != null? operation : method;
+        this.method = method != null? method : operation;
         this.request = request;
         this.url = url;
         this.assertions = assertions.isNull() ? verifications : assertions;
@@ -116,6 +123,7 @@ public class Step {
                 "loop=" + loop +
                 ", retry='" + retry + '\'' +
                 ", name='" + name + '\'' +
+                ", method='" + method + '\'' +
                 ", operation='" + operation + '\'' +
                 ", url='" + url + '\'' +
                 ", request=" + request +
