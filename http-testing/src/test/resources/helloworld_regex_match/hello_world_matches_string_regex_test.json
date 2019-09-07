@@ -4,7 +4,7 @@
         {
             "name": "get_user_details",
             "url": "/api/v1/google-uk/employees/UK-LON-1002",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {
@@ -19,7 +19,7 @@
         {
             "name": "get_user_for_dob_match",
             "url": "/api/v1/google-uk/employees/UK-LON-1002",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {
@@ -32,7 +32,7 @@
         {
             "name": "get_user_for_city_match",
             "url": "/api/v1/google-uk/employees/UK-LON-1002",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {

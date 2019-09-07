@@ -1,7 +1,7 @@
 {
     "name": "get_github_server_details_2",
     "url": "/users/albertosipov",
-    "operation": "GET",
+    "method": "GET",
     "request": {
     },
     "assertions": {

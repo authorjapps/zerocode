@@ -4,7 +4,7 @@
         {
             "name": "create_emp",
             "url": "/api/v1/google-uk/employees",
-            "operation": "POST",
+            "method": "POST",
             "request": {
                 "body": {
                     "id": 1000,
@@ -26,7 +26,7 @@
         {
             "name": "get_user_details",
             "url": "/api/v1/google-uk/employees/${$.create_emp.response.body.id}",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {

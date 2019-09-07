@@ -4,7 +4,7 @@
         {
             "name": "get_emp_details",
             "url": "/api/v1/google-uk/employees/999",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {

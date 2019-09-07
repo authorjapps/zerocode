@@ -4,7 +4,7 @@
         {
             "name": "create_emp",
             "url": "/api/v1/google-uk/employees",
-            "operation": "POST",
+            "method": "POST",
             "request": {
                 "body": {
                     "id": 1000,

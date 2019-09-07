@@ -3,7 +3,7 @@
     "apis": [
         {
             "name": "Sample_POST_Employee_Create",
-            "operation": "POST",
+            "method": "POST",
             "url": "/api/v1/google-uk/employees",
             "ignoreBody": true,
             "response": {
@@ -24,7 +24,7 @@
         },
         {
             "name": "sample POST with matching body",
-            "operation": "POST",
+            "method": "POST",
             "url": "/api/v1/employees",
             "ignoreBody": false,
             "body": {
@@ -41,7 +41,7 @@
         },
         {
             "name": "sample GET for Emma Norton",
-            "operation": "GET",
+            "method": "GET",
             "url": "/api/v1/employees/39001",
             "response": {
                 "status": 200,
@@ -55,7 +55,7 @@
         },
         {
             "name": "Sample_Get_Employee_by_Id",
-            "operation": "GET",
+            "method": "GET",
             "url": "/api/v1/google-uk/employees/999",
             "response": {
                 "status": 200,
@@ -75,7 +75,7 @@
         },
         {
             "name": "Screening - sample POST with matching body",
-            "operation": "POST",
+            "method": "POST",
             "url": "/api/v1/employees/screening",
             "ignoreBody": false,
             "body": {
@@ -94,7 +94,7 @@
         },
         {
             "name": "Screening - sample GET",
-            "operation": "GET",
+            "method": "GET",
             "url": "/api/v1/employees/screening/SCRUNIQUEID5003",
             "response": {
                 "status": 200,
@@ -110,7 +110,7 @@
         },
         {
             "name": "Sample_Get_Created_Employee_by_Id",
-            "operation": "GET",
+            "method": "GET",
             "url": "/api/v1/google-uk/employees/1000",
             "response": {
                 "status": 200,
@@ -130,7 +130,7 @@
         },
         {
             "name": "sample_get_api",
-            "operation": "GET",
+            "method": "GET",
             "url": "/api/v1/google-uk/employees/UK1001",
             "response": {
                 "status": 200,
@@ -150,7 +150,7 @@
         },
         {
             "name": "bare_string_get",
-            "operation": "GET",
+            "method": "GET",
             "url": "/api/v1/google-uk/employees/101",
             "response": {
                 "status": 200,
@@ -159,7 +159,7 @@
         },
         {
             "name": "Sample_Get_Full_Employee_by_Id",
-            "operation": "GET",
+            "method": "GET",
             "url": "/api/v1/employees/emp1001",
             "response": {
                 "status": 200,
@@ -185,7 +185,7 @@
         },
         {
             "name": "Sample_Get_Address_by_emp_id",
-            "operation": "GET",
+            "method": "GET",
             "url": "/api/v1/addresses/empoyee/emp1001",
             "response": {
                 "status": 200,
@@ -210,7 +210,7 @@
         },
         {
             "name": "Mock GET employee details including DOB",
-            "operation": "GET",
+            "method": "GET",
             "url": "/api/v1/google-uk/employees/UK-LON-1002",
             "response": {
                 "status": 200,

@@ -4,7 +4,7 @@
         {
             "name": "execute_java_method",
             "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
-            "operation": "fetchDbCustomers",
+            "method": "fetchDbCustomers",
             "request": "select id, name from customers",
             "assertions": {
                 "results": [
