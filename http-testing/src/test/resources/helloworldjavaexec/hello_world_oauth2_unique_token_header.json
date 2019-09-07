@@ -4,7 +4,7 @@
         {
             "name": "new_oauth_token",
             "url": "org.jsmart.zerocode.zerocodejavaexec.utils.OauthTokenGenerator",
-            "operation": "generateToken",
+            "method": "generateToken",
             "request": "",
             "assertions": {
                 "token": "$NOT.NULL"
@@ -13,7 +13,7 @@
         {
             "name": "create_emp",
             "url": "/api/v1/google-uk/employees", // Start the REST simulator for this test to pass.
-            "operation": "POST",
+            "method": "POST",
             "request": {
                 "headers": {
                     "token": "${$.new_oauth_token.response.token}"

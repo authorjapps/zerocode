@@ -4,7 +4,7 @@
         {
             "name": "get_user_details",
             "url": "/users/${0}",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {

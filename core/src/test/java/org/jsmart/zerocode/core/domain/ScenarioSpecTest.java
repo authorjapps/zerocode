@@ -80,7 +80,7 @@ public class ScenarioSpecTest {
          * Note:
          * jayway json assertEquals has issues if json doc has got comments. So find out how to ignore or allow comments
          */
-        JSONAssert.assertEquals(scenarioSpecNode.toString(), jsonDocumentAsString, true);
+        JSONAssert.assertEquals(jsonDocumentAsString, scenarioSpecNode.toString(), false);
 
         assertThat(scenarioSpecNode.get("scenarioName").asText(), containsString("Given_When_Then"));
         assertThat(scenarioSpecNode.get("loop").asInt(), is(5));

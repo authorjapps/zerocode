@@ -4,7 +4,7 @@
         {
             "name": "get_repos_by_query",
             "url": "/users/octocat/repos?page=1&per_page=5",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {
@@ -15,7 +15,7 @@
         {
             "name": "get_repos_by_query_params",
             "url": "/users/octocat/repos",
-            "operation": "GET",
+            "method": "GET",
             "request": {
                 "queryParams":{
                     "page":1,
@@ -30,7 +30,7 @@
         {
             "name": "get_all_reposs_without_query",
             "url": "/users/octocat/repos",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {

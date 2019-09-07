@@ -4,12 +4,12 @@
         {
             "name": "setup_mocks",
             "url": "/$MOCK",
-            "operation": "$USE.WIREMOCK",
+            "method": "$USE.WIREMOCK",
             "request": {
                 "mocks": [
                     {
                         "name": "mocking_a_GET_endpoint",
-                        "operation": "GET",
+                        "method": "GET",
                         "url": "/api/v1/amazon/customers/UK001",
                         "response": {
                             "status": 200,
@@ -25,7 +25,7 @@
                     },
                     {
                         "name": "mocking_a_GET_endpoint_with_headers",
-                        "operation": "GET",
+                        "method": "GET",
                         "url": "/api/v1/amazon/customers/cust-007",
                         "request": {
                             "headers": {
@@ -53,7 +53,7 @@
         {
             "name": "actual_test_verify_get_customer",
             "url": "/api/v1/amazon/customers/UK001",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {
@@ -63,7 +63,7 @@
         {
             "name": "verify_get_customer_with_headers",
             "url": "/api/v1/amazon/customers/cust-007",
-            "operation": "GET",
+            "method": "GET",
             "request": {
                 "headers": {
                     "api_key": "key-01-01", //<--- Please try with a wrong key. The test should fail.
@@ -81,7 +81,7 @@
         {
             "name": "verify_get_customer_without_headers",
             "url": "/api/v1/amazon/customers/cust-007",
-            "operation": "GET",
+            "method": "GET",
             "request": {
                 "headers": {
                     //"api_key": "key-01-01", //<--- Please do not put a header, you should get 404.

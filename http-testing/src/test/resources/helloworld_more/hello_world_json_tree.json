@@ -4,7 +4,7 @@
         {
             "name": "get_emp_details",
             "url": "/api/v1/employees/emp1001",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {
@@ -29,7 +29,7 @@
         {
             "name": "get_address_details",
             "url": "/api/v1/addresses/empoyee/${$.get_emp_details.response.body.id}",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {
