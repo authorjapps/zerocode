@@ -4,7 +4,7 @@
       {
          "name": "verify_mock",
          "url": "/delay/ids/2",
-         "operation": "GET",
+         "method": "GET",
          "request": {
          },
          "assertions": {

@@ -3,7 +3,7 @@ scenarioName: As simple GET request response
 steps:
 - name: find_match
   url: "/api/v1/search/persons"
-  operation: GET
+  method: GET
   request:
     queryParams:
       lang: Amazing

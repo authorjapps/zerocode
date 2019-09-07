@@ -4,7 +4,7 @@
         {
             "name": "create_emp",
             "url": "/api/v1/employees",
-            "operation": "POST",
+            "method": "POST",
             "request": {
                 "body" : "${JSON.FILE:reusable_content/request/request_body.json}"
             },
@@ -15,7 +15,7 @@
         {
             "name": "get_user_details",
             "url": "/api/v1/employees/${$.create_emp.response.body.id}",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {

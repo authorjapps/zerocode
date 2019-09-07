@@ -4,7 +4,7 @@
         {
             "name": "create_scr",
             "url": "/api/v1/employees/screening",
-            "operation": "POST",
+            "method": "POST",
             "request": {
                 "body": {
                     "empId": "EMP39001",
@@ -21,7 +21,7 @@
         {
             "name": "get_user_details",
             "url": "/api/v1/employees/screening/${$.create_scr.response.body.id}",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {

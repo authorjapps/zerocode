@@ -4,7 +4,7 @@
         {
             "name": "config",
             "url": "org.jsmart.zerocode.zerocodejavaexec.utils.HostConfigs",
-            "operation": "readProperties",
+            "method": "readProperties",
             "request": "",
             "assertions": {
                 "new_api_host": "https://api.github.com"
@@ -13,7 +13,7 @@
         {
             "name": "get_user_details_way2",
             "url": "${$.config.response.new_api_host}/users/octocat",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {

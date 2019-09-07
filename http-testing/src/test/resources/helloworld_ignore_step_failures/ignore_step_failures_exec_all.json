@@ -5,7 +5,7 @@
         {
             "name": "get_enitity",
             "url": "/wrong/url",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {
@@ -15,7 +15,7 @@
         {
             "name": "get_user_details",
             "url": "/users/octocat",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {
