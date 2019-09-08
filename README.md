@@ -71,7 +71,7 @@ request:
 retry:
   max: 3
   delay: 2000
-verifications:
+verify:
   status: 200
   headers:
     corr-id: corr_uuid
@@ -98,7 +98,7 @@ verifications:
     "max": 3,
     "delay": 2000
   },
-  "verifications": {
+  "verify": {
     "status": 200,
     "headers": {
       "corr-id": "corr_uuid"
@@ -202,7 +202,7 @@ Then visit this open-source [pyresttest](https://github.com/svanoort/pyresttest#
 In the below example -
 - `name` is equivalent to `scenarioName`
 - `method` is equivalent to `operation`
-- `validators` is equivalent to `verifications` feature of Zerocode
+- `validators` is equivalent to `verify` feature of Zerocode
 
 ```yaml
 - test: # create entity by PUT
@@ -429,7 +429,7 @@ Where, the `hello_world_status_ok_assertions.json` looks like below.
             "operation": "GET",
             "request": {
             },
-            "verifications": {
+            "verify": {
                 "status": 200,
                 "body": {
                     "login" : "octocat",
@@ -567,7 +567,7 @@ A scenario might consist of one or more steps. Let's start with a single step Te
       "url": "http://localhost:9998/google-emp-services/home/employees/999",
       "operation": "GET",
       "request": {},
-      "verifications": {
+      "verify": {
         "status": 200
       }
     }
@@ -591,7 +591,7 @@ where,
 
 > "step.name" - Free text without any space
 
-> "verifications" or "assertions" - The response payload to validate
+> "verify" or "assertions" - The response payload to validate
 
 > "status" - A HTTP status code returned from the server
 
@@ -635,7 +635,7 @@ Because we are asserting with an expected status as 500, but the end point actua
       "operation": "GET",
       "request": {
       },
-      "verifications": {
+      "verify": {
         "status": 500
       }
     }
@@ -684,7 +684,7 @@ which verifies the response in the `assertions` section -
             "url": "/users/octocat",
             "operation": "GET",
             "request": {},
-            "verifications": {
+            "verify": {
                 "status": 200,
                 "body": {
                     "login" : "octocat",
@@ -714,7 +714,7 @@ which verifies the response in the `assertions` section -
       "operation": "GET",
       "request": {
       },
-      "verifications": {
+      "verify": {
         "status": 200,
         "body": {
           "id": 999,
@@ -735,7 +735,7 @@ which verifies the response in the `assertions` section -
 }
 ```
 
-The above scenario will `pass` as the `verifications`(`assertions`) section has the payload matching the REST API response.
+The above scenario will `pass` as the `verify`(`assertions`) section has the payload matching the REST API response.
 
 
 ### Running with scenario _loop_
@@ -753,7 +753,7 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
       "operation": "GET",
       "request": {
       },
-      "verifications": {
+      "verify": {
         "status": 200,
         "body": {
           "id": 101
@@ -766,7 +766,7 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
       "operation": "GET",
       "request": {
       },
-      "verifications": {
+      "verify": {
         "status": 200,
         "body": {
           "id": 102
@@ -869,7 +869,7 @@ To assert the above situation, you can find the element using `JSON path` as bel
             "operation": "GET",
             "request": {
             },
-            "verifications": {
+            "verify": {
                 "status": 200,
                 "body": {
                     "type": "HIGH-VALUE",
@@ -916,7 +916,7 @@ Then you can assert many ways for the desired result-
 ```javaScript
         {
       ...
-            "verifications": {
+            "verify": {
                 "results.SIZE": 2
             }
         }
@@ -924,14 +924,14 @@ Then you can assert many ways for the desired result-
 -or-
         {
       ...
-            "verifications": {
+            "verify": {
                 "results.SIZE": "$GT.1"
             }
         }
 -or-
         {
       ...
-            "verifications": {
+            "verify": {
                 "results.SIZE": "$LT.3"
             }
         }
@@ -952,7 +952,7 @@ Chaining steps: Multi-Step REST calls with the earlier response(IDs etc) as inpu
             "url": "http://localhost:9998/google-emp-services/home/employees",
             "operation": "POST",
             "request": {},
-            "verifications": {
+            "verify": {
                 "status": 201,
                 "body": {
                     "id": 1000
@@ -964,7 +964,7 @@ Chaining steps: Multi-Step REST calls with the earlier response(IDs etc) as inpu
             "url": "http://localhost:9998/google-emp-services/home/employees/${$.create_new_employee.response.body.id}", //<-- ID from previous response
             "operation": "GET",
             "request": {},
-            "verifications": {
+            "verify": {
                 "status": 200,
                 "body": {
                     "id": 1000,
@@ -1017,7 +1017,7 @@ Random UUID-
           "name": "Elen M"   
         }
       },
-      "verifications": {
+      "verify": {
         "status": 201
       }
     }
@@ -1038,7 +1038,7 @@ Resolves to-
           "name": "Elen M"   
         }
       },
-      "verifications": {
+      "verify": {
         "status": 201
       }
     }
@@ -1062,7 +1062,7 @@ Random String of specific length-
           "password": "${RANDOM.STRING:10}"     //<-- Random number of length 10 chars
         }
       },
-      "verifications": {
+      "verify": {
         "status": 201
       }
     }
@@ -1151,7 +1151,7 @@ Asserting with $CONTAINS.STRING:
 {
       ...
       ...
-      "verifications": {
+      "verify": {
         "status": 200,
         "body": {
           "name": "$CONTAINS.STRING:Larry"   //<-- PASS: If the "name" field in the response contains "Larry".
@@ -1170,7 +1170,7 @@ $GT.<any_number>
 {
   ...
   ...
-  "verifications": {
+  "verify": {
     "status": "$GT.198"   //<--- PASS: 200 is greater than 198
   }
 }
@@ -1182,7 +1182,7 @@ $LT.<any_number>
 {
   ...
   ...
-  "verifications": {
+  "verify": {
       "status": "$LT.500"   //<--- PASS: 200 is lesser than 500
   }
 }
@@ -1195,7 +1195,7 @@ $LT.<any_number>
     {
       ...
       ...
-      "verifications": {
+      "verify": {
         "status": 200,
         "body": {
           "id": "$NOT.NULL",
@@ -1228,7 +1228,7 @@ Then you can assert many ways for the desired result-
 ```javaScript
         {
       ...
-            "verifications": {
+            "verify": {
                 "results.SIZE": 2
             }
         }
@@ -1236,14 +1236,14 @@ Then you can assert many ways for the desired result-
 -or-
         {
       ...
-            "verifications": {
+            "verify": {
                 "results.SIZE": "$GT.1"
             }
         }
 -or-
         {
       ...
-            "verifications": {
+            "verify": {
                 "results.SIZE": "$LT.3"
             }
         }
@@ -1273,7 +1273,7 @@ In case of - Java method request, response as JSON:
                 "itemName" : "Mango",
                 "quantity" : 15000
             },
-            "verifications": {
+            "verify": {
                 "orderId" : 1020301,
                 "itemName" : "Mango",
                 "quantity" : 15000
@@ -1404,7 +1404,7 @@ public class ScreeningServiceContractTest {
             "operation": "GET",
             "request": {
             },
-            "verifications": {
+            "verify": {
                 "status": 200,
                 "body": {
                     "login" : "octocat",
@@ -1487,7 +1487,7 @@ Then, you can simply use the properties as below.
             "operation": "GET",
             "request": {
             },
-            "verifications": {
+            "verify": {
                 "status": 200
             }
         },
@@ -1497,7 +1497,7 @@ Then, you can simply use the properties as below.
             "operation": "GET",
             "request": {
             },
-            "verifications": {
+            "verify": {
                 "status": 200
             }
         }
@@ -1686,7 +1686,7 @@ you want to, but you don't have to).
                 -or- // pick from- src/test/resources/soap_requests/xml_files/soap_request.xml
                 "body": "${XML.FILE:soap_requests/xml_files/soap_request.xml}" 
             },
-            "verifications": {
+            "verify": {
                 "status": 200
             }
         }
@@ -1718,7 +1718,7 @@ So better to test against an available SOAP service to you or a local stub servi
                 // -or- 
                 // "body": "${XML.FILE:soap_requests/xml_files/soap_request.xml}"
             },
-            "verifications": {
+            "verify": {
                 "status": 200
             }
         }
@@ -1872,7 +1872,7 @@ e.g.
             "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
             "operation": "xmlToJson",
             "request": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <ConversionRate xmlns=\"http://www.webserviceX.NET/\">\n      <FromCurrency>AFA</FromCurrency>\n      <ToCurrency>GBP</ToCurrency>\n    </ConversionRate>\n  </soap:Body>\n</soap:Envelope>",
-            "verifications": {
+            "verify": {
                 "soap:Envelope": {
                     "xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
                     "xmlns:soap": "http://schemas.xmlsoap.org/soap/envelope/",
@@ -1916,7 +1916,7 @@ Various input and output. Depending upon the usecase, you can use that method.
                     ]
                 }
             },
-            "verifications": {
+            "verify": {
                 "headers": {
                     "hdrX": "valueX"
                 },
@@ -1938,7 +1938,7 @@ Various input and output. Depending upon the usecase, you can use that method.
             "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
             "operation": "jsonToJson",
             "request": "${$.json_block_to_json.request.headers}",
-            "verifications": {
+            "verify": {
                 "hdrX": "valueX"
             }
         },
@@ -1947,7 +1947,7 @@ Various input and output. Depending upon the usecase, you can use that method.
             "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
             "operation": "jsonToJson",
             "request": "${$.json_block_to_json.request.body}",
-            "verifications": {
+            "verify": {
                 "id": 1001,
                 "addresses": [
                     {
@@ -1976,7 +1976,7 @@ Various input and output. Depending upon the usecase, you can use that method.
                     ]
                 }
             },
-            "verifications": {
+            "verify": {
                 "headers": {
                     "hdrX": "valueX"
                 },
@@ -2054,7 +2054,7 @@ The below JSON block step will mock two end points using WireMock.
                     }
                 ]
             },
-            "verifications": {
+            "verify": {
                 "status": 200
             }
         }
@@ -2080,7 +2080,7 @@ Zerocode framework helps you to achieve this, but has nothing to do with Basic-A
             "Authorization": "Basic Y2hhcmFhbnVzZXI6cGFzc3R3aXR0ZXI=" // You can generate this using Postman or java code
         }
     },
-    "verifications": {
+    "verify": {
         "status": 200, // 401 - if unauthorised. See negatibe test below
         "body": {
             "id": "WP-001",
@@ -2102,7 +2102,7 @@ Zerocode framework helps you to achieve this, but has nothing to do with Basic-A
             "Authorization": "Basic aWRONG-PASSWORD"
         }
     },
-    "verifications": {
+    "verify": {
         "status": 401 //401(or simillar code whatever the server responds), you can assert here.
         "body": {
             "message": "Unauthorised" 
@@ -2140,7 +2140,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
             "operation": "GET",
             "request": {
             },
-            "verifications": {
+            "verify": {
                 "status": 200,
                 "body.SIZE": 6
             }
@@ -2155,7 +2155,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
                     "per_page":6
                 }
             },
-            "verifications": {
+            "verify": {
                 "status": 200,
                 "body.SIZE": 6
             }
@@ -2166,7 +2166,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
             "operation": "GET",
             "request": {
             },
-            "verifications": {
+            "verify": {
                 "status": 200,
                 "body.SIZE": 8
             }

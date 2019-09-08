@@ -6,7 +6,7 @@
             "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
             "method": "fetchDbCustomers",
             "request": "select id, name from customers",
-            "verifications": {
+            "verify": {
                 "results": [
                     {
                         "id": 1,
@@ -24,14 +24,14 @@
             "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
             "method": "stringToJson",
             "request": "${$.get_records.response.results[?(@.id=='2')].name}",
-            "verifications": [ "Jeff Bezos" ]
+            "verify": [ "Jeff Bezos" ]
         },
         {
             "name": "get_by_name",
             "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
             "method": "fetchDbCustomersByName",
             "request": "${$.find_matching_value.response[0]}", //<--- Picked the field from the above array i.e. the step `find_matching_value`
-            "verifications": {
+            "verify": {
                 "results": [
                     {
                         "id": 2,

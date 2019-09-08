@@ -8,7 +8,7 @@ steps:
     queryParams:
       lang: Amazing
       city: Lon
-  verifications:
+  verify:
     status: 200
     body:
       exactMatches: true

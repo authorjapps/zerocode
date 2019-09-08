@@ -8,7 +8,7 @@ steps:
     headers:
       x-api-key: "Ama-zing-key"
       x-api-secret: "Sec-ret-stuff"
-  verifications:
+  verify:
     status: 200 #comment - a http status code as int value
     body:
       exactMatches: true

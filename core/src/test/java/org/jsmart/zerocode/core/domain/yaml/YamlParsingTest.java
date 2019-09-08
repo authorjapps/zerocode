@@ -29,11 +29,11 @@ public class YamlParsingTest {
         assertThat(scenarioSpec.getSteps().get(0).getRequest().get("headers").get("x-api-key").asText(), is("Ama-zing-key"));
 
         // verifications
-        assertThat(scenarioSpec.getSteps().get(0).getVerifications().get("status").asInt(), is(200));
-        assertThat(scenarioSpec.getSteps().get(0).getVerifications().get("body").get("exactMatches").asBoolean(), is(true));
-        assertThat(scenarioSpec.getSteps().get(0).getVerifications().get("body").get("addresses").get(0).toString(),
+        assertThat(scenarioSpec.getSteps().get(0).getVerify().get("status").asInt(), is(200));
+        assertThat(scenarioSpec.getSteps().get(0).getVerify().get("body").get("exactMatches").asBoolean(), is(true));
+        assertThat(scenarioSpec.getSteps().get(0).getVerify().get("body").get("addresses").get(0).toString(),
                 is("{\"type\":\"office\",\"line1\":\"10 Random St\"}"));
-        assertThat(scenarioSpec.getSteps().get(0).getVerifications().get("body").get("addresses").get(1).toString(),
+        assertThat(scenarioSpec.getSteps().get(0).getVerify().get("body").get("addresses").get(1).toString(),
                 is("{\"type\":\"home\",\"line1\":\"300 Random St\"}"));
     }
 }

@@ -23,7 +23,7 @@ steps:
     queryParams:
       lang: Amazing
       city: Lon
-  verifications:
+  verify:
     status: "$EQ.${$.find_match.response.status}"
     body:
       exactMatches: true
