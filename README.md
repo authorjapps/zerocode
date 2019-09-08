@@ -21,6 +21,7 @@ Table of Contents
    * [Running a Single Scenario Test](#running-a-single-scenario-test)
    * [Running a Suite of Tests](#running-a-suite-of-tests)
    * [Load Testing](#load-testing)
+   * [Chatbot Validation](#chatbot-validation)
    * [YAML DSL](#yaml-dsl)
    * [JSON DSL](#json-dsl)
    * [Python](#python)
@@ -40,7 +41,7 @@ Introduction
 ===
 Zerocode is a light-weight, simple and extensible open-source framework for writing test intentions in simple JSON or YAML format that facilitates both declarative configuration and automation. The [framework manages](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing) the response validations, target API invocations with  payload and test-scenario steps-chaining at the same time, same place using [Jayway JsonPath](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples). 
 
-For example, if our REST API returns the following from URL `https://localhost:8080/api/v1/customers/123` with `http` status `200(OK)`,
+For example, if our REST API's `GET` method returns the following from the URL `https://localhost:8080/api/v1/customers/123` with a `http` status code `200(OK)`,
 ```javaScript
 Response:
 {
@@ -64,14 +65,14 @@ then, we can easily validate the above API using `Zerocode` like below.
 ```yaml
 ---
 url: api/v1/customers/123
-operation: GET
+method: GET
 request:
   headers:
     auth_token: a_valid_token
 retry:
   max: 3
-  delay: 2000
-verify:
+  delay: 1000
+verifications:
   status: 200
   headers:
     corr-id: corr_uuid
@@ -88,7 +89,7 @@ verify:
 ```javaScript
 {
   "url": "api/v1/customers/123",
-  "operation": "GET",
+  "method": "GET",
   "request": {
     "headers": {
       "auth_token": "a_valid_token"
@@ -96,7 +97,7 @@ verify:
   },
   "retry": {
     "max": 3,
-    "delay": 2000
+    "delay": 1000
   },
   "verify": {
     "status": 200,
@@ -121,7 +122,7 @@ and run it simply by pointing to the above JSON/YAML file from a JUnit `@Test` m
 
 ```java
    @Test
-   @Scenario("test_customer_get_api.json")
+   @Scenario("test_customer_get_api.yml")
    public void getCustomer_happyCase(){
         // No code goes here. This remains empty.
    }
@@ -150,12 +151,12 @@ e.g.
 public class GitHubHelloWorldTest {
 
    @Test
-   @Scenario("screening_tests/test_happy_flow.json")
+   @Scenario("screening_tests/test_happy_flow.yml")
    public void testHappyFlow(){
    }
 
    @Test
-   @Scenario("screening_tests/test_negative_flow.json")
+   @Scenario("screening_tests/test_negative_flow.yml")
    public void testNegativeFlow(){
    }
 
@@ -168,14 +169,14 @@ Running a Suite of Tests
 + Selecting all tests as usual `JUnit Suite`
 
 ```java
-@RunWith(Suite.class)				
-@Suite.SuiteClasses({				
+@RunWith(Suite.class)       
+@Suite.SuiteClasses({       
   HelloWorldSimpleTest.class,
-  HelloWorldMoreTest.class,  			
-})		
+  HelloWorldMoreTest.class,       
+})    
 
 public class HelloWorldJunitSuite {
-    // This class remains empty		
+    // This class remains empty   
 }
 ```
 
@@ -186,7 +187,7 @@ Or
 @UseHttpClient(CustomHttpClient.class)
 @RunWith(ZeroCodePackageRunner.class)
 @Scenarios({
-        @Scenario("path1/test_case_scenario_1.json"),
+        @Scenario("path1/test_case_scenario_1.yml"),
         @Scenario("path2/test_case_scenario_2.json"),
 })
 public class HelloWorldSelectedGitHubSuite {
@@ -196,13 +197,8 @@ public class HelloWorldSelectedGitHubSuite {
 
 Python
 ===
-If you are looking for simillar REST API testing DSL in Python(YAML/JSON),
-Then visit this open-source [pyresttest](https://github.com/svanoort/pyresttest#sample-test) lib in the GitHub.
-
-In the below example -
-- `name` is equivalent to `scenarioName`
-- `method` is equivalent to `operation`
-- `validators` is equivalent to `verify` feature of Zerocode
+If you are looking for simillar REST API validation DSL in Python using YAML/JSON,
+then visit this open-source [pyresttest](https://github.com/svanoort/pyresttest#sample-test) lib in the GitHub.
 
 ```yaml
 - test: # create entity by PUT
@@ -218,6 +214,10 @@ In the below example -
 ```
 
 The [Quick-Start](https://github.com/svanoort/pyresttest/blob/master/quickstart.md) guide explains how to bring up a REST end point and run the tests.
+
+Zerocode equivalent of the above example is
++ `validators` or `comparator` is equivalent to `verifications` or `assertions`
++ `raw_body` equivalent to `rawBody`
 
 Load Testing
 ===
@@ -426,7 +426,7 @@ Where, the `hello_world_status_ok_assertions.json` looks like below.
         {
             "name": "get_user_details",
             "url": "/users/octocat",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "verify": {
@@ -565,7 +565,7 @@ A scenario might consist of one or more steps. Let's start with a single step Te
     {
       "name": "step1_get_google_emp_details",
       "url": "http://localhost:9998/google-emp-services/home/employees/999",
-      "operation": "GET",
+      "method": "GET",
       "request": {},
       "verify": {
         "status": 200
@@ -600,7 +600,7 @@ Note:
 ```javaScript
         {
           "name": "Sample_Get_Employee_by_Id",
-          "operation": "GET",
+          "method": "GET",
           "url": "/google-emp-services/home/employees/999",
           "response": {
             "status": 200,
@@ -632,7 +632,7 @@ Because we are asserting with an expected status as 500, but the end point actua
     {
       "name": "step1_get_google_emp_details",
       "url": "http://localhost:9998/google-emp-services/home/employees/999",
-      "operation": "GET",
+      "method": "GET",
       "request": {
       },
       "verify": {
@@ -682,7 +682,7 @@ which verifies the response in the `assertions` section -
         {
             "name": "get_user_details",
             "url": "/users/octocat",
-            "operation": "GET",
+            "method": "GET",
             "request": {},
             "verify": {
                 "status": 200,
@@ -711,7 +711,7 @@ which verifies the response in the `assertions` section -
     {
       "name": "step1_get_google_emp_details",
       "url": "http://localhost:9998/google-emp-services/home/employees/999",
-      "operation": "GET",
+      "method": "GET",
       "request": {
       },
       "verify": {
@@ -750,7 +750,7 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
     {
       "name": "get_room_details",
       "url": "http://localhost:9998/google-emp-services/home/employees/101",
-      "operation": "GET",
+      "method": "GET",
       "request": {
       },
       "verify": {
@@ -763,7 +763,7 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
     {
       "name": "get_another_room_details",
       "url": "http://localhost:9998/google-emp-services/home/employees/102",
-      "operation": "GET",
+      "method": "GET",
       "request": {
       },
       "verify": {
@@ -776,6 +776,24 @@ Runs the entire scenario two times i.e. executing both the steps once for each t
   ]
 }
 ```
+
+### Chatbot Validation
+
+When you have series of questions and answers to be validated, you can arrange them in a CSV format and drive a test.
+Which means, for a given scenario, you just need to write one scenario and mulitple CSV rows of input/output data to validate the Chabot APIs.
+
+e.g.
+
+```
+"parameterized": {
+    "csvSource": [
+        "What do you want to buy?,  Laptop, Color(Red or Blue)?,    Red,   RAM(16 or 32GB),    32,       2000 USD",
+        "What do you want to buy?,  Laptop, Color(Red or Blue)?,    Blue,  RAM(16 or 32GB),    16,       1500 USD",
+        "What do you want to buy?,  Mouse,  Color(Black or White)?, White, Wired or Wireless?, Wireless, 100 USD"
+    ]
+}
+```
+
 
 ### Paramterized scenario
 To run the scenario steps for each parameter from a list of values or CSV rows.
@@ -838,7 +856,7 @@ e.g. your actual response is like below,
 Your use-case is, `Dan` and `Mike` might not be returned in the same order always, but they appear only once in the array.
 ```
 Url: "/api/v1/screening/persons",
-Operation: "GET",
+Method: "GET",
 Response: 
 {
                 "status": 200,
@@ -866,7 +884,7 @@ To assert the above situation, you can find the element using `JSON path` as bel
         {
             "name": "get_screening_details",
             "url": "/api/v1/screening/persons",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "verify": {
@@ -950,7 +968,7 @@ Chaining steps: Multi-Step REST calls with the earlier response(IDs etc) as inpu
         {
             "name": "create_new_employee",
             "url": "http://localhost:9998/google-emp-services/home/employees",
-            "operation": "POST",
+            "method": "POST",
             "request": {},
             "verify": {
                 "status": 201,
@@ -962,7 +980,7 @@ Chaining steps: Multi-Step REST calls with the earlier response(IDs etc) as inpu
         {
             "name": "get_and_verify_created_employee",
             "url": "http://localhost:9998/google-emp-services/home/employees/${$.create_new_employee.response.body.id}", //<-- ID from previous response
-            "operation": "GET",
+            "method": "GET",
             "request": {},
             "verify": {
                 "status": 200,
@@ -1010,7 +1028,7 @@ Random UUID-
     {
       "name": "create_new_employee",
       "url": "http://localhost:9998/google-emp-services/home/employees",
-      "operation": "POST",
+      "method": "POST",
       "request": {
         "body": {
           "id": "${RANDOM.UUID}", //<-- Everytime it creates unique uuid. See below example.
@@ -1031,7 +1049,7 @@ Resolves to-
     {
       "name": "create_new_employee",
       "url": "http://localhost:9998/google-emp-services/home/employees",
-      "operation": "POST",
+      "method": "POST",
       "request": {
         "body": {
           "id": "94397df8-0e9e-4479-a2f9-9af509fb5998", //<-- Every time it runs, it creates an unique uuid
@@ -1054,7 +1072,7 @@ Random String of specific length-
     {
       "name": "create_new_employee",
       "url": "http://localhost:9998/google-emp-services/home/employees",
-      "operation": "POST",
+      "method": "POST",
       "request": {
         "body": {
           "id": 1000,
@@ -1268,7 +1286,7 @@ In case of - Java method request, response as JSON:
         {
             "name": "execute_java_method",
             "url": "org.jsmart.zerocode.zerocodejavaexec.OrderCreator",
-            "operation": "createOrder",
+            "method": "createOrder",
             "request": {
                 "itemName" : "Mango",
                 "quantity" : 15000
@@ -1401,7 +1419,7 @@ public class ScreeningServiceContractTest {
         {
             "name": "get_user_details",
             "url": "/users/octocat",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "verify": {
@@ -1484,7 +1502,7 @@ Then, you can simply use the properties as below.
         {
             "name": "get_api_call",
             "url": "${web.application.endpoint.host}:${web.application.endpoint.port}/home/bathroom/1",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "verify": {
@@ -1494,7 +1512,7 @@ Then, you can simply use the properties as below.
         {
             "name": "get_call_via_new_url",
             "url": "${my_new_url}/home/bathroom/1",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "verify": {
@@ -1675,7 +1693,7 @@ you want to, but you don't have to).
         {
             "name": "invoke_currency_conversion",
             "url": "http://<target-domain.com>/<path etc>",
-            "operation": "POST",
+            "method": "POST",
             "request": {
                 "headers": {
                     "Content-Type": "text/xml; charset=utf-8",
@@ -1707,7 +1725,7 @@ So better to test against an available SOAP service to you or a local stub servi
         {
             "name": "invoke_currency_conversion",
             "url": "http://www.webservicex.net/CurrencyConvertor.asmx",
-            "operation": "POST",
+            "method": "POST",
             "request": {
                 "headers": {
                     "Content-Type": "text/xml; charset=utf-8",
@@ -1870,7 +1888,7 @@ e.g.
 {
             "name": "xml_to_json",
             "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
-            "operation": "xmlToJson",
+            "method": "xmlToJson",
             "request": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <ConversionRate xmlns=\"http://www.webserviceX.NET/\">\n      <FromCurrency>AFA</FromCurrency>\n      <ToCurrency>GBP</ToCurrency>\n    </ConversionRate>\n  </soap:Body>\n</soap:Envelope>",
             "verify": {
                 "soap:Envelope": {
@@ -1899,7 +1917,7 @@ Various input and output. Depending upon the usecase, you can use that method.
         {
             "name": "json_block_to_json",
             "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
-            "operation": "jsonBlockToJson",
+            "method": "jsonBlockToJson",
             "request": {
                 "headers": {
                     "hdrX": "valueX"
@@ -1936,7 +1954,7 @@ Various input and output. Depending upon the usecase, you can use that method.
         {
             "name": "json_to_json",
             "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
-            "operation": "jsonToJson",
+            "method": "jsonToJson",
             "request": "${$.json_block_to_json.request.headers}",
             "verify": {
                 "hdrX": "valueX"
@@ -1945,7 +1963,7 @@ Various input and output. Depending upon the usecase, you can use that method.
         {
             "name": "body_json_to_json",
             "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
-            "operation": "jsonToJson",
+            "method": "jsonToJson",
             "request": "${$.json_block_to_json.request.body}",
             "verify": {
                 "id": 1001,
@@ -1962,7 +1980,7 @@ Various input and output. Depending upon the usecase, you can use that method.
         {
             "name": "json_node_to_json",
             "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
-            "operation": "jsonBlockToJson",
+            "method": "jsonBlockToJson",
             "request": {
                 "headers": {
                     "hdrX": "valueX"
@@ -2015,12 +2033,12 @@ The below JSON block step will mock two end points using WireMock.
         {
             "name": "setup_mocks",
             "url": "/$MOCK",
-            "operation": "$USE.WIREMOCK",
+            "method": "$USE.WIREMOCK",
             "request": {
                 "mocks": [
                     {
                         "name": "mocking_a_GET_endpoint",
-                        "operation": "GET",
+                        "method": "GET",
                         "url": "/api/v1/amazon/customers/UK001",
                         "response": {
                             "status": 200,
@@ -2036,7 +2054,7 @@ The below JSON block step will mock two end points using WireMock.
                     },
                     {
                         "name": "mocking_a_GET_endpoint_with_headers",
-                        "operation": "GET",
+                        "method": "GET",
                         "url": "/api/v1/amazon/customers/cust-007",
                         "request": {
                             "headers": {
@@ -2074,7 +2092,7 @@ Zerocode framework helps you to achieve this, but has nothing to do with Basic-A
 {
     "name": "get_book_using_basic_auth",
     "url": "http://localhost:8088/api/v1/white-papers/WP-001",
-    "operation": "GET",
+    "method": "GET",
     "request": {
         "headers": {
             "Authorization": "Basic Y2hhcmFhbnVzZXI6cGFzc3R3aXR0ZXI=" // You can generate this using Postman or java code
@@ -2096,7 +2114,7 @@ Zerocode framework helps you to achieve this, but has nothing to do with Basic-A
 {
     "name": "get_book_using_wrong_auth",
     "url": "http://localhost:8088/api/v1/white-papers/WP-001",
-    "operation": "GET",
+    "method": "GET",
     "request": {
         "headers": {
             "Authorization": "Basic aWRONG-PASSWORD"
@@ -2137,7 +2155,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
         {
             "name": "get_repos_by_query",
             "url": "https://api.github.com/users/octocat/repos?page=1&per_page=6",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "verify": {
@@ -2148,7 +2166,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
         {
             "name": "get_repos_by_query_params",
             "url": "https://api.github.com/users/octocat/repos",
-            "operation": "GET",
+            "method": "GET",
             "request": {
                 "queryParams":{
                     "page":1,
@@ -2163,7 +2181,7 @@ See below both the examples( See this in the hello-world repo in action i.e. the
         {
             "name": "get_all_reposs_without_query", // without the query params, which fetches everything.
             "url": "https://api.github.com/users/octocat/repos",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "verify": {
