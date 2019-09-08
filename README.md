@@ -72,7 +72,7 @@ request:
 retry:
   max: 3
   delay: 1000
-verifications:
+verify:
   status: 200
   headers:
     corr-id: corr_uuid
@@ -216,8 +216,8 @@ then visit this open-source [pyresttest](https://github.com/svanoort/pyresttest#
 The [Quick-Start](https://github.com/svanoort/pyresttest/blob/master/quickstart.md) guide explains how to bring up a REST end point and run the tests.
 
 Zerocode equivalent of the above example is
-+ `validators` or `comparator` is equivalent to `verifications` or `assertions`
-+ `raw_body` equivalent to `rawBody`
++ `validators` / `comparator` is equivalent to `verify` / `assertions`
++ `raw_body` is equivalent to `rawBody`
 
 Load Testing
 ===
