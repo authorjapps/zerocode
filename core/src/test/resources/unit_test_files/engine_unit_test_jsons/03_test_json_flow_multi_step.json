@@ -28,7 +28,7 @@
                     "id": 1001
                 }
             },
-            "verifications": null
+            "verify": null
         },
         {
             "loop": 3,
@@ -56,7 +56,7 @@
                     "id": 1001
                 }
             },
-            "verifications": null
+            "verify": null
         }
     ]
 }

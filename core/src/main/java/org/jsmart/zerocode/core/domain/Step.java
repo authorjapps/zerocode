@@ -21,7 +21,7 @@ public class Step {
     private final String url;
     private JsonNode request;
     private JsonNode assertions;
-    private JsonNode verifications;
+    private JsonNode verify;
     private String id;
     private JsonNode stepFile;
     private List<Object> parameterized;
@@ -59,8 +59,8 @@ public class Step {
         return assertions;
     }
 
-    public JsonNode getVerifications() {
-        return verifications;
+    public JsonNode getVerify() {
+        return verify;
     }
 
     public String getId() {
@@ -105,7 +105,7 @@ public class Step {
             @JsonProperty("url") String url,
             @JsonProperty("request") JsonNode request,
             @JsonProperty("assertions") JsonNode assertions,
-            @JsonProperty("verifications") JsonNode verifications) {
+            @JsonProperty("verify") JsonNode verify) {
         this.loop = loop;
         this.retry = retry;
         this.name = name;
@@ -113,8 +113,8 @@ public class Step {
         this.method = method != null? method : operation;
         this.request = request;
         this.url = url;
-        this.assertions = assertions.isNull() ? verifications : assertions;
-        this.verifications = verifications;
+        this.assertions = assertions.isNull() ? verify : assertions;
+        this.verify = verify;
     }
 
     @Override
@@ -128,7 +128,7 @@ public class Step {
                 ", url='" + url + '\'' +
                 ", request=" + request +
                 ", assertions=" + assertions +
-                ", verifications=" + verifications +
+                ", verify=" + verify +
                 ", id='" + id + '\'' +
                 ", stepFile=" + stepFile +
                 ", parameterized=" + parameterized +

@@ -79,7 +79,7 @@ public class StepTest {
                 smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/00_test_json_single_step_verifications.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
 
-        assertThat(stepDeserialized.getVerifications().get("status").asText(), is("201"));
+        assertThat(stepDeserialized.getVerify().get("status").asText(), is("201"));
         assertThat(stepDeserialized.getAssertions().get("status").asText(), is("201"));
     }
 
