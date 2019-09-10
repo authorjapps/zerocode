@@ -374,7 +374,9 @@ Smart Projects Using Zerocode
  + [Vocalink (A Mastercard company)](https://www.vocalink.com/) - REST API testing for virtualization software 
  + [HSBC Bank](https://www.hsbc.co.uk/) - MuleSoft application REST API Contract testing, E2E Integration Testing, Oracle DB API testing, SOAP testing and Load/Stress aka Performance testing
  + [Barclays Bank](https://www.barclays.co.uk/) - Micro-Services API Contract Validation for System APIs build using Spring Boot
- + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Kafka Data-pipeline testing, Authentication testing.
+ + [Home Office(GOV.UK)](https://www.gov.uk/government/organisations/home-office) - Micro-Services REST API Contract testing, HDFS/Hbase REST end point testing, Kafka Data-pipeline testing, Authentication testing
+ + [Deloitte(Australia)](https://www2.deloitte.com/au/en.html) - Kafka data pipeline end to end validations
+ + [Yandex Search Engine(Russia)](https://yandex.com/) - Load and Stress Testing aka Performance Testing
 
 Latest news/releases/features
 ===
