@@ -1,0 +1,34 @@
+{
+    "scenarioName": "As simple GET API - Strict validation",
+    "steps": [
+        {
+            "name": "find_match",
+            "url": "/api/v1/search/people",
+            "method": "GET",
+            "request": {
+                "queryParams": {
+                    "city": "Lon"
+                }
+            },
+            "verifyMode":"STRICT",
+            "verify": {
+                "status": 200,
+                "body": {
+                    "exactMatches": false,
+                    "bio": "name-only",
+                    "searchMatches":[
+                        {
+                            "name": "Mr Bean",
+                            "char": "Kids"
+                        },
+                        {
+                            "name": "Mr Bean",
+                            "char": "Adults"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
+
