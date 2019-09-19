@@ -8,7 +8,6 @@
     </parent>
 
     <artifactId>zerocode-tdd-jupiter</artifactId>
-
     <packaging>jar</packaging>
     <name>Zerocode JUnit5 Jupiter Testing</name>
     <description>Zerocode tests with JUnit5 Jupiter Engine</description>

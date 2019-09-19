@@ -8,8 +8,6 @@
     </parent>
 
     <artifactId>zerocode-tdd</artifactId>
-    <groupId>org.jsmart</groupId>
-
     <packaging>jar</packaging>
     <name>Zerocode TDD Core</name>
     <description>Zerocode TDD framework for API test automation</description>
