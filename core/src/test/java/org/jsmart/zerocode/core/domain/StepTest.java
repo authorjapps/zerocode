@@ -66,9 +66,6 @@ public class StepTest {
         assertThat(queryParams.toString(), is("{param1=value1, invId=10101}"));
         assertThat(requestHeaders.toString(), is("{Content-Type=application/json;charset=UTF-8, Cookie=cookie_123}"));
 
-        //Map<String, Object> headerMap = smartUtils.readJsonStringAsMap(requestHeaders.toString());
-        //Map<String, Object> queryParamsMap = smartUtils.readJsonStringAsMap(queryParams.toString());
-
         Map<String, Object> headerMap = (HashMap) requestHeaders;
         Map<String, Object> queryParamsMap = (HashMap) queryParams;
 
@@ -214,7 +211,7 @@ public class StepTest {
             JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
 
         } catch (Throwable ex) {
-            System.out.println("Caught: " + ex);
+            assertThat(ex.getMessage(), containsString("Unexpected: id"));
         }
     }
 
@@ -234,8 +231,12 @@ public class StepTest {
                 "    \"exactMatches\": true,\n" +
                 "    \"foo\": \"Mr FooX\",\n" +
                 "    \"name\": \"Mr Bean\",\n" +
-                "    \"lang\": \"Amazing\",\n" +
-                "    \"city\": \"Lon\"\n" +
+                "    \"city\": \"Lon\",\n" +
+                "    \"listings\":[\n" +
+                "        {\n" +
+                "            \"exchange\": \"NYX\"\n" +
+                "        }\n" +
+                "    ]\n" +
                 "}";
         String expected = "{\n" +
                 "    \"office\":{\n" +
@@ -248,8 +249,12 @@ public class StepTest {
                 "    },\n" +
                 //"    \"exactMatches\": true,\n" +
                 "    \"foo\": \"Mr FooX\",\n" +
-                "    \"lang\": \"Amazing\",\n" +
                 "    \"city\": \"Lon\",\n" +
+                "    \"listings\":[\n" +
+                "        {\n" +
+                "            \"exchange\": \"NYX\"\n" +
+                "        }\n" +
+                "    ],\n" +
                 "    \"addresses\":[\n" +
                 "        {\n" +
                 "            \"type\": \"office\"\n" +
