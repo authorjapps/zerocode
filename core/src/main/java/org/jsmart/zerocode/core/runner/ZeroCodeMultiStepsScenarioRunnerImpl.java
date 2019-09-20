@@ -1,13 +1,20 @@
 package org.jsmart.zerocode.core.runner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.univocity.parsers.csv.CsvParser;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
@@ -26,14 +33,20 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 
+import static java.util.Optional.ofNullable;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
+import static org.jsmart.zerocode.core.utils.HelperJsonUtils.strictComparePayload;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getParameterSize;
 import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Singleton
@@ -226,8 +239,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 // -----------------
                 // logging assertion
                 // -----------------
-                List<JsonAsserter> asserters = zeroCodeAssertionsProcessor.createJsonAsserters(resolvedAssertionJson);
-                List<FieldAssertionMatcher> failureResults = zeroCodeAssertionsProcessor.assertAllAndReturnFailed(asserters, executionResult);
+                List<FieldAssertionMatcher> failureResults = compareStepResults(thisStep, executionResult, resolvedAssertionJson);
 
                 if (!failureResults.isEmpty()) {
                     StringBuilder builder = new StringBuilder();
@@ -481,4 +493,16 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         scenarioLoopTimes = parameterSize != 0 ? parameterSize : scenarioLoopTimes;
         return scenarioLoopTimes;
     }
+
+    private List<FieldAssertionMatcher> compareStepResults(Step thisStep, String actualResult, String expectedResult) {
+        List<FieldAssertionMatcher> failureResults = new ArrayList<>();
+        if (ofNullable(thisStep.getVerifyMode()).orElse("LENIENT").equals("STRICT")) {
+            failureResults = strictComparePayload(expectedResult, actualResult);
+        } else {
+            List<JsonAsserter> asserters = zeroCodeAssertionsProcessor.createJsonAsserters(expectedResult);
+            failureResults = zeroCodeAssertionsProcessor.assertAllAndReturnFailed(asserters, actualResult);
+        }
+        return failureResults;
+    }
+
 }

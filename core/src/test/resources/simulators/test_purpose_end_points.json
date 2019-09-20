@@ -100,7 +100,29 @@
                     "city": "Lon"
                 }
             }
+        },
+        {
+            "name": "request with query params",
+            "operation": "GET",
+            "url": "/api/v1/search/people?city=Lon",
+            "response": {
+                "status": 200,
+                "body": {
+                    "exactMatches": false,
+                    "bio": "name-only",
+                    "searchMatches":[
+                        {
+                            "name": "Mr Bean",
+                            "char": "Kids"
+                        },
+                        {
+                            "name": "Mr Bean",
+                            "char": "Adults"
+                        }
+                    ]
+                }
+            }
         }
-
     ]
 }
+

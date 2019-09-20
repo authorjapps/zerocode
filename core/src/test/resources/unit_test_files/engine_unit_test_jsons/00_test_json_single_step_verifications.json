@@ -23,5 +23,6 @@
     "body": {
       "id" : 1001
     }
-  }
+  },
+  "verifyMode":"STRICT"
 }
