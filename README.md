@@ -257,10 +257,8 @@ Maven and CI 🔨
 **Wiki:** [About Zerocode](https://github.com/authorjapps/zerocode/wiki) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 **Mailing List:** [Mailing List](https://groups.google.com/forum/#!forum/zerocode-automation) <br/>
-**Chat Room:** [Gitter(unused)](https://gitter.im/zerocode-testing/help-and-usage) <br/>
-**Chat Room:** [Slack(active)](https://join.slack.com/t/zerocode-workspace/shared_invite/enQtNzIyNDUwOTg2NDUzLWQ3ZTM1YTBhNjJmNzY3NmU0Y2I4NWIwZDVjYjk4M2JhYWY5NzA3ZWEwMWIwOTIwOWFjNTg2YzFmNzZhYTUyYzI) <br/>
-
-> The purpose of Zerocode lib is to make our API tests easy to **write**, easy to **change**, easy to **share**.
+**Chat Room:** [Gitter(Old conversasions)](https://gitter.im/zerocode-testing/help-and-usage) <br/>
+**Chat Room:** [Slack(active)](https://join.slack.com/t/zerocode-workspace/shared_invite/enQtNzYxMDAwNTQ3MjY1LTA2YmJjODJhNzQ4ZjBiYTQwZDBmZmNkNmExYjA3ZDk2OGFiZWFmNWJlNGRkOTdiMDQ4ZmQyNzcyNzVjNWQ4ODQ) <br/>
 
 Maven dependency xml:
 ```xml
