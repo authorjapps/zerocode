@@ -65,6 +65,24 @@
                         "message": "email updated"
                      }
                   }
+               },
+               {
+                  "name": "Mock the DELETE Person",
+                  "operation": "DELETE",
+                  "url": "/customers/cust302",
+                  "request": {
+                     "headers": {
+                        "Content-Type": "application/json"
+                     },
+                     "body": {}
+                  },
+                  "response": {
+                     "status": 204,
+                     "headers": {
+                        "Content-Type": "application/json"
+                     },
+                     "body": {}
+                  }
                }
             ]
          },

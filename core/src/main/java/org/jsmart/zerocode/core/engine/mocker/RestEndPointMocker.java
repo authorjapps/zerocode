@@ -55,6 +55,11 @@ public class RestEndPointMocker {
                 givenThat(createPatchRequestBuilder(mockStep)
                         .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
                 LOGGER.info("WireMock- Mocking the PATCH endpoint -done-*****");
+            } else if ("DELETE".equals(mockStep.getOperation())) {
+                LOGGER.info("*****WireMock- Mocking the DELETE endpoint");
+                givenThat(createDeleteRequestBuilder(mockStep)
+                        .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
+                LOGGER.info("WireMock- Mocking the DELETE endpoint -done-*****");
             }
 
         });
@@ -87,6 +92,11 @@ public class RestEndPointMocker {
             wireMockServer = null;
             LOGGER.info("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
         }
+    }
+
+    private static MappingBuilder createDeleteRequestBuilder(MockStep mockStep) {
+        final MappingBuilder requestBuilder = delete(urlEqualTo(mockStep.getUrl()));
+        return createRequestBuilderWithHeaders(mockStep, requestBuilder);
     }
 
     private static MappingBuilder createPatchRequestBuilder(MockStep mockStep) {
