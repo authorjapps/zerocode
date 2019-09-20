@@ -7,7 +7,9 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -33,15 +35,7 @@ import javax.inject.Inject;
 
 import java.util.Map;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalToXml;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -73,16 +67,24 @@ public class RestEndPointMockerTest {
     public WireMockRule rule = new WireMockRule(9073);
 
     RestEndPointMocker restEndPointMocker;
+    String jsonDocumentAsString;
+    ScenarioSpec scenarioDeserialized;
+    MockSteps mockSteps;
 
     @Before
     public void beforeMethod() throws Exception {
         restEndPointMocker = new RestEndPointMocker();
+
+        WireMock.configureFor(9073);
+
+        jsonDocumentAsString = smartUtils.getJsonDocumentAsString("integration_test_files/wiremock_integration/wiremock_end_point_json_body.json");
+        scenarioDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+        mockSteps = smartUtils.getMapper().readValue(scenarioDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
+
     }
 
     @Test
     public void willDeserializeA_VanilaFlow() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("integration_test_files/wiremock_integration/wiremock_end_point_json_body.json");
-        ScenarioSpec scenarioDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         assertThat(scenarioDeserialized, notNullValue());
         assertThat(scenarioDeserialized.getSteps().size(), is(1));
@@ -92,31 +94,27 @@ public class RestEndPointMockerTest {
 
         assertThat(mockSteps.getMocks().get(0).getName(), containsString("Mock the Get Person"));
         assertThat(mockSteps.getMocks().get(1).getName(), containsString("Mock the POST Person"));
+        assertThat(mockSteps.getMocks().get(2).getName(), containsString("Mock the PATCH Person"));
 
-        assertThat(mockSteps.getMocks().get(0).getOperation(), is("GET"));
-        assertThat(mockSteps.getMocks().get(0).getResponse().get("status").asInt(), is(200));
-        assertThat(mockSteps.getMocks().get(0).getResponse().get("status").intValue(), is(200));
-        assertThat(mockSteps.getMocks().get(0).getResponse().get("status").toString(), is("200"));
+        MockStep mockStepGET = mockSteps.getMocks().get(0);
+        assertThat(mockStepGET.getOperation(), is("GET"));
+        assertThat(mockStepGET.getResponse().get("status").asInt(), is(200));
+        assertThat(mockStepGET.getResponse().get("status").intValue(), is(200));
+        assertThat(mockStepGET.getResponse().get("status").toString(), is("200"));
         JSONAssert.assertEquals(mockSteps.getMocks().get(0).getResponse().get("body").toString(),
-                        "{\n" +
-                                "                \"id\": \"p001\",\n" +
-                                "                \"source\": {\n" +
-                                "                  \"code\": \"GOOGLE.UK\"\n" +
-                                "                }\n" +
-                                "              }",
+                "{\n" +
+                        "                \"id\": \"p001\",\n" +
+                        "                \"source\": {\n" +
+                        "                  \"code\": \"GOOGLE.UK\"\n" +
+                        "                }\n" +
+                        "              }",
 
                 true);
+
     }
 
     @Test
-    public void willMockASimpleGetEndPoint() throws Exception{
-        // WireMockRule rule = new WireMockRule(9073);
-        // WireMock wireMock = new WireMock(9073);
-        // WireMock.configureFor(9073);
-
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("integration_test_files/wiremock_integration/wiremock_end_point_json_body.json");
-        ScenarioSpec scenarioDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
-        MockSteps mockSteps = smartUtils.getMapper().readValue(scenarioDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
+    public void willMockASimpleGetEndPoint() throws Exception {
 
         final MockStep mockStep = mockSteps.getMocks().get(0);
         String jsonBodyRequest = mockStep.getResponse().get("body").toString();
@@ -133,7 +131,7 @@ public class RestEndPointMockerTest {
         clientExecutor.setHttpMethod("GET");
         ClientResponse serverResponse = clientExecutor.execute();
 
-        final String respBodyAsString = (String)serverResponse.getEntity(String.class);
+        final String respBodyAsString = (String) serverResponse.getEntity(String.class);
         JSONAssert.assertEquals(jsonBodyRequest, respBodyAsString, true);
 
         System.out.println("### zerocode: \n" + respBodyAsString);
@@ -141,13 +139,7 @@ public class RestEndPointMockerTest {
     }
 
     @Test
-    public void willMockAPostRequest() throws Exception{
-
-        WireMock.configureFor(9073);
-
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("integration_test_files/wiremock_integration/wiremock_end_point_json_body.json");
-        ScenarioSpec scenarioDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
-        MockSteps mockSteps = smartUtils.getMapper().readValue(scenarioDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
+    public void willMockAPostRequest() throws Exception {
 
         final MockStep mockPost = mockSteps.getMocks().get(1);
         String jsonBodyResponse = mockPost.getResponse().get("body").toString();
@@ -176,13 +168,57 @@ public class RestEndPointMockerTest {
     }
 
     @Test
-    public void willMockRequest_jsonBody() throws Exception{
+    public void willMockAPATCHRequest() throws Exception {
+
+        final MockStep mockPatch = mockSteps.getMocks().get(2);
+        String jsonBodyResponse = mockPatch.getResponse().get("body").toString(); // { "id": "cust345", "message": "email updated"  }
+
+        final String bodyJson = mockPatch.getRequest().get("body").toString(); // { "email": "new_email_to_update@gmail.com" }
+        stubFor(patch(urlEqualTo(mockPatch.getUrl()))
+                .withRequestBody(equalToJson(bodyJson))
+                .willReturn(aResponse()
+                        .withStatus(mockPatch.getResponse().get("status").asInt())
+                        .withHeader("Content-Type", APPLICATION_JSON)
+                        .withBody(jsonBodyResponse)));
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPatch request = new HttpPatch("http://localhost:9073" + mockPatch.getUrl());
+        request.addHeader("Content-Type", "application/json");
+        StringEntity entity = new StringEntity(bodyJson);
+        request.setEntity(entity);
+        HttpResponse response = httpClient.execute(request);
+
+        final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        System.out.println("### response: \n" + responseBodyActual);
+
+        assertThat(response.getStatusLine().getStatusCode(), is(200));
+        JSONAssert.assertEquals(jsonBodyResponse, responseBodyActual, true);
+
+    }
+
+    @Test
+    public void willMockADELETERequest() throws Exception {
+
+        final MockStep mockDelete = mockSteps.getMocks().get(3);
+
+        stubFor(delete(urlEqualTo(mockDelete.getUrl()))
+                .willReturn(aResponse()
+                        .withStatus(mockDelete.getResponse().get("status").asInt())
+                        .withHeader("Content-Type", APPLICATION_JSON)));
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpDelete request = new HttpDelete("http://localhost:9073" + mockDelete.getUrl());
+        request.addHeader("Content-Type", "application/json");
+        HttpResponse response = httpClient.execute(request);
+
+        assertThat(response.getStatusLine().getStatusCode(), is(204));
+
+    }
+
+    @Test
+    public void willMockRequest_jsonBody() throws Exception {
 
         int WIRE_MOCK_TEST_PORT = 9077;
-
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("integration_test_files/wiremock_integration/wiremock_end_point_json_body.json");
-        ScenarioSpec scenarioDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
-        MockSteps mockSteps = smartUtils.getMapper().readValue(scenarioDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
 
         final MockStep mockPost = mockSteps.getMocks().get(1);
         final String reqBody = mockPost.getRequest().get("body").toString(); //"{ \"id\" : \"p002\" }";
@@ -207,13 +243,9 @@ public class RestEndPointMockerTest {
     }
 
     @Test
-    public void willMockRequest_respond_with_contentType() throws Exception{
+    public void willMockRequest_respond_with_contentType() throws Exception {
 
         int WIRE_MOCK_TEST_PORT = 9077;
-
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("integration_test_files/wiremock_integration/wiremock_end_point_json_body.json");
-        ScenarioSpec scenarioDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
-        MockSteps mockSteps = smartUtils.getMapper().readValue(scenarioDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
 
         final MockStep mockGetRequest = mockSteps.getMocks().get(0);
         String respBody = mockGetRequest.getResponse().get("body").toString();
@@ -237,13 +269,14 @@ public class RestEndPointMockerTest {
 
         getWireMockServer().stop();
     }
+
     // --------------------------------------------------------------
     // ISSUE-202 - https://github.com/authorjapps/zerocode/issues/202
     // - xmlBody for SOAP mocking
     // - Fixed by - arunvelusamyd
     // --------------------------------------------------------------
     @Test
-    public void willMockRequest_xmlBody() throws Exception{
+    public void willMockRequest_xmlBody() throws Exception {
         int WIRE_MOCK_TEST_PORT = 9077;
 
         String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("integration_test_files/wiremock_integration/wiremock_end_point_soap_xml_body.json");
@@ -251,8 +284,6 @@ public class RestEndPointMockerTest {
         MockSteps mockSteps = smartUtils.getMapper().readValue(scenarioDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
 
         final MockStep mockPost = mockSteps.getMocks().get(0);
-        //final String reqBody = mockPost.getRequest().get("body").toString();
-        String mockedXmlBody = mockPost.getResponse().get("xmlBody").toString();
 
         createWithWireMock(mockSteps, WIRE_MOCK_TEST_PORT);
 
@@ -271,13 +302,7 @@ public class RestEndPointMockerTest {
     }
 
     @Test
-    public void willMockAGetRequestWith_headers() throws Exception{
-
-        WireMock.configureFor(9073);
-
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("integration_test_files/wiremock_integration/wiremock_end_point_json_body.json");
-        ScenarioSpec scenarioDeserialized = objectMapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
-        MockSteps mockSteps = smartUtils.getMapper().readValue(scenarioDeserialized.getSteps().get(0).getRequest().toString(), MockSteps.class);
+    public void willMockAGetRequestWith_headers() throws Exception {
 
         final MockStep mockGetStep = mockSteps.getMocks().get(0);
         final Map<String, Object> headersMap = mockGetStep.getHeadersMap();
@@ -313,9 +338,8 @@ public class RestEndPointMockerTest {
 
     }
 
-
     @Test
-    public void willMockASoapEndPoint() throws Exception{
+    public void willMockASoapEndPoint() throws Exception {
 
         WireMock.configureFor(9073);
 
@@ -343,5 +367,5 @@ public class RestEndPointMockerTest {
 
         assertThat(responseBodyActual, is(soapResponseExpected));
     }
-    
+
 }
