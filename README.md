@@ -119,4 +119,4 @@ Looks simple n easy? Why not give a try? Visit the [quick-start guide](https://g
 
 Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their micro-services. 
 
-Happy testing <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>
+Happy testing! <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>
