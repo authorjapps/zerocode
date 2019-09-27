@@ -62,7 +62,8 @@ retry:
 verify:
   status: 200
   headers:
-    corr-id: corr_uuid
+    Content-Type:
+    - application/json; charset=utf-8
   body:
     id: 123
     type: Premium High Value
@@ -91,7 +92,7 @@ or
   "verify": {
     "status": 200,
     "headers": {
-      "corr-id": "corr_uuid"
+      "Content-Type" : [ "application/json; charset=utf-8" ]
     },
     "body": {
       "id": 123,
