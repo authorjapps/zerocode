@@ -26,7 +26,9 @@ For a quick introduction to Zerocode and its features, visit the
 
 Introduction
 ===
-Zerocode is a new light-weight, simple and extensible open-source framework for writing test intentions in simple JSON or YAML format that facilitates both declarative configuration and automation. Put simply, Zerocode alleviates pain and brings simplicity to the moddern api-automation. The framework manages the response validations, target API invocations,load/stress testing and security testing in a unified way using simple YAML/JSON/Fluent DSLs.
+Zerocode is a new light-weight, simple and extensible open-source framework for writing test intentions in simple JSON or YAML format that facilitates both declarative configuration and automation. 
+
+Put simply, Zerocode alleviates pain and brings simplicity to the moddern api-automation. The framework manages the response validations, target API invocations,load/stress testing and security testing in a unified way using simple YAML/JSON/Fluent DSLs.
 
 For example, if your REST API URL `https://localhost:8080/api/v1/customers/123` with `GET` method and `"Content-Type": "application/json"` returns the following payload and a `http` status code `200(OK)` ,
 ```javaScript
@@ -47,7 +49,7 @@ then, we can easily validate the above API using `Zerocode` like below.
 
 + Using YAML described as below,
 
-> _The beauty here is, we can use the payload structure as it is without any manipulation._
+> _The beauty here is, we can use the payload/headers structure as it is without any manipulation._
 
 ```yaml
 ---
