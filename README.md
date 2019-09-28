@@ -5,7 +5,7 @@ Automated API testing was never so easy before
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
-[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeEasyTDD)
+[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeEasyTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeTDD)
 
 
 **Latest release: [1.3.x](https://search.maven.org/search?q=a:zerocode-tdd)** 🏹
@@ -26,7 +26,9 @@ For a quick introduction to Zerocode and its features, visit the
 
 Introduction
 ===
-Zerocode is a new light-weight, simple and extensible open-source framework for writing test intentions in simple JSON or YAML format that facilitates both declarative configuration and automation. Put simply, Zerocode alleviates pain and brings simplicity to the moddern api-automation. The framework manages the response validations, target API invocations and scenario step-chaining at the same time, same place using [Jayway JsonPath](https://github.com/json-path/JsonPath/blob/master/README.md#path-examples).
+Zerocode is a new light-weight, simple and extensible open-source framework for writing test intentions in simple JSON or YAML format that facilitates both declarative configuration and automation. 
+
+Put simply, Zerocode alleviates pain and brings simplicity to the moddern api-automation. The framework manages the response validations, target API invocations,load/stress testing and security testing in a unified way using simple YAML/JSON/Fluent scripts/DSLs.
 
 For example, if your REST API URL `https://localhost:8080/api/v1/customers/123` with `GET` method and `"Content-Type": "application/json"` returns the following payload and a `http` status code `200(OK)` ,
 ```javaScript
@@ -47,7 +49,7 @@ then, we can easily validate the above API using `Zerocode` like below.
 
 + Using YAML described as below,
 
-> _The beauty here is, we can use the payload structure as it is without any manipulation._
+> _The beauty here is, we can use the payload/headers structure as it is without any manipulation._
 
 ```yaml
 ---
@@ -62,7 +64,8 @@ retry:
 verify:
   status: 200
   headers:
-    corr-id: corr_uuid
+    Content-Type:
+    - application/json; charset=utf-8
   body:
     id: 123
     type: Premium High Value
@@ -70,6 +73,8 @@ verify:
     - type: home
       line1: 10 Random St
 ```
+
+or
 
 + Using JSON DSL described as below,
 
@@ -89,7 +94,7 @@ verify:
   "verify": {
     "status": 200,
     "headers": {
-      "corr-id": "corr_uuid"
+      "Content-Type" : [ "application/json; charset=utf-8" ]
     },
     "body": {
       "id": 123,
