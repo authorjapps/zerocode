@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.module.RuntimeHttpClientModule;
+import org.jsmart.zerocode.core.di.module.RuntimeKafkaClientModule;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.JsonTestCases;
 import org.jsmart.zerocode.core.domain.Scenario;
@@ -16,10 +17,9 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Scenarios;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.TestPackageRoot;
-import org.jsmart.zerocode.core.domain.UseHttpClient;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
+import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
@@ -34,6 +34,8 @@ import static com.google.inject.Guice.createInjector;
 import static java.lang.System.getProperty;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ZEROCODE_JUNIT;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomHttpClientOrDefault;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomKafkaClientOrDefault;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
 public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
@@ -188,10 +190,14 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
         serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 
-        final UseHttpClient runtimeClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
-        Class<? extends BasicHttpClient> runtimeHttpClient = runtimeClientAnnotated != null ? runtimeClientAnnotated.value() : SslTrustHttpClient.class;
+        Class<? extends BasicHttpClient> runtimeHttpClient = getCustomHttpClientOrDefault(testClass);
+        Class<? extends BasicKafkaClient> runtimeKafkaClient = getCustomKafkaClientOrDefault(testClass);
 
-        return createInjector(Modules.override(new ApplicationMainModule(serverEnv)).with(new RuntimeHttpClientModule(runtimeHttpClient)));
+        return createInjector(Modules.override(new ApplicationMainModule(serverEnv))
+                .with(
+                        new RuntimeHttpClientModule(runtimeHttpClient),
+                        new RuntimeKafkaClientModule(runtimeKafkaClient)
+                ));
     }
 
     public void setSmartUtils(SmartUtils smartUtils) {
@@ -248,7 +254,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         // i.e. JsonTestCase
         // --------------------------------------------------
         List<JsonTestCase> jsonTestCases = Arrays.asList(testClass.getAnnotationsByType(JsonTestCase.class));
-        if(jsonTestCases != null && jsonTestCases.size() > 0){
+        if (jsonTestCases != null && jsonTestCases.size() > 0) {
             return jsonTestCases.stream()
                     .map(thisTestCase -> thisTestCase.value())
                     .collect(Collectors.toList());

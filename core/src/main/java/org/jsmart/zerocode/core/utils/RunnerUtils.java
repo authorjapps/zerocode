@@ -5,6 +5,12 @@ import org.jsmart.zerocode.core.domain.EnvProperty;
 import org.jsmart.zerocode.core.domain.Parameterized;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.TestMapping;
+import org.jsmart.zerocode.core.domain.UseHttpClient;
+import org.jsmart.zerocode.core.domain.UseKafkaClient;
+import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
+import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
+import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
+import org.jsmart.zerocode.core.kafka.client.ZerocodeCustomKafkaClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,6 +132,17 @@ public class RunnerUtils {
 
         return valueSource != null ? valueSource.size() :
                 (csvSource != null ? csvSource.size() : 0);
+    }
+
+
+    public static Class<? extends BasicKafkaClient> getCustomKafkaClientOrDefault(Class<?> testClass) {
+        final UseKafkaClient kafkaClientAnnotated = testClass.getAnnotation(UseKafkaClient.class);
+        return kafkaClientAnnotated != null ? kafkaClientAnnotated.value() : ZerocodeCustomKafkaClient.class;
+    }
+
+    public static Class<? extends BasicHttpClient> getCustomHttpClientOrDefault(Class<?> testClass) {
+        final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
+        return httpClientAnnotated != null ? httpClientAnnotated.value() : SslTrustHttpClient.class;
     }
 
 
