@@ -11,7 +11,7 @@ Automated API testing was never so easy before
 **Latest release: [1.3.x](https://search.maven.org/search?q=a:zerocode-tdd)** 🏹
 
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
-**Issue Discussions:** [Slack](https://join.slack.com/t/zerocode-workspace/shared_invite/enQtNzIyNDUwOTg2NDUzLWQ3ZTM1YTBhNjJmNzY3NmU0Y2I4NWIwZDVjYjk4M2JhYWY5NzA3ZWEwMWIwOTIwOWFjNTg2YzFmNzZhYTUyYzI) <br/>
+**Issue Discussions:** [Slack](https://join.slack.com/t/zerocode-workspace/shared_invite/enQtNzYxMDAwNTQ3MjY1LTA2YmJjODJhNzQ4ZjBiYTQwZDBmZmNkNmExYjA3ZDk2OGFiZWFmNWJlNGRkOTdiMDQ4ZmQyNzcyNzVjNWQ4ODQ) <br/> 
 **Mailing List:** [Mailing List](https://groups.google.com/forum/#!forum/zerocode-automation) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
 
