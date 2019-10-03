@@ -28,7 +28,7 @@ public class DelloiteCustomKafkaClient extends BasicKafkaClient {
         // ---
 
         // Just a sanity check if flow has hit this point or not.
-        assertThat(customCodeExecuted, is (true));
+        assertThat(customCodeExecuted, is(true));
 
         return super.execute(brokers, topicName, operation, requestJson);
     }
