@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class DelloiteCustomKafkaClient extends BasicKafkaClient {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DelloiteCustomKafkaClient.class);
+public class MyCustomKafkaClient extends BasicKafkaClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyCustomKafkaClient.class);
     private boolean customCodeExecuted;
 
-    public DelloiteCustomKafkaClient() {
+    public MyCustomKafkaClient() {
         super();
         LOGGER.info("Running via Deloitte custom-Kafka-client...");
     }
