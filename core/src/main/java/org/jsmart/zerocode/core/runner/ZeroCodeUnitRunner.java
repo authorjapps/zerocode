@@ -45,6 +45,8 @@ import static java.lang.System.getProperty;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ZEROCODE_JUNIT;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomHttpClientOrDefault;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomKafkaClientOrDefault;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
 public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
@@ -155,8 +157,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 
-            Class<? extends BasicHttpClient> runtimeHttpClient = getCustomHttpClientOrDefault();
-            Class<? extends BasicKafkaClient> runtimeKafkaClient = getCustomKafkaClientOrDefault();
+            Class<? extends BasicHttpClient> runtimeHttpClient = getCustomHttpClientOrDefault(testClass);
+            Class<? extends BasicKafkaClient> runtimeKafkaClient = getCustomKafkaClientOrDefault(testClass);
 
             injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
                     .with(
@@ -168,17 +170,6 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             return injector;
         }
     }
-
-    private Class<? extends BasicKafkaClient> getCustomKafkaClientOrDefault() {
-        final UseKafkaClient kafkaClientAnnotated = testClass.getAnnotation(UseKafkaClient.class);
-        return kafkaClientAnnotated != null ? kafkaClientAnnotated.value() : ZerocodeCustomKafkaClient.class;
-    }
-
-    private Class<? extends BasicHttpClient> getCustomHttpClientOrDefault() {
-        final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
-        return httpClientAnnotated != null ? httpClientAnnotated.value() : SslTrustHttpClient.class;
-    }
-
 
     protected SmartUtils getInjectedSmartUtilsClass() {
         return getMainModuleInjector().getInstance(SmartUtils.class);
