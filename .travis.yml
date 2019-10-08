@@ -2,7 +2,6 @@
 #It is better to switch to openJDK
 language: java
 jdk:
-  - oraclejdk8
   - openjdk8
 
 #This helps to avoid downloading artefacts every time from MVN central. 
