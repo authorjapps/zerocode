@@ -24,6 +24,13 @@ For a quick introduction to Zerocode and its features, visit the
 + [Zerocode Wiki](https://github.com/authorjapps/zerocode/wiki)
 + [User's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide)
 
+Maven Dependency
+===
++ [New releases - zerocode-tdd](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) 
+[![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/)
++ _[Older releases - zerocode-rest-bdd](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/)_ 
+[![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/)
+
 Introduction
 ===
 Zerocode is a new light-weight, simple and extensible open-source framework for writing test intentions in simple JSON or YAML format that facilitates both declarative configuration and automation. 
@@ -68,10 +75,11 @@ verify:
     - application/json; charset=utf-8
   body:
     id: 123
-    type: Premium High Value
+    type: Premium Visa
     addresses:
-    - type: home
+    - type: Billing
       line1: 10 Random St
+verifyMode: LINIENT
 ```
 
 or
@@ -98,15 +106,16 @@ or
     },
     "body": {
       "id": 123,
-      "type": "Premium High Value",
+      "type": "Premium Visa",
       "addresses": [
         {
-          "type": "home",
+          "type": "Billing",
           "line1": "10 Random St"
         }
       ]
-    }
-  }
+    }    
+  },
+  "verifyMode": "STRICT"
 }
 ```
 
