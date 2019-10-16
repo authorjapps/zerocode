@@ -6,6 +6,8 @@ import org.jsmart.zerocode.core.kafka.send.KafkaSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class BasicKafkaClient {
     private Logger LOGGER = LoggerFactory.getLogger(BasicKafkaClient.class);
 
@@ -15,12 +17,11 @@ public class BasicKafkaClient {
     @Inject
     private  KafkaReceiver receiver;
 
-
     public BasicKafkaClient() {
     }
 
-    public String execute(String brokers, String topicName, String operation, String requestJson) {
-        LOGGER.info("brokers:{}, topicName:{}, operation:{}, requestJson:{}", brokers, topicName, operation, requestJson);
+    public String execute(String brokers, List<String> topicNames, String operation, String requestJson) {
+        LOGGER.info("brokers:{}, topicNames:{}, operation:{}, requestJson:{}", brokers, topicNames.toString(), operation, requestJson);
 
         try {
             switch (operation) {
@@ -28,13 +29,14 @@ public class BasicKafkaClient {
                 case "load":
                 case "publish":
                 case "produce":
-                    return sender.send(brokers, topicName, requestJson);
+                    //@todo rewrite sender to send in multiple topics
+                    return sender.send(brokers, topicNames.get(0), requestJson);
 
                 case "unload":
                 case "consume":
                 case "receive":
                 case "subscribe":
-                    return receiver.receive(brokers, topicName, requestJson);
+                    return receiver.receive(brokers, topicNames, requestJson);
 
                 case "poll":
                     throw new RuntimeException("poll - Not yet Implemented");
@@ -45,10 +47,9 @@ public class BasicKafkaClient {
 
         } catch (Throwable exx) {
 
-            LOGGER.error("Exception during operation:{}, topicName:{}, error:{}", operation, topicName, exx.getMessage());
+            LOGGER.error("Exception during operation:{}, topicName:{}, error:{}", operation, topicNames.get(0), exx.getMessage());
 
             throw new RuntimeException(exx);
         }
-
     }
 }

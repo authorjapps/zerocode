@@ -7,7 +7,6 @@ import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -44,7 +43,7 @@ public class KafkaConsumerHelper {
     private static final Gson gson = new GsonSerDeProvider().get();
     private static final ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
-    public static Consumer createConsumer(String bootStrapServers, String consumerPropertyFile, String topic) {
+    public static Consumer createConsumer(String bootStrapServers, String consumerPropertyFile, List<String> topics) {
         try (InputStream propsIs = Resources.getResource(consumerPropertyFile).openStream()) {
             Properties properties = new Properties();
             properties.load(propsIs);
@@ -53,7 +52,7 @@ public class KafkaConsumerHelper {
             resolveValuePlaceHolders(properties);
 
             final Consumer consumer = new KafkaConsumer(properties);
-            consumer.subscribe(Collections.singletonList(topic));
+            consumer.subscribe(topics);
 
             return consumer;
 

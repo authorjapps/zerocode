@@ -1,5 +1,7 @@
 package org.jsmart.zerocode.core.engine.executor;
 
+import java.util.List;
+
 public interface ApiServiceExecutor {
     /**
      *
@@ -27,6 +29,6 @@ public interface ApiServiceExecutor {
      * @param requestJson RAW or JSON records for producing, config settings for consuming
      * @return String The broker acknowledgement in JSON
      */
-    String executeKafkaService(String kafkaServers, String kafkaTopic, String methodName, String requestJson);
+    String executeKafkaService(String kafkaServers, List<String> kafkaTopic, String methodName, String requestJson);
 
 }

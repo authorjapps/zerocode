@@ -1,0 +1,47 @@
+{
+    "scenarioName": "Unload - consume a message from multiple topics",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-multiple-c1",
+            "operation": "load",
+            "request": {
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World"
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Ok"
+            }
+        },
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-multiple-c2",
+            "operation": "load",
+            "request": {
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World"
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Ok"
+            }
+        },
+        {
+            "name": "onload_kafka",
+            "url": "kafka-topic:demo-multiple-c1,demo-multiple-c2",
+            "operation": "unload",
+            "request": {
+            },
+            "assertions": {
+                "size" : "$EQ.2"
+            }
+        }
+    ]
+}

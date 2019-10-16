@@ -424,8 +424,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .id(stepId)
                         .request(prettyPrintJson(resolvedRequestJson));
 
-                String topicName = url.substring(KAFKA_TOPIC.length());
-                executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJson);
+                List<String> topicNames = Arrays.asList(url.substring(KAFKA_TOPIC.length()).split(","));
+                executionResult = apiExecutor.executeKafkaService(kafkaServers, topicNames, operationName, resolvedRequestJson);
                 break;
 
             case NONE:

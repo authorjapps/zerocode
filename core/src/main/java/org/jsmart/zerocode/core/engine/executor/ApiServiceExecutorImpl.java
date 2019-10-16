@@ -8,6 +8,8 @@ import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class ApiServiceExecutorImpl implements ApiServiceExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiServiceExecutorImpl.class);
 
@@ -54,7 +56,7 @@ public class ApiServiceExecutorImpl implements ApiServiceExecutor {
     }
 
     @Override
-    public String executeKafkaService(String kafkaServers, String kafkaTopic, String operation, String requestJson) {
-        return kafkaClient.execute(kafkaServers, kafkaTopic, operation, requestJson);
+    public String executeKafkaService(String kafkaServers, List<String> kafkaTopics, String operation, String requestJson) {
+        return kafkaClient.execute(kafkaServers, kafkaTopics, operation, requestJson);
     }
 }
