@@ -6,6 +6,7 @@ public interface ZeroCodeReportConstants {
     String TEST_STEP_CORRELATION_ID = "TEST-STEP-CORRELATION-ID:";
     String TARGET_FULL_REPORT_DIR = "target/";
     String TARGET_REPORT_DIR = "target/zerocode-test-reports/";
+    String TARGET_CUCUMBER_REPORT_DIR = "target/cucumber-test-reports/";
     String TARGET_FULL_REPORT_CSV_FILE_NAME = "zerocode-junit-granular-report.csv";
     String TARGET_FILE_NAME = "target/zerocode-junit-interactive-fuzzy-search.html";
     String HIGH_CHART_HTML_FILE_NAME = "zerocode_results_chart";
@@ -17,5 +18,11 @@ public interface ZeroCodeReportConstants {
     String LINK_LABEL_NAME = "Spike Chart(Click here)";
     String ZEROCODE_JUNIT = "zerocode.junit";
     String CHARTS_AND_CSV = "gen-smart-charts-csv-reports";
+
+    String CUCUMBER_FEATURE_KEYWORD = "Feature";
+    String CUCUMBER_SCENARIO_KEYWORD = "Scenario";
+    String CUCUMBER_WHEN_KEYWORD = "When ";
+    String CUCUMBER_SCENARIO_TYPE = "scenario";
+    String CUCUMBER_URI = "dummy uri"; // can't determine URI somehow
 
 }

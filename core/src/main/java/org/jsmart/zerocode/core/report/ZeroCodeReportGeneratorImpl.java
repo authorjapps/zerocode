@@ -5,6 +5,7 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -13,14 +14,26 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.apache.commons.lang.StringUtils;
+import org.jsmart.zerocode.core.constants.ZeroCodeReportConstants;
 import org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory;
 import org.jsmart.zerocode.core.domain.builders.HighChartColumnHtmlBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueArrayBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeCsvReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeCucumberElementBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeCucumberReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeCucumberResultBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeCucumberStepBuilder;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeExecResult;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 import org.jsmart.zerocode.core.domain.reports.chart.HighChartColumnHtml;
 import org.jsmart.zerocode.core.domain.reports.csv.ZeroCodeCsvReport;
+import org.jsmart.zerocode.core.domain.reports.cucumber.CucumberElement;
+import org.jsmart.zerocode.core.domain.reports.cucumber.CucumberResult;
+import org.jsmart.zerocode.core.domain.reports.cucumber.CucumberStatus;
+import org.jsmart.zerocode.core.domain.reports.cucumber.CucumberStep;
+import org.jsmart.zerocode.core.domain.reports.cucumber.ZeroCodeCucumberReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,23 +45,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang.StringUtils.substringBetween;
-import static org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory.getReportName;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ANONYMOUS_AUTHOR;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.AUTHOR_MARKER;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CUCUMBER_SCENARIO_KEYWORD;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CUCUMBER_SCENARIO_TYPE;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CUCUMBER_WHEN_KEYWORD;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.DEFAULT_REGRESSION_CATEGORY;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.HIGH_CHART_HTML_FILE_NAME;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.LINK_LABEL_NAME;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_PASS;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_CUCUMBER_REPORT_DIR;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FILE_NAME;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FULL_REPORT_CSV_FILE_NAME;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FULL_REPORT_DIR;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_REPORT_DIR;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TEST_STEP_CORRELATION_ID;
+import static org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory.getReportName;
 
 public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeReportGeneratorImpl.class);
@@ -77,9 +96,81 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
     private List<ZeroCodeCsvReport> csvRows = new ArrayList<>();
 
+    private List<ZeroCodeCucumberReport> zeroCodeCucumberReports;
+
     @Inject
     public ZeroCodeReportGeneratorImpl(ObjectMapper mapper) {
         this.mapper = mapper;
+    }
+
+    @Override
+    public void generateCucumberReport() {
+
+        treeReports = readZeroCodeReportsByPath(TARGET_REPORT_DIR);
+
+        zeroCodeCucumberReports = treeReports.stream()
+                .map(ZeroCodeReport::getResults)
+                .map(this::toCucumberReport)
+                .collect(Collectors.toList());
+
+        ObjectWriter jsonWriter = mapper.writer();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        zeroCodeCucumberReports.forEach(zeroCodeCucumberReport -> writeCucumberReportToFile(zeroCodeCucumberReport, jsonWriter));
+    }
+
+    private ZeroCodeCucumberReport toCucumberReport(List<ZeroCodeExecResult> zeroCodeExecResults) {
+
+        CucumberElement[] cucumberElements = zeroCodeExecResults.stream()
+                .map(this::toCucumberElement).toArray(CucumberElement[]::new);
+
+        return ZeroCodeCucumberReportBuilder.newInstance()
+                .keyword(ZeroCodeReportConstants.CUCUMBER_FEATURE_KEYWORD)
+                .uri(ZeroCodeReportConstants.CUCUMBER_URI)
+                .name(Integer.toString(new Random(System.currentTimeMillis()).nextInt()))
+                .elements(cucumberElements).build();
+    }
+
+    private CucumberElement toCucumberElement(ZeroCodeExecResult zeroCodeExecResult) {
+        return ZeroCodeCucumberElementBuilder.newInstance()
+                .name(zeroCodeExecResult.getScenarioName())
+                .type(CUCUMBER_SCENARIO_TYPE)
+                .keyword(CUCUMBER_SCENARIO_KEYWORD)
+                .steps(toCucumberSteps(zeroCodeExecResult.getSteps())).build();
+    }
+
+    private CucumberStep[] toCucumberSteps(List<ZeroCodeReportStep> steps) {
+        return steps.stream().map(step ->
+                ZeroCodeCucumberStepBuilder.newInstance()
+                        .name(step.getName())
+                        .keyword(CUCUMBER_WHEN_KEYWORD)
+                        .result(toCucumberResult(step)).build())
+                .toArray(CucumberStep[]::new);
+    }
+
+    private CucumberResult toCucumberResult(ZeroCodeReportStep step) {
+        CucumberStatus cucumberStatus = step.getResult().equals(RESULT_PASS) ? CucumberStatus.PASSED : CucumberStatus.FAILED;
+        return ZeroCodeCucumberResultBuilder.newInstance()
+                .status(cucumberStatus)
+                .duration(TimeUnit.SECONDS.toNanos(step.getResponseDelay().longValue())) // do I need to convert to ms?
+                .build();
+    }
+
+    private void writeCucumberReportToFile(ZeroCodeCucumberReport zeroCodeCucumberReport, ObjectWriter jsonWriter){
+        try {
+            File file = new File(
+                    TARGET_CUCUMBER_REPORT_DIR +
+                            "result" + zeroCodeCucumberReport.getName() + ".json"
+            );
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+            jsonWriter.writeValue(
+                    file,
+                    zeroCodeCucumberReports);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Exception while Writing Cucumber report. Details: " + e);
+        }
     }
 
     @Override
