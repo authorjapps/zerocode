@@ -1,0 +1,27 @@
+<archetype-descriptor
+  name="maven-archetype">
+     
+    <fileSets>
+        <fileSet filtered="true" packaged="true">
+            <directory>src/main/java</directory>
+            <includes>
+                <include>**/*.java</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="true" packaged="true">
+            <directory>src/test/java</directory>
+            <includes>
+                <include>**/tests/*.java</include>
+                <include>**/*.java</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="true">
+            <directory>src/test/resources</directory>
+            <includes>
+                <include>*</include>
+                <include>**/*.json</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+ 
+</archetype-descriptor>
