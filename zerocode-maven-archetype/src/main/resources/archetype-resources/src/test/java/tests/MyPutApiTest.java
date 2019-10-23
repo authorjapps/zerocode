@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 
 public class MyPutApiTest {
      @Test
-    @JsonTestCase("tests/post_api_200.json")
+    @JsonTestCase("tests/put_api_200.json")
     public void testPost() throws Exception {
 
     }
