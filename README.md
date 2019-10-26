@@ -8,8 +8,7 @@ Automated API testing was never so easy before
 [![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeTDD)
 
 
-**Latest release: [1.3.x](https://search.maven.org/search?q=a:zerocode-tdd)** 🏹
-
+**Latest release:🏹** [![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
 **Issue Discussions:** [Slack](https://join.slack.com/t/zerocode-workspace/shared_invite/enQtNzYxMDAwNTQ3MjY1LTA2YmJjODJhNzQ4ZjBiYTQwZDBmZmNkNmExYjA3ZDk2OGFiZWFmNWJlNGRkOTdiMDQ4ZmQyNzcyNzVjNWQ4ODQ) <br/> 
 **Mailing List:** [Mailing List](https://groups.google.com/forum/#!forum/zerocode-automation) <br/>
@@ -24,6 +23,13 @@ Quick Links
 For a quick introduction to Zerocode and its features, visit the 
 + [Zerocode Wiki](https://github.com/authorjapps/zerocode/wiki)
 + [User's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide)
+
+Maven Dependency
+===
++ [New releases - zerocode-tdd](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) 
+[![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/)
++ _[Older releases - zerocode-rest-bdd](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/)_ 
+[![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/)
 
 Introduction
 ===
@@ -69,10 +75,11 @@ verify:
     - application/json; charset=utf-8
   body:
     id: 123
-    type: Premium High Value
+    type: Premium Visa
     addresses:
-    - type: home
+    - type: Billing
       line1: 10 Random St
+verifyMode: LINIENT
 ```
 
 or
@@ -99,15 +106,16 @@ or
     },
     "body": {
       "id": 123,
-      "type": "Premium High Value",
+      "type": "Premium Visa",
       "addresses": [
         {
-          "type": "home",
+          "type": "Billing",
           "line1": "10 Random St"
         }
       ]
-    }
-  }
+    }    
+  },
+  "verifyMode": "STRICT"
 }
 ```
 
