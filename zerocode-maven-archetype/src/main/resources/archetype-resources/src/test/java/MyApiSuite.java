@@ -10,8 +10,6 @@ import ${groupId}.tests.MyPostApiTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({MyGetApiTest.class, MyPostApiTest.class, MyPutApiTest.class})
-
-
 public class MyApiSuite {
-    
+
 }
