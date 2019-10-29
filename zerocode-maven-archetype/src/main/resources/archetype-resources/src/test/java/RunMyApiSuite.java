@@ -1,9 +1,9 @@
-package com.myproject;
+package ${groupId};
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import com.myproject.MyApiSuite;
+import ${groupId}.MyApiSuite;
 
 public class RunMyApiSuite {
     public static void main (String[] args){
