@@ -4,11 +4,11 @@ To install archetype locally:
 To generate anew archetype-based project:
     Navigate to the directory that will house the project. Run 
     "mvn archetype:generate 
-    -DarchetypeGroupId=com.myproject 
+    -DarchetypeGroupId=zerocode.archetype 
     -DarchetypeArtifactId=zerocodeArchetype 
     -DarchetypeVersion=1.0-SNAPSHOT 
-    -DgroupId=com.myproject 
-    -DartifactId=zerocodeArchetypeTest"
+    -DgroupId=com.xbox
+    -DartifactId=game-app"
     
     The generic command format is:
     "mvn archetype:generate -DarchetypeGroupId=<custom-archetype group id e.g.>
