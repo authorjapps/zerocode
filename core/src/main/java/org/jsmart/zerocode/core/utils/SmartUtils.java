@@ -11,8 +11,12 @@ import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -91,6 +95,35 @@ public class SmartUtils {
         }
 
         return mapper.readValue(readJsonAsString(scenarioFile), clazz);
+    }
+
+    public static void main(String[] args) {
+
+//        File f = new File("/Path/To/File/or/Directory");
+//        String path = "/Users/nirmalchandra/dev/ZEROCODE_REPOS/zerocode/core/src/main/resources/reports";
+        String path = "~/dev/ZEROCODE_REPOS/zerocode/core/src/main/resources/reports";
+//        String path = "~/dev/ZEROCODE_REPOS/zerocode/core/src/main/resources/engine/request_respone_actual.json";
+        File folder = new File(path);
+        if (folder.exists() && folder.isDirectory()) {
+            System.out.println("dir exists");
+        } else {
+            System.out.println("no such dir");
+        }
+
+
+        try {
+            Path path1 = Paths.get(path);
+            System.out.println("Absolute path:" + path1.toAbsolutePath());
+
+            if(path1.toFile().exists() && path1.toFile().isDirectory()){
+                System.out.println("It's a dir...");
+            } else {
+                System.out.println("It's a file(not a dir");
+            }
+        } catch (InvalidPathException | NullPointerException ex) {
+            System.out.println("no such dir or path");
+        }
+        System.out.println("dir or path exists");
     }
 
     public List<ScenarioSpec> getScenarioSpecListByPackage(String packageName) {
