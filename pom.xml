@@ -84,7 +84,6 @@
         <version.kafka-clients>2.1.0</version.kafka-clients>
         <version.gson>2.6.2</version.gson>
         <version.univocity-parsers>2.8.2</version.univocity-parsers>
-        <picocli.version>4.0.4</picocli.version>
         <!-- Maven plugins, build properties  -->
         <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
         <java-compiler-source.version>1.8</java-compiler-source.version>
@@ -96,11 +95,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>info.picocli</groupId>
-                <artifactId>picocli</artifactId>
-                <version>${picocli.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-params</artifactId>
