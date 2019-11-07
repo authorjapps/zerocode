@@ -142,6 +142,24 @@ public class SmartUtilsTest {
         assertThat(javaHomeValue, notNullValue());
 
         assertThat(SmartUtils.getEnvPropertyValue("WRONG_XYZ_INVALID"), nullValue());
+    }
 
+    @Test
+    public void testSuiteFolder_absolutePath() throws Exception {
+        String HOME_PATH = System.getProperty("user.home");
+        String absPath = HOME_PATH + "/dev/ZEROCODE_REPOS/zerocode/core/src/test/resources/unit_test_files/cherry_pick_tests";
+        List<String> allScenarios = SmartUtils.retrieveScenariosByAbsPath(absPath);
+        assertThat(allScenarios.size(), is(2));
+        assertThat(allScenarios.get(0), containsString("unit_test_files/cherry_pick_tests/folder_b/test_case_2.json"));
+        assertThat(allScenarios.get(0), containsString("cherry_pick_tests/folder_b/test_case_2.json"));
+    }
+
+    @Test
+    public void testSuiteFolder_symAbsolutePath() throws Exception {
+        String absPath = "~/dev/ZEROCODE_REPOS/zerocode/core/src/test/resources/unit_test_files/cherry_pick_tests";
+        List<String> allScenarios = SmartUtils.retrieveScenariosByAbsPath(absPath);
+        assertThat(allScenarios.size(), is(2));
+        assertThat(allScenarios.get(0), containsString("unit_test_files/cherry_pick_tests/folder_b/test_case_2.json"));
+        assertThat(allScenarios.get(0), containsString("cherry_pick_tests/folder_b/test_case_2.json"));
     }
 }

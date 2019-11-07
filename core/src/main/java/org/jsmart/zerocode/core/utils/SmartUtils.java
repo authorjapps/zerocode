@@ -13,7 +13,9 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
@@ -33,8 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.Charset.defaultCharset;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
+import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsoluteProperties;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 
@@ -45,7 +50,8 @@ public class SmartUtils {
     @Inject
     private ObjectMapper mapper; //<--- remember the static methods can not use this objectMapper. So make the methods non-static if you want to use this objectMapper.
 
-    @Inject @Named("YamlMapper")
+    @Inject
+    @Named("YamlMapper")
     private ObjectMapper yamlMapper;
 
     public <T> String getItRight() throws IOException {
@@ -54,76 +60,100 @@ public class SmartUtils {
     }
 
     public <T> String getJsonDocumentAsString(String fileName) throws IOException {
-        String jsonAsString = Resources.toString(getClass().getClassLoader().getResource(fileName), StandardCharsets.UTF_8);
+        String jsonAsString = Resources.toString(getClass().getClassLoader().getResource(fileName), UTF_8);
         return jsonAsString;
     }
 
-    public static String readJsonAsString(String jsonFile){
+    static String readFile(String path, Charset encoding) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, encoding == null ? UTF_8 : encoding);
+    }
+
+    public static String readJsonAsString(String jsonFile) {
         try {
+            jsonFile = replaceHome(jsonFile);
+            if (isValidAbsolutePath(jsonFile)) {
+                return readFile(jsonFile, UTF_8);
+            }
             return Resources.toString(Resources.getResource(jsonFile), defaultCharset());
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Exception occurred while reading the JSON file - " + jsonFile);
         }
     }
 
-    public static String readYamlAsString(String yamlFile){
+    public static String readYamlAsString(String yamlFile) {
         return readJsonAsString(yamlFile);
     }
 
     public Map<String, Object> readJsonStringAsMap(String json) throws IOException {
         Map<String, Object> map = new HashMap<>();
-        map = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
+        map = mapper.readValue(json, new TypeReference<Map<String, Object>>() {
+        });
 
         return map;
     }
 
     public static List<String> getAllEndPointFiles(String packageName) {
+        if(isValidAbsolutePath(packageName)){
+            return retrieveScenariosByAbsPath(packageName);
+        }
         ClassPathFactory factory = new ClassPathFactory();
         ClassPath jvmClassPath = factory.createFromJVM();
         String[] allSimulationFiles = jvmClassPath.findResources(packageName, new RegExpResourceFilter(".*", ".*\\.json$"));
         if (null == allSimulationFiles || allSimulationFiles.length == 0) {
+            LOGGER.error("Test folder is empty or not correctly setup.");
             throw new RuntimeException("NothingFoundHereException: Check the (" + packageName + ") integration test repo folder(empty?). ");
         }
 
         return Arrays.asList(allSimulationFiles);
     }
 
+    public static List<String> retrieveScenariosByAbsPath(String packageName) {
+        packageName = replaceHome(packageName);
+        try {
+            return Files.walk(Paths.get(packageName))
+                    .filter(Files::isRegularFile)
+                    .map(aPath -> aPath.toString())
+                    .collect(Collectors.toList());
+        } catch (IOException exx) {
+            LOGGER.error("Exception during reading absolute suite folder - " + exx);
+            throw new RuntimeException("Exception during reading absolute suite folder - " + exx);
+        }
+    }
+
 
     public <T> T scenarioFileToJava(String scenarioFile, Class<T> clazz) throws IOException {
-        if(scenarioFile.endsWith(".yml") || scenarioFile.endsWith(".yaml")){
+        if (scenarioFile.endsWith(".yml") || scenarioFile.endsWith(".yaml")) {
             return yamlMapper.readValue(readYamlAsString(scenarioFile), clazz);
         }
 
         return mapper.readValue(readJsonAsString(scenarioFile), clazz);
     }
 
-    public static void main(String[] args) {
-
-//        File f = new File("/Path/To/File/or/Directory");
-//        String path = "/Users/nirmalchandra/dev/ZEROCODE_REPOS/zerocode/core/src/main/resources/reports";
-        String path = "~/dev/ZEROCODE_REPOS/zerocode/core/src/main/resources/reports";
-//        String path = "~/dev/ZEROCODE_REPOS/zerocode/core/src/main/resources/engine/request_respone_actual.json";
-        File folder = new File(path);
-        if (folder.exists() && folder.isDirectory()) {
-            System.out.println("dir exists");
+    public static boolean isValidAbsolutePath(String path) {
+        path = replaceHome(path);
+        Path actualPath = Paths.get(path).toAbsolutePath();
+        File file = actualPath.toFile();
+        if (file.isAbsolute() && file.exists()) {
+            return true;
         } else {
-            System.out.println("no such dir");
+            return false;
         }
+    }
+
+    public static String replaceHome(String path) {
+        path = path.replaceFirst("^~", System.getProperty("user.home"));
+        return path;
+    }
+
+    public static void main(String[] args) throws IOException {
+        ///
 
 
-        try {
-            Path path1 = Paths.get(path);
-            System.out.println("Absolute path:" + path1.toAbsolutePath());
+        /// Put your main code here and test
 
-            if(path1.toFile().exists() && path1.toFile().isDirectory()){
-                System.out.println("It's a dir...");
-            } else {
-                System.out.println("It's a file(not a dir");
-            }
-        } catch (InvalidPathException | NullPointerException ex) {
-            System.out.println("no such dir or path");
-        }
-        System.out.println("dir or path exists");
+
+        ///
     }
 
     public List<ScenarioSpec> getScenarioSpecListByPackage(String packageName) {
@@ -208,7 +238,7 @@ public class SmartUtils {
         return sub.replace(stringWithToken);
     }
 
-    public static String getEnvPropertyValue(String envPropertyKey){
+    public static String getEnvPropertyValue(String envPropertyKey) {
 
         final String propertyValue = System.getProperty(envPropertyKey);
 
