@@ -269,7 +269,7 @@
     </dependencyManagement>
 
     <!-- Uncomment this for uber jar -->
-    <build>
+    <!--<build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -287,5 +287,5 @@
                 </executions>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 </project>
