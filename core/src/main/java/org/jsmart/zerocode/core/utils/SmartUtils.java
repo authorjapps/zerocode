@@ -148,16 +148,6 @@ public class SmartUtils {
         return path;
     }
 
-    public static void main(String[] args) throws IOException {
-        ///
-
-
-        /// Put your main code here and test
-
-
-        ///
-    }
-
     public List<ScenarioSpec> getScenarioSpecListByPackage(String packageName) {
         List<String> allEndPointFiles = getAllEndPointFiles(packageName);
         List<ScenarioSpec> scenarioSpecList = allEndPointFiles.stream()
