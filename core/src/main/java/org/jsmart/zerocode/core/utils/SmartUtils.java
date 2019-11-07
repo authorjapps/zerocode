@@ -69,15 +69,17 @@ public class SmartUtils {
         return new String(encoded, encoding == null ? UTF_8 : encoding);
     }
 
-    public static String readJsonAsString(String jsonFile) {
+    public static String readJsonAsString(String scenarioFile) {
         try {
-            jsonFile = replaceHome(jsonFile);
-            if (isValidAbsolutePath(jsonFile)) {
-                return readFile(jsonFile, UTF_8);
+            scenarioFile = replaceHome(scenarioFile);
+            if (isValidAbsolutePath(scenarioFile)) {
+                return readFile(scenarioFile, UTF_8);
             }
-            return Resources.toString(Resources.getResource(jsonFile), defaultCharset());
+            return Resources.toString(Resources.getResource(scenarioFile), defaultCharset());
         } catch (Exception e) {
-            throw new RuntimeException("Exception occurred while reading the JSON file - " + jsonFile);
+            LOGGER.error("Exception occurred while parsing the 'Test Scenario' file:{}. " +
+                    "Check if it is present n in correct format" + scenarioFile);
+            throw new RuntimeException("Exception occurred while reading the 'Test Scenario' file - " + scenarioFile);
         }
     }
 
