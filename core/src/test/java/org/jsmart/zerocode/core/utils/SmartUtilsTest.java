@@ -173,7 +173,6 @@ public class SmartUtilsTest {
 
 
         String parentFolderAbsPath = path1.getParent().getParent().toFile().getAbsolutePath();
-        System.out.println("parent path: --> " + parentFolderAbsPath);
 
         List<String> allScenarios = SmartUtils.retrieveScenariosByAbsPath(parentFolderAbsPath);
         assertThat(allScenarios.size(), is(2));
