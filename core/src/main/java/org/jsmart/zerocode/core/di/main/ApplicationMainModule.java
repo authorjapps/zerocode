@@ -26,12 +26,9 @@ import org.jsmart.zerocode.core.report.ZeroCodeReportGeneratorImpl;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunner;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunnerImpl;
 
-import static org.jsmart.zerocode.core.di.PropertyKeys.RESTFUL_APPLICATION_ENDPOINT_CONTEXT;
-import static org.jsmart.zerocode.core.di.PropertyKeys.RESTFUL_APPLICATION_ENDPOINT_HOST;
-import static org.jsmart.zerocode.core.di.PropertyKeys.RESTFUL_APPLICATION_ENDPOINT_PORT;
-import static org.jsmart.zerocode.core.di.PropertyKeys.WEB_APPLICATION_ENDPOINT_CONTEXT;
-import static org.jsmart.zerocode.core.di.PropertyKeys.WEB_APPLICATION_ENDPOINT_HOST;
-import static org.jsmart.zerocode.core.di.PropertyKeys.WEB_APPLICATION_ENDPOINT_PORT;
+import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.checkAndLoadOldProperties;
+import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsoluteProperties;
+import static org.jsmart.zerocode.core.utils.SmartUtils.isValidAbsolutePath;
 
 public class ApplicationMainModule extends AbstractModule {
     private static final Logger LOGGER = Logger.getLogger(ApplicationMainModule.class.getName());
@@ -74,6 +71,11 @@ public class ApplicationMainModule extends AbstractModule {
 
     public Properties getProperties(String host) {
         final Properties properties = new Properties();
+
+        if(isValidAbsolutePath(host)){
+            return loadAbsoluteProperties(host, properties);
+        }
+
         try {
             properties.load(getClass().getClassLoader().getResourceAsStream(host));
 
@@ -89,25 +91,6 @@ public class ApplicationMainModule extends AbstractModule {
         }
 
         return properties;
-    }
-
-    private void checkAndLoadOldProperties(Properties properties) {
-
-        if (properties.get(WEB_APPLICATION_ENDPOINT_HOST) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST) != null) {
-            Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST);
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_HOST, oldPropertyValue != null ? oldPropertyValue.toString() : null);
-        }
-
-        if (properties.get(WEB_APPLICATION_ENDPOINT_PORT) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT) != null) {
-            Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT);
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, oldPropertyValue != null ? oldPropertyValue.toString() : null);
-        }
-
-        if (properties.get(WEB_APPLICATION_ENDPOINT_CONTEXT) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT) != null) {
-            Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT);
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_CONTEXT, oldPropertyValue != null ? oldPropertyValue.toString() : null);
-        }
-
     }
 
 }

@@ -63,6 +63,8 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.RAW
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.$VALUE;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.digTypeCast;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.fieldTypes;
+import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsoluteProperties;
+import static org.jsmart.zerocode.core.utils.SmartUtils.isValidAbsolutePath;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -359,10 +361,17 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
 
     private void loadAnnotatedHostProperties() {
         try {
-            properties.load(getClass().getClassLoader().getResourceAsStream(hostFileName));
-        } catch (IOException e) {
-            LOGGER.error("Problem encountered while accessing annotated host properties file '" + hostFileName + "'");
-            throw new RuntimeException(e);
+            if(isValidAbsolutePath(hostFileName)){
+               loadAbsoluteProperties(hostFileName, properties);
+            } else {
+                properties.load(getClass().getClassLoader().getResourceAsStream(hostFileName));
+            }
+
+        } catch (Exception e) {
+            String msg = "Problem encountered while accessing annotated host properties file '";
+            LOGGER.error(msg + hostFileName + "'");
+            System.err.println(msg + hostFileName + "'");
+            throw new RuntimeException(msg + e);
         }
 
         properties.keySet().stream().forEach(thisKey -> {
