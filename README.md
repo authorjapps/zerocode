@@ -1,6 +1,6 @@
 <img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
 ===
-Automated API testing was never so easy before
+Automated API testing has never been so easy
 
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)
@@ -16,7 +16,7 @@ Automated API testing was never so easy before
 **Gitter IM:** [Gitter](https://gitter.im/zerocode-testing/help-and-usage) <br/>
 
 
-Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. It has got best of best ideas and practices from the community to keep it super simple and the adoption is rapidly growing among the developer/tester community.
+Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. It has the best of best ideas and practices from the community to keep it super simple, and the adoption is rapidly growing among the developer/tester community.
 
 Quick Links
 ===
@@ -33,9 +33,9 @@ Maven Dependency
 
 Introduction
 ===
-Zerocode is a new light-weight, simple and extensible open-source framework for writing test intentions in simple JSON or YAML format that facilitates both declarative configuration and automation. 
+Zerocode is a new lightweight, simple and extensible open-source framework for writing test intentions in simple JSON or YAML format that facilitates both declarative configuration and automation. 
 
-Put simply, Zerocode alleviates pain and brings simplicity to the moddern api-automation. The framework manages the response validations, target API invocations,load/stress testing and security testing in a unified way using simple YAML/JSON/Fluent steps aka DSL.
+Put simply, Zerocode alleviates pain and brings simplicity to modern API automation. The framework manages the response validations, target API invocations, load/stress testing and security testing in a unified way using simple YAML/JSON/Fluent steps, aka DSL.
 
 For example, if your REST API URL `https://localhost:8080/api/v1/customers/123` with `GET` method and `"Content-Type": "application/json"` returns the following payload and a `http` status code `200(OK)` ,
 ```javaScript
@@ -129,8 +129,8 @@ and run it simply by pointing to the above JSON/YAML file from a JUnit `@Test` m
    }
 ```
 
-Looks simple n easy? Why not give a try? Visit the [quick-start guide](https://github.com/authorjapps/zerocode/wiki/Getting-Started) or [user's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide) for more insight.
+Looks simple n easy? Why not give it a try? Visit the [quick-start guide](https://github.com/authorjapps/zerocode/wiki/Getting-Started) or [user's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide) for more insight.
 
-Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their micro-services. 
+Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their microservices. 
 
 Happy testing! <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>
