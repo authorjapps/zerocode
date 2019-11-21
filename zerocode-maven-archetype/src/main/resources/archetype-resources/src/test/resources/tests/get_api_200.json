@@ -1,0 +1,24 @@
+{
+    "scenarioName": "Validate the GET api",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/users/octocat",
+            "method": "GET",
+            "request": {
+                "headers" : { 
+                   "Content-Type" : "application/json"
+                }
+            },
+            "verify": {
+                "status": 200,
+                "headers" : { 
+                   "Content-Type" : [ "application/json; charset=utf-8" ]
+                },
+                "body": {
+                    "login" : "octocat"
+                }
+            }
+        }
+    ]
+}
