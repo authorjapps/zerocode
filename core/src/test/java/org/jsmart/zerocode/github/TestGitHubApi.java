@@ -13,7 +13,7 @@ public class TestGitHubApi {
 
     @Ignore("Locally passes, but fails in Travis CI due to rate limiting issue of GitHub")
     @Test
-    @JsonTestCase("load/github_get_api_sample_test.json")
+    @JsonTestCase("load_test_files/github_get_api_sample_test.json")
     public void testGitHubApi_get() throws Exception {
     }
 }

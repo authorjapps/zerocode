@@ -14,12 +14,15 @@ import java.util.List;
 //@JsonIgnoreProperties(ignoreUnknown = true)
 public class Step {
     private final Integer loop;
+    private final Retry retry;
     private final String name;
+    private final String method;
     private final String operation;
     private final String url;
-    private JsonNode request;
-    private JsonNode assertions;
-    private JsonNode verifications;
+    private final JsonNode request;
+    private final JsonNode assertions;
+    private final String verifyMode;
+    private final JsonNode verify;
     private String id;
     private JsonNode stepFile;
     private List<Object> parameterized;
@@ -29,12 +32,20 @@ public class Step {
         return loop;
     }
 
+    public Retry getRetry() {
+        return retry;
+    }
+
     public String getName() {
         return name;
     }
 
     public String getOperation() {
         return operation;
+    }
+
+    public String getMethod() {
+        return method;
     }
 
     public String getUrl() {
@@ -49,8 +60,12 @@ public class Step {
         return assertions;
     }
 
-    public JsonNode getVerifications() {
-        return verifications;
+    public JsonNode getVerify() {
+        return verify;
+    }
+
+    public String getVerifyMode() {
+        return verifyMode;
     }
 
     public String getId() {
@@ -88,31 +103,40 @@ public class Step {
     @JsonCreator
     public Step(
             @JsonProperty("stepLoop") Integer loop,
+            @JsonProperty("retry") Retry retry,
             @JsonProperty("name") String name,
             @JsonProperty("operation") String operation,
+            @JsonProperty("method") String method,
             @JsonProperty("url") String url,
             @JsonProperty("request") JsonNode request,
             @JsonProperty("assertions") JsonNode assertions,
-            @JsonProperty("verifications") JsonNode verifications) {
+            @JsonProperty("verify") JsonNode verify,
+            @JsonProperty("verifyMode")String verifyMode) {
         this.loop = loop;
+        this.retry = retry;
         this.name = name;
-        this.operation = operation;
+        this.verifyMode = verifyMode;
+        this.operation = operation != null? operation : method;
+        this.method = method != null? method : operation;
         this.request = request;
         this.url = url;
-        this.assertions = assertions.isNull() ? verifications : assertions;
-        this.verifications = verifications;
+        this.assertions = assertions.isNull() ? verify : assertions;
+        this.verify = verify;
     }
 
     @Override
     public String toString() {
         return "Step{" +
                 "loop=" + loop +
+                ", retry='" + retry + '\'' +
                 ", name='" + name + '\'' +
+                ", method='" + method + '\'' +
                 ", operation='" + operation + '\'' +
                 ", url='" + url + '\'' +
                 ", request=" + request +
                 ", assertions=" + assertions +
-                ", verifications=" + verifications +
+                ", verifyMode=" + verifyMode +
+                ", verify=" + verify +
                 ", id='" + id + '\'' +
                 ", stepFile=" + stepFile +
                 ", parameterized=" + parameterized +

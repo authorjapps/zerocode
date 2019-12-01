@@ -3,7 +3,7 @@ package org.jsmart.zerocode.core.runner;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_REPORT_DIR;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_REPORT_DIR;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class ZeroCodeMultiStepsScenarioRunner_FailedAssertionsTest {
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getResult(), is("FAILED"));
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getAssertions(), containsString("Assumed Payload"));
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getAssertions(), containsString("Assertion Errors"));
-            assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getAssertions(), containsString("Assertion path"));
+            assertThat(rawJsonReport.getResults().get(0).getSteps().get(0).getAssertions(), containsString("Assertion jsonPath"));
 
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(1).getName(), is("PassedStep"));
             assertThat(rawJsonReport.getResults().get(0).getSteps().get(1).getResult(), is("PASSED"));

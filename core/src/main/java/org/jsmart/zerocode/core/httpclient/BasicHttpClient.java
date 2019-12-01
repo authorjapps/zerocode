@@ -1,5 +1,12 @@
 package org.jsmart.zerocode.core.httpclient;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import javax.net.ssl.SSLContext;
+import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -10,27 +17,23 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.jsmart.zerocode.core.utils.HelperJsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.SSLContext;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.jsmart.zerocode.core.httpclient.utils.FileUploadUtils.*;
+import static org.jsmart.zerocode.core.httpclient.utils.FileUploadUtils.buildAllFilesToUpload;
+import static org.jsmart.zerocode.core.httpclient.utils.FileUploadUtils.buildMultiPartBoundary;
+import static org.jsmart.zerocode.core.httpclient.utils.FileUploadUtils.buildOtherRequestParams;
+import static org.jsmart.zerocode.core.httpclient.utils.FileUploadUtils.createUploadRequestBuilder;
+import static org.jsmart.zerocode.core.httpclient.utils.FileUploadUtils.getFileFieldNameValue;
 import static org.jsmart.zerocode.core.httpclient.utils.HeaderUtils.processFrameworkDefault;
 import static org.jsmart.zerocode.core.httpclient.utils.UrlQueryParamsUtils.setQueryParams;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.getContentAsItIsJson;
@@ -181,7 +184,6 @@ public class BasicHttpClient {
      * @return  : A http response compatible with Charset received from the http server e.g. UTF-8, UTF-16 etc
      * @throws IOException
      *
-     * @author santhoshkumar santhoshTpixler
      */
     public Response createCharsetResponse(CloseableHttpResponse httpResponse) throws IOException {
         HttpEntity entity = httpResponse.getEntity();
@@ -215,7 +217,6 @@ public class BasicHttpClient {
      * @param queryParams - Query parameters to pass
      * @return : Effective url
      *
-     * @author santhoshkumar santhoshTpixler (Fixed empty queryParams map handling)
      */
     public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) throws IOException {
         if ((queryParams != null) && (!queryParams.isEmpty())) {
@@ -404,7 +405,7 @@ public class BasicHttpClient {
                 return createFormUrlEncodedRequestBuilder(httpUrl, methodName, reqBodyAsString);
             }
             // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-            // Extention- Any other header types to be specially handled here
+            // Extension - Any other header types to be specially handled here
             // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
             // else if(contentType.equals("OTHER-TYPES")){
             //    Handling logic

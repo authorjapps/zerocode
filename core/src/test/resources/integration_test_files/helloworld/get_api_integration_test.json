@@ -1,0 +1,26 @@
+{
+    "scenarioName": "As simple GET API - Inetgration Test - Local Server",
+    "steps": [
+        {
+            "name": "find_match",
+            "url": "/api/v1/search/persons",
+            "method": "GET",
+            "request": {
+                "queryParams": {
+                    "lang": "Amazing",
+                    "city": "Lon"
+                }
+            },
+            "verify": {
+                "status": 200,
+                "body": {
+                    "exactMatches": true,
+                    "name": "Mr Bean",
+                    "lang": "Amazing",
+                    "city": "Lon"
+                }
+            }
+        }
+    ]
+}
+

@@ -4,12 +4,10 @@
     <parent>
         <artifactId>zerocode-tdd-parent</artifactId>
         <groupId>org.jsmart</groupId>
-        <version>1.3.12-SNAPSHOT</version>
+        <version>1.3.17-SNAPSHOT</version>
     </parent>
 
     <artifactId>zerocode-tdd</artifactId>
-    <groupId>org.jsmart</groupId>
-
     <packaging>jar</packaging>
     <name>Zerocode TDD Core</name>
     <description>Zerocode TDD framework for API test automation</description>
@@ -63,6 +61,10 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.univocity</groupId>
             <artifactId>univocity-parsers</artifactId>

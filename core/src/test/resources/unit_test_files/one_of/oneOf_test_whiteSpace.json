@@ -1,0 +1,18 @@
+{
+    "scenarioName": "Assert that 'currentStatus' is one of array items, including a whitespace",
+    "steps": [
+        {
+            "name": "get_person_job_details",
+            "url": "",
+            "operation": "",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                	"currentStatus": "$ONE.OF:[Found, Searching, , Not Looking]"
+                }
+            }
+        }
+    ]
+}

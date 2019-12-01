@@ -4,21 +4,22 @@
         {
             "name": "get_user_details",
             "url": "/users/${0}",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {
                 "status": 200,
                 "body": {
-                    "login" : "${0}"
+                    "login": "${0}"
                 }
             }
         }
     ],
     "parameterized": {
-        "valueSource":[
+        "valueSource": [
             "octocat",
-            "siddhagalaxy"
+            "foo",
+            "bar"
         ]
     }
 }

@@ -1,0 +1,16 @@
+{
+   "scenarioName": "Validate Http Implicit Delay or Max Timeout",
+   "steps": [
+      {
+         "name": "verify_mock",
+         "url": "/delay/ids/2",
+         "method": "GET",
+         "request": {
+         },
+         "assertions": {
+            "status": 200
+         }
+      }
+
+   ]
+}

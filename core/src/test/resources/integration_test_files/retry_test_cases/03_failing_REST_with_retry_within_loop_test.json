@@ -1,0 +1,44 @@
+{
+  "scenarioName": "Failing Rest with Retry within loop Test",
+  "steps": [
+    {
+      "name": "FailingRetryUntilSuccessMock",
+      "url": "/$MOCK",
+      "operation": "$USE.WIREMOCK",
+      "request": {
+        "mocks": [
+          {
+            "name": "SlidingDateMock",
+            "operation": "GET",
+            "url": "/retry/003",
+            "response": {
+              "status": 400,
+              "body": {
+              }
+            }
+          }
+        ]
+      },
+      "assertions": {
+        "status": 200
+      }
+    },
+    {
+      "retry": {"max": 3, "delay": 0},
+      "name": "GetFailingRequest",
+      "url": "http://localhost:8888/retry/003",
+      "operation": "GET",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "body": {
+        }
+      },
+      "assertions": {
+        "status": 200
+      }
+    }
+
+  ]
+}

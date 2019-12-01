@@ -11,7 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.TARGET_FULL_REPORT_DIR;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FULL_REPORT_DIR;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class HighChartColumnHtmlWriter {

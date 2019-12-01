@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 public class ZeroCodeEnvPropertyReaderTest {
 
     @Test
-    @JsonTestCase("14_env_prop/22_env_property_dynamic_runtime.json")
+    @JsonTestCase("integration_test_files/env_prop/22_env_property_dynamic_runtime.json")
     public void testRunAgainstConfigPropertySetViaJenkins() throws Exception {
         
     }

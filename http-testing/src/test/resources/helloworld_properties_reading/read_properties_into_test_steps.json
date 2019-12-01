@@ -4,7 +4,7 @@
         {
             "name": "get_user_details",
             "url": "${new_api_host}/users/octocat",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {
@@ -17,7 +17,7 @@
         {
             "name": "get_user_details_way2",
             "url": "${another.new.endpoint.host}/users/octocat",
-            "operation": "GET",
+            "method": "GET",
             "request": {
             },
             "assertions": {

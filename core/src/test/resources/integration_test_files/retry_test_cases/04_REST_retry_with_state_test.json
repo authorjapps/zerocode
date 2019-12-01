@@ -1,0 +1,22 @@
+{
+    "scenarioName": "WireMock State Saved For Retry",
+    "steps": [
+        {
+            "retry": {
+                "max": 5,
+                "delay": 500
+            },
+            "name": "GetDatesRequest",
+            "url": "http://localhost:8484/retry/ids/1",
+            "operation": "GET",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/json;charset=UTF-8"
+                }
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+    ]
+}

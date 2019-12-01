@@ -1,21 +1,24 @@
 package org.jsmart.zerocode.core.di.main;
 
-
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+import java.util.Properties;
+import java.util.logging.Logger;
 import org.jsmart.zerocode.core.di.module.CsvParserModule;
 import org.jsmart.zerocode.core.di.module.GsonModule;
 import org.jsmart.zerocode.core.di.module.HttpClientModule;
 import org.jsmart.zerocode.core.di.module.ObjectMapperModule;
 import org.jsmart.zerocode.core.di.module.PropertiesInjectorModule;
-import org.jsmart.zerocode.core.engine.executor.JavaExecutor;
-import org.jsmart.zerocode.core.engine.executor.JavaExecutorImpl;
-import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutor;
-import org.jsmart.zerocode.core.engine.executor.JsonServiceExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
+import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.httpapi.HttpApiExecutor;
+import org.jsmart.zerocode.core.engine.executor.httpapi.HttpApiExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.javaapi.JavaMethodExecutor;
+import org.jsmart.zerocode.core.engine.executor.javaapi.JavaMethodExecutorImpl;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessorImpl;
-import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesor;
-import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonTestProcesorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessorImpl;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
@@ -23,10 +26,9 @@ import org.jsmart.zerocode.core.report.ZeroCodeReportGeneratorImpl;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunner;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunnerImpl;
 
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import static org.jsmart.zerocode.core.di.PropertyKeys.*;
+import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.checkAndLoadOldProperties;
+import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsoluteProperties;
+import static org.jsmart.zerocode.core.utils.SmartUtils.isValidAbsolutePath;
 
 public class ApplicationMainModule extends AbstractModule {
     private static final Logger LOGGER = Logger.getLogger(ApplicationMainModule.class.getName());
@@ -53,9 +55,10 @@ public class ApplicationMainModule extends AbstractModule {
          * Bind Direct classes, classes to interfaces etc
          */
         bind(ZeroCodeMultiStepsScenarioRunner.class).to(ZeroCodeMultiStepsScenarioRunnerImpl.class);
-        bind(JsonServiceExecutor.class).to(JsonServiceExecutorImpl.class);
-        bind(JavaExecutor.class).to(JavaExecutorImpl.class);
-        bind(ZeroCodeJsonTestProcesor.class).to(ZeroCodeJsonTestProcesorImpl.class);
+        bind(ApiServiceExecutor.class).to(ApiServiceExecutorImpl.class);
+        bind(HttpApiExecutor.class).to(HttpApiExecutorImpl.class);
+        bind(JavaMethodExecutor.class).to(JavaMethodExecutorImpl.class);
+        bind(ZeroCodeAssertionsProcessor.class).to(ZeroCodeAssertionsProcessorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
         bind(ZeroCodeExternalFileProcessor.class).to(ZeroCodeExternalFileProcessorImpl.class);
         bind(ZeroCodeParameterizedProcessor.class).to(ZeroCodeParameterizedProcessorImpl.class);
@@ -68,6 +71,11 @@ public class ApplicationMainModule extends AbstractModule {
 
     public Properties getProperties(String host) {
         final Properties properties = new Properties();
+
+        if(isValidAbsolutePath(host)){
+            return loadAbsoluteProperties(host, properties);
+        }
+
         try {
             properties.load(getClass().getClassLoader().getResourceAsStream(host));
 
@@ -83,25 +91,6 @@ public class ApplicationMainModule extends AbstractModule {
         }
 
         return properties;
-    }
-
-    private void checkAndLoadOldProperties(Properties properties) {
-
-        if(properties.get(WEB_APPLICATION_ENDPOINT_HOST) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST) != null){
-            Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_HOST);
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_HOST, oldPropertyValue != null ? oldPropertyValue.toString() : null);
-        }
-
-        if(properties.get(WEB_APPLICATION_ENDPOINT_PORT) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT) != null){
-            Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_PORT);
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_PORT, oldPropertyValue != null ? oldPropertyValue.toString() : null);
-        }
-
-        if(properties.get(WEB_APPLICATION_ENDPOINT_CONTEXT) == null && properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT) != null){
-            Object oldPropertyValue = properties.get(RESTFUL_APPLICATION_ENDPOINT_CONTEXT);
-            properties.setProperty(WEB_APPLICATION_ENDPOINT_CONTEXT, oldPropertyValue != null ? oldPropertyValue.toString() : null);
-        }
-
     }
 
 }

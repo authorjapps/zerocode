@@ -1,0 +1,31 @@
+{
+    "scenarioName": "POST via file body - reuse payload",
+    "steps": [
+        {
+            "name": "create_emp",
+            "url": "/home/bathroom",
+            "operation": "POST",
+            "request": {
+                "body" : "${JSON.FILE:integration_test_files/filebody/bodyonly/request_body.json}"
+            },
+            "assertions": {
+                "status": 201
+            }
+        },
+        {
+            "name": "get_user_details",
+            "url": "/home/bathroom/${$.create_emp.response.body.id}",
+            "operation": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id" : 1,
+                    "name" : "Shower",
+                    "availability" : true
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "scenarioName": "Validate the PUT api",
+    "steps": [
+        {
+            "name": "enable_vulnerability_alerts",
+            "url": "/repos/<your username>/blog/vulnerability-alerts",
+            "method": "PUT",
+            "request": {
+                "headers" : { 
+                   "Content-Type" : "application/json",
+                   "Authorization" : "Bearer <your token>",
+                    "Accept" : "application/vnd.github.dorian-preview+json"
+                }
+            },
+            "verify": {
+                "status": 204,
+                "headers" : { 
+                   "X-GitHub-Media-Type" : [ "github.dorian-preview; format=json" ]
+                }
+            }
+        }
+    ]
+}

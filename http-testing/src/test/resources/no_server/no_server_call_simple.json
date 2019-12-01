@@ -4,7 +4,7 @@
         {
             "name": "create_emp",
             "url": "",
-            "operation": "",
+            "method": "",
             "request": {
                 "body": {
                     "id": 1000,
@@ -21,7 +21,7 @@
         {
             "name": "get_user_details",
             "url": "",
-            "operation": "",
+            "method": "",
             "request": {
                 "body": {
                     "id": 1001,

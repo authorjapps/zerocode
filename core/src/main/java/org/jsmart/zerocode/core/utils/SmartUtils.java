@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,8 +10,16 @@ import com.google.classpath.RegExpResourceFilter;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,20 +27,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.Charset.defaultCharset;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
+import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsoluteProperties;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 
 @Singleton
 public class SmartUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(SmartUtils.class);
-    
+
     @Inject
     private ObjectMapper mapper; //<--- remember the static methods can not use this objectMapper. So make the methods non-static if you want to use this objectMapper.
+
+    @Inject
+    @Named("YamlMapper")
+    private ObjectMapper yamlMapper;
 
     public <T> String getItRight() throws IOException {
         String jsonAsString = mapper.toString();
@@ -39,40 +60,92 @@ public class SmartUtils {
     }
 
     public <T> String getJsonDocumentAsString(String fileName) throws IOException {
-        String jsonAsString = Resources.toString(getClass().getClassLoader().getResource(fileName), StandardCharsets.UTF_8);
+        String jsonAsString = Resources.toString(getClass().getClassLoader().getResource(fileName), UTF_8);
         return jsonAsString;
     }
 
-    public static String readJsonAsString(String jsonFileName){
+    static String readFile(String path, Charset encoding) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, encoding == null ? UTF_8 : encoding);
+    }
+
+    public static String readJsonAsString(String scenarioFile) {
         try {
-            return Resources.toString(Resources.getResource(jsonFileName), defaultCharset());
-        } catch (IOException e) {
-            throw new RuntimeException("Exception occurred while reading the JSON file - " + jsonFileName);
+            scenarioFile = replaceHome(scenarioFile);
+            if (isValidAbsolutePath(scenarioFile)) {
+                return readFile(scenarioFile, UTF_8);
+            }
+            return Resources.toString(Resources.getResource(scenarioFile), defaultCharset());
+        } catch (Exception e) {
+            LOGGER.error("Exception occurred while parsing the 'Test Scenario' file:{}. " +
+                    "Check if it is present n in correct format" + scenarioFile);
+            throw new RuntimeException("Exception occurred while reading the 'Test Scenario' file - " + scenarioFile);
         }
     }
 
+    public static String readYamlAsString(String yamlFile) {
+        return readJsonAsString(yamlFile);
+    }
 
     public Map<String, Object> readJsonStringAsMap(String json) throws IOException {
         Map<String, Object> map = new HashMap<>();
-        map = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
+        map = mapper.readValue(json, new TypeReference<Map<String, Object>>() {
+        });
 
         return map;
     }
 
     public static List<String> getAllEndPointFiles(String packageName) {
+        if(isValidAbsolutePath(packageName)){
+            return retrieveScenariosByAbsPath(packageName);
+        }
         ClassPathFactory factory = new ClassPathFactory();
         ClassPath jvmClassPath = factory.createFromJVM();
         String[] allSimulationFiles = jvmClassPath.findResources(packageName, new RegExpResourceFilter(".*", ".*\\.json$"));
         if (null == allSimulationFiles || allSimulationFiles.length == 0) {
+            LOGGER.error("Test folder is empty or not correctly setup.");
             throw new RuntimeException("NothingFoundHereException: Check the (" + packageName + ") integration test repo folder(empty?). ");
         }
 
         return Arrays.asList(allSimulationFiles);
     }
 
+    public static List<String> retrieveScenariosByAbsPath(String packageName) {
+        packageName = replaceHome(packageName);
+        try {
+            return Files.walk(Paths.get(packageName))
+                    .filter(Files::isRegularFile)
+                    .map(aPath -> aPath.toString())
+                    .collect(Collectors.toList());
+        } catch (IOException exx) {
+            LOGGER.error("Exception during reading absolute suite folder - " + exx);
+            throw new RuntimeException("Exception during reading absolute suite folder - " + exx);
+        }
+    }
 
-    public <T> T jsonFileToJava(String jsonFileName, Class<T> clazz) throws IOException {
-        return mapper.readValue(readJsonAsString(jsonFileName), clazz);
+
+    public <T> T scenarioFileToJava(String scenarioFile, Class<T> clazz) throws IOException {
+        if (scenarioFile.endsWith(".yml") || scenarioFile.endsWith(".yaml")) {
+            return yamlMapper.readValue(readYamlAsString(scenarioFile), clazz);
+        }
+
+        return mapper.readValue(readJsonAsString(scenarioFile), clazz);
+    }
+
+    public static boolean isValidAbsolutePath(String path) {
+        path = replaceHome(path);
+        Path actualPath = Paths.get(path).toAbsolutePath();
+        File file = actualPath.toFile();
+        if (file.isAbsolute() && file.exists()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static String replaceHome(String path) {
+        path = path.replaceFirst("^~", System.getProperty("user.home"));
+        return path;
     }
 
     public List<ScenarioSpec> getScenarioSpecListByPackage(String packageName) {
@@ -80,7 +153,7 @@ public class SmartUtils {
         List<ScenarioSpec> scenarioSpecList = allEndPointFiles.stream()
                 .map(testResource -> {
                     try {
-                        return jsonFileToJava(testResource, ScenarioSpec.class);
+                        return scenarioFileToJava(testResource, ScenarioSpec.class);
                     } catch (IOException e) {
                         throw new RuntimeException("Exception while deserializing to Spec. Details: " + e);
                     }
@@ -157,7 +230,7 @@ public class SmartUtils {
         return sub.replace(stringWithToken);
     }
 
-    public static String getEnvPropertyValue(String envPropertyKey){
+    public static String getEnvPropertyValue(String envPropertyKey) {
 
         final String propertyValue = System.getProperty(envPropertyKey);
 

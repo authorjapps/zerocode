@@ -9,9 +9,6 @@ import org.junit.runner.notification.RunListener;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-/**
- * @author Siddha on 24-jul-2016
- */
 public class ZeroCodeTestReportListener extends RunListener {
     private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeTestReportListener.class);
 
@@ -38,8 +35,8 @@ public class ZeroCodeTestReportListener extends RunListener {
         /*
          * Called when all tests have finished
          */
-        LOGGER.info("### ZeroCode: Test run completed for this runner. Generating test reports and charts. " +
-                "More help and examples are available at the README in GitHub");
+        LOGGER.info("#ZeroCode: Test run completed for this runner. Generating test reports and charts. " +
+                "\n* For more examples, helps, Kafka streams and API use-cases visit http://zerocode.io");
         generateChartsAndReports();
     }
 

@@ -1,0 +1,65 @@
+{
+    "scenarioName": "Pick a value from returned array for matching JSON Path ",
+    "steps": [
+        {
+            "name": "get_records",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "method": "fetchDbCustomers",
+            "request": "select id, name from customers",
+            "verify": {
+                "results": [
+                    {
+                        "id": 1,
+                        "name": "Elon Musk"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "get_by_name",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "method": "fetchDbCustomersByName",
+            "request": "${$.get_records.response.results[?(@.id=='2')].name.$VALUE}", //<-- Picked the field from the  array
+            "verify": {
+                "results": [
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "get_by_name_index_0",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "method": "fetchDbCustomersByName",
+            "request": "${$.get_records.response.results[?(@.id=='2')].name.$VALUE[0]}", //<-- Picked the 1st item from the  array
+            "verify": {
+                "results": [
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "get_by_name_index_1",
+            "url": "org.jsmart.zerocode.zerocodejavaexec.DbSqlExecutor",
+            "method": "fetchDbCustomersByName",
+            "request": "${$.get_records.response.results[?(@.id < 5)].name.$VALUE[1]}", //<-- Picked the 2nd item from the  array
+            "verify": {
+                "results": [
+                    {
+                        "id": 2,
+                        "name": "Jeff Bezos"
+                    }
+                ]
+            }
+        }
+    ]
+}

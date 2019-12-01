@@ -5,23 +5,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
 import com.univocity.parsers.csv.CsvParser;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
 import org.jukito.TestModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
 
 @RunWith(JukitoRunner.class)
 // Or use - @UseModules(ApplicationMainModule.class)
@@ -48,7 +54,7 @@ public class StepTest {
 
     @Test
     public void shouldDeserializeSingleStep() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_unit_test_jsons/01_test_json_single_step.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/01_test_json_single_step.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
         assertThat(stepDeserialized, notNullValue());
         final String requestJsonAsString = stepDeserialized.getRequest().toString();
@@ -60,11 +66,8 @@ public class StepTest {
         assertThat(queryParams.toString(), is("{param1=value1, invId=10101}"));
         assertThat(requestHeaders.toString(), is("{Content-Type=application/json;charset=UTF-8, Cookie=cookie_123}"));
 
-        //Map<String, Object> headerMap = smartUtils.readJsonStringAsMap(requestHeaders.toString());
-        //Map<String, Object> queryParamsMap = smartUtils.readJsonStringAsMap(queryParams.toString());
-
-        Map<String, Object> headerMap = (HashMap)requestHeaders;
-        Map<String, Object> queryParamsMap = (HashMap)queryParams;
+        Map<String, Object> headerMap = (HashMap) requestHeaders;
+        Map<String, Object> queryParamsMap = (HashMap) queryParams;
 
         assertThat(headerMap.get("Cookie"), is("cookie_123"));
         assertThat(queryParamsMap.get("invId"), is(10101));
@@ -76,17 +79,18 @@ public class StepTest {
     @Test
     public void testVerifications_section() throws Exception {
         String jsonDocumentAsString =
-                smartUtils.getJsonDocumentAsString("01_unit_test_jsons/00_test_json_single_step_verifications.json");
+                smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/00_test_json_single_step_verifications.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
 
-        assertThat(stepDeserialized.getVerifications().get("status").asText(), is("201"));
+        assertThat(stepDeserialized.getVerify().get("status").asText(), is("201"));
         assertThat(stepDeserialized.getAssertions().get("status").asText(), is("201"));
+        assertThat(stepDeserialized.getVerifyMode(), is("STRICT"));
     }
 
     @Test
     public void testParameterized_values() throws Exception {
         String jsonDocumentAsString =
-                smartUtils.getJsonDocumentAsString("01_unit_test_jsons/06_test_single_step_parameterized_value.json");
+                smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/06_test_single_step_parameterized_value.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
 
         assertThat(stepDeserialized.getParameterized().get(0), is("Hello"));
@@ -98,7 +102,7 @@ public class StepTest {
     public void testParameterized_csv() throws Exception {
 
         String jsonDocumentAsString =
-                smartUtils.getJsonDocumentAsString("01_unit_test_jsons/07_test_single_step_parameterized_csv.json");
+                smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/07_test_single_step_parameterized_csv.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
 
         List<String> parameterizedCsv = stepDeserialized.getParameterizedCsv();
@@ -116,7 +120,7 @@ public class StepTest {
 
     @Test
     public void testDeserExternalStepFile() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_unit_test_jsons/05_test_external_step_reuse.json");
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/05_test_external_step_reuse.json");
         Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
         assertThat(stepDeserialized, notNullValue());
         assertThat(stepDeserialized.getId(), is("step1"));
@@ -125,13 +129,13 @@ public class StepTest {
 
     @Test
     public void shouldSerializeSingleStep() throws Exception {
-        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("01_unit_test_jsons/01_test_json_single_step.json");
-        Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/01_test_json_single_step.json");
+        Step stepJava = mapper.readValue(jsonDocumentAsString, Step.class);
 
-        JsonNode singleStepNode = mapper.valueToTree(stepDeserialized);
+        JsonNode singleStepNode = mapper.valueToTree(stepJava);
         String singleStepNodeString = mapper.writeValueAsString(singleStepNode);
 
-        JSONAssert.assertEquals(singleStepNodeString, jsonDocumentAsString, true);
+        JSONAssert.assertEquals(jsonDocumentAsString, singleStepNodeString, false);
 
         assertThat(singleStepNode.get("name").asText(), is("StepNameWithoutSpaceEgCREATE"));
         assertThat(singleStepNode.get("loop").asInt(), is(3));
@@ -151,6 +155,144 @@ public class StepTest {
          * 3. singleStepNode.get("name").asText() -->Correct
          *
          */
+    }
+
+    @Test
+    public void shouldSerializeSingleStep_method() throws Exception {
+        String jsonDocumentAsString = smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/01.1_test_json_single_step_method.json");
+        Step stepJava = mapper.readValue(jsonDocumentAsString, Step.class);
+
+        JsonNode singleStepNode = mapper.valueToTree(stepJava);
+        String singleStepNodeString = mapper.writeValueAsString(singleStepNode);
+
+        JSONAssert.assertEquals(jsonDocumentAsString, singleStepNodeString, false);
+        assertThat(singleStepNode.get("method").asText(), is("POST"));
+    }
+
+    @Test
+    public void testPayLoad_strictPass() {
+        String actual = "{\n" +
+                "    \"id\": 123,\n" +
+                "    \"type\": \"Premium High Value\",\n" +
+                "    \"office\":{\n" +
+                "        \"type\": \"branches\",\n" +
+                "        \"locations\":[\n" +
+                "            {\n" +
+                "                \"country\": \"UK\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"addresses\": [\n" +
+                "        {\n" +
+                "            \"type\": \"home\",\n" +
+                "            \"line1\": \"10 Random St\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+        String expected = "{\n" +
+                //"    \"id\": 123,\n" +
+                "    \"type\": \"Premium High Value\",\n" +
+                "    \"office\":{\n" +
+                "        \"type\": \"branches\",\n" +
+                "        \"locations\":[\n" +
+                "            {\n" +
+                "                \"country\": \"UK\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"addresses\": [\n" +
+                "        {\n" +
+                "            \"type\": \"home\",\n" +
+                "            \"line1\": \"10 Random St\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+        try {
+            JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+
+        } catch (Throwable ex) {
+            assertThat(ex.getMessage(), containsString("Unexpected: id"));
+        }
+    }
+
+    @Test
+    public void testPayLoad_strictFail_FieldAssertion() {
+        List<FieldAssertionMatcher> matchers = new ArrayList<>();
+
+        String actual = "{\n" +
+                "    \"office\":{\n" +
+                "        \"type\": \"branches\",\n" +
+                "        \"locations\":[\n" +
+                "            {\n" +
+                "                \"country\": \"UK\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"exactMatches\": true,\n" +
+                "    \"foo\": \"Mr FooX\",\n" +
+                "    \"name\": \"Mr Bean\",\n" +
+                "    \"city\": \"Lon\",\n" +
+                "    \"listings\":[\n" +
+                "        {\n" +
+                "            \"exchange\": \"NYX\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+        String expected = "{\n" +
+                "    \"office\":{\n" +
+                "        \"type\": \"branches\",\n" +
+                "        \"locations\":[\n" +
+                "            {\n" +
+                "                \"country\": \"FRANCE\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    },\n" +
+                //"    \"exactMatches\": true,\n" +
+                "    \"foo\": \"Mr FooX\",\n" +
+                "    \"city\": \"Lon\",\n" +
+                "    \"listings\":[\n" +
+                "        {\n" +
+                "            \"exchange\": \"NYX\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"addresses\":[\n" +
+                "        {\n" +
+                "            \"type\": \"office\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+        try {
+
+            JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+
+        } catch (AssertionError ex) {
+            String message = ex.getMessage();
+            List<String> errorMsgs = Arrays.asList(message.split(";"));
+            matchers = errorMsgs.stream()
+                    .map(msg -> {
+                        List<String> strings = Arrays.asList(msg.trim().split("\n"));
+                        String fieldJsonPath = "";
+                        if(strings != null && strings.size() > 0){
+                            fieldJsonPath = strings.get(0).substring(strings.get(0).indexOf(": ") + 1).trim();
+                        }
+                        if (strings.size() == 1) {
+                            return aNotMatchingMessage(fieldJsonPath, "", strings.get(0).trim());
+                        } else if (strings.size() == 2) {
+                            return aNotMatchingMessage(fieldJsonPath, "", strings.get(1).trim());
+                        } else if (strings.size() > 2) {
+                            return aNotMatchingMessage(fieldJsonPath, strings.get(1).trim(), strings.get(2).trim());
+                        } else {
+                            return aMatchingMessage();
+                        }
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        assertThat(matchers.size(), is(4));
+        assertThat(matchers.get(0).toString(), is("Assertion jsonPath 'addresses' with actual value 'but none found' did not match the expected value ''"));
+        assertThat(matchers.get(1).toString(), is("Assertion jsonPath 'office.locations[0].country' with actual value 'got: UK' did not match the expected value 'Expected: FRANCE'"));
+        assertThat(matchers.get(2).toString(), is("Assertion jsonPath 'exactMatches' with actual value 'Unexpected: exactMatches' did not match the expected value ''"));
+        assertThat(matchers.get(3).toString(), is("Assertion jsonPath 'name' with actual value 'Unexpected: name' did not match the expected value ''"));
     }
 
 }

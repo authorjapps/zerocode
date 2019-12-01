@@ -1,0 +1,29 @@
+{
+    "scenarioName": "Parameterized and type casted example - GET API",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/users/${0}",
+            "method": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "${0}",
+                    "type" : "User",
+                    "name" : "${1}",
+                    "location" : "${2}",
+                    "id" : "(int)${3}",
+                    "site_admin" : "(boolean)${4}"
+                }
+            }
+        }
+    ],
+    "parameterized": {
+        "csvSource":[
+            "octocat,      The Octocat, San Francisco, 583231,   false",
+            "siddhagalaxy, Sidd,        UK,            33847730, false"
+        ]
+    }
+}

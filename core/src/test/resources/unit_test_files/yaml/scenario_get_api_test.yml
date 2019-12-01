@@ -1,0 +1,20 @@
+---
+scenarioName: "A simple GET API Scenario" #comments allowed
+steps:
+- name: "find_match"
+  url: "/api/v1/persons/p001"
+  operation: "GET"
+  request:
+    headers:
+      x-api-key: "Ama-zing-key"
+      x-api-secret: "Sec-ret-stuff"
+  verify:
+    status: 200 #comment - a http status code as int value
+    body:
+      exactMatches: true
+      name: "Mr Bean"
+      addresses:
+      - type: "office"
+        line1: "10 Random St"
+      - type: "home"
+        line1: "300 Random St"

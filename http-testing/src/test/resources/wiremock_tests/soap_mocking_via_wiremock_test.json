@@ -4,12 +4,12 @@
         {
             "name": "setup_mocks",
             "url": "/$MOCK",
-            "operation": "$USE.WIREMOCK",
+            "method": "$USE.WIREMOCK",
             "request": {
                 "mocks": [
                     {
                         "name": "mocking_a_GET_endpoint",
-                        "operation": "POST",
+                        "method": "POST",
                         "url": "/soap/CurrencyConvertor",
                         "response": {
                             "status": 200,
@@ -31,7 +31,7 @@
         {
             "name": "invoke_currency_conversion",
             "url": "/soap/CurrencyConvertor",
-            "operation": "POST",
+            "method": "POST",
             "request": {
                 "headers": {
                     "Content-Type": "text/xml; charset=utf-8",

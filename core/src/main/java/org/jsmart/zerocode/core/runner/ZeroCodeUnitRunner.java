@@ -6,15 +6,21 @@ import com.google.inject.util.Modules;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.module.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.di.module.RuntimeKafkaClientModule;
-import org.jsmart.zerocode.core.domain.*;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultIoWriteBuilder;
+import org.jsmart.zerocode.core.domain.HostProperties;
+import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.Scenario;
+import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.TargetEnv;
+import org.jsmart.zerocode.core.domain.UseHttpClient;
+import org.jsmart.zerocode.core.domain.UseKafkaClient;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
 import org.jsmart.zerocode.core.kafka.client.ZerocodeCustomKafkaClient;
-import org.jsmart.zerocode.core.logbuilder.LogCorrelationshipPrinter;
+import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.internal.AssumptionViolatedException;
@@ -39,9 +45,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.System.getProperty;
-import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecResultBuilder.newInstance;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.CHARTS_AND_CSV;
-import static org.jsmart.zerocode.core.domain.reports.ZeroCodeReportProperties.ZEROCODE_JUNIT;
+import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ZEROCODE_JUNIT;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomHttpClientOrDefault;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomKafkaClientOrDefault;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
 public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
@@ -57,7 +65,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private int port;
     private List<String> smartTestCaseNames = new ArrayList<>();
     private String currentTestCase;
-    private LogCorrelationshipPrinter logCorrelationshipPrinter;
+    private ZerocodeCorrelationshipLogger corrLogger;
     protected boolean testRunCompleted;
     protected boolean passed;
 
@@ -184,8 +192,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 
-            Class<? extends BasicHttpClient> runtimeHttpClient = getCustomHttpClientOrDefault();
-            Class<? extends BasicKafkaClient> runtimeKafkaClient = getCustomKafkaClientOrDefault();
+            Class<? extends BasicHttpClient> runtimeHttpClient = getCustomHttpClientOrDefault(testClass);
+            Class<? extends BasicKafkaClient> runtimeKafkaClient = getCustomKafkaClientOrDefault(testClass);
 
             injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
                     .with(
@@ -197,17 +205,6 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             return injector;
         }
     }
-
-    private Class<? extends BasicKafkaClient> getCustomKafkaClientOrDefault() {
-        final UseKafkaClient kafkaClientAnnotated = testClass.getAnnotation(UseKafkaClient.class);
-        return kafkaClientAnnotated != null ? kafkaClientAnnotated.value() : ZerocodeCustomKafkaClient.class;
-    }
-
-    private Class<? extends BasicHttpClient> getCustomHttpClientOrDefault() {
-        final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
-        return httpClientAnnotated != null ? httpClientAnnotated.value() : SslTrustHttpClient.class;
-    }
-
 
     protected SmartUtils getInjectedSmartUtilsClass() {
         return getMainModuleInjector().getInstance(SmartUtils.class);
@@ -228,7 +225,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
         ScenarioSpec child = null;
         try {
-            child = smartUtils.jsonFileToJava(currentTestCase, ScenarioSpec.class);
+            child = smartUtils.scenarioFileToJava(currentTestCase, ScenarioSpec.class);
 
             LOGGER.debug("### Found currentTestCase : -" + child);
 
@@ -325,31 +322,31 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
 
     private void buildReportAndPrintToFile(Description description) {
-        ZeroCodeExecResultBuilder reportResultBuilder = newInstance().loop(0).scenarioName(description.getClassName());
-        reportResultBuilder.step(logCorrelationshipPrinter.buildReportSingleStep());
+        ZeroCodeExecReportBuilder reportResultBuilder = newInstance().loop(0).scenarioName(description.getClassName());
+        reportResultBuilder.step(corrLogger.buildReportSingleStep());
 
-        ZeroCodeExecResultIoWriteBuilder reportBuilder = ZeroCodeExecResultIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
+        ZeroCodeIoWriteBuilder reportBuilder = ZeroCodeIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
         reportBuilder.result(reportResultBuilder.build());
-        reportBuilder.printToFile(description.getClassName() + logCorrelationshipPrinter.getCorrelationId() + ".json");
+        reportBuilder.printToFile(description.getClassName() + corrLogger.getCorrelationId() + ".json");
     }
 
     private void prepareResponseReport(String logPrefixRelationshipId) {
         LocalDateTime timeNow = LocalDateTime.now();
         LOGGER.info("JUnit *responseTimeStamp:{}, \nJUnit Response:{}", timeNow, logPrefixRelationshipId);
-        logCorrelationshipPrinter.aResponseBuilder()
+        corrLogger.aResponseBuilder()
                 .relationshipId(logPrefixRelationshipId)
                 .responseTimeStamp(timeNow);
 
-        logCorrelationshipPrinter.result(passed);
-        logCorrelationshipPrinter.buildResponseDelay();
+        corrLogger.stepOutcome(passed);
+        corrLogger.buildResponseDelay();
     }
 
     private String prepareRequestReport(Description description) {
-        logCorrelationshipPrinter = LogCorrelationshipPrinter.newInstance(LOGGER);
-        logCorrelationshipPrinter.stepLoop(0);
-        final String logPrefixRelationshipId = logCorrelationshipPrinter.createRelationshipId();
+        corrLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
+        corrLogger.stepLoop(0);
+        final String logPrefixRelationshipId = corrLogger.createRelationshipId();
         LocalDateTime timeNow = LocalDateTime.now();
-        logCorrelationshipPrinter.aRequestBuilder()
+        corrLogger.aRequestBuilder()
                 .stepLoop(0)
                 .relationshipId(logPrefixRelationshipId)
                 .requestTimeStamp(timeNow)

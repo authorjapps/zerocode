@@ -4,5 +4,5 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 
 public interface ZeroCodeParameterizedProcessor {
 
-    ScenarioSpec processParameterized(ScenarioSpec scenario, int iteration);
+    ScenarioSpec resolveParameterized(ScenarioSpec scenario, int iteration);
 }

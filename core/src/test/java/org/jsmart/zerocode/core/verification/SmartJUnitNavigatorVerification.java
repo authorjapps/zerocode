@@ -29,7 +29,7 @@ public class SmartJUnitNavigatorVerification {
 
     }
 
-    @JsonTestCase("11_reports/02_multi_scenario_multi_step_report_test.json")
+    @JsonTestCase("unit_test_files/reports/02_multi_scenario_multi_step_report_test.json")
     @Test
     public void willGeneratReport_multiSceneMultiSteps() throws Exception {
 

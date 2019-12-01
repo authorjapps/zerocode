@@ -1,0 +1,53 @@
+{
+  "scenarioName": "Rest with Retry within loop Test",
+  "steps": [
+    {
+      "name": "RetryUntilSuccessMock",
+      "url": "/$MOCK",
+      "operation": "$USE.WIREMOCK",
+      "request": {
+        "mocks": [
+          {
+            "name": "SlidingDateMock",
+            "operation": "GET",
+            "url": "/retry/002",
+            "response": {
+              "status": 200,
+              "body": {
+                "fixed_date_time": "${LOCAL.DATETIME.NOW:uuuu-MM-dd'T'HH:mm:ss.SSS}",
+                "dynamic_oneMinuteAgo": "{{localdatetime offset='-1 seconds'}}"
+              }
+            }
+          }
+        ]
+      },
+      "assertions": {
+        "status": 200
+      }
+    },
+    {
+      "retry": {"max": 3, "delay": 1000},
+      "name": "GetDatesRequest",
+      "url": "http://localhost:8888/retry/002",
+      "operation": "GET",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "body": {
+        }
+      },
+      "assertions": {
+        "status": 200,
+        "body": {
+          "dynamic_oneMinuteAgo": "$LOCAL.DATETIME.AFTER:${$.GetDatesRequest.response.body.fixed_date_time}"
+          // NOTE that the inverse does not work, because
+          // the right-hand value stays fixed to the result of the first iteration
+          // the left-hand value does schange for each iteration
+          // "fixed_date_time": "$DATE.BEFORE:${$.GetDatesRequest.response.body.dynamic_oneMinuteAgo}"
+        }
+      }
+    }
+
+  ]
+}

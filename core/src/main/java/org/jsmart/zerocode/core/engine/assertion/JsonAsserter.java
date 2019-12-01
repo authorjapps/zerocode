@@ -5,6 +5,9 @@ import com.jayway.jsonpath.PathNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
+import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
+
 public interface JsonAsserter {
     Logger logger = LoggerFactory.getLogger(JsonAsserter.class);
 
@@ -14,9 +17,14 @@ public interface JsonAsserter {
      */
     String getPath();
 
-    AssertionReport actualEqualsToExpected(Object result);
+    /*
+     * Every asserter must provide implementation of the expected value
+     */
+    Object getExpected();
 
-    default AssertionReport assertWithJson(String jsonSource) {
+    FieldAssertionMatcher actualEqualsToExpected(Object result);
+
+    default FieldAssertionMatcher assertWithJson(String jsonSource) {
 
         Object result = null;
         try{
@@ -31,5 +39,8 @@ public interface JsonAsserter {
         return actualEqualsToExpected(result);
     }
 
+    default FieldAssertionMatcher defaultAssertionMessage(Object actualResult, boolean areEqual) {
+        return areEqual ? aMatchingMessage() : aNotMatchingMessage(getPath(), getExpected(), actualResult);
+    }
 
 }

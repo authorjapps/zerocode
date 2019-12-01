@@ -5,6 +5,8 @@ import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.file.Paths;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import org.junit.Ignore;
@@ -97,5 +99,17 @@ public class TokenUtilsTest {
         String[] split = result.split(",");
         assertTrue(split[0] != split[1]);
     }
+
+
+    @Test
+    public  void testEnvPropertyReplace(){
+        Map<String, String> env = System.getenv();
+        env.forEach((k,v) ->{
+            String text = "${SYSTEM.ENV:"+ k +"}";
+            String resolvedValue = resolveKnownTokens(text);
+            assertTrue(resolvedValue.equals(v));
+        });
+    }
+
 
 }

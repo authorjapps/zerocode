@@ -1,12 +1,12 @@
 package org.jsmart.zerocode.zerocodejavaexec.pojo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import org.junit.Test;
 
-import java.io.IOException;
-
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class OrderTest {
 
