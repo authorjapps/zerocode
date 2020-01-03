@@ -58,7 +58,33 @@ then, we can easily validate the above API using `Zerocode` like below.
 
 > _The beauty here is, we can use the payload/headers structure as it is without any manipulation._
 
+## Validators
+
 ```yaml
+
+---
+url: api/v1/customers/123
+method: GET
+request:
+  headers:
+    Content-Type: application/json
+retry:
+  max: 3
+  delay: 1000
+validators:
+- field: "$.status"
+ value: 200
+- field: "$.body.type"
+ value: Premium Visa
+- field: "$.body.addresses[0].line1"
+ value: 10 Random St
+```
+
+
+## Matchers
+
+```yaml
+
 ---
 url: api/v1/customers/123
 method: GET
