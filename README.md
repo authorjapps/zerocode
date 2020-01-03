@@ -73,11 +73,11 @@ retry:
   delay: 1000
 validators:
 - field: "$.status"
- value: 200
+  value: 200
 - field: "$.body.type"
- value: Premium Visa
+  value: Premium Visa
 - field: "$.body.addresses[0].line1"
- value: 10 Random St
+  value: 10 Random St
 ```
 
 
