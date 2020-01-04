@@ -224,7 +224,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .relationshipId(logPrefixRelationshipId)
                         .responseTimeStamp(responseTimeStamp)
                         .response(executionResult);
-
+                correlLogger.aResponseBuilder().customLog(thisStep.getCustomLog());
                 stepExecutionState.addResponse(executionResult);
                 scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
 

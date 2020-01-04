@@ -54,6 +54,11 @@ public class ZerocodeCorrelationshipLogger {
         return this;
     }
 
+    public ZerocodeCorrelationshipLogger customLog(String customLog){
+        responseLogBuilder.customLog(customLog);
+        return this;
+    }
+
     public ZerocodeCorrelationshipLogger stepLoop(Integer stepLoop) {
         this.stepLoop = stepLoop;
         return this;
@@ -88,6 +93,9 @@ public class ZerocodeCorrelationshipLogger {
 			zeroCodeReportStep.response(responseLogBuilder.getResponse());
 			zeroCodeReportStep.request(requestLogBuilder.getRequest());
 		}
+        if(null != responseLogBuilder.customLog){
+            zeroCodeReportStep.customLog(responseLogBuilder.customLog);
+        }
 
         return zeroCodeReportStep.build();
     }
@@ -130,11 +138,13 @@ public class ZerocodeCorrelationshipLogger {
 
         buildResponseDelay();
 
-        logger.info(format("%s %s \n*Response delay:%s milli-secs \n%s \n-done-\n",
+        String customLog = responseLogBuilder.getCustomLog();
+        logger.info(format("%s %s \n*Response delay:%s milli-secs \n%s \n%s \n-done-\n",
                 requestLogBuilder.toString(),
                 responseLogBuilder.toString(),
                 responseDelay,
-                "---------> Expected Response: <----------\n" + responseLogBuilder.getAssertion()
+                "---------> Expected Response: <----------\n" + responseLogBuilder.getAssertion(),
+                customLog == null ? "" : "---------> Custom Log: <----------\n" +customLog
                 )
         );
     }

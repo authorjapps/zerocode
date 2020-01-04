@@ -8,7 +8,13 @@ public class ResponseLogBuilder {
     String response;
     String exceptionMsg;
     String assertion = "{Oops! Not decided. Possibly due to non JSON content was encountered. See log for details}";
+    String customLog;
 
+
+    public ResponseLogBuilder customLog(String customLog) {
+        this.customLog = customLog;
+        return this;
+    }
 
     public ResponseLogBuilder relationshipId(String relationshipId) {
         this.relationshipId = relationshipId;
@@ -52,6 +58,10 @@ public class ResponseLogBuilder {
 
     public String getAssertion() {
         return assertion;
+    }
+
+    public String getCustomLog() {
+        return customLog;
     }
 
 }
