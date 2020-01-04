@@ -56,7 +56,7 @@ then, we can easily validate the above API using `Zerocode` like below.
 
 + Using YAML described as below,
 
-> _The beauty here is, we can use the payload/headers structure as it is without any manipulation or a JSON path pointing to the field._
+> _The beauty here is, we can use the payload/headers structure for validation as it is without any manipulation or use a flat JSON path to skip the hassles of the entire object hierarchies._
 
 ## Validators
 
