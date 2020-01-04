@@ -78,9 +78,9 @@ public class ZeroCodeValidatorImplTest {
         assertThat(matchers.size(), is(2));
         assertThat(matchers.get(0).toString(), containsString("actual value 'Mrs X' did not match the expected value 'Mr Bean'"));
         assertThat(matchers.get(1).toString(), containsString("actual value '201' did not match the expected value '200'"));
-        //TODO
-        //assertThat(matchers.get(0).toString(), containsString("'$.body.name' with actual value 'Mrs X' did not match the expected value '\"Mr Bean\"'"));
-        //assertThat(matchers.get(1).toString(), containsString("'$.status' with actual value '201' did not match the expected value '200'"));
 
+        //TODO [TECH-DEBT - Bulk or section validator]
+        //assertThat(matchers.get(0).toString(), containsString("'$.body.name' with actual value"));
+        //assertThat(matchers.get(1).toString(), containsString("'$.status' with actual value "));
     }
 }
