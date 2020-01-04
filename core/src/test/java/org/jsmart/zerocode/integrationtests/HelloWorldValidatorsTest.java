@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 
 @HostProperties(host="http://localhost", port=9998, context = "")
 @RunWith(TestOnlyZeroCodeUnitRunner.class)
-public class HelloWorldInMemoryTest {
+public class HelloWorldValidatorsTest {
 
     /**
      * Mock end points are in test/resources: simulators/test_purpose_end_points.json.
@@ -16,8 +16,8 @@ public class HelloWorldInMemoryTest {
      */
 
     @Test
-    @Scenario("integration_test_files/helloworld/get_api_integration_test.json")
-    public void testStrict_compare() throws Exception {
+    @Scenario("integration_test_files/helloworld/get_api_integration_validators_test.json")
+    public void testValidators() throws Exception {
     
     }
 

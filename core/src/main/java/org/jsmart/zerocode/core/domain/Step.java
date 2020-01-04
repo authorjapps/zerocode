@@ -20,6 +20,7 @@ public class Step {
     private final String operation;
     private final String url;
     private final JsonNode request;
+    private final List<Validator> validators;
     private final JsonNode assertions;
     private final String verifyMode;
     private final JsonNode verify;
@@ -55,6 +56,10 @@ public class Step {
 
     public JsonNode getRequest() {
         return request;
+    }
+
+    public List<Validator> getValidators() {
+        return validators;
     }
 
     public JsonNode getAssertions() {
@@ -114,12 +119,14 @@ public class Step {
             @JsonProperty("method") String method,
             @JsonProperty("url") String url,
             @JsonProperty("request") JsonNode request,
+            @JsonProperty("validators") List<Validator> validators,
             @JsonProperty("assertions") JsonNode assertions,
             @JsonProperty("verify") JsonNode verify,
-            @JsonProperty("verifyMode")String verifyMode) {
+            @JsonProperty("verifyMode") String verifyMode) {
         this.loop = loop;
         this.retry = retry;
         this.name = name;
+        this.validators = validators;
         this.verifyMode = verifyMode;
         this.operation = operation != null? operation : method;
         this.method = method != null? method : operation;
@@ -139,6 +146,7 @@ public class Step {
                 ", operation='" + operation + '\'' +
                 ", url='" + url + '\'' +
                 ", request=" + request +
+                ", validators=" + validators +
                 ", assertions=" + assertions +
                 ", verifyMode=" + verifyMode +
                 ", verify=" + verify +

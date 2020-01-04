@@ -36,7 +36,7 @@ public class ZeroCodeTestReportListener extends RunListener {
          * Called when all tests have finished
          */
         LOGGER.info("#ZeroCode: Test run completed for this runner. Generating test reports and charts. " +
-                "\n* For more examples, helps, Kafka streams and API use-cases visit http://zerocode.io");
+                "\n* For more examples, helps, Kafka streams, APIs and Load use-cases visit https://zerocode.io");
         generateChartsAndReports();
     }
 

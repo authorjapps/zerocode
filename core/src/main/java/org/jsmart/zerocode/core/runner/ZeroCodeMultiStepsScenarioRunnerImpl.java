@@ -1,22 +1,19 @@
 package org.jsmart.zerocode.core.runner;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.PathNotFoundException;
 import com.univocity.parsers.csv.CsvParser;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
+import org.jsmart.zerocode.core.domain.Validator;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
@@ -24,9 +21,10 @@ import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
-import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
+import org.jsmart.zerocode.core.engine.validators.ZeroCodeValidator;
 import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.jsmart.zerocode.core.utils.ApiTypeUtils;
 import org.junit.runner.Description;
@@ -36,17 +34,13 @@ import org.slf4j.Logger;
 import static java.util.Optional.ofNullable;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
-import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
+import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.strictComparePayload;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getParameterSize;
-import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
-import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Singleton
@@ -74,6 +68,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     @Inject
     private ApiTypeUtils apiTypeUtils;
+
+    @Inject
+    ZeroCodeValidator validator;
 
     @Inject(optional = true)
     @Named("web.application.endpoint.host")
@@ -496,13 +493,44 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private List<FieldAssertionMatcher> compareStepResults(Step thisStep, String actualResult, String expectedResult) {
         List<FieldAssertionMatcher> failureResults = new ArrayList<>();
-        if (ofNullable(thisStep.getVerifyMode()).orElse("LENIENT").equals("STRICT")) {
+
+        // --------------------
+        //  Validators (pyrest)
+        // --------------------
+        if (ofNullable(thisStep.getValidators()).orElse(null) != null) {
+            validator.validateFlat();
+            validateAll(thisStep, actualResult, failureResults);
+        }
+
+        // ------------------------
+        // STRICT mode (skyscreamer)
+        // ------------------------
+        else if (ofNullable(thisStep.getVerifyMode()).orElse("LENIENT").equals("STRICT")) {
+            validator.validateStrict();
             failureResults = strictComparePayload(expectedResult, actualResult);
-        } else {
+        }
+
+        // --------------------------
+        // LENIENT mode (skyscreamer)
+        // --------------------------
+        else {
+            validator.validateLenient();
             List<JsonAsserter> asserters = zeroCodeAssertionsProcessor.createJsonAsserters(expectedResult);
             failureResults = zeroCodeAssertionsProcessor.assertAllAndReturnFailed(asserters, actualResult);
         }
         return failureResults;
+    }
+
+    private void validateAll(Step thisStep, String actualResult, List<FieldAssertionMatcher> failureResults) {
+        List<Validator> validators = thisStep.getValidators();
+        for (Validator validator : validators) {
+            String josnPath = validator.getField();
+            JsonNode expectedValue = validator.getValue();
+            Object actualValue = JsonPath.read(actualResult, josnPath);
+
+            List<JsonAsserter> asserters = zeroCodeAssertionsProcessor.createJsonAsserters(expectedValue.toString());
+            failureResults.addAll(zeroCodeAssertionsProcessor.assertAllAndReturnFailed(asserters, actualValue.toString()));
+        }
     }
 
 }
