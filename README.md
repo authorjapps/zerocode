@@ -16,7 +16,7 @@ Automated API testing has never been so easy
 **Gitter IM:** [Gitter](https://gitter.im/zerocode-testing/help-and-usage) <br/>
 
 
-Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction), [DB services](https://github.com/authorjapps/zerocode/wiki/Sample-DB-SQL-Executor) and more. It has the best of best ideas and practices from the community to keep it super simple, and the adoption is rapidly growing among the developer/tester community.
+Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka Real Time Data Streams](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) and much more. It has the best of best ideas and practices from the community to keep it super simple, and the adoption is rapidly growing among the developer/tester community.
 
 Quick Links
 ===
@@ -80,6 +80,37 @@ validators:
   value: 10 Random St
 ```
 
+or
+
+```
+{
+  "url": "api/v1/customers/123",
+  "method": "GET",
+  "request": {
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "retry": {
+    "max": 3,
+    "delay": 1000
+  },
+  "validators": [
+    {
+      "field": "$.status",
+      "value": 200
+    },
+    {
+      "field": "$.body.type",
+      "value": "Premium Visa"
+    },
+    {
+      "field": "$.body.addresses[0].line1",
+      "value": "10 Random St"
+    }
+  ]
+}
+```
 
 ## Matchers
 
@@ -157,6 +188,6 @@ and run it simply by pointing to the above JSON/YAML file from a JUnit `@Test` m
 
 Looks simple n easy? Why not give it a try? Visit the [quick-start guide](https://github.com/authorjapps/zerocode/wiki/Getting-Started) or [user's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide) for more insight.
 
-Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their microservices. 
+Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their microservices. Learn here about [Validators Vs Matchers](https://github.com/authorjapps/zerocode/wiki).
 
 Happy testing! <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>
