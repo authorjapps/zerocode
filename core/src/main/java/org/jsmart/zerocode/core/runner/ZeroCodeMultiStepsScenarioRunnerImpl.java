@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.runner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
@@ -37,6 +38,7 @@ import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
+import static org.jsmart.zerocode.core.utils.HelperJsonUtils.readObjectAsMap;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.strictComparePayload;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getParameterSize;
@@ -248,10 +250,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     failureResults.forEach(f -> {
                         builder.append(f.toString() + "\n");
                     });
-                    correlLogger.assertion(builder.toString());
+                    correlLogger.assertion(resolvedAssertionJson != null ? builder.toString() : expectedValidatorsAsJson(thisStep));
                 } else {
-
-                    correlLogger.assertion(prettyPrintJson(resolvedAssertionJson));
+                    correlLogger.assertion(resolvedAssertionJson != null && !"null".equalsIgnoreCase(resolvedAssertionJson) ?
+                            prettyPrintJson(resolvedAssertionJson) : expectedValidatorsAsJson(thisStep));
                 }
 
                 if (retryTillSuccess && (retryCounter + 1 < retryMaxTimes) && !failureResults.isEmpty()) {
@@ -357,6 +359,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         }
 
         return null;
+    }
+
+    private String expectedValidatorsAsJson(Step thisStep) throws JsonProcessingException {
+        if(thisStep.getValidators() == null){
+            return "No validators were found for this step";
+        }
+        return prettyPrintJson(objectMapper.writeValueAsString((thisStep.getValidators())));
     }
 
     private String executeApi(String logPrefixRelationshipId,
@@ -498,39 +507,24 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         //  Validators (pyrest)
         // --------------------
         if (ofNullable(thisStep.getValidators()).orElse(null) != null) {
-            validator.validateFlat();
-            validateAll(thisStep, actualResult, failureResults);
+            failureResults = validator.validateFlat(thisStep, actualResult);
         }
 
         // ------------------------
         // STRICT mode (skyscreamer)
         // ------------------------
         else if (ofNullable(thisStep.getVerifyMode()).orElse("LENIENT").equals("STRICT")) {
-            validator.validateStrict();
-            failureResults = strictComparePayload(expectedResult, actualResult);
+            failureResults = validator.validateStrict(expectedResult, actualResult);
         }
 
         // --------------------------
         // LENIENT mode (skyscreamer)
         // --------------------------
         else {
-            validator.validateLenient();
-            List<JsonAsserter> asserters = zeroCodeAssertionsProcessor.createJsonAsserters(expectedResult);
-            failureResults = zeroCodeAssertionsProcessor.assertAllAndReturnFailed(asserters, actualResult);
+            failureResults = validator.validateLenient(expectedResult, actualResult);
         }
+
         return failureResults;
-    }
-
-    private void validateAll(Step thisStep, String actualResult, List<FieldAssertionMatcher> failureResults) {
-        List<Validator> validators = thisStep.getValidators();
-        for (Validator validator : validators) {
-            String josnPath = validator.getField();
-            JsonNode expectedValue = validator.getValue();
-            Object actualValue = JsonPath.read(actualResult, josnPath);
-
-            List<JsonAsserter> asserters = zeroCodeAssertionsProcessor.createJsonAsserters(expectedValue.toString());
-            failureResults.addAll(zeroCodeAssertionsProcessor.assertAllAndReturnFailed(asserters, actualValue.toString()));
-        }
     }
 
 }
