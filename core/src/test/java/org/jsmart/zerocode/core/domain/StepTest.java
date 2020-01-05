@@ -88,6 +88,16 @@ public class StepTest {
     }
 
     @Test
+    public void testValidators_array() throws Exception {
+        String jsonDocumentAsString =
+                smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/00_test_json_single_step_verifications.json");
+        Step stepDeserialized = mapper.readValue(jsonDocumentAsString, Step.class);
+
+        assertThat(stepDeserialized.getValidators().get(0).getField(), is("fooFoo"));
+        assertThat(stepDeserialized.getValidators().get(0).getValue().asText(), is("barBar"));
+    }
+
+    @Test
     public void testParameterized_values() throws Exception {
         String jsonDocumentAsString =
                 smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/06_test_single_step_parameterized_value.json");
