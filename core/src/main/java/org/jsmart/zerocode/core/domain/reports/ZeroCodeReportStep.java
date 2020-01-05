@@ -26,6 +26,7 @@ public class ZeroCodeReportStep {
     private final String request;
     private final String response;
     private final String assertions;
+    private final String customLog;
 
     @JsonCreator
     public ZeroCodeReportStep(
@@ -40,7 +41,8 @@ public class ZeroCodeReportStep {
             @JsonProperty("result") String result,
             @JsonProperty("request") String request,
             @JsonProperty("response") String response,
-            @JsonProperty("assertions") String assertions) {
+            @JsonProperty("assertions") String assertions,
+            @JsonProperty("customLog") String customLog) {
         this.loop = loop;
         this.name = name;
         this.url = url;
@@ -53,6 +55,7 @@ public class ZeroCodeReportStep {
         this.request = request;
         this.response = response;
         this.assertions = assertions;
+        this.customLog = customLog;
     }
 
     public Integer getLoop() {
@@ -103,6 +106,8 @@ public class ZeroCodeReportStep {
         return assertions;
     }
 
+    public String getCustomLog(){ return customLog;}
+
     @Override
     public String toString() {
         return "ZeroCodeReportStep{" +
@@ -118,6 +123,7 @@ public class ZeroCodeReportStep {
                 ", request='" + request + '\'' +
                 ", response='" + response + '\'' +
                 ", assertions='" + assertions + '\'' +
+                ", customLog='" + customLog + '\'' +
                 '}';
     }
 }

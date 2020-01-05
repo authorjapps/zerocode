@@ -27,6 +27,7 @@ public class Step {
     private JsonNode stepFile;
     private List<Object> parameterized;
     private List<String> parameterizedCsv;
+    private String customLog;
 
     public Integer getLoop() {
         return loop;
@@ -100,6 +101,10 @@ public class Step {
         this.parameterizedCsv = parameterizedCsv;
     }
 
+    public String getCustomLog(){ return customLog; }
+
+    public void setCustomLog(String customLog) { this.customLog = customLog; }
+
     @JsonCreator
     public Step(
             @JsonProperty("stepLoop") Integer loop,
@@ -140,6 +145,7 @@ public class Step {
                 ", id='" + id + '\'' +
                 ", stepFile=" + stepFile +
                 ", parameterized=" + parameterized +
+                ", customLog=" + customLog +
                 '}';
     }
 }
