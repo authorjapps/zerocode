@@ -188,6 +188,6 @@ and run it simply by pointing to the above JSON/YAML file from a JUnit `@Test` m
 
 Looks simple n easy? Why not give it a try? Visit the [quick-start guide](https://github.com/authorjapps/zerocode/wiki/Getting-Started) or [user's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide) for more insight.
 
-Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their microservices. Learn here about [Validators Vs Matchers](https://github.com/authorjapps/zerocode/wiki).
+Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their microservices. Learn more about [Validators Vs Matchers](https://github.com/authorjapps/zerocode/wiki/Validators-and-Matchers) here.
 
 Happy testing! <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>
