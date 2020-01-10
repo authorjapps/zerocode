@@ -1,0 +1,17 @@
+[
+    {
+        "field": "foo",
+        "value": "bar"
+    },
+    {
+        "field": "age",
+        "value": 23
+    },
+    {
+        "field": "address",
+        "value": {
+            "line1": "East Croydon",
+            "postcode": "ECY"
+        }
+    }
+]

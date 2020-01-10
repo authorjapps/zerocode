@@ -1,0 +1,26 @@
+{
+    "scenarioName": "Unit testing series of validators",
+    "steps": [
+        {
+            "name": "get_visas",
+            "url": "/api/visas",
+            "method": "GET",
+            "request": {
+                "queryParams": {
+                    "city": "Lon"
+                }
+            },
+            "validators": [
+                {
+                    "field": "$.body.name",
+                    "value": "Mr Bean"
+                },
+                {
+                    "field": "$.status",
+                    "value": 200
+                }
+            ]
+        }
+    ]
+}
+

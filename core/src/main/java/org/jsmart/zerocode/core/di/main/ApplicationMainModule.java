@@ -21,6 +21,8 @@ import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcesso
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessorImpl;
+import org.jsmart.zerocode.core.engine.validators.ZeroCodeValidator;
+import org.jsmart.zerocode.core.engine.validators.ZeroCodeValidatorImpl;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGeneratorImpl;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunner;
@@ -59,6 +61,7 @@ public class ApplicationMainModule extends AbstractModule {
         bind(HttpApiExecutor.class).to(HttpApiExecutorImpl.class);
         bind(JavaMethodExecutor.class).to(JavaMethodExecutorImpl.class);
         bind(ZeroCodeAssertionsProcessor.class).to(ZeroCodeAssertionsProcessorImpl.class);
+        bind(ZeroCodeValidator.class).to(ZeroCodeValidatorImpl.class);
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
         bind(ZeroCodeExternalFileProcessor.class).to(ZeroCodeExternalFileProcessorImpl.class);
         bind(ZeroCodeParameterizedProcessor.class).to(ZeroCodeParameterizedProcessorImpl.class);
