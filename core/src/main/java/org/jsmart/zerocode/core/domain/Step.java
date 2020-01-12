@@ -24,6 +24,7 @@ public class Step {
     private final JsonNode assertions;
     private final String verifyMode;
     private final JsonNode verify;
+    private final boolean ignoreStep;
     private String id;
     private JsonNode stepFile;
     private List<Object> parameterized;
@@ -110,6 +111,10 @@ public class Step {
 
     public void setCustomLog(String customLog) { this.customLog = customLog; }
 
+    public boolean getIgnoreStep() {
+        return this.ignoreStep;
+    }
+
     @JsonCreator
     public Step(
             @JsonProperty("stepLoop") Integer loop,
@@ -122,7 +127,8 @@ public class Step {
             @JsonProperty("validators") List<Validator> validators,
             @JsonProperty("assertions") JsonNode assertions,
             @JsonProperty("verify") JsonNode verify,
-            @JsonProperty("verifyMode") String verifyMode) {
+            @JsonProperty("verifyMode") String verifyMode,
+            @JsonProperty("ignoreStep") boolean ignoreStep) {
         this.loop = loop;
         this.retry = retry;
         this.name = name;
@@ -134,6 +140,7 @@ public class Step {
         this.url = url;
         this.assertions = assertions.isNull() ? verify : assertions;
         this.verify = verify;
+        this.ignoreStep = ignoreStep;
     }
 
     @Override
