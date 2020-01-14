@@ -136,7 +136,7 @@ verify:
     addresses:
     - type: Billing
       line1: 10 Random St
-verifyMode: LINIENT
+verifyMode: LENIENT
 ```
 
 or
