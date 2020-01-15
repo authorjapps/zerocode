@@ -124,6 +124,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
             return objectMapper.readValue(resultantStepJson, ScenarioSpec.class);
 
         } catch (Exception exx) {
+            exx.printStackTrace();
             throw new RuntimeException("Error while resolving parameterizedCsv values - " + exx);
         }
     }

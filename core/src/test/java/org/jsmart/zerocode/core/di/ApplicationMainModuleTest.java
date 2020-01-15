@@ -21,6 +21,8 @@ public class ApplicationMainModuleTest {
     public static class JukitoModule extends TestModule {
         @Override
         protected void configureTest() {
+            System.getProperties().put("custom_prop_key", "custom_prop_value");
+            System.getProperties().put("key.to.override", "5647");
             ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test.properties");
 
             /* Finally install the main module */
@@ -34,6 +36,18 @@ public class ApplicationMainModuleTest {
     @Inject
     @Named("web.application.endpoint.host")
     private String host;
+
+    @Inject
+    @Named("key.to.override")
+    private Integer keyToOverride;
+
+    @Inject
+    @Named("HOME")
+    private String env;
+
+    @Inject
+    @Named("custom_prop_key")
+    private String prop;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -49,4 +63,18 @@ public class ApplicationMainModuleTest {
         assertThat(host, is("http://localhost-test"));
     }
 
+    @Test
+    public void willInject_env_value() throws Exception {
+        assertThat(env, is(System.getenv("HOME")));
+    }
+
+    @Test
+    public void willInject_prop_value() throws Exception {
+        assertThat(prop, is("custom_prop_value"));
+    }
+
+    @Test
+    public void willOverride_properties_by_env_value() throws Exception {
+        assertThat(keyToOverride, is(5647));
+    }
 }

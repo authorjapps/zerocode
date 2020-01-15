@@ -69,7 +69,11 @@ public class ApplicationMainModule extends AbstractModule {
         // ------------------------------------------------
         // Bind properties for localhost, CI, DIT, SIT etc
         // ------------------------------------------------
-        Names.bindProperties(binder(), getProperties(serverEnv));
+        Properties properties = getProperties(serverEnv);
+        properties.putAll(System.getenv());
+        properties.putAll(System.getProperties());
+
+        Names.bindProperties(binder(), properties);
     }
 
     public Properties getProperties(String host) {
