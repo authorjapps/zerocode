@@ -23,6 +23,7 @@ Quick Links
 For a quick introduction to Zerocode and its features, visit the 
 + [Zerocode Wiki](https://github.com/authorjapps/zerocode/wiki)
 + [User's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide)
++ [Release frquency](https://github.com/authorjapps/zerocode/wiki/Zerocode-release-frequency-and-schedule)
 
 Maven Dependency
 ===
@@ -60,6 +61,8 @@ then, we can easily validate the above API using `Zerocode` like below.
 
 ## Validators
 
+Using YAML
+
 ```yaml
 
 ---
@@ -82,7 +85,9 @@ validators:
 
 or
 
-```
+Using JSON
+
+```JSON
 {
   "url": "api/v1/customers/123",
   "method": "GET",
@@ -114,6 +119,8 @@ or
 
 ## Matchers
 
+Using YAML
+
 ```yaml
 
 ---
@@ -141,9 +148,9 @@ verifyMode: LENIENT
 
 or
 
-+ Using JSON DSL described as below,
+Using JSON
 
-```javaScript
+```JSON
 {
   "url": "api/v1/customers/123",
   "method": "GET",
