@@ -1,0 +1,26 @@
+{
+    "scenarioName": "custom Log",
+    "steps": [
+        {
+            "name": "step_with_custom_log",
+            "url": "",
+            "operation": "",
+            "customLog": "Contributing to Zerocode",
+            "request": {
+            },
+            "assertions": {
+            }
+        },
+        {
+            "name": "step_without_custom_log",
+            "url": "",
+            "operation": "",
+            "request": {
+
+            },
+            "assertions": {
+
+            }
+        }
+    ]
+}
