@@ -216,7 +216,21 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             return;
         }
 
-        Statement statement = new Statement() {
+        Statement statement = createZeroCodeStatement(jsonTestCaseAnno, notifier, description);
+        statement = possiblyExpectingExceptions(method, test, statement);
+        statement = withPotentialTimeout(method, test, statement);
+        statement = withBefores(method, test, statement);
+        statement = withAfters(method, test, statement);
+        statement = withRules(method, test, statement);
+        try {
+            statement.evaluate();
+        } catch (Throwable e) {
+        }
+
+    }
+
+    private Statement createZeroCodeStatement(JsonTestCase jsonTestCaseAnno, RunNotifier notifier, Description description) {
+        return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 if (jsonTestCaseAnno != null) {
@@ -248,20 +262,9 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
                     }
 
                     notifier.fireTestFinished(description);
-                    throw new RuntimeException();
                 }
             }
         };
-        statement = possiblyExpectingExceptions(method, test, statement);
-        statement = withPotentialTimeout(method, test, statement);
-        statement = withBefores(method, test, statement);
-        statement = withAfters(method, test, statement);
-        statement = withRules(method, test, statement);
-        try {
-            statement.evaluate();
-        } catch (Throwable e) {
-        }
-
     }
 
     private List<String> getSmartChildrenList() {

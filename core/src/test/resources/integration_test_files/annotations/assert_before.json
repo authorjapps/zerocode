@@ -1,0 +1,11 @@
+{
+  "scenarioName": "Testing @Before, @After annotations",
+  "steps": [
+    {
+      "name": "assert_step",
+      "url": "org.jsmart.zerocode.annotations.TestBeforeAfter",
+      "operation": "assertBeforeIsCalled",
+      "assertions": {}
+    }
+  ]
+}
