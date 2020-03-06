@@ -23,7 +23,7 @@ Quick Links
 For a quick introduction to Zerocode and its features, visit the 
 + [Zerocode Wiki](https://github.com/authorjapps/zerocode/wiki)
 + [User's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide)
-+ [Release frquency](https://github.com/authorjapps/zerocode/wiki/Zerocode-release-frequency-and-schedule)
++ [Release frequency](https://github.com/authorjapps/zerocode/wiki/Zerocode-release-frequency-and-schedule)
 
 Maven Dependency
 ===
