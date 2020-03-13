@@ -30,7 +30,7 @@
         },
         {
             "id": "single_step_file",
-            "stepFiles": "${JSON.FILE:integration_test_files/multi_step/single_step.json}"
+            "stepFile": "${JSON.FILE:integration_test_files/multi_step/single_step.json}"
         },
         {
             "name": "checking_step_with_single_step_response",
