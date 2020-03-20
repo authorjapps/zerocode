@@ -186,7 +186,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 return wasExecSuccess;
             }
         }
-        ;
         return null;
     }
 
