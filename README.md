@@ -1,3 +1,8 @@
+### Zerocode stands in solidarity with every family and community affected by #COVID19. We are grateful to medical professionals everywhere for their service, and we wish health and safety to all.
+
+<img width="954" alt="covid small" src="https://user-images.githubusercontent.com/12598420/78008268-5eda9400-7337-11ea-926b-ebb2380a2f5c.png">
+
+
 <img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
 ===
 Automated API testing has never been so easy
