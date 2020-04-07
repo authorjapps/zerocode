@@ -4,7 +4,7 @@
         {
             "name": "find_match",
             "url": "/api/v1/search/persons",
-            "method": "POST",
+            "method": "GET",
             "request": {
                 "queryParams": {
                     "lang": "Amazing",
