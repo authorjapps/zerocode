@@ -1,5 +1,8 @@
 package org.jsmart.zerocode.core.utils;
 
+import java.io.File;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +18,7 @@ import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.ABS_PATH;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATETIME_NOW;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATE_TODAY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER;
@@ -76,12 +80,10 @@ public class TokenUtils {
                             paramaMap.put(runTimeToken, LocalDateTime.now().format(formatter));
 
                         } else if (runTimeToken.startsWith(SYSTEM_PROPERTY)) {
-
                             String propertyName = runTimeToken.substring(SYSTEM_PROPERTY.length());
                             paramaMap.put(runTimeToken, System.getProperty(propertyName));
 
-                        }else if (runTimeToken.startsWith(SYSTEM_ENV)) {
-
+                        } else if (runTimeToken.startsWith(SYSTEM_ENV)) {
                             String propertyName = runTimeToken.substring(SYSTEM_ENV.length());
                             paramaMap.put(runTimeToken, System.getenv(propertyName));
 
@@ -94,12 +96,17 @@ public class TokenUtils {
 
                         } else if (runTimeToken.startsWith(RANDOM_UU_ID)) {
                             paramaMap.put(runTimeToken, randomUUID().toString());
+
+                        } else if (runTimeToken.startsWith(ABS_PATH)) {
+                            String propertyName = runTimeToken.substring(ABS_PATH.length());
+                            paramaMap.put(runTimeToken, absolutePathOf(propertyName));
                         }
                     }
                 }
         );
 
     }
+
 
     /**
      * This method was introduced later,
@@ -151,5 +158,20 @@ public class TokenUtils {
         }
     }
 
+    public static String absolutePathOf(String resourceFilePath) {
+        URL res = TokenUtils.class.getClassLoader().getResource(resourceFilePath);
+        if(res == null){
+            throw new RuntimeException("Wrong file name or path found '" + resourceFilePath + "', Please fix it and rerun.");
+        }
 
+        File file = null;
+        try {
+            file = Paths.get(res.toURI()).toFile();
+        } catch (Exception e) {
+            throw new RuntimeException("Something went wrong while fetching abs path of '" + resourceFilePath + "', " +
+                    "Please recheck the file/path. Full exception is : " + e);
+        }
+
+        return file.getAbsolutePath();
+    }
 }

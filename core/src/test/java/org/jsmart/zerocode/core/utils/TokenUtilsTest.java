@@ -1,18 +1,18 @@
 package org.jsmart.zerocode.core.utils;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.stream.IntStream;
-
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.jsmart.zerocode.core.utils.TokenUtils.absolutePathOf;
+import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class TokenUtilsTest {
 
@@ -111,5 +111,16 @@ public class TokenUtilsTest {
         });
     }
 
+    @Test
+    public void testAbsolutePathOf_wrongPath() {
+        exceptionRule.expectMessage("Wrong file name or path found");
+        exceptionRule.expectMessage("Please fix it and rerun.");
+        absolutePathOf("WRONG_PATH/jks_files/dummy_key_store.jks");
+    }
 
+    @Test
+    public void testAbsolutePathOf() {
+        assertThat(absolutePathOf("unit_test_files/jks_files/dummy_key_store.jks"),
+                containsString("zerocode/core/target/test-classes/unit_test_files/jks_files/dummy_key_store.jks"));
+    }
 }
