@@ -1,0 +1,27 @@
+[
+  {
+    "name": "fist_of_multi_step",
+    "url": "",
+    "operation": "",
+    "customLog": "Contributing to Zerocode",
+    "request": {
+      "req": "12345",
+      "id": "${$.first_test.request.id}"
+    },
+    "assertions": {
+    }
+  },
+  {
+    "name": "second_of_multi_step",
+    "url": "",
+    "operation": "",
+    "customLog": "Contributing to Zerocode",
+    "request": {
+      "req": "54321",
+      "res": "${$.fist_of_multi_step.request.id}"
+    },
+    "assertions": {
+      "res": "${$.first_test.request.id}"
+    }
+  }
+]
