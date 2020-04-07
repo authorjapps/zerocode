@@ -41,7 +41,7 @@ public class ZeroCodeReportTest {
                                 .loop(3)
                                 .correlationId("correlation Id")
                                 .name("step_create")
-                                .operation("POST-POST")
+                                .method("POST-POST")
                                 .url("/home/googly")
                                 .result("PASS")
                                 .build()))
@@ -53,6 +53,7 @@ public class ZeroCodeReportTest {
         assertThat(jsonNode.get("timeStamp"), is(notNullValue()));
         assertThat(jsonNode.get("results").get(0).get("loop").asInt(), is(1));
         assertThat(jsonNode.get("results").get(0).get("steps").get(0).get("loop").asInt(), is(3));
+        assertThat(jsonNode.get("results").get(0).get("steps").get(0).get("method").asText(), is("POST"));
     }
 
     @Test

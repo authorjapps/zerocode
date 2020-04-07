@@ -13,6 +13,7 @@ public class ZeroCodeReportStep {
     private final Integer loop;
     private final String name;
     private final String url;
+    private final String method;
     private final String correlationId;
     private final String operation;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -33,6 +34,7 @@ public class ZeroCodeReportStep {
             @JsonProperty("stepLoop") Integer loop,
             @JsonProperty("name") String name,
             @JsonProperty("url") String url,
+            @JsonProperty("method") String method,
             @JsonProperty("correlationId") String correlationId,
             @JsonProperty("operation") String operation,
             @JsonProperty("requestTimeStamp") LocalDateTime requestTimeStamp,
@@ -46,6 +48,7 @@ public class ZeroCodeReportStep {
         this.loop = loop;
         this.name = name;
         this.url = url;
+        this.method=method;
         this.correlationId = correlationId;
         this.operation = operation;
         this.requestTimeStamp = requestTimeStamp;
@@ -68,6 +71,10 @@ public class ZeroCodeReportStep {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getMethod() {
+        return method;
     }
 
     public String getCorrelationId() {
@@ -114,6 +121,7 @@ public class ZeroCodeReportStep {
                 "loop=" + loop +
                 ", name='" + name + '\'' +
                 ", url='" + url + '\'' +
+                ", method='" + method + '\'' +
                 ", correlationId='" + correlationId + '\'' +
                 ", operation='" + operation + '\'' +
                 ", requestTimeStamp=" + requestTimeStamp +
