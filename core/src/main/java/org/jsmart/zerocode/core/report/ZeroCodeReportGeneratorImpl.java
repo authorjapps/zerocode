@@ -254,6 +254,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                 .addColumn("responseDelayMilliSec", CsvSchema.ColumnType.NUMBER)
                 .addColumn("responseTimeStamp")
                 .addColumn("result")
+                .addColumn("method")
                 .build();
 
         CsvMapper csvMapper = new CsvMapper();
@@ -293,6 +294,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                         csvFileBuilder.stepName(thisStep.getName());
                         csvFileBuilder.correlationId(thisStep.getCorrelationId());
                         csvFileBuilder.result(thisStep.getResult());
+                        csvFileBuilder.method(thisStep.getOperation());
                         csvFileBuilder.requestTimeStamp(thisStep.getRequestTimeStamp().toString());
                         csvFileBuilder.responseTimeStamp(thisStep.getResponseTimeStamp().toString());
                         csvFileBuilder.responseDelayMilliSec(thisStep.getResponseDelay());
