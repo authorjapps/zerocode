@@ -2,7 +2,7 @@
     "scenarioName": "As simple GET API - Inetgration Test - Local Server",
     "steps": [
         {
-            "name": "find_match_1",
+            "name": "find_match",
             "url": "/api/v1/search/persons",
             "method": "GET",
             "request": {
