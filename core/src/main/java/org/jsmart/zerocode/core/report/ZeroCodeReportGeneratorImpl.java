@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -49,6 +51,8 @@ import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FULL_REPORT_DIR;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_REPORT_DIR;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TEST_STEP_CORRELATION_ID;
+import static org.jsmart.zerocode.core.utils.ApiType.*;
+import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
 
 public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeReportGeneratorImpl.class);
@@ -106,16 +110,16 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     test.getModel().setEndTime(utilDateOf(thisStep.getResponseTimeStamp()));
 
                     final Status testStatus = thisStep.getResult().equals(RESULT_PASS) ? Status.PASS : Status.FAIL;
-					
+
                     ExtentTest step = test.createNode(thisStep.getName(), TEST_STEP_CORRELATION_ID + " " + thisStep.getCorrelationId());
-                 
-                    if(testStatus.equals(Status.PASS)) {
-                    	step.pass(thisStep.getResult());
-                    }else {
-                    	step.info(MarkupHelper.createCodeBlock(thisStep.getOperation() + "\t" + thisStep.getUrl()));
-                    	step.info(MarkupHelper.createCodeBlock(thisStep.getRequest(), CodeLanguage.JSON));
+
+                    if (testStatus.equals(Status.PASS)) {
+                        step.pass(thisStep.getResult());
+                    } else {
+                        step.info(MarkupHelper.createCodeBlock(thisStep.getOperation() + "\t" + thisStep.getUrl()));
+                        step.info(MarkupHelper.createCodeBlock(thisStep.getRequest(), CodeLanguage.JSON));
                         step.info(MarkupHelper.createCodeBlock(thisStep.getResponse(), CodeLanguage.JSON));
-                    	step.fail(MarkupHelper.createCodeBlock("Reason:\n" + thisStep.getAssertions()));
+                        step.fail(MarkupHelper.createCodeBlock("Reason:\n" + thisStep.getAssertions()));
                     }
                     extentReports.flush();
                 });
@@ -133,13 +137,13 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         // (might be disabled by current runner)
         // Then it's good to link it to that spike report.
         // ------------------------------------------------
-        if(spikeChartReportEnabled || spikeChartFileName != null){
+        if (spikeChartReportEnabled || spikeChartFileName != null) {
             final String reportName = getReportName();
 
             String linkCodeToTargetSpikeChartHtml =
                     String.format("<code>&nbsp;&nbsp;<a href='%s' style=\"color: #006; background: #ff6;\"> %s </a></code>",
-                    spikeChartFileName,
-                    LINK_LABEL_NAME);
+                            spikeChartFileName,
+                            LINK_LABEL_NAME);
 
             ExtentReportsFactory.reportName(reportName + linkCodeToTargetSpikeChartHtml);
         }
@@ -148,33 +152,33 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     protected String optionalAuthor(String scenarioName) {
         String authorName = substringBetween(scenarioName, AUTHOR_MARKER, AUTHOR_MARKER);
 
-        if(authorName == null){
+        if (authorName == null) {
             authorName = substringBetween(scenarioName, AUTHOR_MARKER, ",");
         }
 
-        if(authorName == null){
+        if (authorName == null) {
             authorName = substringBetween(scenarioName, AUTHOR_MARKER, " ");
         }
 
-        if(authorName == null){
+        if (authorName == null) {
             authorName = scenarioName.substring(scenarioName.lastIndexOf(AUTHOR_MARKER) + AUTHOR_MARKER.length());
         }
 
-        if(scenarioName.lastIndexOf(AUTHOR_MARKER) == -1 || StringUtils.isEmpty(authorName)){
+        if (scenarioName.lastIndexOf(AUTHOR_MARKER) == -1 || StringUtils.isEmpty(authorName)) {
             authorName = ANONYMOUS_AUTHOR;
         }
 
         return authorName;
     }
-    
+
     protected String onlyScenarioName(String scenarioName) {
-    	
-    	int index = scenarioName.indexOf(AUTHOR_MARKER);
-    	if(index == -1) {
-    		return scenarioName;
-    	}else {
-    		return scenarioName.substring(0, index -1); 
-    	}
+
+        int index = scenarioName.indexOf(AUTHOR_MARKER);
+        if (index == -1) {
+            return scenarioName;
+        } else {
+            return scenarioName.substring(0, index - 1);
+        }
     }
 
     @Override
@@ -198,7 +202,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         /*
          * Generate: Spike Chart using HighChart
          */
-        if(spikeChartReportEnabled){
+        if (spikeChartReportEnabled) {
             HighChartColumnHtml highChartColumnHtml = convertCsvRowsToHighChartData(zeroCodeCsvFlattenedRows);
             generateHighChartReport(highChartColumnHtml);
         }
@@ -255,6 +259,8 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                 .addColumn("responseTimeStamp")
                 .addColumn("result")
                 .addColumn("method")
+                .addColumn("host")
+                //If(host enabled)
                 .addColumn("url")
                 .build();
 
@@ -296,7 +302,29 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                         csvFileBuilder.correlationId(thisStep.getCorrelationId());
                         csvFileBuilder.result(thisStep.getResult());
                         csvFileBuilder.method(thisStep.getOperation());
-                        csvFileBuilder.url(thisStep.getUrl());
+                        /**
+                         * @implNote Conditional Host and Url fields added as per API Type
+                         **/
+                        String host = "";
+                        String urlPath = "";
+                        if (apiType(thisStep.getUrl(), thisStep.getOperation()).equals(REST_CALL)) {
+                            try {
+                                URL u = new URL(thisStep.getUrl());
+                                String url = u.toString();
+                                host = url.substring(0, url.indexOf(u.getPath()));
+                                urlPath = u.getPath();
+                                csvFileBuilder.host(host);
+                                csvFileBuilder.url(urlPath);
+                            } catch (MalformedURLException e) {
+                                LOGGER.error("####MalformedURLException: " + e.getMessage() + " In Test: " + thisResult.getScenarioName()+ ",URL: "+thisStep.getUrl());
+                            }
+                        } else if (apiType(thisStep.getUrl(), thisStep.getOperation()).equals(JAVA_CALL)) {
+                            csvFileBuilder.host("NATIVE");
+                            csvFileBuilder.url(thisStep.getUrl());
+                        } else if (apiType(thisStep.getUrl(), thisStep.getOperation()).equals(KAFKA_CALL)) {
+                            csvFileBuilder.host("KAFKA");
+                            csvFileBuilder.url(thisStep.getUrl());
+                        }
                         csvFileBuilder.requestTimeStamp(thisStep.getRequestTimeStamp().toString());
                         csvFileBuilder.responseTimeStamp(thisStep.getResponseTimeStamp().toString());
                         csvFileBuilder.responseDelayMilliSec(thisStep.getResponseDelay());
@@ -344,7 +372,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
             return name.endsWith(".json");
         });
 
-        if(files == null || files.length == 0){
+        if (files == null || files.length == 0) {
 
             LOGGER.error("\n\t\t\t************\nNow files were found in folder:{}, hence could not proceed. " +
                     "\n(If this was intentional, then you can safely ignore this error)" +

@@ -14,6 +14,7 @@ public class ZeroCodeCsvReportBuilder {
     String requestTimeStamp;
     String responseTimeStamp;
     private Double responseDelayMilliSec;
+    private String host;
 
     public static ZeroCodeCsvReportBuilder newInstance() {
         return new ZeroCodeCsvReportBuilder();
@@ -21,7 +22,7 @@ public class ZeroCodeCsvReportBuilder {
 
     public ZeroCodeCsvReport build() {
         ZeroCodeCsvReport built = new ZeroCodeCsvReport(scenarioName,scenarioLoop,stepName, stepLoop,
-                correlationId, result, method, url, requestTimeStamp, responseTimeStamp, responseDelayMilliSec);
+                correlationId, result, method, host, url, requestTimeStamp, responseTimeStamp, responseDelayMilliSec);
         return built;
     }
 
@@ -42,6 +43,11 @@ public class ZeroCodeCsvReportBuilder {
 
     public ZeroCodeCsvReportBuilder url(String url) {
         this.url = url;
+        return this;
+    }
+
+    public ZeroCodeCsvReportBuilder host(String host) {
+        this.host = host;
         return this;
     }
 
