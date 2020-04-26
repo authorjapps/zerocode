@@ -3,6 +3,7 @@ package org.jsmart.zerocode.core.httpclient;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -67,7 +68,7 @@ public class BasicHttpClientTest {
     }
 
     @Test
-    public void test_queryParamEncodedChar() throws IOException {
+    public void test_queryParamEncodedChar() throws URISyntaxException {
         Map<String, Object> queryParamsMap = new HashMap<>();
         queryParamsMap.put("q1", "value1");
         queryParamsMap.put("q2", "value2");
@@ -95,7 +96,7 @@ public class BasicHttpClientTest {
     }
 
     @Test
-    public void test_emptyQueryParams() throws IOException {
+    public void test_emptyQueryParams() throws URISyntaxException {
         String effectiveUrl = basicHttpClient.handleUrlAndQueryParams("http://test-url", new HashMap<>());
         assertThat(effectiveUrl, is("http://test-url"));
         effectiveUrl = basicHttpClient.handleUrlAndQueryParams("http://test-url", null);
