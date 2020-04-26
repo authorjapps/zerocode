@@ -28,6 +28,20 @@
             }
         },
         {
+            "name": "get_repos_by_query_params",
+            "url": "/users/octocat/repos?page=1",
+            "method": "GET",
+            "request": {
+                "queryParams":{
+                    "per_page":6
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body.SIZE": 6
+            }
+        },
+        {
             "name": "get_all_reposs_without_query",
             "url": "/users/octocat/repos",
             "method": "GET",
