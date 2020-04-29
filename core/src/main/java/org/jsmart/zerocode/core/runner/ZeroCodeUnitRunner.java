@@ -16,15 +16,11 @@ import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.TargetEnv;
-import org.jsmart.zerocode.core.domain.UseHttpClient;
-import org.jsmart.zerocode.core.domain.UseKafkaClient;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
-import org.jsmart.zerocode.core.kafka.client.ZerocodeCustomKafkaClient;
 import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
@@ -33,6 +29,7 @@ import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -42,9 +39,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.System.getProperty;
-import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ZEROCODE_JUNIT;
+import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomHttpClientOrDefault;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomKafkaClientOrDefault;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
@@ -98,7 +95,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier) {
-        ZeroCodeTestReportListener reportListener = new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator());
+        RunListener reportListener = createReportListener();
 
         LOGGER.info("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
         if (!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
@@ -169,6 +166,15 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             return injector;
         }
+    }
+
+    /**
+     * Override this for Junit custom lister handling.
+     * End User experience can be enhanced via this
+     * @return An instance of the Junit RunListener
+     */
+    protected RunListener createReportListener() {
+        return getMainModuleInjector().getInstance(ZeroCodeTestReportListener.class);
     }
 
     protected SmartUtils getInjectedSmartUtilsClass() {
@@ -319,7 +325,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         return logPrefixRelationshipId;
     }
 
-    private void handleNoRunListenerReport(ZeroCodeTestReportListener reportListener) {
+    protected void handleNoRunListenerReport(RunListener reportListener) {
         if (CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
             /**
              * Gradle does not support JUnit RunListener. Hence Zerocode gracefully handled this
@@ -333,7 +339,12 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
              * - many more related tickets.
              */
             LOGGER.debug("Bypassed JUnit RunListener [as configured by the build tool] to generate useful reports...");
-            reportListener.testRunFinished(new Result());
+            try {
+                reportListener.testRunFinished(new Result());
+            } catch (Exception e) {
+                LOGGER.error("### Exception occurred while handling non-maven(e.g. Gradle) report generation => " + e);
+                throw new RuntimeException(e);
+            }
         }
     }
 
