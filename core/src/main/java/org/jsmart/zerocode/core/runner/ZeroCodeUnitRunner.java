@@ -3,33 +3,24 @@ package org.jsmart.zerocode.core.runner;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
-import java.lang.annotation.Annotation;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.module.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.di.module.RuntimeKafkaClientModule;
-import org.jsmart.zerocode.core.domain.HostProperties;
-import org.jsmart.zerocode.core.domain.JsonTestCase;
-import org.jsmart.zerocode.core.domain.Scenario;
-import org.jsmart.zerocode.core.domain.ScenarioSpec;
-import org.jsmart.zerocode.core.domain.TargetEnv;
-import org.jsmart.zerocode.core.domain.UseHttpClient;
-import org.jsmart.zerocode.core.domain.UseKafkaClient;
+import org.jsmart.zerocode.core.domain.*;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
-import org.jsmart.zerocode.core.kafka.client.ZerocodeCustomKafkaClient;
 import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.internal.runners.model.ReflectiveCallable;
+import org.junit.internal.runners.statements.Fail;
+import org.junit.rules.RunRules;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -41,13 +32,17 @@ import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static java.lang.System.getProperty;
-import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ZEROCODE_JUNIT;
-import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomHttpClientOrDefault;
-import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomKafkaClientOrDefault;
-import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
+import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.*;
 
 public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeUnitRunner.class);
@@ -115,7 +110,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
         final Description description = describeChild(method);
         JsonTestCase jsonTestCaseAnno = method.getMethod().getAnnotation(JsonTestCase.class);
-        if(jsonTestCaseAnno == null){
+        if (jsonTestCaseAnno == null) {
             jsonTestCaseAnno = evalScenarioToJsonTestCase(method.getMethod().getAnnotation(Scenario.class));
         }
 
@@ -124,8 +119,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             notifier.fireTestIgnored(description);
 
         } else if (jsonTestCaseAnno != null) {
-
-            runLeafJsonTest(notifier, description, jsonTestCaseAnno);
+            runLeafJsonTest(method, notifier, description, jsonTestCaseAnno);
 
         } else {
             // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -134,6 +128,36 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             runLeafJUnitTest(methodBlock(method), description, notifier);
         }
 
+    }
+
+    private Statement withRules(FrameworkMethod method, Object target,
+                                Statement statement) {
+        List<TestRule> testRules = getTestRules(target);
+        Statement result = statement;
+        result = withMethodRules(method, testRules, target, result);
+        result = withTestRules(method, testRules, result);
+
+        return result;
+    }
+
+    private Statement withTestRules(FrameworkMethod method, List<TestRule> testRules,
+                                    Statement statement) {
+        return testRules.isEmpty() ? statement :
+                new RunRules(statement, testRules, describeChild(method));
+    }
+
+    private Statement withMethodRules(FrameworkMethod method, List<TestRule> testRules,
+                                      Object target, Statement result) {
+        for (org.junit.rules.MethodRule each : getMethodRules(target)) {
+            if (!testRules.contains(each)) {
+                result = each.apply(result, method, target);
+            }
+        }
+        return result;
+    }
+
+    private List<org.junit.rules.MethodRule> getMethodRules(Object target) {
+        return rules(target);
     }
 
     public List<String> getSmartTestCaseNames() {
@@ -179,39 +203,68 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
-    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno) {
-        if (jsonTestCaseAnno != null) {
-            currentTestCase = jsonTestCaseAnno.value();
-        }
-
-        notifier.fireTestStarted(description);
-
-        LOGGER.debug("### Running currentTestCase : " + currentTestCase);
-
-        ScenarioSpec child = null;
+    private void runLeafJsonTest(FrameworkMethod method, RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno) {
+        Object test;
         try {
-            child = smartUtils.scenarioFileToJava(currentTestCase, ScenarioSpec.class);
-
-            LOGGER.debug("### Found currentTestCase : -" + child);
-
-            passed = multiStepsRunner.runScenario(child, notifier, description);
-
-        } catch (Exception ioEx) {
-            ioEx.printStackTrace();
-            notifier.fireTestFailure(new Failure(description, ioEx));
+            test = new ReflectiveCallable() {
+                @Override
+                protected Object runReflectiveCall() throws Throwable {
+                    return createTest();
+                }
+            }.run();
+        } catch (Throwable e) {
+            return;
         }
 
-        testRunCompleted = true;
-
-        if (passed) {
-            LOGGER.info(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
-                    child.getScenarioName(),
-                    child.getSteps().stream()
-                            .map(step -> step.getName() == null ? step.getId() : step.getName())
-                            .collect(Collectors.toList())));
+        Statement statement = createZeroCodeStatement(jsonTestCaseAnno, notifier, description);
+        statement = possiblyExpectingExceptions(method, test, statement);
+        statement = withPotentialTimeout(method, test, statement);
+        statement = withBefores(method, test, statement);
+        statement = withAfters(method, test, statement);
+        statement = withRules(method, test, statement);
+        try {
+            statement.evaluate();
+        } catch (Throwable e) {
         }
 
-        notifier.fireTestFinished(description);
+    }
+
+    private Statement createZeroCodeStatement(JsonTestCase jsonTestCaseAnno, RunNotifier notifier, Description description) {
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                if (jsonTestCaseAnno != null) {
+                    currentTestCase = jsonTestCaseAnno.value();
+                }
+                notifier.fireTestStarted(description);
+
+                LOGGER.debug("### Running currentTestCase : " + currentTestCase);
+                ScenarioSpec child = null;
+                try {
+                    child = smartUtils.scenarioFileToJava(currentTestCase, ScenarioSpec.class);
+
+                    LOGGER.debug("### Found currentTestCase : -" + child);
+
+                    passed = multiStepsRunner.runScenario(child, notifier, description);
+                } catch (Throwable ioEx) {
+                    ioEx.printStackTrace();
+                    notifier.fireTestFailure(new Failure(description, ioEx));
+                    throw ioEx;
+                } finally {
+                    testRunCompleted = true;
+
+                    if (passed) {
+                        LOGGER.info(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
+                                child.getScenarioName(),
+                                child.getSteps().stream()
+                                        .map(step -> step.getName() == null ? step.getId() : step.getName())
+                                        .collect(Collectors.toList())));
+                    }
+
+                    notifier.fireTestFinished(description);
+                }
+            }
+        };
     }
 
     private List<String> getSmartChildrenList() {
@@ -220,7 +273,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
                 frameworkMethod -> {
                     JsonTestCase jsonTestCaseAnno = frameworkMethod.getAnnotation(JsonTestCase.class);
 
-                    if(jsonTestCaseAnno == null){
+                    if (jsonTestCaseAnno == null) {
                         jsonTestCaseAnno = evalScenarioToJsonTestCase(frameworkMethod.getAnnotation(Scenario.class));
                     }
 
@@ -284,6 +337,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             eachNotifier.fireTestFinished();
         }
     }
+
 
     private void buildReportAndPrintToFile(Description description) {
         ZeroCodeExecReportBuilder reportResultBuilder = newInstance().loop(0).scenarioName(description.getClassName());
@@ -350,7 +404,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             @Override
             public String value() {
-                return scenario != null? scenario.value(): null;
+                return scenario != null ? scenario.value() : null;
             }
         };
 
