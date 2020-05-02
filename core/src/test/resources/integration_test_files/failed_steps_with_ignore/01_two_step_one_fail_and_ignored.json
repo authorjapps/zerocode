@@ -1,0 +1,28 @@
+{
+  "scenarioName": "GIVEN One Step Fail and ignored THEN the test is succeed",
+  "ignoreStepFailures": true,
+  "steps": [
+    {
+      "name": "FailedStep",
+      "ignoreStep": true,
+      "url": "/thisUrlShouldntWork",
+      "operation": "GET",
+      "request": {},
+      "assertions": {
+        "status": 200
+      }
+    },
+    {
+      "name": "PassedStep",
+      "url": "/thisUrlShouldntWork",
+      "operation": "GET",
+      "request": {},
+      "assertions": {
+        "status": 404
+      }
+    }
+
+  ]
+}
+
+

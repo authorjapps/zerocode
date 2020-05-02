@@ -45,6 +45,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImplVerifyTest {
     public void willNotRunIf_ignored() throws Exception {
     }
 
+    @Test
+    @JsonTestCase("integration_test_files/failed_steps_with_ignore/01_two_step_one_fail_and_ignored.json")
+    public void willPassWhen_failedTestAreIgnore() throws Exception {
+
+    }
 }
 
 
