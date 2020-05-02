@@ -1,3 +1,8 @@
+### Zerocode stands in solidarity with every family and community affected by #COVID19([Click here for FAQs and Quick Health Tips](https://github.com/authorjapps/zerocode/wiki/COVID19-FAQ)). We are grateful to medical professionals everywhere for their service, and we wish health and safety to all.
+
+<img width="954" alt="covid small" src="https://user-images.githubusercontent.com/12598420/78008268-5eda9400-7337-11ea-926b-ebb2380a2f5c.png">
+
+
 <img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
 ===
 Automated API testing has never been so easy
@@ -23,6 +28,7 @@ Quick Links
 For a quick introduction to Zerocode and its features, visit the 
 + [Zerocode Wiki](https://github.com/authorjapps/zerocode/wiki)
 + [User's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide)
++ [Release frequency](https://github.com/authorjapps/zerocode/wiki/Zerocode-release-frequency-and-schedule)
 
 Maven Dependency
 ===
@@ -60,6 +66,8 @@ then, we can easily validate the above API using `Zerocode` like below.
 
 ## Validators
 
+Using YAML
+
 ```yaml
 
 ---
@@ -82,7 +90,9 @@ validators:
 
 or
 
-```
+Using JSON
+
+```JSON
 {
   "url": "api/v1/customers/123",
   "method": "GET",
@@ -114,6 +124,8 @@ or
 
 ## Matchers
 
+Using YAML
+
 ```yaml
 
 ---
@@ -141,9 +153,9 @@ verifyMode: LENIENT
 
 or
 
-+ Using JSON DSL described as below,
+Using JSON
 
-```javaScript
+```JSON
 {
   "url": "api/v1/customers/123",
   "method": "GET",

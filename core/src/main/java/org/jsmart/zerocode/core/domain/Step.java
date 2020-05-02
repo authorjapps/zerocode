@@ -1,6 +1,7 @@
 package org.jsmart.zerocode.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,6 +28,9 @@ public class Step {
     private final boolean ignoreStep;
     private String id;
     private JsonNode stepFile;
+
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    private List<JsonNode> stepFiles;
     private List<Object> parameterized;
     private List<String> parameterizedCsv;
     private String customLog;
@@ -83,6 +87,14 @@ public class Step {
         this.id = id;
     }
 
+    public List<JsonNode> getStepFiles() {
+        return stepFiles;
+    }
+
+    public void setStepFiles(List<JsonNode> stepFiles) {
+        this.stepFiles = stepFiles;
+    }
+
     public JsonNode getStepFile() {
         return stepFile;
     }
@@ -90,6 +102,7 @@ public class Step {
     public void setStepFile(JsonNode stepFile) {
         this.stepFile = stepFile;
     }
+
 
     public List<Object> getParameterized() {
         return parameterized;
@@ -159,6 +172,7 @@ public class Step {
                 ", verify=" + verify +
                 ", id='" + id + '\'' +
                 ", stepFile=" + stepFile +
+                ", stepFiles=" + stepFiles +
                 ", parameterized=" + parameterized +
                 ", customLog=" + customLog +
                 '}';

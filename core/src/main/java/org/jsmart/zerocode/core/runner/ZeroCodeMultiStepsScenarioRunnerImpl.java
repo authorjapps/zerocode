@@ -159,21 +159,32 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             correlLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
 
-            thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
-            thisStep = extFileProcessor.createFromStepFile(thisStep, thisStep.getId());
+            Boolean wasExecSuccess = executeRetryWithSteps(notifier, description, scenarioExecutionState, scenario, thisStep);
+            if (wasExecSuccess != null) return wasExecSuccess;
+        }
 
-            Boolean wasExecSuccess = executeRetry(notifier,
+        return false;
+    }
+
+    private Boolean executeRetryWithSteps(RunNotifier notifier,
+                                          Description description,
+                                          ScenarioExecutionState scenarioExecutionState,
+                                          ScenarioSpec scenario, Step thisStep) {
+        thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
+        List<Step> thisSteps = extFileProcessor.createFromStepFile(thisStep, thisStep.getId());
+        if(null == thisSteps || thisSteps.isEmpty()) thisSteps.add(thisStep);
+        Boolean wasExecSuccess = null;
+        for(Step step : thisSteps) {
+             wasExecSuccess = executeRetry(notifier,
                     description,
                     scenarioExecutionState,
                     scenario,
-                    thisStep);
-
+                    step);
             if (wasExecSuccess != null) {
                 return wasExecSuccess;
             }
         }
-
-        return false;
+        return null;
     }
 
     private Boolean executeRetry(RunNotifier notifier,

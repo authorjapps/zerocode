@@ -1,0 +1,12 @@
+
+  {
+    "name": "step_file_with_node",
+    "url": "",
+    "operation": "",
+    "customLog": "Contributing to Zerocode",
+    "request": {
+      "req": "hey zerocode"
+    },
+    "assertions": {
+    }
+  }

@@ -1,18 +1,17 @@
 package org.jsmart.zerocode.core.utils;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.stream.IntStream;
-
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.jsmart.zerocode.core.utils.TokenUtils.absolutePathOf;
+import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
+import static org.junit.Assert.*;
 
 public class TokenUtilsTest {
 
@@ -94,11 +93,40 @@ public class TokenUtilsTest {
     }
 
     @Test
-    public void testFixedRandomUniqueness() {
+    public void testFixedLengthRandomNumberUniqueness() {
         String result = resolveKnownTokens("${RANDOM.NUMBER:12},${RANDOM.NUMBER:12}");
         String[] split = result.split(",");
-        assertTrue(split[0] != split[1]);
+        assertFalse(split[0].equals(split[1]));
     }
+
+    @Test
+    public void testRandomNumberUniqueness(){
+        String result = resolveKnownTokens("${RANDOM.NUMBER},${RANDOM.NUMBER}");
+        String[] split = result.split(",");
+        assertFalse(split[0].equals(split[1]));
+    }
+
+    @Test
+    public void testFixedRandomNumberSameness(){
+        String result = resolveKnownTokens("${RANDOM.NUMBER.FIXED},${RANDOM.NUMBER.FIXED}");
+        String[] split = result.split(",");
+        assertTrue(split[0].equals(split[1]));
+    }
+
+    @Test
+    public void testUUIDUniqueness(){
+        String result = resolveKnownTokens("${RANDOM.UUID},${RANDOM.UUID}");
+        String[] split = result.split(",");
+        assertFalse(split[0].equals(split[1]));
+    }
+
+    @Test
+    public void testUUIDFixedSameness(){
+        String result = resolveKnownTokens("${RANDOM.UUID.FIXED},${RANDOM.UUID.FIXED}");
+        String[] split = result.split(",");
+        assertTrue(split[0].equals(split[1]));
+    }
+
 
 
     @Test
@@ -111,5 +139,16 @@ public class TokenUtilsTest {
         });
     }
 
+    @Test
+    public void testAbsolutePathOf_wrongPath() {
+        exceptionRule.expectMessage("Wrong file name or path found");
+        exceptionRule.expectMessage("Please fix it and rerun.");
+        absolutePathOf("WRONG_PATH/jks_files/dummy_key_store.jks");
+    }
 
+    @Test
+    public void testAbsolutePathOf() {
+        assertThat(absolutePathOf("unit_test_files/jks_files/dummy_key_store.jks"),
+                containsString("zerocode/core/target/test-classes/unit_test_files/jks_files/dummy_key_store.jks"));
+    }
 }

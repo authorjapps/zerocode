@@ -7,12 +7,13 @@ public class ZeroCodeCsvReport {
     private Integer stepLoop;
     private String correlationId;
     private String result;
+    private String method;
     String requestTimeStamp;
     String responseTimeStamp;
     private Double responseDelayMilliSec;
 
     public ZeroCodeCsvReport(String scenarioName, Integer scenarioLoop, String stepName, Integer stepLoop,
-                             String correlationId, String result, String requestTimeStamp,
+                             String correlationId, String result, String method, String requestTimeStamp,
                              String responseTimeStamp, Double responseDelayMilliSec) {
         this.scenarioName = scenarioName;
         this.scenarioLoop = scenarioLoop;
@@ -20,6 +21,7 @@ public class ZeroCodeCsvReport {
         this.stepLoop = stepLoop;
         this.correlationId = correlationId;
         this.result = result;
+        this.method=method;
         this.requestTimeStamp = requestTimeStamp;
         this.responseTimeStamp = responseTimeStamp;
         this.responseDelayMilliSec = responseDelayMilliSec;
@@ -49,6 +51,10 @@ public class ZeroCodeCsvReport {
         return result;
     }
 
+    public String getMethod() {
+        return method;
+    }
+
     public Double getResponseDelayMilliSec() {
         return responseDelayMilliSec;
     }
@@ -70,6 +76,7 @@ public class ZeroCodeCsvReport {
                 ", stepLoop=" + stepLoop +
                 ", correlationId='" + correlationId + '\'' +
                 ", result='" + result + '\'' +
+                ", method='" + method + '\'' +
                 ", requestTimeStamp=" + requestTimeStamp +
                 ", responseTimeStamp=" + responseTimeStamp +
                 ", responseDelayMilliSec=" + responseDelayMilliSec +

@@ -1,12 +1,13 @@
 package org.jsmart.zerocode.core.utils;
 
+import java.io.File;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.text.StrSubstitutor;
@@ -15,6 +16,7 @@ import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.ABS_PATH;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATETIME_NOW;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATE_TODAY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER;
@@ -25,8 +27,10 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.STATIC_
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.SYSTEM_ENV;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.SYSTEM_PROPERTY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.XML_FILE;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.getKnownTokens;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_UU_ID_FIXED;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER_FIXED;
 
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.getKnownTokens;
 public class TokenUtils {
 
     public static String resolveKnownTokens(String requestJsonOrAnyString) {
@@ -48,9 +52,17 @@ public class TokenUtils {
                         if (runTimeToken.startsWith(RANDOM_NUMBER)) {
                             String[] slices = runTimeToken.split(":");
                             if (slices.length == 2) {
-                                paramaMap.put(runTimeToken, FixedLengthRandomGenerator.getGenerator(Integer.parseInt(slices[1])));
+                                if(runTimeToken.startsWith(RANDOM_NUMBER_FIXED)){
+                                    paramaMap.put(runTimeToken,  FixedLengthRandomGenerator.getGenerator(Integer.parseInt(slices[1])).toString());
+                                }else{
+                                    paramaMap.put(runTimeToken, FixedLengthRandomGenerator.getGenerator(Integer.parseInt(slices[1])));
+                                }
                             } else {
-                                paramaMap.put(runTimeToken, System.currentTimeMillis());
+                                if(runTimeToken.equals(RANDOM_NUMBER_FIXED)){
+                                    paramaMap.put(runTimeToken, new RandomNumberGenerator().toString());
+                                }else {
+                                    paramaMap.put(runTimeToken, new RandomNumberGenerator());
+                                }
                             }
 
                         } else if (runTimeToken.startsWith(RANDOM_STRING_ALPHA)) {
@@ -76,12 +88,10 @@ public class TokenUtils {
                             paramaMap.put(runTimeToken, LocalDateTime.now().format(formatter));
 
                         } else if (runTimeToken.startsWith(SYSTEM_PROPERTY)) {
-
                             String propertyName = runTimeToken.substring(SYSTEM_PROPERTY.length());
                             paramaMap.put(runTimeToken, System.getProperty(propertyName));
 
-                        }else if (runTimeToken.startsWith(SYSTEM_ENV)) {
-
+                        } else if (runTimeToken.startsWith(SYSTEM_ENV)) {
                             String propertyName = runTimeToken.substring(SYSTEM_ENV.length());
                             paramaMap.put(runTimeToken, System.getenv(propertyName));
 
@@ -93,13 +103,22 @@ public class TokenUtils {
                             paramaMap.put(runTimeToken, escapeJava(xmlString));
 
                         } else if (runTimeToken.startsWith(RANDOM_UU_ID)) {
-                            paramaMap.put(runTimeToken, randomUUID().toString());
+                            if(runTimeToken.equals(RANDOM_UU_ID_FIXED)){
+                                paramaMap.put(runTimeToken, UUID.randomUUID().toString());
+                            }else{
+                                paramaMap.put(runTimeToken, new UUIDGenerator());
+                            }
+
+                        } else if (runTimeToken.startsWith(ABS_PATH)) {
+                            String propertyName = runTimeToken.substring(ABS_PATH.length());
+                            paramaMap.put(runTimeToken, absolutePathOf(propertyName));
                         }
                     }
                 }
         );
 
     }
+
 
     /**
      * This method was introduced later,
@@ -151,5 +170,20 @@ public class TokenUtils {
         }
     }
 
+    public static String absolutePathOf(String resourceFilePath) {
+        URL res = TokenUtils.class.getClassLoader().getResource(resourceFilePath);
+        if(res == null){
+            throw new RuntimeException("Wrong file name or path found '" + resourceFilePath + "', Please fix it and rerun.");
+        }
 
+        File file = null;
+        try {
+            file = Paths.get(res.toURI()).toFile();
+        } catch (Exception e) {
+            throw new RuntimeException("Something went wrong while fetching abs path of '" + resourceFilePath + "', " +
+                    "Please recheck the file/path. Full exception is : " + e);
+        }
+
+        return file.getAbsolutePath();
+    }
 }
