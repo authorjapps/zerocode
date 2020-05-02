@@ -1,12 +1,10 @@
 package org.jsmart.zerocode.core.runner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import com.jayway.jsonpath.JsonPath;
 import com.univocity.parsers.csv.CsvParser;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,11 +12,9 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
-import org.jsmart.zerocode.core.domain.Validator;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
-import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
@@ -38,8 +34,6 @@ import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
-import static org.jsmart.zerocode.core.utils.HelperJsonUtils.readObjectAsMap;
-import static org.jsmart.zerocode.core.utils.HelperJsonUtils.strictComparePayload;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getParameterSize;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
@@ -158,6 +152,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         ScenarioSpec scenario = parameterizedScenario;
 
         for (Step thisStep : parameterizedScenario.getSteps()) {
+            if (thisStep.getIgnoreStep()) {
+                LOGGER.info("Step \"" + thisStep.getName() + "\" is ignored because of ignoreStep property.");
+                continue;
+            }
 
             correlLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
 
