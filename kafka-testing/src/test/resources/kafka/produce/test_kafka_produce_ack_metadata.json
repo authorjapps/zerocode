@@ -18,7 +18,7 @@
                 "recordMetadata" : {
                     "offset" : "$NOT.NULL",
                     "timestamp" : "$NOT.NULL",
-                    "serializedKeySize" : 19,
+                    "serializedKeySize" : "$GT.0",
                     "serializedValueSize" : 11,
                     "topicPartition" : {
                         "hash" : "$NOT.NULL",
