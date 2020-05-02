@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.jsmart.zerocode.core.domain.Step;
@@ -85,17 +87,27 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
     }
 
     @Override
-    public Step createFromStepFile(Step thisStep, String stepId) {
+    public List<Step> createFromStepFile(Step thisStep, String stepId) {
+        List<Step> thisSteps = new ArrayList<>();
         if (thisStep.getStepFile() != null) {
             try {
-                thisStep = objectMapper.treeToValue(thisStep.getStepFile(), Step.class);
+                thisSteps.add(objectMapper.treeToValue(thisStep.getStepFile(), Step.class));
             } catch (JsonProcessingException e) {
                 LOGGER.error("\n### Error while parsing for stepId - {}, stepFile - {}",
                         stepId, thisStep.getStepFile());
                 throw new RuntimeException(e);
             }
+        } else if(null != thisStep.getStepFiles() && !thisStep.getStepFiles().isEmpty()) {
+            try {
+                for(int i = 0; i < thisStep.getStepFiles().size(); i++)
+                    thisSteps.add(objectMapper.treeToValue(thisStep.getStepFiles().get(i), Step.class));
+            } catch (JsonProcessingException e) {
+                LOGGER.error("\n### Error while parsing for stepId - {}, stepFile - {}",
+                        stepId, thisStep.getStepFiles());
+                throw new RuntimeException(e);
+            }
         }
-        return thisStep;
+        return thisSteps;
     }
 
     /**

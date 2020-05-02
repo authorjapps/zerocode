@@ -8,6 +8,7 @@ public class ZeroCodeReportStepBuilder {
     Integer loop;
     String name;
     String url;
+    String method;
     String correlationId;
     String operation;
     LocalDateTime requestTimeStamp;
@@ -26,7 +27,7 @@ public class ZeroCodeReportStepBuilder {
 
     public ZeroCodeReportStep build() {
         ZeroCodeReportStep built = new ZeroCodeReportStep(
-                loop, name, url,
+                loop, name, url, method,
                 correlationId, operation, requestTimeStamp,
                 responseTimeStamp, responseDelay, result,
                 request, response, assertions, customLog);
@@ -48,6 +49,10 @@ public class ZeroCodeReportStepBuilder {
         return this;
     }
 
+    public ZeroCodeReportStepBuilder method(String method) {
+        this.method = method;
+        return this;
+    }
     public ZeroCodeReportStepBuilder correlationId(String correlationId) {
         this.correlationId = correlationId;
         return this;

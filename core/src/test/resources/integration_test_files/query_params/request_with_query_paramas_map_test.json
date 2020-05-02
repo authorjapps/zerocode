@@ -34,7 +34,7 @@
             "assertions": {
                 "status": 404,
                 "body": {
-                    "errorId" : "$CONTAINS.STRING:could.not.find.end.point:/api/v1/search/persons?lang=Amazing&city=Lon?lang=Amazing&city=Lon"
+                    "errorId" : "$CONTAINS.STRING:could.not.find.end.point:/api/v1/search/persons?lang=Amazing&city=Lon&lang=Amazing&city=Lon"
                 }
             }
         },
@@ -43,6 +43,25 @@
             "url": "/api/v1/search/persons?lang=Amazing&city=Lon",
             "operation": "GET",
             "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body" : {
+                    "exactMatches" : true,
+                    "name" : "Mr Bean",
+                    "lang" : "Amazing",
+                    "city" : "Lon"
+                }
+            }
+        },
+        {
+            "name": "find_combing_url_and_query_params",
+            "url": "/api/v1/search/persons?lang=Amazing",
+            "operation": "GET",
+            "request": {
+                "queryParams": {
+                    "city": "Lon"
+                }
             },
             "assertions": {
                 "status": 200,

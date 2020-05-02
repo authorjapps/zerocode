@@ -1,6 +1,7 @@
 package org.jsmart.zerocode.core.httpclient;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -218,7 +219,7 @@ public class BasicHttpClient {
      * @return : Effective url
      *
      */
-    public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) throws IOException {
+    public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) throws URISyntaxException {
         if ((queryParams != null) && (!queryParams.isEmpty())) {
             httpUrl = setQueryParams(httpUrl, queryParams);
         }

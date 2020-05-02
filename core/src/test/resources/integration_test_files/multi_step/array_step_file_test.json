@@ -1,0 +1,48 @@
+{
+    "scenarioName": "Multi Step File Test",
+    "steps": [
+        {
+            "name": "first_test",
+            "url": "",
+            "operation": "",
+            "customLog": "Contributing to Zerocode",
+            "request": {
+                "id": "12"
+            },
+            "assertions": {
+            }
+        },
+        {
+            "id": "step_file",
+            "stepFiles": "${JSON.FILE:integration_test_files/multi_step/multi_step_file.json}"
+        },
+        {
+            "name": "reuse_multi_step_response",
+            "url": "",
+            "operation": "",
+            "request": {
+                "req": "${$.fist_of_multi_step.request.req}",
+                "req1": "${$.second_of_multi_step.request.req}"
+            },
+            "assertions": {
+
+            }
+        },
+        {
+            "id": "single_step_file",
+            "stepFile": "${JSON.FILE:integration_test_files/multi_step/single_step.json}"
+        },
+        {
+            "name": "checking_step_with_single_step_response",
+            "url": "",
+            "operation": "",
+            "request": {
+                "req": "${$.step_file_with_node.request.req}"
+            },
+            "assertions": {
+                "req": "hey zerocode"
+            }
+        }
+
+    ]
+}
