@@ -13,8 +13,10 @@ public class ZeroCodeValueTokens {
     public static final String PREFIX_ASU = "ASU";
     public static final String XML_FILE = "XML.FILE:";
     public static final String RANDOM_UU_ID = "RANDOM.UUID";
+    public static final String RANDOM_UU_ID_FIXED = "RANDOM.UUID.FIXED";
     public static final String RECORD_DUMP = "RECORD.DUMP:";
     public static final String RANDOM_NUMBER = "RANDOM.NUMBER";
+    public static final String RANDOM_NUMBER_FIXED = "RANDOM.NUMBER.FIXED";
     public static final String RANDOM_STRING_ALPHA = "RANDOM.STRING:";
     public static final String RANDOM_STRING_ALPHA_NUMERIC = "RANDOM.ALPHANUMERIC:";
     public static final String STATIC_ALPHABET = "STATIC.ALPHABET:";
