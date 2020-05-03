@@ -147,7 +147,7 @@ public class RestEndPointMocker {
         JsonNode headers = mockStep.getResponse().get("headers");
         JsonNode contentType = headers != null ? headers.get("Content-Type") : null;
         responseBuilder = contentType != null ?
-                responseBuilder.withHeader("Content-Type", contentType.toString()).withBody(jsonBodyRequest) :
+                responseBuilder.withHeader("Content-Type", contentType.textValue()).withBody(jsonBodyRequest) :
                 responseBuilder.withBody(jsonBodyRequest);
 
         return responseBuilder;
