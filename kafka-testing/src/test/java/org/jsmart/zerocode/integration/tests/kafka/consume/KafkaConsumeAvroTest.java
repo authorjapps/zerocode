@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.integration.tests.kafka.consume;
 
-import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.Ignore;
@@ -14,17 +14,17 @@ import org.junit.runner.RunWith;
 public class KafkaConsumeAvroTest {
 
     @Test
-    @JsonTestCase("kafka/consume/test_kafka_consume_avro_msg_json.json")
+    @Scenario("kafka/consume/test_kafka_consume_avro_msg_json.json")
     public void testKafkaConsume_avroJson() throws Exception {
     }
 
     @Test
-    @JsonTestCase("kafka/consume/test_kafka_consume_avro_msg_raw_int.json")
+    @Scenario("kafka/consume/test_kafka_consume_avro_msg_raw_int.json")
     public void testKafkaConsume_avroRaw() throws Exception {
     }
 
     @Test
-    @JsonTestCase("kafka/consume/test_kafka_consume_avro_msg_raw_json.json")
+    @Scenario("kafka/consume/test_kafka_consume_avro_msg_raw_json.json")
     public void testKafkaConsume_avroRawJson() throws Exception {
     }
 

@@ -22,6 +22,9 @@
                             "body": {
                                 "id": "cust-007",
                                 "type": "Premium"
+                            },
+                            "headers": {
+                                "Content-Type": "application/json"
                             }
                         }
                     }
@@ -49,6 +52,9 @@
                 "body": {
                     "id": "cust-007",
                     "type": "Premium"
+                },
+                "headers": {
+                    "Content-Type": ["application/json"]
                 }
             }
         },

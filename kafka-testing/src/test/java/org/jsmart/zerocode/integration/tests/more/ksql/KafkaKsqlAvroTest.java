@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.integration.tests.more.ksql;
 
-import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.Ignore;
@@ -13,13 +13,13 @@ public class KafkaKsqlAvroTest {
 
     @Ignore ("Issue still exists")
     @Test
-    @JsonTestCase("kafka/consume/ksql/WIP_ISSUE_test_ksql_print_records.json")
+    @Scenario("kafka/consume/ksql/WIP_ISSUE_test_ksql_print_records.json")
     public void testKafkaConsume_printTopicRaw() throws Exception {
     }
 
     @Ignore("Issue still exists")
     @Test
-    @JsonTestCase("kafka/consume/ksql/WIP_ISSUE_test_ksql_print_records_json.json")
+    @Scenario("kafka/consume/ksql/WIP_ISSUE_test_ksql_print_records_json.json")
     public void testKafkaConsume_printTopicJson() throws Exception {
     }
 

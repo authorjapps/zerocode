@@ -6,10 +6,8 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.text.StrSubstitutor;
@@ -29,8 +27,10 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.STATIC_
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.SYSTEM_ENV;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.SYSTEM_PROPERTY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.XML_FILE;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.getKnownTokens;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_UU_ID_FIXED;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER_FIXED;
 
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.getKnownTokens;
 public class TokenUtils {
 
     public static String resolveKnownTokens(String requestJsonOrAnyString) {
@@ -52,9 +52,17 @@ public class TokenUtils {
                         if (runTimeToken.startsWith(RANDOM_NUMBER)) {
                             String[] slices = runTimeToken.split(":");
                             if (slices.length == 2) {
-                                paramaMap.put(runTimeToken, FixedLengthRandomGenerator.getGenerator(Integer.parseInt(slices[1])));
+                                if(runTimeToken.startsWith(RANDOM_NUMBER_FIXED)){
+                                    paramaMap.put(runTimeToken,  FixedLengthRandomGenerator.getGenerator(Integer.parseInt(slices[1])).toString());
+                                }else{
+                                    paramaMap.put(runTimeToken, FixedLengthRandomGenerator.getGenerator(Integer.parseInt(slices[1])));
+                                }
                             } else {
-                                paramaMap.put(runTimeToken, System.currentTimeMillis());
+                                if(runTimeToken.equals(RANDOM_NUMBER_FIXED)){
+                                    paramaMap.put(runTimeToken, new RandomNumberGenerator().toString());
+                                }else {
+                                    paramaMap.put(runTimeToken, new RandomNumberGenerator());
+                                }
                             }
 
                         } else if (runTimeToken.startsWith(RANDOM_STRING_ALPHA)) {
@@ -95,7 +103,11 @@ public class TokenUtils {
                             paramaMap.put(runTimeToken, escapeJava(xmlString));
 
                         } else if (runTimeToken.startsWith(RANDOM_UU_ID)) {
-                            paramaMap.put(runTimeToken, randomUUID().toString());
+                            if(runTimeToken.equals(RANDOM_UU_ID_FIXED)){
+                                paramaMap.put(runTimeToken, UUID.randomUUID().toString());
+                            }else{
+                                paramaMap.put(runTimeToken, new UUIDGenerator());
+                            }
 
                         } else if (runTimeToken.startsWith(ABS_PATH)) {
                             String propertyName = runTimeToken.substring(ABS_PATH.length());
