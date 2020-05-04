@@ -63,7 +63,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     }
 
     protected SmartUtils getInjectedSmartUtilsClass() {
-        return getInjector().getInstance(SmartUtils.class);
+        return getMainModuleInjector().getInstance(SmartUtils.class);
     }
 
     @Inject
@@ -183,7 +183,9 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
     }
 
-    public Injector getInjector() {
+    // This is exact duplicate of ZeroCodeUnitRunner.getMainModuleInjector
+    // Refactor and maintain a single method in RunnerUtils
+    public Injector getMainModuleInjector() {
         //TODO: Synchronise this with e.g. synchronized (ZeroCodePackageRunner.class) {}
         final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
         String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
@@ -221,12 +223,12 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     }
 
     private ZeroCodeMultiStepsScenarioRunner getInjectedMultiStepsRunner() {
-        zeroCodeMultiStepsScenarioRunner = getInjector().getInstance(ZeroCodeMultiStepsScenarioRunner.class);
+        zeroCodeMultiStepsScenarioRunner = getMainModuleInjector().getInstance(ZeroCodeMultiStepsScenarioRunner.class);
         return zeroCodeMultiStepsScenarioRunner;
     }
 
     private ZeroCodeReportGenerator getInjectedReportGenerator() {
-        return getInjector().getInstance(ZeroCodeReportGenerator.class);
+        return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
     private void handleNoRunListenerReport(ZeroCodeTestReportListener reportListener) {

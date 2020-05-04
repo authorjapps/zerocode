@@ -38,6 +38,16 @@ public class ZeroCodeTestReportListener extends RunListener {
         LOGGER.info("#ZeroCode: Test run completed for this runner. Generating test reports and charts. " +
                 "\n* For more examples, helps, Kafka streams, APIs and Load use-cases visit https://zerocode.io");
         generateChartsAndReports();
+        runPostFinished();
+    }
+
+    /**
+     * Override this to handle post-finished tasks
+     */
+    public void runPostFinished() {
+        /*
+         * Do nothing for now
+         */
     }
 
     private void generateChartsAndReports() {
