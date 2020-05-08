@@ -19,6 +19,7 @@ import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueArrayBuilde
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeCsvReportBuilder;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 import org.jsmart.zerocode.core.domain.reports.chart.HighChartColumnHtml;
 import org.jsmart.zerocode.core.domain.reports.csv.ZeroCodeCsvReport;
 import org.slf4j.Logger;
@@ -28,10 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
@@ -82,6 +80,26 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         this.mapper = mapper;
     }
 
+    /**
+     * gets unique steps from a scenario. In case of retries, the steps have same correlation id and if
+     * one of the retries is successful, we include it in the result(not the one which failed).
+     * @param steps
+     * @return
+     */
+    private List<ZeroCodeReportStep> getUniqueSteps(List<ZeroCodeReportStep> steps){
+        Map<String,ZeroCodeReportStep> result = new HashMap<>();
+        steps.forEach(step->{
+            if(result.containsKey(step.getCorrelationId())){
+                if(step.getResult().equals(RESULT_PASS)){
+                    result.put(step.getCorrelationId(),step);
+                }
+            }else{
+                result.put(step.getCorrelationId(),step);
+            }
+        });
+        return new ArrayList<>(result.values());
+    }
+
     @Override
     public void generateExtentReport() {
 
@@ -100,17 +118,17 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                 test.assignCategory(DEFAULT_REGRESSION_CATEGORY);
 
                 test.assignAuthor(optionalAuthor(thisScenario.getScenarioName()));
-
-                thisScenario.getSteps().forEach(thisStep -> {
+                List<ZeroCodeReportStep> thisScenarioUniqueSteps = getUniqueSteps(thisScenario.getSteps());
+                thisScenarioUniqueSteps.forEach(thisStep -> {
                     test.getModel().setStartTime(utilDateOf(thisStep.getRequestTimeStamp()));
                     test.getModel().setEndTime(utilDateOf(thisStep.getResponseTimeStamp()));
 
                     final Status testStatus = thisStep.getResult().equals(RESULT_PASS) ? Status.PASS : Status.FAIL;
 					
                     ExtentTest step = test.createNode(thisStep.getName(), TEST_STEP_CORRELATION_ID + " " + thisStep.getCorrelationId());
-                 
+
                     if(testStatus.equals(Status.PASS)) {
-                    	step.pass(thisStep.getResult());
+                        step.pass(thisStep.getResult());
                     }else {
                     	step.info(MarkupHelper.createCodeBlock(thisStep.getOperation() + "\t" + thisStep.getUrl()));
                     	step.info(MarkupHelper.createCodeBlock(thisStep.getRequest(), CodeLanguage.JSON));
