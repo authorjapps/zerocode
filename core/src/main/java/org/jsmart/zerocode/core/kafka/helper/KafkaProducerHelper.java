@@ -29,7 +29,7 @@ public class KafkaProducerHelper {
     private static final Gson gson = new GsonSerDeProvider().get();
     private static final ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
-    public  static Producer<Long, String> createProducer(String bootStrapServers, String producerPropertyFile) {
+    public static Producer<Long, String> createProducer(String bootStrapServers, String producerPropertyFile) {
         try (InputStream propsIs = Resources.getResource(producerPropertyFile).openStream()) {
             Properties properties = new Properties();
             properties.load(propsIs);
@@ -53,25 +53,53 @@ public class KafkaProducerHelper {
 
     public static ProducerRecord prepareRecordToSend(String topicName, ProducerRecord recordToSend) {
 
-        return new ProducerRecord(topicName,
-                recordToSend.partition(),
-                recordToSend.timestamp(),
-                recordToSend.key(),
-                recordToSend.value());
+        // constructor without header
+        if (recordToSend.headers() == null){
+            return new ProducerRecord(topicName,
+                    recordToSend.partition(),
+                    recordToSend.timestamp(),
+                    recordToSend.key(),
+                    recordToSend.value());
+        }else {
+            // constructor with header
+            return new ProducerRecord(topicName,
+                    recordToSend.partition(),
+                    recordToSend.timestamp(),
+                    recordToSend.key(),
+                    recordToSend.value(),
+                    recordToSend.headers());
+        }
     }
 
     public static ProducerRecord prepareJsonRecordToSend(String topicName, ProducerJsonRecord recordToSend) {
 
-        return new ProducerRecord(topicName,
-                //recordToSend.partition(),
-                //recordToSend.timestamp(),
-                recordToSend.getKey(),
-                // --------------------------------------------
-                // It's a JSON as String. Nothing to worry !
-                // Kafka StringSerializer needs in this format.
-                // --------------------------------------------
-                recordToSend.getValue().toString()
-        );
+        // constructor without header
+        if (recordToSend.getHeaders() == null){
+            return new ProducerRecord(topicName,
+                    //recordToSend.partition(),
+                    //recordToSend.timestamp(),
+                    recordToSend.getKey(),
+                    // --------------------------------------------
+                    // It's a JSON as String. Nothing to worry !
+                    // Kafka StringSerializer needs in this format.
+                    // --------------------------------------------
+                    recordToSend.getValue().toString()
+            );
+        }else{
+            // constructor with header
+            return new ProducerRecord(topicName,
+                    recordToSend.getPartition(),
+                    //recordToSend.timestamp(),
+                    recordToSend.getKey(),
+                    // --------------------------------------------
+                    // It's a JSON as String. Nothing to worry !
+                    // Kafka StringSerializer needs in this format.
+                    // --------------------------------------------
+                    recordToSend.getValue().toString(),
+                    recordToSend.getHeaders()
+            );
+        }
+
     }
 
 
