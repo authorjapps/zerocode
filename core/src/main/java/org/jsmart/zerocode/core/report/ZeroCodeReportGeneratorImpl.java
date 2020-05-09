@@ -18,6 +18,7 @@ import org.jsmart.zerocode.core.domain.builders.HighChartColumnHtmlBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueArrayBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeCsvReportBuilder;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeExecResult;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 import org.jsmart.zerocode.core.domain.reports.chart.HighChartColumnHtml;
@@ -349,7 +350,11 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     }
                 })
                 .collect(Collectors.toList());
-
+        for(ZeroCodeReport zeroCodeReport : scenarioReports){
+            for(ZeroCodeExecResult zeroCodeExecResult : zeroCodeReport.getResults()){
+                zeroCodeExecResult.setSteps(getUniqueSteps(zeroCodeExecResult.getSteps()));
+            }
+        }
         return scenarioReports;
     }
 

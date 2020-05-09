@@ -35,6 +35,10 @@ public class ZeroCodeExecResult {
         return steps;
     }
 
+    public void setSteps(List<ZeroCodeReportStep> steps) {
+        this.steps = steps;
+    }
+
     @Override
     public String toString() {
         return "ZeroCodeExecResult{" +
