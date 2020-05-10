@@ -57,7 +57,8 @@ public class KafkaProducerHelper {
                 recordToSend.partition(),
                 recordToSend.timestamp(),
                 recordToSend.key(),
-                recordToSend.value());
+                recordToSend.value(),
+                recordToSend.headers());
     }
 
     public static ProducerRecord<Object, Object> prepareJsonRecordToSend(String topicName, ProducerJsonRecord<?> recordToSend) {
