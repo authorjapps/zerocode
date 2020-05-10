@@ -2,14 +2,21 @@ package org.jsmart.zerocode.core.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_FAIL;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_PASS;
+import static org.junit.Assert.assertEquals;
 
 public class ZeroCodeReportGeneratorImplTest {
 
@@ -74,6 +81,34 @@ public class ZeroCodeReportGeneratorImplTest {
         author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment");
         assertThat(author, is("Anonymous"));
 
+    }
+
+    @Test
+    public void testGettingUniqueStepsForMultipleRetries(){
+        List<ZeroCodeReportStep> steps = new ArrayList<ZeroCodeReportStep>(){
+            {
+                add(new ZeroCodeReportStep("testCorrelationId",RESULT_PASS));
+                add(new ZeroCodeReportStep("testCorrelationId",RESULT_FAIL));
+            }
+        };
+        List<ZeroCodeReportStep> uniqueSteps = zeroCodeReportGenerator.getUniqueSteps(steps);
+        assertEquals(uniqueSteps.size() , 1);
+        assertEquals(uniqueSteps.get(0).getResult(),RESULT_PASS);
+    }
+
+    @Test
+    public void testGettingUniqueStepsForNoRetries(){
+        List<ZeroCodeReportStep> steps = new ArrayList<ZeroCodeReportStep>(){
+            {
+                add(new ZeroCodeReportStep("testCorrelationId1",RESULT_PASS));
+                add(new ZeroCodeReportStep("testCorrelationId2",RESULT_FAIL));
+                add(new ZeroCodeReportStep("testCorrelationId3",RESULT_FAIL));
+            }
+        };
+        List<ZeroCodeReportStep> uniqueSteps = zeroCodeReportGenerator.getUniqueSteps(steps);
+        assertEquals(uniqueSteps.size() , 3);
+        assertEquals(uniqueSteps.stream().filter(step->step.getResult().equals(RESULT_PASS)).count(),1);
+        assertEquals(uniqueSteps.stream().filter(step->step.getResult().equals(RESULT_FAIL)).count(),2);
     }
 
 }

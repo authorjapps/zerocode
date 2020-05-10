@@ -87,7 +87,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
      * @param steps
      * @return
      */
-    private List<ZeroCodeReportStep> getUniqueSteps(List<ZeroCodeReportStep> steps){
+     List<ZeroCodeReportStep> getUniqueSteps(List<ZeroCodeReportStep> steps){
         Map<String,ZeroCodeReportStep> result = new HashMap<>();
         steps.forEach(step->{
             if(result.containsKey(step.getCorrelationId())){
