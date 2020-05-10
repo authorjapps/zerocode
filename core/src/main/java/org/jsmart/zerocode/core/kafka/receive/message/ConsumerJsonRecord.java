@@ -4,19 +4,24 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.Map;
+
 public class ConsumerJsonRecord<K> {
     private final K key;
     private final JsonNode jsonKey;
     private final JsonNode value;
+    private final Map<String, String> headers;
 
     @JsonCreator
     public ConsumerJsonRecord(
             @JsonProperty("key") K key,
             @JsonProperty("jsonKey") JsonNode jsonKey,
-            @JsonProperty("value") JsonNode value) {
+            @JsonProperty("value") JsonNode value,
+            @JsonProperty("headers") Map<String, String> headers) {
         this.key = key;
         this.jsonKey = jsonKey;
         this.value = value;
+        this.headers = headers;
     }
 
     public K getKey() {
@@ -29,6 +34,10 @@ public class ConsumerJsonRecord<K> {
 
     public JsonNode getValue() {
         return value;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 
     @Override

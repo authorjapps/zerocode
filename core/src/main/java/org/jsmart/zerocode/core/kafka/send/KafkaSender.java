@@ -71,7 +71,7 @@ public class KafkaSender {
                                 LOGGER.info("From file:'{}', Sending record number: {}\n", fileName, i);
                                 deliveryDetails = sendRaw(topicName, producer, record, rawRecords.getAsync());
                             }
-                        } catch(Throwable ex) {
+                        } catch(Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     } else {
@@ -112,7 +112,7 @@ public class KafkaSender {
             }
 
         } catch (Exception e) {
-            LOGGER.error("Error in sending record. Exception : " + e );
+            LOGGER.error("Error in sending record.", e);
             String failedStatus = objectMapper.writeValueAsString(new DeliveryDetails(FAILED, e.getMessage()));
             return prettyPrintJson(failedStatus);
 
@@ -131,7 +131,7 @@ public class KafkaSender {
         ProducerRecord qualifiedRecord = prepareRecordToSend(topicName, recordToSend);
 
         RecordMetadata metadata;
-        if (isAsync != null && isAsync == true) {
+        if (Boolean.TRUE.equals(isAsync)) {
             LOGGER.info("Asynchronous Producer sending record - {}", qualifiedRecord);
             metadata = (RecordMetadata) producer.send(qualifiedRecord, new ProducerAsyncCallback()).get();
         } else {
@@ -157,7 +157,7 @@ public class KafkaSender {
         ProducerRecord record = prepareJsonRecordToSend(topicName, recordToSend);
 
         RecordMetadata metadata;
-        if (isAsync != null && isAsync == true) {
+        if (Boolean.TRUE.equals(isAsync)) {
             LOGGER.info("Asynchronous - Producer sending JSON record - {}", record);
             metadata = (RecordMetadata) producer.send(record, new ProducerAsyncCallback()).get();
         } else {

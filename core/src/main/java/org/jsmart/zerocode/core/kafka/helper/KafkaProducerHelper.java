@@ -29,7 +29,7 @@ public class KafkaProducerHelper {
     private static final Gson gson = new GsonSerDeProvider().get();
     private static final ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
-    public  static Producer<Long, String> createProducer(String bootStrapServers, String producerPropertyFile) {
+    public static Producer<Long, String> createProducer(String bootStrapServers, String producerPropertyFile) {
         try (InputStream propsIs = Resources.getResource(producerPropertyFile).openStream()) {
             Properties properties = new Properties();
             properties.load(propsIs);
@@ -60,18 +60,16 @@ public class KafkaProducerHelper {
                 recordToSend.value());
     }
 
-    public static ProducerRecord prepareJsonRecordToSend(String topicName, ProducerJsonRecord recordToSend) {
-
-        return new ProducerRecord(topicName,
-                //recordToSend.partition(),
-                //recordToSend.timestamp(),
+    public static ProducerRecord<Object, Object> prepareJsonRecordToSend(String topicName, ProducerJsonRecord<?> recordToSend) {
+        return ProducerRecordBuilder.from(topicName,
                 recordToSend.getKey(),
                 // --------------------------------------------
                 // It's a JSON as String. Nothing to worry !
                 // Kafka StringSerializer needs in this format.
                 // --------------------------------------------
-                recordToSend.getValue().toString()
-        );
+                recordToSend.getValue().toString())
+                .withHeaders(recordToSend.getHeaders())
+                .build();
     }
 
 
