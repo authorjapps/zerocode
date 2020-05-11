@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.integration.tests.kafka.consume;
 
-import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.Ignore;
@@ -17,7 +17,7 @@ public class KafkaConsumeSeekOffsetTest {
     // Note- it will always pass in CI, due to fresh container spins up.
     @Ignore("Unignore this when you find out how to run this repeatedly. Otherwise release to mvn central will fail")
     @Test
-    @JsonTestCase("kafka/consume/test_kafka_consume_seek_offset.json")
+    @Scenario("kafka/consume/test_kafka_consume_seek_offset.json")
     public void testKafkaConsume_seekOffset() throws Exception {
     }
 

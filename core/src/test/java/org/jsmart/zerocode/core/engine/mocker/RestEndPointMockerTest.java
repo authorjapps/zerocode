@@ -265,7 +265,7 @@ public class RestEndPointMockerTest {
         JSONAssert.assertEquals(respBody, responseBodyActual, true);
 
         Assert.assertEquals("Content-Type", response.getEntity().getContentType().getName());
-        Assert.assertEquals("\"application/json\"", response.getEntity().getContentType().getValue());
+        Assert.assertEquals("application/json", response.getEntity().getContentType().getValue());
 
         getWireMockServer().stop();
     }
