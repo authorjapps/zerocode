@@ -1,12 +1,20 @@
 package org.jsmart.zerocode.core.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
+import org.jsmart.zerocode.core.domain.reports.cucumber.ZeroCodeCucumberReport;
+import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -16,6 +24,7 @@ public class ZeroCodeReportGeneratorImplTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    private SmartUtils smartUtils = new SmartUtils();
 
     private ZeroCodeReportGeneratorImpl zeroCodeReportGenerator;
 
@@ -74,6 +83,11 @@ public class ZeroCodeReportGeneratorImplTest {
         author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment");
         assertThat(author, is("Anonymous"));
 
+    }
+
+    @Test
+    public void testCucumberReport() throws IOException {
+        zeroCodeReportGenerator.generateCucumberReport();
     }
 
 }

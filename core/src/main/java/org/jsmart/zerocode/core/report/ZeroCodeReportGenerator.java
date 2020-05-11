@@ -10,4 +10,6 @@ public interface ZeroCodeReportGenerator {
     void generateHighChartReport();
 
     void generateExtentReport();
+
+    void generateCucumberReport();
 }
