@@ -25,8 +25,9 @@ public class GsonSerDeProvider implements Provider<Gson> {
                 .create();
     }
 
-    public static class KafkaHeadersAdapter extends TypeAdapter<Headers> {
-        public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
+    static class KafkaHeadersAdapter extends TypeAdapter<Headers> {
+
+        static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
             @SuppressWarnings("unchecked")
             @Override
             public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
@@ -37,7 +38,7 @@ public class GsonSerDeProvider implements Provider<Gson> {
             }
         };
 
-        private Gson gson;
+        private final Gson gson;
 
         public KafkaHeadersAdapter(Gson gson) {
             this.gson = gson;

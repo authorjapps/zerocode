@@ -61,6 +61,7 @@ public class KafkaSender {
             switch (recordType) {
                 case RAW:
                     rawRecords = gson.fromJson(requestJson, ProducerRawRecords.class);
+
                     String fileName = rawRecords.getFile();
                     if (fileName != null) {
                         File file = validateAndGetFile(fileName);
@@ -71,7 +72,7 @@ public class KafkaSender {
                                 LOGGER.info("From file:'{}', Sending record number: {}\n", fileName, i);
                                 deliveryDetails = sendRaw(topicName, producer, record, rawRecords.getAsync());
                             }
-                        } catch(Exception ex) {
+                        } catch(Throwable ex) {
                             throw new RuntimeException(ex);
                         }
                     } else {
@@ -87,6 +88,7 @@ public class KafkaSender {
 
                 case JSON:
                     jsonRecords = objectMapper.readValue(requestJson, ProducerJsonRecords.class);
+
                     fileName = jsonRecords.getFile();
                     if (fileName != null) {
                         File file = validateAndGetFile(fileName);

@@ -49,12 +49,15 @@ public class ProducerRawRecordsTest {
         jsonBack = gson.toJson(producerRecord);
         assertThat(producerRecord.value(), is("{\"name\": \"Nicola\"}"));
         JSONAssert.assertEquals("{\"topic\":\"topic2\",\"key\":\"key-123\",\"value\":\"{\\\"name\\\": \\\"Nicola\\\"}\"}", jsonBack, LENIENT);
+    }
 
+    @Test
+    public void testDeser_headers() {
         Headers headers = new RecordHeaders();
         headers.add("headerKey1", "headerValue1".getBytes());
         headers.add("headerKey2", "headerValue2".getBytes());
-        producerRecord = new ProducerRecord("topic2", null, "key-123", "Hello", headers);
-        jsonBack = gson.toJson(producerRecord);
+        ProducerRecord producerRecord  = new ProducerRecord("topic2", null, "key-123", "Hello", headers);
+        String jsonBack = gson.toJson(producerRecord);
         JSONAssert.assertEquals("{\"topic\":\"topic2\",\"headers\":{\"headerKey1\":\"headerValue1\",\"headerKey2\":\"headerValue2\"},\"key\":\"key-123\",\"value\":\"Hello\"}", jsonBack, LENIENT);
     }
 

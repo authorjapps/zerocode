@@ -54,7 +54,7 @@ public class ProducerJsonRecordsTest {
 
 
     @Test
-    public void should_read_producer_json_record_with_headers() throws JsonProcessingException {
+    public void testDeser_headers() throws JsonProcessingException {
         final String json = "{\n" +
                 "                \"key\": 101,\n" +
                 "                \"value\": {\n" +

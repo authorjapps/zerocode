@@ -12,9 +12,11 @@ import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceAsyncTest
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceIntKeyTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceJsonTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceRawTest;
+import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceRawWithHeadersTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceToPartitionTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceTwoRecordsTest;
+import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceWithHeadersTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceWithTimeStampTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.file.KafkaProduceAsyncFromFileRawTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.file.KafkaProduceSyncFromFileJsonTest;
@@ -34,6 +36,8 @@ import org.junit.runners.Suite;
         KafkaProduceTwoRecordsTest.class,
         KafkaProduceRawTest.class,
         KafkaProduceJsonTest.class,
+        KafkaProduceRawWithHeadersTest.class,
+        KafkaProduceWithHeadersTest.class,
         KafkaConsumeRawTest.class,
         KafkaConsumeJsonTest.class,
         KafkaProduceIntKeyTest.class,
