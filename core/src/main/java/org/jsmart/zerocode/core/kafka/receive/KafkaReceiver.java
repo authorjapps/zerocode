@@ -46,7 +46,7 @@ public class KafkaReceiver {
     @Inject
     private ConsumerCommonConfigs consumerCommonConfigs;
 
-    public String receive(String kafkaServers, String topicName, String requestJsonWithConfig) throws IOException {
+    public String receive(String kafkaServers, List<String> topicNames, String requestJsonWithConfig) throws IOException {
 
         ConsumerLocalConfigs consumerLocalConfigs = readConsumerLocalTestProperties(requestJsonWithConfig);
 
@@ -54,7 +54,7 @@ public class KafkaReceiver {
 
         LOGGER.info("\n### Kafka Consumer Effective configs:{}\n", effectiveLocal);
 
-        Consumer consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
+        Consumer consumer = createConsumer(kafkaServers, consumerPropertyFile, topicNames);
 
         final List<ConsumerRecord> rawRecords = new ArrayList<>();
         final List<ConsumerJsonRecord> jsonRecords = new ArrayList<>();

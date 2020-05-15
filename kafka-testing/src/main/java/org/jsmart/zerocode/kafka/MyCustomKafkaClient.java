@@ -4,6 +4,8 @@ import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -17,7 +19,7 @@ public class MyCustomKafkaClient extends BasicKafkaClient {
     }
 
     @Override
-    public String execute(String brokers, String topicName, String operation, String requestJson) {
+    public String execute(String brokers, List<String> topicNames, String operation, String requestJson) {
         customCodeExecuted = true;
         // ---
         // Use your custom send and receive mechanism here
@@ -30,7 +32,7 @@ public class MyCustomKafkaClient extends BasicKafkaClient {
         // Just a sanity check if flow has hit this point or not.
         assertThat(customCodeExecuted, is(true));
 
-        return super.execute(brokers, topicName, operation, requestJson);
+        return super.execute(brokers, topicNames, operation, requestJson);
     }
 }
 
