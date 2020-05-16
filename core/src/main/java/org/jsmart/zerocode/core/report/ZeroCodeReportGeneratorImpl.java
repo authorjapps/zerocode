@@ -82,21 +82,17 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     }
 
     /**
-     * gets unique steps from a scenario. In case of retries, the steps have same correlation id and if
+     * Gets unique steps from a scenario. In case of retries, the steps have same correlation id and if
      * one of the retries is successful, we include it in the result(not the one which failed).
+     * In a normal case(without retry), both PASS and FAIL will be included as usual.
      * @param steps
      * @return
      */
      List<ZeroCodeReportStep> getUniqueSteps(List<ZeroCodeReportStep> steps){
         Map<String,ZeroCodeReportStep> result = new HashMap<>();
         steps.forEach(step->{
-            if(result.containsKey(step.getCorrelationId())){
-                if(step.getResult().equals(RESULT_PASS)){
-                    result.put(step.getCorrelationId(),step);
-                }
-            }else{
-                result.put(step.getCorrelationId(),step);
-            }
+            result.merge(step.getCorrelationId(), step,
+                    (s1, s2) -> RESULT_PASS.equals(s1.getResult()) ? s1 : s2);
         });
         return new ArrayList<>(result.values());
     }
@@ -104,7 +100,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     @Override
     public void generateExtentReport() {
 
-        if(interactiveHtmlReportDisabled){
+        if (interactiveHtmlReportDisabled) {
             return;
         }
 
@@ -125,16 +121,16 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     test.getModel().setEndTime(utilDateOf(thisStep.getResponseTimeStamp()));
 
                     final Status testStatus = thisStep.getResult().equals(RESULT_PASS) ? Status.PASS : Status.FAIL;
-					
+
                     ExtentTest step = test.createNode(thisStep.getName(), TEST_STEP_CORRELATION_ID + " " + thisStep.getCorrelationId());
 
-                    if(testStatus.equals(Status.PASS)) {
+                    if (testStatus.equals(Status.PASS)) {
                         step.pass(thisStep.getResult());
-                    }else {
-                    	step.info(MarkupHelper.createCodeBlock(thisStep.getOperation() + "\t" + thisStep.getUrl()));
-                    	step.info(MarkupHelper.createCodeBlock(thisStep.getRequest(), CodeLanguage.JSON));
+                    } else {
+                        step.info(MarkupHelper.createCodeBlock(thisStep.getOperation() + "\t" + thisStep.getUrl()));
+                        step.info(MarkupHelper.createCodeBlock(thisStep.getRequest(), CodeLanguage.JSON));
                         step.info(MarkupHelper.createCodeBlock(thisStep.getResponse(), CodeLanguage.JSON));
-                    	step.fail(MarkupHelper.createCodeBlock("Reason:\n" + thisStep.getAssertions()));
+                        step.fail(MarkupHelper.createCodeBlock("Reason:\n" + thisStep.getAssertions()));
                     }
                     extentReports.flush();
                 });
@@ -152,13 +148,13 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         // (might be disabled by current runner)
         // Then it's good to link it to that spike report.
         // ------------------------------------------------
-        if(spikeChartReportEnabled || spikeChartFileName != null){
+        if (spikeChartReportEnabled || spikeChartFileName != null) {
             final String reportName = getReportName();
 
             String linkCodeToTargetSpikeChartHtml =
                     String.format("<code>&nbsp;&nbsp;<a href='%s' style=\"color: #006; background: #ff6;\"> %s </a></code>",
-                    spikeChartFileName,
-                    LINK_LABEL_NAME);
+                            spikeChartFileName,
+                            LINK_LABEL_NAME);
 
             ExtentReportsFactory.reportName(reportName + linkCodeToTargetSpikeChartHtml);
         }
@@ -167,33 +163,33 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     protected String optionalAuthor(String scenarioName) {
         String authorName = substringBetween(scenarioName, AUTHOR_MARKER, AUTHOR_MARKER);
 
-        if(authorName == null){
+        if (authorName == null) {
             authorName = substringBetween(scenarioName, AUTHOR_MARKER, ",");
         }
 
-        if(authorName == null){
+        if (authorName == null) {
             authorName = substringBetween(scenarioName, AUTHOR_MARKER, " ");
         }
 
-        if(authorName == null){
+        if (authorName == null) {
             authorName = scenarioName.substring(scenarioName.lastIndexOf(AUTHOR_MARKER) + AUTHOR_MARKER.length());
         }
 
-        if(scenarioName.lastIndexOf(AUTHOR_MARKER) == -1 || StringUtils.isEmpty(authorName)){
+        if (scenarioName.lastIndexOf(AUTHOR_MARKER) == -1 || StringUtils.isEmpty(authorName)) {
             authorName = ANONYMOUS_AUTHOR;
         }
 
         return authorName;
     }
-    
+
     protected String onlyScenarioName(String scenarioName) {
-    	
-    	int index = scenarioName.indexOf(AUTHOR_MARKER);
-    	if(index == -1) {
-    		return scenarioName;
-    	}else {
-    		return scenarioName.substring(0, index -1); 
-    	}
+
+        int index = scenarioName.indexOf(AUTHOR_MARKER);
+        if (index == -1) {
+            return scenarioName;
+        } else {
+            return scenarioName.substring(0, index - 1);
+        }
     }
 
     @Override
@@ -217,7 +213,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         /*
          * Generate: Spike Chart using HighChart
          */
-        if(spikeChartReportEnabled){
+        if (spikeChartReportEnabled) {
             HighChartColumnHtml highChartColumnHtml = convertCsvRowsToHighChartData(zeroCodeCsvFlattenedRows);
             generateHighChartReport(highChartColumnHtml);
         }
@@ -350,8 +346,8 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     }
                 })
                 .collect(Collectors.toList());
-        for(ZeroCodeReport zeroCodeReport : scenarioReports){
-            for(ZeroCodeExecResult zeroCodeExecResult : zeroCodeReport.getResults()){
+        for (ZeroCodeReport zeroCodeReport : scenarioReports) {
+            for (ZeroCodeExecResult zeroCodeExecResult : zeroCodeReport.getResults()) {
                 zeroCodeExecResult.setSteps(getUniqueSteps(zeroCodeExecResult.getSteps()));
             }
         }
@@ -365,7 +361,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
             return name.endsWith(".json");
         });
 
-        if(files == null || files.length == 0){
+        if (files == null || files.length == 0) {
 
             LOGGER.error("\n\t\t\t************\nNow files were found in folder:{}, hence could not proceed. " +
                     "\n(If this was intentional, then you can safely ignore this error)" +
