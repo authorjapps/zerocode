@@ -61,6 +61,12 @@ public class ZeroCodeReportStep {
         this.customLog = customLog;
     }
 
+
+    public  ZeroCodeReportStep(String correlationId,String result){
+        this(null,null,null,null,correlationId,null,null,null,null,result,null,null,null,null);
+    }
+
+
     public Integer getLoop() {
         return loop;
     }
