@@ -1,0 +1,56 @@
+{
+    "scenarioName": "Produce a message with headers to a kafka topic",
+    "steps": [
+        {
+            "name": "produce_to_kafka",
+            "url": "kafka-topic:demo-json-headers-topic",
+            "operation": "produce",
+            "request": {
+                "recordType": "JSON",
+                "records": [
+                    {
+                        "key": 101,
+                        "value": {
+                            "name": "Jey"
+                        },
+                        "headers": {
+                            "hKey": "something",
+                            "correlationId": "d85e88d2-3247-40a8-9c56-ec29004c45c9"
+                        }
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok",
+                "recordMetadata": "$NOT.NULL"
+            }
+        },
+        {
+            "name": "consume_from_kafka",
+            "url": "kafka-topic:demo-json-headers-topic",
+            "operation": "unload",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType": "JSON",
+                    "commitSync": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "size": 1,
+                "records": [
+                    {
+                        "key": 101,
+                        "value": {
+                            "name": "Jey"
+                        },
+                        "headers": {
+                            "hKey": "something",
+                            "correlationId": "d85e88d2-3247-40a8-9c56-ec29004c45c9"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -61,6 +61,7 @@ public class KafkaSender {
             switch (recordType) {
                 case RAW:
                     rawRecords = gson.fromJson(requestJson, ProducerRawRecords.class);
+
                     String fileName = rawRecords.getFile();
                     if (fileName != null) {
                         File file = validateAndGetFile(fileName);
@@ -87,6 +88,7 @@ public class KafkaSender {
 
                 case JSON:
                     jsonRecords = objectMapper.readValue(requestJson, ProducerJsonRecords.class);
+
                     fileName = jsonRecords.getFile();
                     if (fileName != null) {
                         File file = validateAndGetFile(fileName);
@@ -112,7 +114,7 @@ public class KafkaSender {
             }
 
         } catch (Exception e) {
-            LOGGER.error("Error in sending record. Exception : " + e );
+            LOGGER.error("Error in sending record.", e);
             String failedStatus = objectMapper.writeValueAsString(new DeliveryDetails(FAILED, e.getMessage()));
             return prettyPrintJson(failedStatus);
 
@@ -131,7 +133,7 @@ public class KafkaSender {
         ProducerRecord qualifiedRecord = prepareRecordToSend(topicName, recordToSend);
 
         RecordMetadata metadata;
-        if (isAsync != null && isAsync == true) {
+        if (Boolean.TRUE.equals(isAsync)) {
             LOGGER.info("Asynchronous Producer sending record - {}", qualifiedRecord);
             metadata = (RecordMetadata) producer.send(qualifiedRecord, new ProducerAsyncCallback()).get();
         } else {
@@ -157,7 +159,7 @@ public class KafkaSender {
         ProducerRecord record = prepareJsonRecordToSend(topicName, recordToSend);
 
         RecordMetadata metadata;
-        if (isAsync != null && isAsync == true) {
+        if (Boolean.TRUE.equals(isAsync)) {
             LOGGER.info("Asynchronous - Producer sending JSON record - {}", record);
             metadata = (RecordMetadata) producer.send(record, new ProducerAsyncCallback()).get();
         } else {

@@ -8,15 +8,20 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.Headers;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
@@ -180,11 +185,19 @@ public class KafkaConsumerHelper {
 
             Object key = thisRecord.key();
             Object value = thisRecord.value();
-            LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}",
-                    key, value, thisRecord.partition(), thisRecord.offset());
+            Headers headers = thisRecord.headers();
+            LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
+                    key, value, thisRecord.partition(), thisRecord.offset(), headers);
 
             JsonNode valueNode = objectMapper.readTree(value.toString());
-            ConsumerJsonRecord jsonRecord = new ConsumerJsonRecord(thisRecord.key(), null, valueNode);
+            Map<String, String> headersMap = null;
+            if (headers != null) {
+                headersMap = new HashMap<>();
+                for (Header header : headers) {
+                    headersMap.put(header.key(), new String(header.value()));
+                }
+            }
+            ConsumerJsonRecord jsonRecord = new ConsumerJsonRecord(thisRecord.key(), null, valueNode, headersMap);
             jsonRecords.add(jsonRecord);
         }
     }

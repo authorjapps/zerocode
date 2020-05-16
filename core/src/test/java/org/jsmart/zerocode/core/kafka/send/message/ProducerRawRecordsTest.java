@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.Headers;
+import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -46,8 +48,17 @@ public class ProducerRawRecordsTest {
         producerRecord = new ProducerRecord("topic2", "key-123", "{\"name\": \"Nicola\"}");
         jsonBack = gson.toJson(producerRecord);
         assertThat(producerRecord.value(), is("{\"name\": \"Nicola\"}"));
-        JSONAssert.assertEquals("{\"topic\":\"topic2\",\"headers\":{\"headers\":[],\"isReadOnly\":false},\"key\":\"key-123\",\"value\":\"{\\\"name\\\": \\\"Nicola\\\"}\"}", jsonBack, LENIENT);
+        JSONAssert.assertEquals("{\"topic\":\"topic2\",\"key\":\"key-123\",\"value\":\"{\\\"name\\\": \\\"Nicola\\\"}\"}", jsonBack, LENIENT);
+    }
 
+    @Test
+    public void testDeser_headers() {
+        Headers headers = new RecordHeaders();
+        headers.add("headerKey1", "headerValue1".getBytes());
+        headers.add("headerKey2", "headerValue2".getBytes());
+        ProducerRecord producerRecord  = new ProducerRecord("topic2", null, "key-123", "Hello", headers);
+        String jsonBack = gson.toJson(producerRecord);
+        JSONAssert.assertEquals("{\"topic\":\"topic2\",\"headers\":{\"headerKey1\":\"headerValue1\",\"headerKey2\":\"headerValue2\"},\"key\":\"key-123\",\"value\":\"Hello\"}", jsonBack, LENIENT);
     }
 
     @Test
