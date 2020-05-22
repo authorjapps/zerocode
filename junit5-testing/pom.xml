@@ -9,7 +9,7 @@
 
     <artifactId>zerocode-tdd-jupiter</artifactId>
     <packaging>jar</packaging>
-    <name>Zerocode JUnit5 Jupiter Testing</name>
+    <name>Zerocode JUnit5 Jupiter Load Testing</name>
     <description>Zerocode tests with JUnit5 Jupiter Engine</description>
 
     <properties>
