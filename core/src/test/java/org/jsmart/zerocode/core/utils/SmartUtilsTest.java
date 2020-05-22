@@ -206,6 +206,11 @@ public class SmartUtilsTest {
         System.out.println("isAbsPath should be true as file exits : " + isAbsPath);
         assertThat(isAbsPath, is(true));
 
+        String absPathToFileWithParent = path1.getParent().getParent().toFile().getAbsolutePath();
+        System.out.println("parentFolderAbsPath : " + absPathToFileWithParent); // This is full path
+        isAbsPath = SmartUtils.isValidAbsolutePath(absPathToFileWithParent);
+        assertThat(isAbsPath, is(true));
+
         // Delete the folders/files
         // mvn clean
     }
