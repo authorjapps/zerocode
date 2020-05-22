@@ -183,6 +183,38 @@ public class SmartUtilsTest {
         // mvn clean
     }
 
+    @Test
+    public void testScenarioFile_absolutePath() throws Exception {
+        // Try in target folder
+        String folder1File1 = "target/temp/unit_test_files/cherry_pick_tests/folder_a/test_case_1.json";
+
+        boolean isAbsPath = SmartUtils.isValidAbsolutePath(folder1File1);
+        System.out.println("isAbsPath should be false as file is not yet created : " + isAbsPath);
+        assertThat(isAbsPath, is(false)); //Do a mvn clean before this. Travis shd do this everytime build runs
+
+        // Create the folders
+        createCascadeIfNotExisting(folder1File1);
+
+        Path path1 = Paths.get(folder1File1);
+        String absolutePath1 = path1.toFile().getAbsolutePath();
+
+        // Create the files
+        File f1 = new File(absolutePath1);
+        f1.createNewFile();
+
+        isAbsPath = SmartUtils.isValidAbsolutePath(folder1File1);
+        System.out.println("isAbsPath should be true as file exits : " + isAbsPath);
+        assertThat(isAbsPath, is(true));
+
+        String absPathToFileWithParent = path1.getParent().getParent().toFile().getAbsolutePath();
+        System.out.println("parentFolderAbsPath : " + absPathToFileWithParent); // This is full path
+        isAbsPath = SmartUtils.isValidAbsolutePath(absPathToFileWithParent);
+        assertThat(isAbsPath, is(true));
+
+        // Delete the folders/files
+        // mvn clean
+    }
+
     @Ignore("Tested in local laptop. Ignored for Ci build. Follow testSuiteFolder_absolutePath() like flow ")
     @Test
     public void testSuiteFolder_symAbsolutePath() throws Exception {
