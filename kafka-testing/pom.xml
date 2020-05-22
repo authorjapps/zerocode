@@ -9,7 +9,7 @@
 
 	<artifactId>kafka-testing</artifactId>
 	<packaging>jar</packaging>
-	<name>Zerocode Kafka Testing Simple JSON DSL</name>
+	<name>Zerocode Kafka Testing With Simple YAML and JSON DSL</name>
 	<description>How to use zerocode in your project</description>
 
 	<properties>
