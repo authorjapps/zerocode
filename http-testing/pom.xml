@@ -11,7 +11,7 @@
     <artifactId>http-testing</artifactId>
 
     <packaging>jar</packaging>
-    <name>Zerocode Http Testing Simple JSON DSL</name>
+    <name>Zerocode Http Testing With Simple YAML and JSON DSL</name>
     <description>How to use zerocode in your project</description>
 
     <properties>
