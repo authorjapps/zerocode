@@ -13,7 +13,7 @@ Then run:
 mvn archetype:generate \
 -DarchetypeGroupId=org.jsmart \
 -DarchetypeArtifactId=zerocode-maven-archetype \
--DarchetypeVersion=1.3.20-SNAPSHOT \
+-DarchetypeVersion=1.3.20 \
 -DgroupId=com.myproject \
 -DartifactId=my-api-testing \
 -Dversion=1.0.0-SNAPSHOT

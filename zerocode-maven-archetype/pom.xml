@@ -8,9 +8,7 @@
         <version>1.3.20-SNAPSHOT</version>
     </parent>
     <artifactId>zerocode-maven-archetype</artifactId>
-<!--
-    <packaging>maven-archetype</packaging>
--->
+
     <name>Zerocode Automated Testing Maven Archetype</name>
     <description>Zerocode Automated-Testing Simple Maven Archetype</description>
 
