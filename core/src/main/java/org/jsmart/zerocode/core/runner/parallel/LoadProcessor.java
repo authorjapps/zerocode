@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.time.LocalDateTime.now;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FULL_REPORT_CSV_FILE_NAME;
 
 public class LoadProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadProcessor.class);
@@ -24,7 +25,7 @@ public class LoadProcessor {
 
     public LoadProcessor(String loadPropertiesFile) {
         this.loadPropertiesFile = loadPropertiesFile;
-        executorServiceRunner = new ExecutorServiceRunner(loadPropertiesFile);
+        this.executorServiceRunner = createExecutorServiceRunner();
     }
 
     public ExecutorServiceRunner getExecutorServiceRunner() {
@@ -39,6 +40,14 @@ public class LoadProcessor {
         return failedCounter;
     }
 
+    public String getLoadPropertiesFile() {
+        return loadPropertiesFile;
+    }
+
+    public ExecutorServiceRunner createExecutorServiceRunner() {
+        return new ExecutorServiceRunner(getLoadPropertiesFile());
+    }
+
     public LoadProcessor addTest(Class<?> testClass, String testMethod) {
 
         Runnable zeroCodeJunitTest = createRunnable(testClass, testMethod);
@@ -51,12 +60,19 @@ public class LoadProcessor {
     public boolean process() {
         executorServiceRunner.runRunnables();
 
-        LOGGER.info(
+        LOGGER.debug(
                 "\n------------------------------------"
                         + "\n   >> Total load test count:" + (failedCounter.get() + passedCounter.get())
                         + "\n   >> Passed count:" + passedCounter.get()
                         + "\n   >> Failed count:" + failedCounter.get()
                         + "\n------------------------------------");
+
+        LOGGER.warn("=====>> Completed this load-run! <<=====\n" +
+                "\n----------------------------------------\n"+
+                "\n>>>> Number of load tests ran : " + (failedCounter.get() + passedCounter.get()) +
+                "\n----------------------------------------\n" +
+                ">>>>>>> View the full performance results in the 'target/" + TARGET_FULL_REPORT_CSV_FILE_NAME + "' folder.\n"
+        );
 
         if (failedCounter.get() > 0) {
             return failed;
@@ -68,12 +84,19 @@ public class LoadProcessor {
     public boolean processMultiLoad() {
         executorServiceRunner.runRunnablesMulti();
 
-        LOGGER.info(
+        LOGGER.debug(
                 "\n------------------------------------"
                         + "\n   >> Total load test count:" + (failedCounter.get() + passedCounter.get())
                         + "\n   >> Passed count:" + passedCounter.get()
                         + "\n   >> Failed count:" + failedCounter.get()
                         + "\n------------------------------------");
+
+        LOGGER.warn("=====>> Completed this load-run! <<=====\n" +
+                        "\n----------------------------------------\n"+
+                        "\n>>>> Number of load tests ran : " + (failedCounter.get() + passedCounter.get()) +
+                        "\n----------------------------------------\n" +
+                ">>>>>>> View the performance results in the 'target/" + TARGET_FULL_REPORT_CSV_FILE_NAME + "' folder.\n"
+        );
 
         if (failedCounter.get() > 0) {
             return failed;

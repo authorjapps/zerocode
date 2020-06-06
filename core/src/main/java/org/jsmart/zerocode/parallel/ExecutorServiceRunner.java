@@ -147,7 +147,7 @@ public class ExecutorServiceRunner {
                 // --------------------------------------
                 //LOGGER.info("Still waiting for all threads to complete execution...");
             }
-            LOGGER.info("**Finished executing all threads**");
+            LOGGER.warn("** Completed executing all virtual-user scenarios! **");
         }
     }
 
@@ -188,7 +188,7 @@ public class ExecutorServiceRunner {
                 // wait for all tasks to finish executing
                 // LOGGER.info("Still waiting for all threads to complete execution...");
             }
-            LOGGER.info("Finished all threads");
+            LOGGER.warn("* Completed executing all virtual-user scenarios! *");
         }
 
 
@@ -236,7 +236,7 @@ public class ExecutorServiceRunner {
     }
 
     private void logLoadingProperties() {
-        LOGGER.info(
+        LOGGER.warn(
                 "\nLOAD:" +
                 "\n-----------------------------------" +
                 "\n   ### numberOfThreads : " + numberOfThreads +
