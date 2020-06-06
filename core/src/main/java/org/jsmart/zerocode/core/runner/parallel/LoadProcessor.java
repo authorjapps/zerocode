@@ -1,6 +1,9 @@
 package org.jsmart.zerocode.core.runner.parallel;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.jsmart.zerocode.core.utils.EnvUtils;
 import org.jsmart.zerocode.parallel.ExecutorServiceRunner;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -13,6 +16,8 @@ import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_
 
 public class LoadProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadProcessor.class);
+    public static final String LOGLEVEL = "loglevel";
+    public static final String DEFAULT_LOAD_LOGGING_LEVEL = "INFO";
 
     private final String loadPropertiesFile;
 
@@ -26,6 +31,7 @@ public class LoadProcessor {
     public LoadProcessor(String loadPropertiesFile) {
         this.loadPropertiesFile = loadPropertiesFile;
         this.executorServiceRunner = createExecutorServiceRunner();
+        updateLoggingLevel();
     }
 
     public ExecutorServiceRunner getExecutorServiceRunner() {
@@ -67,11 +73,12 @@ public class LoadProcessor {
                         + "\n   >> Failed count:" + failedCounter.get()
                         + "\n------------------------------------");
 
-        LOGGER.warn("=====>> Completed this load-run! <<=====\n" +
-                "\n----------------------------------------\n"+
-                "\n>>>> Number of load tests ran : " + (failedCounter.get() + passedCounter.get()) +
-                "\n----------------------------------------\n" +
-                ">>>>>>> View the full performance results in the 'target/" + TARGET_FULL_REPORT_CSV_FILE_NAME + "' folder.\n"
+        LOGGER.warn(
+                "\n-----------------------------------------------------------------------------------------------------------" +
+                "\n==>> Completed this load-run!" +
+                "\n==>> Number of load tests ran : " + (failedCounter.get() + passedCounter.get()) +
+                "\n==>> View the detailed performance results in the 'target/" + TARGET_FULL_REPORT_CSV_FILE_NAME + "' folder." +
+                "\n-----------------------------------------------------------------------------------------------------------\n\n"
         );
 
         if (failedCounter.get() > 0) {
@@ -91,11 +98,12 @@ public class LoadProcessor {
                         + "\n   >> Failed count:" + failedCounter.get()
                         + "\n------------------------------------");
 
-        LOGGER.warn("=====>> Completed this load-run! <<=====\n" +
-                        "\n----------------------------------------\n"+
-                        "\n>>>> Number of load tests ran : " + (failedCounter.get() + passedCounter.get()) +
-                        "\n----------------------------------------\n" +
-                ">>>>>>> View the performance results in the 'target/" + TARGET_FULL_REPORT_CSV_FILE_NAME + "' folder.\n"
+        LOGGER.warn(
+                "\n-----------------------------------------------------------------------------------------------------------" +
+                        "\n==>> Completed this load-run!" +
+                        "\n==>> Number of load tests ran : " + (failedCounter.get() + passedCounter.get()) +
+                        "\n==>> View the detailed performance results in the 'target/" + TARGET_FULL_REPORT_CSV_FILE_NAME + "' folder." +
+                        "\n-----------------------------------------------------------------------------------------------------------\n\n"
         );
 
         if (failedCounter.get() > 0) {
@@ -121,4 +129,12 @@ public class LoadProcessor {
         };
     }
 
+    private void updateLoggingLevel() {
+        String loggingLevel = EnvUtils.getEnvValueString(LOGLEVEL);
+        loggingLevel = loggingLevel != null ? loggingLevel : DEFAULT_LOAD_LOGGING_LEVEL;
+        LOGGER.warn("Logging level has been set to:{}, to change this use: '{}'", loggingLevel, "-Dloglevel=<WARN or INFO or DEBUG etc>");
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.jsmart.zerocode.core");
+        logger.setLevel(Level.toLevel(loggingLevel));
+    }
 }

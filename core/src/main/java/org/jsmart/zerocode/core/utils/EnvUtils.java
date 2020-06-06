@@ -12,8 +12,7 @@ public class EnvUtils {
     }
 
     public static String getEnvValueString(String envKey) {
-        String envValue = getProperty(envKey) == null ? getenv(envKey) : getProperty(envKey);
-        return envValue == null ? null : envValue;
+        return getProperty(envKey) == null ? getenv(envKey) : getProperty(envKey);
     }
 
 }
