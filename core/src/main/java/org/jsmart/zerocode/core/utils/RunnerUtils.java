@@ -134,17 +134,4 @@ public class RunnerUtils {
                 (csvSource != null ? csvSource.size() : 0);
     }
 
-
-    public static Class<? extends BasicKafkaClient> getCustomKafkaClientOrDefault(Class<?> testClass) {
-        final UseKafkaClient kafkaClientAnnotated = testClass.getAnnotation(UseKafkaClient.class);
-        return kafkaClientAnnotated != null ? kafkaClientAnnotated.value() : ZerocodeCustomKafkaClient.class;
-    }
-
-    public static Class<? extends BasicHttpClient> getCustomHttpClientOrDefault(Class<?> testClass) {
-        final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
-        return httpClientAnnotated != null ? httpClientAnnotated.value() : SslTrustHttpClient.class;
-    }
-
-
-
 }

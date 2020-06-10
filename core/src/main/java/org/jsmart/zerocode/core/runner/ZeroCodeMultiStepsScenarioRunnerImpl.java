@@ -435,7 +435,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .requestTimeStamp(requestTimeStamp)
                         .step(thisStepName)
                         .url(url)
-                        .method(operationName)
+                        .method(operationName.toUpperCase())
                         .id(stepId)
                         .request(prettyPrintJson(resolvedRequestJson));
 

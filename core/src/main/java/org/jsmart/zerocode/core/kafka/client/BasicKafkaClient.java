@@ -23,7 +23,7 @@ public class BasicKafkaClient {
         LOGGER.info("brokers:{}, topicName:{}, operation:{}, requestJson:{}", brokers, topicName, operation, requestJson);
 
         try {
-            switch (operation) {
+            switch (operation.toLowerCase()) {
                 case "send":
                 case "load":
                 case "publish":
