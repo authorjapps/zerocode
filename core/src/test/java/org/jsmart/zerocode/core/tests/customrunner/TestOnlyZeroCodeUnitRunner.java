@@ -26,7 +26,7 @@ public class TestOnlyZeroCodeUnitRunner extends ZeroCodeUnitRunner {
     }
 
     public Class<? extends BasicHttpClient> createCustomHttpClientOrDefault() {
-        return SslTrustHttpClient.class;
+        return getUseHttpClient() == null? SslTrustHttpClient.class : getUseHttpClient().value();
     }
 
 }

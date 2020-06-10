@@ -176,8 +176,12 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     public Class<? extends BasicHttpClient> createCustomHttpClientOrDefault() {
-        final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
+        final UseHttpClient httpClientAnnotated = getUseHttpClient();
         return httpClientAnnotated != null ? httpClientAnnotated.value() : SslTrustHttpClient.class;
+    }
+
+    public UseHttpClient getUseHttpClient() {
+        return testClass.getAnnotation(UseHttpClient.class);
     }
 
     /**
