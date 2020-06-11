@@ -17,9 +17,13 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Scenarios;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.TestPackageRoot;
+import org.jsmart.zerocode.core.domain.UseHttpClient;
+import org.jsmart.zerocode.core.domain.UseKafkaClient;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
+import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
+import org.jsmart.zerocode.core.kafka.client.ZerocodeCustomKafkaClient;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
@@ -34,8 +38,6 @@ import static com.google.inject.Guice.createInjector;
 import static java.lang.System.getProperty;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ZEROCODE_JUNIT;
-import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomHttpClientOrDefault;
-import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomKafkaClientOrDefault;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
 public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
@@ -192,8 +194,8 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
         serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 
-        Class<? extends BasicHttpClient> runtimeHttpClient = getCustomHttpClientOrDefault(testClass);
-        Class<? extends BasicKafkaClient> runtimeKafkaClient = getCustomKafkaClientOrDefault(testClass);
+        Class<? extends BasicHttpClient> runtimeHttpClient = createCustomHttpClientOrDefault();
+        Class<? extends BasicKafkaClient> runtimeKafkaClient = createCustomKafkaClientOrDefault();
 
         return createInjector(Modules.override(new ApplicationMainModule(serverEnv))
                 .with(
@@ -220,6 +222,16 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
     public void setZeroCodeMultiStepsScenarioRunner(ZeroCodeMultiStepsScenarioRunner zeroCodeMultiStepsScenarioRunner) {
         this.zeroCodeMultiStepsScenarioRunner = zeroCodeMultiStepsScenarioRunner;
+    }
+
+    public Class<? extends BasicKafkaClient> createCustomKafkaClientOrDefault() {
+        final UseKafkaClient kafkaClientAnnotated = testClass.getAnnotation(UseKafkaClient.class);
+        return kafkaClientAnnotated != null ? kafkaClientAnnotated.value() : ZerocodeCustomKafkaClient.class;
+    }
+
+    public Class<? extends BasicHttpClient> createCustomHttpClientOrDefault() {
+        final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
+        return httpClientAnnotated != null ? httpClientAnnotated.value() : SslTrustHttpClient.class;
     }
 
     private ZeroCodeMultiStepsScenarioRunner getInjectedMultiStepsRunner() {

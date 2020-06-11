@@ -16,11 +16,15 @@ import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.TargetEnv;
+import org.jsmart.zerocode.core.domain.UseHttpClient;
+import org.jsmart.zerocode.core.domain.UseKafkaClient;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
+import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
+import org.jsmart.zerocode.core.kafka.client.ZerocodeCustomKafkaClient;
 import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
@@ -42,8 +46,6 @@ import static java.lang.System.getProperty;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ZEROCODE_JUNIT;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
-import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomHttpClientOrDefault;
-import static org.jsmart.zerocode.core.utils.RunnerUtils.getCustomKafkaClientOrDefault;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
 
 public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
@@ -154,8 +156,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 
-            Class<? extends BasicHttpClient> runtimeHttpClient = getCustomHttpClientOrDefault(testClass);
-            Class<? extends BasicKafkaClient> runtimeKafkaClient = getCustomKafkaClientOrDefault(testClass);
+            Class<? extends BasicHttpClient> runtimeHttpClient = createCustomHttpClientOrDefault();
+            Class<? extends BasicKafkaClient> runtimeKafkaClient = createCustomKafkaClientOrDefault();
 
             injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
                     .with(
@@ -166,6 +168,20 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             return injector;
         }
+    }
+
+    public Class<? extends BasicKafkaClient> createCustomKafkaClientOrDefault() {
+        final UseKafkaClient kafkaClientAnnotated = testClass.getAnnotation(UseKafkaClient.class);
+        return kafkaClientAnnotated != null ? kafkaClientAnnotated.value() : ZerocodeCustomKafkaClient.class;
+    }
+
+    public Class<? extends BasicHttpClient> createCustomHttpClientOrDefault() {
+        final UseHttpClient httpClientAnnotated = getUseHttpClient();
+        return httpClientAnnotated != null ? httpClientAnnotated.value() : SslTrustHttpClient.class;
+    }
+
+    public UseHttpClient getUseHttpClient() {
+        return testClass.getAnnotation(UseHttpClient.class);
     }
 
     /**
@@ -367,5 +383,6 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
         return jsonTestCase.value() == null ? null : jsonTestCase;
     }
+
 
 }

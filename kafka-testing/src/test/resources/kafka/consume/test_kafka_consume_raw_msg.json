@@ -4,7 +4,7 @@
         {
             "name": "load_kafka",
             "url": "kafka-topic:demo-raw1",
-            "operation": "load",
+            "operation": "PRODUCE",
             "request": {
                 "records": [
                     {
@@ -20,7 +20,7 @@
         {
             "name": "onload_kafka",
             "url": "kafka-topic:demo-raw1",
-            "operation": "unload",
+            "operation": "CONSUME",
             "request": {
                 "consumerLocalConfigs": {
                     "recordType": "RAW",

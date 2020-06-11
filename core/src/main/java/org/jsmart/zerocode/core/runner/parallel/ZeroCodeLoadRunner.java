@@ -21,6 +21,7 @@ public class ZeroCodeLoadRunner extends ParentRunner<TestMapping> {
 
     private final Class<?> testClass;
     private LoadProcessor loadProcessor;
+
     private String loadPropertiesFile;
     private Description testDescription;
 
@@ -28,7 +29,11 @@ public class ZeroCodeLoadRunner extends ParentRunner<TestMapping> {
         super(testClass);
         this.testClass = testClass;
         this.loadPropertiesFile = validateAndGetLoadPropertiesFile();
-        loadProcessor = new LoadProcessor(loadPropertiesFile);
+        loadProcessor = createLoadProcessor();
+    }
+
+    public LoadProcessor createLoadProcessor() {
+        return new LoadProcessor(loadPropertiesFile);
     }
 
     @Override
@@ -63,6 +68,10 @@ public class ZeroCodeLoadRunner extends ParentRunner<TestMapping> {
     @Override
     public void run(RunNotifier notifier) {
         super.run(notifier);
+    }
+
+    public String getLoadPropertiesFile() {
+        return loadPropertiesFile;
     }
 
     private String validateAndGetLoadPropertiesFile() {
