@@ -1,9 +1,6 @@
 package org.jsmart.zerocode.core.runner.parallel;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.jsmart.zerocode.core.utils.EnvUtils;
 import org.jsmart.zerocode.parallel.ExecutorServiceRunner;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
