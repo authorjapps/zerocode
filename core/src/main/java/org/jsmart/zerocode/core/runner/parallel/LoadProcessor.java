@@ -31,7 +31,6 @@ public class LoadProcessor {
     public LoadProcessor(String loadPropertiesFile) {
         this.loadPropertiesFile = loadPropertiesFile;
         this.executorServiceRunner = createExecutorServiceRunner();
-        updateLoggingLevel();
     }
 
     public ExecutorServiceRunner getExecutorServiceRunner() {
@@ -129,6 +128,7 @@ public class LoadProcessor {
         };
     }
 
+    /*
     private void updateLoggingLevel() {
         String loggingLevel = EnvUtils.getEnvValueString(LOGLEVEL);
         loggingLevel = loggingLevel != null ? loggingLevel : DEFAULT_LOAD_LOGGING_LEVEL;
@@ -137,4 +137,5 @@ public class LoadProcessor {
         ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.jsmart.zerocode.core");
         logger.setLevel(Level.toLevel(loggingLevel));
     }
+    */
 }
