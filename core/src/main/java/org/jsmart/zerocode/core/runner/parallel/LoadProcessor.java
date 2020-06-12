@@ -13,8 +13,6 @@ import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_
 
 public class LoadProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadProcessor.class);
-    public static final String LOGLEVEL = "loglevel";
-    public static final String DEFAULT_LOAD_LOGGING_LEVEL = "INFO";
 
     private final String loadPropertiesFile;
 
