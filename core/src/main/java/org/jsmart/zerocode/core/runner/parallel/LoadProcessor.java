@@ -1,9 +1,6 @@
 package org.jsmart.zerocode.core.runner.parallel;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.jsmart.zerocode.core.utils.EnvUtils;
 import org.jsmart.zerocode.parallel.ExecutorServiceRunner;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -16,8 +13,6 @@ import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_
 
 public class LoadProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadProcessor.class);
-    public static final String LOGLEVEL = "loglevel";
-    public static final String DEFAULT_LOAD_LOGGING_LEVEL = "INFO";
 
     private final String loadPropertiesFile;
 
@@ -31,7 +26,6 @@ public class LoadProcessor {
     public LoadProcessor(String loadPropertiesFile) {
         this.loadPropertiesFile = loadPropertiesFile;
         this.executorServiceRunner = createExecutorServiceRunner();
-        updateLoggingLevel();
     }
 
     public ExecutorServiceRunner getExecutorServiceRunner() {
@@ -129,6 +123,7 @@ public class LoadProcessor {
         };
     }
 
+    /*
     private void updateLoggingLevel() {
         String loggingLevel = EnvUtils.getEnvValueString(LOGLEVEL);
         loggingLevel = loggingLevel != null ? loggingLevel : DEFAULT_LOAD_LOGGING_LEVEL;
@@ -137,4 +132,5 @@ public class LoadProcessor {
         ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.jsmart.zerocode.core");
         logger.setLevel(Level.toLevel(loggingLevel));
     }
+    */
 }
