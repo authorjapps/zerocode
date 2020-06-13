@@ -12,7 +12,7 @@ import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
 @Inherited
 public @interface UseKafkaClient {
     /**
-     * @return a Http Client implementation class which will override the default implementation of RestEasy client
+     * @return a Kafka Client implementation class which will override the default implementation
      */
     Class<? extends BasicKafkaClient> value();
 }
