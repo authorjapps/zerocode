@@ -26,7 +26,7 @@ public class FieldTypeConversionUtilsTest {
     ObjectMapper mapper = new ObjectMapperProvider().get();
 
     @Test
-    public void testSubstituted_v3() throws IOException {
+    public void testSubstituted_v4() throws IOException {
         String originalJson = "{\n" +
                 "    \"found\": true,\n" +
                 "    \"currentAddress\":{\n" +
@@ -41,7 +41,8 @@ public class FieldTypeConversionUtilsTest {
                 "        {\n" +
                 "            \"id\": 2.35,\n" +
                 "            \"name\": \"Bar\",\n" +
-                "            \"isActive\": false\n" +
+                "            \"isActive\": false,\n" +
+                "            \"longField\": 1569683094000\n" +
                 "        }\n" +
                 "    ]\n" +
                 "}";
@@ -60,7 +61,8 @@ public class FieldTypeConversionUtilsTest {
                 "        {\n" +
                 "            \"id\": \"(float)${$.results[1].id}\",\n" +
                 "            \"name\": \"Bar - ${$.results[1].id}\",\n" +
-                "            \"isActive\": \"(boolean)${$.results[1].isActive}\"\n" +
+                "            \"isActive\": \"(boolean)${$.results[1].isActive}\",\n" +
+                "            \"longField\": \"(long)${$.results[1].longField}\"\n" +
                 "        }\n" +
                 "    ]\n" +
                 "}";
@@ -70,6 +72,7 @@ public class FieldTypeConversionUtilsTest {
         tokens.add("$.results[0].id");
         tokens.add("$.results[1].id");
         tokens.add("$.results[1].isActive");
+        tokens.add("$.results[1].longField");
 
         Map<String, Object> paramMap = new HashMap<>();
 
@@ -89,7 +92,7 @@ public class FieldTypeConversionUtilsTest {
         JsonNode jsonNode = mapper.valueToTree(stepMap);
 
         assertEquals(true, jsonNode.get("found").asBoolean());
-        assertEquals("{\"id\":2.35,\"name\":\"Bar - 2.35\",\"isActive\":false}",
+        assertEquals("{\"id\":2.35,\"name\":\"Bar - 2.35\",\"isActive\":false,\"longField\":1569683094000}",
                 jsonNode.get("results").get(1).toString());
         assertEquals("address line1", jsonNode.get("currentAddress").get("line1").asText());
     }
