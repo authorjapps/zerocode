@@ -67,20 +67,16 @@ public class KafkaReceiver {
             LOGGER.info("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
 
             final ConsumerRecords records = consumer.poll(ofMillis(getPollTime(effectiveLocal)));
+            noOfTimeOuts++;
 
             if (records.count() == 0) {
-                noOfTimeOuts++;
-                if (noOfTimeOuts > getMaxTimeOuts(effectiveLocal)) {
+                if (noOfTimeOuts >= getMaxTimeOuts(effectiveLocal)) {
                     break;
                 } else {
                     continue;
                 }
             } else {
-                LOGGER.info("Got {} records after {} timeouts\n", records.count(), noOfTimeOuts);
-                // -----------------------------------
-                // reset after it fetched some records
-                // -----------------------------------
-                noOfTimeOuts = 0;
+                LOGGER.info("Received {} records after {} timeouts\n", records.count(), noOfTimeOuts);
             }
 
             if (records != null) {
@@ -105,6 +101,10 @@ public class KafkaReceiver {
             }
 
             handleCommitSyncAsync(consumer, consumerCommonConfigs, effectiveLocal);
+
+            if (noOfTimeOuts >= getMaxTimeOuts(effectiveLocal)) {
+                break;
+            }
         }
 
         consumer.close();
