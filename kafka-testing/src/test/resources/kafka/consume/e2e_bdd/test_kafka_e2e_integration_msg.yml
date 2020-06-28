@@ -3,7 +3,7 @@ scenarioName: Intercept a message from Kafka topic
 steps:
 - name: load_kafka1
   url: kafka-topic:order-topic
-  operation: load
+  operation: PRODUCE
   request:
     records:
     - key: "${RANDOM.NUMBER}"
@@ -12,7 +12,7 @@ steps:
     status: Ok
 - name: load_kafka2
   url: kafka-topic:billing-topic
-  operation: load
+  operation: PRODUCE
   request:
     records:
     - key: "${RANDOM.NUMBER}"
@@ -21,7 +21,7 @@ steps:
     status: Ok
 - name: unload_kafka
   url: kafka-topic:billing-topic
-  operation: unload
+  operation: CONSUME
   request:
     consumerLocalConfigs:
       showRecordsConsumed: true

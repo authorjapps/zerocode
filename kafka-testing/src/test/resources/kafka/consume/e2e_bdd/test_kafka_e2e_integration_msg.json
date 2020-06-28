@@ -1,10 +1,10 @@
 {
-    "scenarioName": "consume a JSON message",
+    "scenarioName": "Intercept a RAW message",
     "steps": [
         {
             "name": "load_kafka1",
             "url": "kafka-topic:order-topic",
-            "operation": "load",
+            "operation": "PRODUCE",
             "request": {
                 "records": [
                     {
@@ -18,11 +18,12 @@
             }
         },
         {
-            // Application reads from "order-topic" and enriches with Card details and sends to "billing-topic"
-            // You can remove this step while testing your APplication code
+            // Application reads from "order-topic", then
+            // enriches with Card details and sends to "billing-topic".
+            // You can remove this step while testing your actual Kafka Application logic
             "name": "load_kafka2",
             "url": "kafka-topic:billing-topic",
-            "operation": "load",
+            "operation": "PRODUCE",
             "request": {
                 "records": [
                     {
@@ -38,11 +39,11 @@
         {
             "name": "unload_kafka",
             "url": "kafka-topic:billing-topic",
-            "operation": "unload",
+            "operation": "CONSUME",
             "request": {
                 "consumerLocalConfigs": {
-//                    "recordType": "RAW",
-//                    "commitSync": true,
+                    // "recordType": "RAW", //Default
+                    // "commitSync": true, //Default
                     "showRecordsConsumed": true,
                     "maxNoOfRetryPollsOrTimeouts": 1,
                     "seek": "billing-topic,0,0"
