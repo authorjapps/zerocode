@@ -171,7 +171,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     public Class<? extends BasicKafkaClient> createCustomKafkaClientOrDefault() {
-        final UseKafkaClient kafkaClientAnnotated = testClass.getAnnotation(UseKafkaClient.class);
+        final UseKafkaClient kafkaClientAnnotated = getUseKafkaClient();
         return kafkaClientAnnotated != null ? kafkaClientAnnotated.value() : ZerocodeCustomKafkaClient.class;
     }
 
@@ -182,6 +182,10 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     public UseHttpClient getUseHttpClient() {
         return testClass.getAnnotation(UseHttpClient.class);
+    }
+
+    public UseKafkaClient getUseKafkaClient() {
+        return testClass.getAnnotation(UseKafkaClient.class);
     }
 
     /**
