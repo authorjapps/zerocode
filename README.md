@@ -1,10 +1,5 @@
-### Zerocode stands in solidarity with every family and community affected by #COVID19([Click here for FAQs and Quick Health Tips](https://github.com/authorjapps/zerocode/wiki/COVID19-FAQ)). We are grateful to medical professionals everywhere for their service, and we wish health and safety to all.
+# ![Zerocode Logo](https://user-images.githubusercontent.com/12598420/86005149-287ee480-ba0c-11ea-91a0-d0811f15be75.png)
 
-<img width="954" alt="covid small" src="https://user-images.githubusercontent.com/12598420/78008268-5eda9400-7337-11ea-926b-ebb2380a2f5c.png">
-
-
-<img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
-===
 Automated API testing has never been so easy
 
 
