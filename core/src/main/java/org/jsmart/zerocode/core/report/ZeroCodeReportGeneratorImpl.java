@@ -36,9 +36,11 @@ import java.util.stream.Collectors;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang.StringUtils.substringBetween;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.AUTHOR_MARKER_NEW;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CATEGORY_MARKER;
 import static org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory.getReportName;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ANONYMOUS_AUTHOR;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.AUTHOR_MARKER;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ANONYMOUS_CAT;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.AUTHOR_MARKER_OLD;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.DEFAULT_REGRESSION_CATEGORY;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.HIGH_CHART_HTML_FILE_NAME;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.LINK_LABEL_NAME;
@@ -85,12 +87,13 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
      * Gets unique steps from a scenario. In case of retries, the steps have same correlation id and if
      * one of the retries is successful, we include it in the result(not the one which failed).
      * In a normal case(without retry), both PASS and FAIL will be included as usual.
+     *
      * @param steps
      * @return
      */
-     List<ZeroCodeReportStep> getUniqueSteps(List<ZeroCodeReportStep> steps){
-        Map<String,ZeroCodeReportStep> result = new HashMap<>();
-        steps.forEach(step->{
+    List<ZeroCodeReportStep> getUniqueSteps(List<ZeroCodeReportStep> steps) {
+        Map<String, ZeroCodeReportStep> result = new HashMap<>();
+        steps.forEach(step -> {
             result.merge(step.getCorrelationId(), step,
                     (s1, s2) -> RESULT_PASS.equals(s1.getResult()) ? s1 : s2);
         });
@@ -112,7 +115,8 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
             thisReport.getResults().forEach(thisScenario -> {
                 ExtentTest test = extentReports.createTest(thisScenario.getScenarioName());
-                test.assignCategory(DEFAULT_REGRESSION_CATEGORY);
+                test.assignCategory(DEFAULT_REGRESSION_CATEGORY); //Super set
+                test.assignCategory(optionalCategory(thisScenario.getScenarioName())); //Sub sets
 
                 test.assignAuthor(optionalAuthor(thisScenario.getScenarioName()));
                 List<ZeroCodeReportStep> thisScenarioUniqueSteps = getUniqueSteps(thisScenario.getSteps());
@@ -160,23 +164,41 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         }
     }
 
+    /**
+     * @param scenarioName String containing a name of an author
+     * @return author of the test scenario
+     */
     protected String optionalAuthor(String scenarioName) {
-        String authorName = substringBetween(scenarioName, AUTHOR_MARKER, AUTHOR_MARKER);
+        String authorName = deriveName(scenarioName, AUTHOR_MARKER_OLD);
+        authorName = ANONYMOUS_CAT.equals(authorName) ? deriveName(scenarioName, AUTHOR_MARKER_NEW) : authorName;
+        return authorName;
+    }
+
+    /**
+     * @param scenarioName String containing hash tags of a category
+     * @return category of the test scenario
+     */
+    protected String optionalCategory(String scenarioName) {
+        return deriveName(scenarioName, CATEGORY_MARKER);
+    }
+
+    private String deriveName(String scenarioName, String marker) {
+        String authorName = substringBetween(scenarioName, marker, marker);
 
         if (authorName == null) {
-            authorName = substringBetween(scenarioName, AUTHOR_MARKER, ",");
+            authorName = substringBetween(scenarioName, marker, ",");
         }
 
         if (authorName == null) {
-            authorName = substringBetween(scenarioName, AUTHOR_MARKER, " ");
+            authorName = substringBetween(scenarioName, marker, " ");
         }
 
         if (authorName == null) {
-            authorName = scenarioName.substring(scenarioName.lastIndexOf(AUTHOR_MARKER) + AUTHOR_MARKER.length());
+            authorName = scenarioName.substring(scenarioName.lastIndexOf(marker) + marker.length());
         }
 
-        if (scenarioName.lastIndexOf(AUTHOR_MARKER) == -1 || StringUtils.isEmpty(authorName)) {
-            authorName = ANONYMOUS_AUTHOR;
+        if (scenarioName.lastIndexOf(marker) == -1 || StringUtils.isEmpty(authorName)) {
+            authorName = ANONYMOUS_CAT;
         }
 
         return authorName;
@@ -184,7 +206,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
     protected String onlyScenarioName(String scenarioName) {
 
-        int index = scenarioName.indexOf(AUTHOR_MARKER);
+        int index = scenarioName.indexOf(AUTHOR_MARKER_OLD);
         if (index == -1) {
             return scenarioName;
         } else {

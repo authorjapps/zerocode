@@ -9,8 +9,10 @@ public interface ZeroCodeReportConstants {
     String TARGET_FULL_REPORT_CSV_FILE_NAME = "zerocode-junit-granular-report.csv";
     String TARGET_FILE_NAME = "target/zerocode-junit-interactive-fuzzy-search.html";
     String HIGH_CHART_HTML_FILE_NAME = "zerocode_results_chart";
-    String AUTHOR_MARKER = "@@";
-    String ANONYMOUS_AUTHOR = "Anonymous";
+    String AUTHOR_MARKER_OLD = "@@"; //Deprecated
+    String AUTHOR_MARKER_NEW = "@";
+    String CATEGORY_MARKER = "#";
+    String ANONYMOUS_CAT = "Anonymous";
     String REPORT_TITLE_DEFAULT = "Zerocode Test Report";
     String REPORT_DISPLAY_NAME_DEFAULT = "Zerocode Interactive Report";
     String DEFAULT_REGRESSION_CATEGORY = "Regression";
