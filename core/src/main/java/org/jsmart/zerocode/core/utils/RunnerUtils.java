@@ -1,23 +1,21 @@
 package org.jsmart.zerocode.core.utils;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.EnvProperty;
 import org.jsmart.zerocode.core.domain.Parameterized;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.TestMapping;
-import org.jsmart.zerocode.core.domain.UseHttpClient;
-import org.jsmart.zerocode.core.domain.UseKafkaClient;
-import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
-import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
-import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
-import org.jsmart.zerocode.core.kafka.client.ZerocodeCustomKafkaClient;
+import org.junit.runner.Result;
+import org.junit.runner.notification.RunListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import static java.lang.System.getProperty;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ZEROCODE_JUNIT;
 import static org.jsmart.zerocode.core.utils.SmartUtils.getEnvPropertyValue;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 
@@ -134,4 +132,26 @@ public class RunnerUtils {
                 (csvSource != null ? csvSource.size() : 0);
     }
 
+    public static void handleTestCompleted(RunListener reportListener, Logger logger) {
+        if (CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
+            /**
+             * Gradle does not support JUnit RunListener. Hence Zerocode gracefully handled this
+             * upon request from Gradle users. But this is not limited to Gradle, anywhere you
+             * want to bypass the JUnit RunListener, you can achieve this way.
+             * See README for details.
+             *
+             * There are number of tickets opened for this, but not yet fixed.
+             * - https://discuss.gradle.org/t/testrunfinished-not-run-in-junit-integration/14644
+             * - https://github.com/gradle/gradle/issues/842
+             * - many more related tickets.
+             */
+            logger.debug("Bypassed JUnit RunListener [as configured by the build tool] to generate useful reports...");
+            try {
+                reportListener.testRunFinished(new Result());
+            } catch (Exception e) {
+                logger.error("### Exception occurred while handling non-maven(e.g. Gradle) report generation => " + e);
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }
