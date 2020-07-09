@@ -327,7 +327,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             } catch (Exception ex) {
 
                 ex.printStackTrace();
-                LOGGER.info("###Exception while executing a step in the zerocode dsl.");
+                LOGGER.error("###Exception while executing a step in the zerocode dsl.");
 
                 // logging exception message
                 final LocalDateTime responseTimeStampEx = LocalDateTime.now();

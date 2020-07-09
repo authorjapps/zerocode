@@ -21,6 +21,7 @@ import static org.junit.runner.Description.createTestDescription;
 public class ZeroCodeMultiLoadRunner extends ParentRunner<TestMapping[]> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeMultiLoadRunner.class);
     public static final String LOAD_LABEL = "<<Multi-Load>>";
+    public static boolean scenariosPrinted;
 
     private final Class<?> testClass;
     private LoadProcessor loadProcessor;
@@ -31,7 +32,15 @@ public class ZeroCodeMultiLoadRunner extends ParentRunner<TestMapping[]> {
         super(testClass);
         this.testClass = testClass;
         this.loadPropertiesFile = validateAndGetLoadPropertiesFile();
-        loadProcessor = new LoadProcessor(loadPropertiesFile);
+        loadProcessor = createLoadProcessor();
+    }
+
+    public LoadProcessor createLoadProcessor() {
+        return new LoadProcessor(loadPropertiesFile);
+    }
+
+    public String getLoadPropertiesFile() {
+        return loadPropertiesFile;
     }
 
     @Override
@@ -51,7 +60,7 @@ public class ZeroCodeMultiLoadRunner extends ParentRunner<TestMapping[]> {
     @Override
     protected Description describeChild(TestMapping[] childArrayElement) {
         String multiLoadLabel = createMultiLoadLabel(childArrayElement);
-        System.out.println("### label = " + multiLoadLabel + "\n");
+        printMultiScenarios(multiLoadLabel);
         this.testDescription = createTestDescription(testClass, LOAD_LABEL + multiLoadLabel);
         return testDescription;
     }
@@ -120,5 +129,12 @@ public class ZeroCodeMultiLoadRunner extends ParentRunner<TestMapping[]> {
                         + thisChild.testClass().getSimpleName()
                         + "." + thisChild.testMethod())
                 .collect(Collectors.joining(",")) + "\n";
+    }
+
+    private void printMultiScenarios(String multiLoadLabel) {
+        if(!scenariosPrinted){
+            System.out.println("### Scenarios = " + multiLoadLabel + "\n");
+            scenariosPrinted = true;
+        }
     }
 }
