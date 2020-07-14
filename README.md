@@ -1,10 +1,5 @@
-### Zerocode stands in solidarity with every family and community affected by #COVID19([Click here for FAQs and Quick Health Tips](https://github.com/authorjapps/zerocode/wiki/COVID19-FAQ)). We are grateful to medical professionals everywhere for their service, and we wish health and safety to all.
+# ![Zerocode Logo](https://user-images.githubusercontent.com/12598420/86005149-287ee480-ba0c-11ea-91a0-d0811f15be75.png)
 
-<img width="954" alt="covid small" src="https://user-images.githubusercontent.com/12598420/78008268-5eda9400-7337-11ea-926b-ebb2380a2f5c.png">
-
-
-<img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
-===
 Automated API testing has never been so easy
 
 
@@ -18,8 +13,7 @@ Automated API testing has never been so easy
 **Issue Discussions:** [Slack](https://join.slack.com/t/zerocode-workspace/shared_invite/enQtNzYxMDAwNTQ3MjY1LTA2YmJjODJhNzQ4ZjBiYTQwZDBmZmNkNmExYjA3ZDk2OGFiZWFmNWJlNGRkOTdiMDQ4ZmQyNzcyNzVjNWQ4ODQ) <br/> 
 **Mailing List:** [Mailing List](https://groups.google.com/forum/#!forum/zerocode-automation) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
-**Gitter IM:** [Gitter](https://gitter.im/zerocode-testing/help-and-usage) <br/>
-
+**LinkedIn:** [Zerocode](https://www.linkedin.com/company/49160481)
 
 Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka Real Time Data Streams](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) and much more. It has the best of best ideas and practices from the community to keep it super simple, and the adoption is rapidly growing among the developer/tester community.
 

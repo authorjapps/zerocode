@@ -139,7 +139,7 @@ public class ZerocodeCorrelationshipLogger {
         buildResponseDelay();
 
         String customLog = responseLogBuilder.getCustomLog();
-        logger.info(format("%s %s \n*Response delay:%s milli-secs \n%s \n%s \n-done-\n",
+        logger.warn(format("%s %s \n*Response delay:%s milli-secs \n%s \n%s \n-done-\n",
                 requestLogBuilder.toString(),
                 responseLogBuilder.toString(),
                 responseDelay,

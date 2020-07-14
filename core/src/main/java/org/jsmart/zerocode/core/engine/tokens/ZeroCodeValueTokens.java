@@ -12,6 +12,7 @@ public class ZeroCodeValueTokens {
     public static final String JSON_PAYLOAD_FILE = "JSON.FILE:";
     public static final String PREFIX_ASU = "ASU";
     public static final String XML_FILE = "XML.FILE:";
+    public static final String GQL_FILE = "GQL.FILE:";
     public static final String RANDOM_UU_ID = "RANDOM.UUID";
     public static final String RANDOM_UU_ID_FIXED = "RANDOM.UUID.FIXED";
     public static final String RECORD_DUMP = "RECORD.DUMP:";
@@ -38,6 +39,7 @@ public class ZeroCodeValueTokens {
                 LOCALDATETIME_NOW,
                 SYSTEM_PROPERTY,
                 XML_FILE,
+                GQL_FILE,
                 RANDOM_UU_ID,
                 RECORD_DUMP,
                 ABS_PATH,

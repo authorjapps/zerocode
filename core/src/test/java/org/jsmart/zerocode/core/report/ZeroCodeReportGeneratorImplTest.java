@@ -56,10 +56,12 @@ public class ZeroCodeReportGeneratorImplTest {
 
     }
 
+
     @Test
     public void testAuthorJiraStyle() throws Exception {
         String author;
 
+        // OLD - Deprecated
         author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @@Peter@@");
         assertThat(author, is("Peter"));
 
@@ -79,6 +81,60 @@ public class ZeroCodeReportGeneratorImplTest {
         assertThat(author, is("Peter"));
 
         author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment");
+        assertThat(author, is("Anonymous"));
+
+    }
+
+    @Test
+    public void testAuthorJiraStyle_new() throws Exception {
+        String author;
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter@");
+        assertThat(author, is("Peter"));
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch @payment @Peter@");
+        assertThat(author, is("payment "));
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter Gibson@");
+        assertThat(author, is("Peter Gibson"));
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter Gibson");
+        assertThat(author, is("Peter"));
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment @Peter");
+        assertThat(author, is("Peter"));
+
+        author = zeroCodeReportGenerator.optionalAuthor("@Peter, PayPal One touch payment ");
+        assertThat(author, is("Peter"));
+
+        author = zeroCodeReportGenerator.optionalAuthor("PayPal One touch payment");
+        assertThat(author, is("Anonymous"));
+
+    }
+
+    @Test
+    public void testCategoryHashTag() throws Exception {
+        String author;
+
+        author = zeroCodeReportGenerator.optionalCategory("PayPal One touch payment #Smoke#");
+        assertThat(author, is("Smoke"));
+
+        author = zeroCodeReportGenerator.optionalCategory("PayPal One touch #Smoke #PDC#");
+        assertThat(author, is("Smoke "));
+
+        author = zeroCodeReportGenerator.optionalCategory("PayPal One touch payment #SIT Smoke#");
+        assertThat(author, is("SIT Smoke"));
+
+        author = zeroCodeReportGenerator.optionalCategory("PayPal One touch payment #PDC Gibson");
+        assertThat(author, is("PDC"));
+
+        author = zeroCodeReportGenerator.optionalCategory("PayPal One touch payment #PDC");
+        assertThat(author, is("PDC"));
+
+        author = zeroCodeReportGenerator.optionalCategory("#PDC, PayPal One touch payment ");
+        assertThat(author, is("PDC"));
+
+        author = zeroCodeReportGenerator.optionalCategory("PayPal One touch payment");
         assertThat(author, is("Anonymous"));
 
     }

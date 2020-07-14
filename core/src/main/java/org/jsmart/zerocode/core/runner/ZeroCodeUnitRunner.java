@@ -31,7 +31,6 @@ import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.runner.Description;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
@@ -47,6 +46,7 @@ import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ZEROCODE_JUNIT;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.handleTestCompleted;
 
 public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeUnitRunner.class);
@@ -171,7 +171,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     public Class<? extends BasicKafkaClient> createCustomKafkaClientOrDefault() {
-        final UseKafkaClient kafkaClientAnnotated = testClass.getAnnotation(UseKafkaClient.class);
+        final UseKafkaClient kafkaClientAnnotated = getUseKafkaClient();
         return kafkaClientAnnotated != null ? kafkaClientAnnotated.value() : ZerocodeCustomKafkaClient.class;
     }
 
@@ -182,6 +182,10 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     public UseHttpClient getUseHttpClient() {
         return testClass.getAnnotation(UseHttpClient.class);
+    }
+
+    public UseKafkaClient getUseKafkaClient() {
+        return testClass.getAnnotation(UseKafkaClient.class);
     }
 
     /**
@@ -342,26 +346,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     protected void handleNoRunListenerReport(RunListener reportListener) {
-        if (CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
-            /**
-             * Gradle does not support JUnit RunListener. Hence Zerocode gracefully handled this
-             * upon request from Gradle users. But this is not limited to Gradle, anywhere you
-             * want to bypass the JUnit RunListener, you can achieve this way.
-             * See README for details.
-             *
-             * There are number of tickets opened for this, but not yet fixed.
-             * - https://discuss.gradle.org/t/testrunfinished-not-run-in-junit-integration/14644
-             * - https://github.com/gradle/gradle/issues/842
-             * - many more related tickets.
-             */
-            LOGGER.debug("Bypassed JUnit RunListener [as configured by the build tool] to generate useful reports...");
-            try {
-                reportListener.testRunFinished(new Result());
-            } catch (Exception e) {
-                LOGGER.error("### Exception occurred while handling non-maven(e.g. Gradle) report generation => " + e);
-                throw new RuntimeException(e);
-            }
-        }
+        handleTestCompleted(reportListener, LOGGER);
     }
 
     private JsonTestCase evalScenarioToJsonTestCase(Scenario scenario) {

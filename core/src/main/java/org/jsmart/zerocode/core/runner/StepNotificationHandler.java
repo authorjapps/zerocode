@@ -44,7 +44,7 @@ public class StepNotificationHandler {
                     String scenarioName,
                     String stepName,
                     Exception stepException) {
-        LOGGER.info(String.format("Exception occurred while executing Scenario:[%s], --> Step:[%s], Details: %s",
+        LOGGER.error(String.format("Exception occurred while executing Scenario:[%s], --> Step:[%s], Details: %s",
                         scenarioName, stepName, stepException));
         notifier.fireTestFailure(new Failure(description, stepException));
         

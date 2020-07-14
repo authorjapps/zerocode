@@ -27,7 +27,7 @@ import org.jsmart.zerocode.core.kafka.client.ZerocodeCustomKafkaClient;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
-import org.junit.runner.Result;
+import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
@@ -39,6 +39,7 @@ import static java.lang.System.getProperty;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ZEROCODE_JUNIT;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getEnvSpecificConfigFile;
+import static org.jsmart.zerocode.core.utils.RunnerUtils.handleTestCompleted;
 
 public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodePackageRunner.class);
@@ -138,7 +139,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
     @Override
     public void run(RunNotifier notifier) {
-        ZeroCodeTestReportListener reportListener = new ZeroCodeTestReportListener(smartUtils.getMapper(), getInjectedReportGenerator());
+        RunListener reportListener = createReportListener();
         notifier.addListener(reportListener);
 
         LOGGER.info("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
@@ -150,6 +151,11 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
         handleNoRunListenerReport(reportListener);
     }
+
+    protected RunListener createReportListener() {
+        return getMainModuleInjector().getInstance(ZeroCodeTestReportListener.class);
+    }
+
 
     /**
      * Runs the test corresponding to {@code child}, which can be assumed to be
@@ -225,13 +231,21 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     }
 
     public Class<? extends BasicKafkaClient> createCustomKafkaClientOrDefault() {
-        final UseKafkaClient kafkaClientAnnotated = testClass.getAnnotation(UseKafkaClient.class);
+        final UseKafkaClient kafkaClientAnnotated = getUseKafkaClient();
         return kafkaClientAnnotated != null ? kafkaClientAnnotated.value() : ZerocodeCustomKafkaClient.class;
     }
 
     public Class<? extends BasicHttpClient> createCustomHttpClientOrDefault() {
-        final UseHttpClient httpClientAnnotated = testClass.getAnnotation(UseHttpClient.class);
+        final UseHttpClient httpClientAnnotated = getUseHttpClient();
         return httpClientAnnotated != null ? httpClientAnnotated.value() : SslTrustHttpClient.class;
+    }
+
+    public UseHttpClient getUseHttpClient() {
+        return testClass.getAnnotation(UseHttpClient.class);
+    }
+
+    public UseKafkaClient getUseKafkaClient() {
+        return testClass.getAnnotation(UseKafkaClient.class);
     }
 
     private ZeroCodeMultiStepsScenarioRunner getInjectedMultiStepsRunner() {
@@ -243,22 +257,8 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
-    private void handleNoRunListenerReport(ZeroCodeTestReportListener reportListener) {
-        if (CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
-            /**
-             * Gradle does not support JUnit RunListener. Hence Zerocode gracefully handled this
-             * upon request from Gradle users. But this is not limited to Gradle, anywhere you
-             * want to bypass the JUnit RunListener, you can achieve this way.
-             * See README for details.
-             *
-             * There are number of tickets opened for this, but not yet fixed.
-             * - https://discuss.gradle.org/t/testrunfinished-not-run-in-junit-integration/14644
-             * - https://github.com/gradle/gradle/issues/842
-             * - many more related tickets.
-             */
-            LOGGER.debug("Bypassed JUnit RunListener [as configured by the build tool] to generate useful reports...");
-            reportListener.testRunFinished(new Result());
-        }
+    private void handleNoRunListenerReport(RunListener reportListener) {
+        handleTestCompleted(reportListener, LOGGER);
     }
 
     private List<String> readTestScenarioFiles() {

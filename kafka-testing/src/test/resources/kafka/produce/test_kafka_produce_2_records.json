@@ -28,7 +28,7 @@
             "request": {
                 "consumerLocalConfigs": {
                     "showRecordsConsumed": true,
-                    "maxNoOfRetryPollsOrTimeouts": 3
+                    "maxNoOfRetryPollsOrTimeouts": 5
                 }
             },
             "assertions": {

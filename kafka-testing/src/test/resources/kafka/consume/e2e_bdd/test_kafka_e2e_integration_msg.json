@@ -1,0 +1,62 @@
+{
+    "scenarioName": "Intercept a RAW message",
+    "steps": [
+        {
+            "name": "load_kafka1",
+            "url": "kafka-topic:order-topic",
+            "operation": "PRODUCE",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Order No. 123"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            // Application reads from "order-topic", then
+            // enriches with Card details and sends to "billing-topic".
+            // You can remove this step while testing your actual Kafka Application logic
+            "name": "load_kafka2",
+            "url": "kafka-topic:billing-topic",
+            "operation": "PRODUCE",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Order No. 123, Card No. 456"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "unload_kafka",
+            "url": "kafka-topic:billing-topic",
+            "operation": "CONSUME",
+            "request": {
+                "consumerLocalConfigs": {
+                    // "recordType": "RAW", //Default
+                    // "commitSync": true, //Default
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 1,
+                    "seek": "billing-topic,0,0"
+                }
+            },
+            "assertions": {
+                "size": 1,
+                "records": [
+                    {
+                        "value": "Order No. 123, Card No. 456"
+                    }
+                ]
+            }
+        }
+    ]
+}
