@@ -10,7 +10,8 @@
                     "Content-Type": "text/xml; charset=utf-8",
                     "SOAPAction": "http://www.webserviceX.NET/ConversionRate"
                 },
-                "body": "${XML.FILE:16_soap/xml_files/soap_request.xml}"
+                "body": "${XML.FILE:integration_test_files/soap/xml_files/soap_request.xml}"
+                //"body": "${GQL.FILE:integration_test_files/soap/xml_files/soap_request.xml}" //both works
             },
             "assertions": {
                 "status": 200,

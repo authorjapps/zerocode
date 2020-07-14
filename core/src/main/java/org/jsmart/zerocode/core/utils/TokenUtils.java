@@ -17,6 +17,7 @@ import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.ABS_PATH;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.GQL_FILE;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATETIME_NOW;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATE_TODAY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER;
@@ -101,6 +102,12 @@ public class TokenUtils {
                             // Used escapeJava, do not use escapeXml as it replaces
                             // with GT LT etc ie what exactly you don't want
                             paramaMap.put(runTimeToken, escapeJava(xmlString));
+                        } else if (runTimeToken.startsWith(GQL_FILE)) {
+                            String gqlFileResource = runTimeToken.substring(GQL_FILE.length());
+                            final String gqlString = getXmlContent(gqlFileResource);
+                            // Used escapeJava, do not use escapeXml as it replaces
+                            // with GT LT etc ie what exactly you don't want
+                            paramaMap.put(runTimeToken, escapeJava(gqlString));
 
                         } else if (runTimeToken.startsWith(RANDOM_UU_ID)) {
                             if(runTimeToken.equals(RANDOM_UU_ID_FIXED)){
