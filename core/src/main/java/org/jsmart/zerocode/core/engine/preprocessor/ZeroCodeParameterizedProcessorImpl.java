@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.Step;
 import org.slf4j.Logger;
 
 import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
@@ -79,6 +81,72 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
         }
 
         throw new RuntimeException("Scenario spec was invalid. Please check the DSL format \ne.g. \n" + DSL_FORMAT);
+    }
+
+    @Override
+    public Step resolveStepParameters(ScenarioSpec scenario, int iteration, Step step) {
+        if(scenario.getParameterized() == null){
+
+            return step;
+
+        } else if (scenario.getParameterized().getValueSource() != null) {
+
+            return resolveStepParamsValues(scenario, iteration , step);
+
+        } else if (scenario.getParameterized().getCsvSource() != null) {
+
+            return resolveStepParamsCsv(scenario, iteration, step);
+
+        }
+        return null;
+    }
+
+    private Step resolveStepParamsCsv(ScenarioSpec scenario, int index,
+        Step step) {
+        LOGGER.info("Resolving parameter CSV-source for row number - {}", index);
+        try {
+            String stepJson = objectMapper.writeValueAsString(step);
+            List<String> parameterizedCsvList = scenario.getParameterized().getCsvSource();
+
+            if (parameterizedCsvList == null || parameterizedCsvList.isEmpty()) {
+                return step;
+            }
+
+            Map<String, Object> valuesMap = new HashMap<>();
+            String csvLine = parameterizedCsvList.get(index);
+
+            resolveCsvLine(valuesMap, csvLine);
+
+            String resultantStepJson = replaceWithValues(stepJson, valuesMap);
+
+            return objectMapper.readValue(resultantStepJson, Step.class);
+
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException("Error while resolving parameterizedCsv values for step - " + ex);
+        }
+    }
+
+    private Step resolveStepParamsValues(ScenarioSpec scenario, int index,
+        Step step) {
+        LOGGER.info("Resolving parameter CSV-source for row number - {}", index);
+        try {
+            String stepJson = objectMapper.writeValueAsString(step);
+            List<Object> parametersList = scenario.getParameterized().getValueSource();
+
+            if (parametersList == null || parametersList.isEmpty()) {
+                return step;
+            }
+
+            Map<String, Object> valuesMap = new HashMap<>();
+            valuesMap.put(VALUE_SOURCE_KEY, parametersList.get(index));
+
+            String resultantStepJson = replaceWithValues(stepJson, valuesMap);
+
+            return objectMapper.readValue(resultantStepJson, Step.class);
+
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException("Error while resolving parameterized values for step- " + ex);
+        }
     }
 
     private ScenarioSpec resolveParamsValues(ScenarioSpec scenario, int paramIndex) {

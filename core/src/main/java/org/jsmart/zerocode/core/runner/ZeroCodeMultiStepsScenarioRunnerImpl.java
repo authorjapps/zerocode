@@ -122,7 +122,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     .loop(scnCount)
                     .scenarioName(parameterizedScenario.getScenarioName());
 
-            wasExecSuccessful = executeSteps(notifier, description, scenarioExecutionState, parameterizedScenario);
+            wasExecSuccessful = executeSteps(notifier, description, scenarioExecutionState, parameterizedScenario, scnCount);
 
             ioWriterBuilder.result(resultReportBuilder.build());
         }
@@ -145,9 +145,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     }
 
     private boolean executeSteps(RunNotifier notifier,
-                                 Description description,
-                                 ScenarioExecutionState scenarioExecutionState,
-                                 ScenarioSpec parameterizedScenario) {
+        Description description,
+        ScenarioExecutionState scenarioExecutionState,
+        ScenarioSpec parameterizedScenario, int scnCount) {
 
         ScenarioSpec scenario = parameterizedScenario;
 
@@ -159,7 +159,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             correlLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
 
-            Boolean wasExecSuccess = executeRetryWithSteps(notifier, description, scenarioExecutionState, scenario, thisStep);
+            Boolean wasExecSuccess = executeRetryWithSteps(notifier, description, scenarioExecutionState, scenario, thisStep, scnCount);
             if (wasExecSuccess != null) return wasExecSuccess;
         }
 
@@ -167,19 +167,21 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     }
 
     private Boolean executeRetryWithSteps(RunNotifier notifier,
-                                          Description description,
-                                          ScenarioExecutionState scenarioExecutionState,
-                                          ScenarioSpec scenario, Step thisStep) {
+        Description description,
+        ScenarioExecutionState scenarioExecutionState,
+        ScenarioSpec scenario, Step thisStep, int scnCount) {
+
         thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
         List<Step> thisSteps = extFileProcessor.createFromStepFile(thisStep, thisStep.getId());
         if(null == thisSteps || thisSteps.isEmpty()) thisSteps.add(thisStep);
         Boolean wasExecSuccess = null;
         for(Step step : thisSteps) {
+            Step parametrizedStep = this.parameterizedProcessor.resolveStepParameters(scenario, scnCount, step);
              wasExecSuccess = executeRetry(notifier,
                     description,
                     scenarioExecutionState,
                     scenario,
-                    step);
+                 parametrizedStep);
             if (wasExecSuccess != null) {
                 return wasExecSuccess;
             }
