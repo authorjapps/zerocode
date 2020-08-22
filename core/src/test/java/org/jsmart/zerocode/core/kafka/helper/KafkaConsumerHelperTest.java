@@ -28,8 +28,6 @@ public class KafkaConsumerHelperTest {
     ConsumerCommonConfigs consumerCommon;
     ConsumerLocalConfigs consumerLocal;
 
-    //ObjectMapper objectMapper = (new ObjectMapperProvider()).get();
-
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
