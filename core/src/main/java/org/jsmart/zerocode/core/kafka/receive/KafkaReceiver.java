@@ -1,6 +1,5 @@
 package org.jsmart.zerocode.core.kafka.receive;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -11,7 +10,6 @@ import java.util.List;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecord;
 import org.slf4j.Logger;
@@ -36,8 +34,6 @@ import static org.jsmart.zerocode.core.kafka.helper.KafkaFileRecordHelper.handle
 public class KafkaReceiver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaReceiver.class);
-
-    private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
     @Inject(optional = true)
     @Named("kafka.consumer.properties")
