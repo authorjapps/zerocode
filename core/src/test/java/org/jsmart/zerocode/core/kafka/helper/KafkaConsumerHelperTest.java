@@ -1,10 +1,8 @@
 package org.jsmart.zerocode.core.kafka.helper;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterators;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.internals.RecordHeaders;
-import org.hamcrest.CoreMatchers;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigsWrap;
 import org.jsmart.zerocode.core.kafka.receive.ConsumerCommonConfigs;
@@ -13,7 +11,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.io.IOException;
