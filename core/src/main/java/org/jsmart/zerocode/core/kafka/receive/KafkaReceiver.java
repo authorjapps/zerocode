@@ -24,6 +24,7 @@ import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.getMaxTi
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.getPollTime;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.handleCommitSyncAsync;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.handleSeekOffset;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.initialPollWaitingForConsumerGroupJoin;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.prepareResult;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.readConsumerLocalTestProperties;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.readJson;
@@ -59,45 +60,34 @@ public class KafkaReceiver {
 
         handleSeekOffset(effectiveLocal, consumer);
 
-        while (true) {
+        LOGGER.info("initial polling to trigger ConsumerGroupJoin");
+
+        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer);
+
+        if(!records.isEmpty()) {
+            LOGGER.info("Received {} records on initial poll\n", records.count());
+
+            appendNewRecords(records, rawRecords, jsonRecords, effectiveLocal);
+
+            handleCommitSyncAsync(consumer, consumerCommonConfigs, effectiveLocal);
+        }
+
+        while (noOfTimeOuts < getMaxTimeOuts(effectiveLocal)) {
             LOGGER.info("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
 
-            final ConsumerRecords records = consumer.poll(ofMillis(getPollTime(effectiveLocal)));
+            records = consumer.poll(ofMillis(getPollTime(effectiveLocal)));
             noOfTimeOuts++;
 
             if (records.count() == 0) {
-                if (noOfTimeOuts >= getMaxTimeOuts(effectiveLocal)) {
-                    break;
-                } else {
-                    continue;
-                }
+                continue;
             }
 
             LOGGER.info("Received {} records after {} timeouts\n", records.count(), noOfTimeOuts);
 
-            Iterator recordIterator = records.iterator();
-
-            LOGGER.info("Consumer chosen recordType: " + effectiveLocal.getRecordType());
-
-            switch (effectiveLocal.getRecordType()) {
-                case RAW:
-                    readRaw(rawRecords, recordIterator);
-                    break;
-
-                case JSON:
-                    readJson(jsonRecords, recordIterator);
-                    break;
-
-                default:
-                    throw new RuntimeException("Unsupported record type - '" + effectiveLocal.getRecordType()
-                            + "'. Supported values are 'JSON','RAW'");
-            }
+            appendNewRecords(records, rawRecords, jsonRecords, effectiveLocal);
 
             handleCommitSyncAsync(consumer, consumerCommonConfigs, effectiveLocal);
 
-            if (noOfTimeOuts >= getMaxTimeOuts(effectiveLocal)) {
-                break;
-            }
         }
 
         consumer.close();
@@ -106,6 +96,26 @@ public class KafkaReceiver {
 
         return prepareResult(effectiveLocal, jsonRecords, rawRecords);
 
+    }
+
+    private void appendNewRecords(ConsumerRecords records, List<ConsumerRecord> rawRecords, List<ConsumerJsonRecord> jsonRecords, ConsumerLocalConfigs effectiveLocal) throws IOException {
+        Iterator recordIterator = records.iterator();
+
+        LOGGER.info("Consumer chosen recordType: " + effectiveLocal.getRecordType());
+
+        switch (effectiveLocal.getRecordType()) {
+            case RAW:
+                readRaw(rawRecords, recordIterator);
+                break;
+
+            case JSON:
+                readJson(jsonRecords, recordIterator);
+                break;
+
+            default:
+                throw new RuntimeException("Unsupported record type - '" + effectiveLocal.getRecordType()
+                        + "'. Supported values are 'JSON','RAW'");
+        }
     }
 
 }
