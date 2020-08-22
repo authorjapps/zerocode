@@ -71,29 +71,26 @@ public class KafkaReceiver {
                 } else {
                     continue;
                 }
-            } else {
-                LOGGER.info("Received {} records after {} timeouts\n", records.count(), noOfTimeOuts);
             }
 
-            if (records != null) {
-                Iterator recordIterator = records.iterator();
+            LOGGER.info("Received {} records after {} timeouts\n", records.count(), noOfTimeOuts);
 
-                LOGGER.info("Consumer chosen recordType: " + effectiveLocal.getRecordType());
+            Iterator recordIterator = records.iterator();
 
-                switch (effectiveLocal.getRecordType()) {
-                    case RAW:
-                        readRaw(rawRecords, recordIterator);
-                        break;
+            LOGGER.info("Consumer chosen recordType: " + effectiveLocal.getRecordType());
 
-                    case JSON:
-                        readJson(jsonRecords, recordIterator);
-                        break;
+            switch (effectiveLocal.getRecordType()) {
+                case RAW:
+                    readRaw(rawRecords, recordIterator);
+                    break;
 
-                    default:
-                        throw new RuntimeException("Unsupported record type - '" + effectiveLocal.getRecordType()
-                                + "'. Supported values are 'JSON','RAW'");
-                }
+                case JSON:
+                    readJson(jsonRecords, recordIterator);
+                    break;
 
+                default:
+                    throw new RuntimeException("Unsupported record type - '" + effectiveLocal.getRecordType()
+                            + "'. Supported values are 'JSON','RAW'");
             }
 
             handleCommitSyncAsync(consumer, consumerCommonConfigs, effectiveLocal);
