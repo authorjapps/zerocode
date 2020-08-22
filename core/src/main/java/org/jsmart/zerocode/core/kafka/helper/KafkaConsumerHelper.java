@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
@@ -32,6 +33,9 @@ import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecords;
 import org.jsmart.zerocode.core.kafka.receive.message.ConsumerRawRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
@@ -65,6 +69,20 @@ public class KafkaConsumerHelper {
         } catch (IOException e) {
             throw new RuntimeException("Exception while reading kafka properties and creating a consumer- " + e);
         }
+    }
+
+    public static ConsumerRecords initialPollWaitingForConsumerGroupJoin(Consumer consumer) {
+        for (int run = 0; run < 10; run++) {
+            if (!consumer.assignment().isEmpty()) {
+                return new ConsumerRecords(new HashMap());
+            }
+            ConsumerRecords records = consumer.poll(Duration.of(500, ChronoUnit.MILLIS));
+            if (!records.isEmpty()) {
+                return records;
+            }
+        }
+
+        throw new RuntimeException("\n********* Kafka Consumer unable to join in time *********\n");
     }
 
     public static void validateLocalConfigs(ConsumerLocalConfigs localConfigs) {
