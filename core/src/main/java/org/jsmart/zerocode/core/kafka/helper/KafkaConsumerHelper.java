@@ -286,9 +286,9 @@ public class KafkaConsumerHelper {
 
     private static void validateSeekConfig(ConsumerLocalConfigs localConfigs) {
         String seek = localConfigs.getSeek();
-        if(!isEmpty(seek)) {
+        if (!isEmpty(seek)) {
             String[] split = seek.split(",");
-            if(split == null || split.length < 3) {
+            if (split == null || split.length < 3) {
                 throw new RuntimeException("\n------> 'seek' should contain 'topic,partition,offset' e.g. 'topic1,0,2' ");
             }
         }
