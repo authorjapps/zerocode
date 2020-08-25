@@ -1,6 +1,5 @@
 package org.jsmart.zerocode.core.kafka.receive;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -11,7 +10,6 @@ import java.util.List;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecord;
 import org.slf4j.Logger;
@@ -26,6 +24,7 @@ import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.getMaxTi
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.getPollTime;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.handleCommitSyncAsync;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.handleSeekOffset;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.initialPollWaitingForConsumerGroupJoin;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.prepareResult;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.readConsumerLocalTestProperties;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.readJson;
@@ -36,8 +35,6 @@ import static org.jsmart.zerocode.core.kafka.helper.KafkaFileRecordHelper.handle
 public class KafkaReceiver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaReceiver.class);
-
-    private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
     @Inject(optional = true)
     @Named("kafka.consumer.properties")
@@ -63,48 +60,34 @@ public class KafkaReceiver {
 
         handleSeekOffset(effectiveLocal, consumer);
 
-        while (true) {
+        LOGGER.info("initial polling to trigger ConsumerGroupJoin");
+
+        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer);
+
+        if(!records.isEmpty()) {
+            LOGGER.info("Received {} records on initial poll\n", records.count());
+
+            appendNewRecords(records, rawRecords, jsonRecords, effectiveLocal);
+
+            handleCommitSyncAsync(consumer, consumerCommonConfigs, effectiveLocal);
+        }
+
+        while (noOfTimeOuts < getMaxTimeOuts(effectiveLocal)) {
             LOGGER.info("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
 
-            final ConsumerRecords records = consumer.poll(ofMillis(getPollTime(effectiveLocal)));
+            records = consumer.poll(ofMillis(getPollTime(effectiveLocal)));
             noOfTimeOuts++;
 
             if (records.count() == 0) {
-                if (noOfTimeOuts >= getMaxTimeOuts(effectiveLocal)) {
-                    break;
-                } else {
-                    continue;
-                }
-            } else {
-                LOGGER.info("Received {} records after {} timeouts\n", records.count(), noOfTimeOuts);
+                continue;
             }
 
-            if (records != null) {
-                Iterator recordIterator = records.iterator();
+            LOGGER.info("Received {} records after {} timeouts\n", records.count(), noOfTimeOuts);
 
-                LOGGER.info("Consumer chosen recordType: " + effectiveLocal.getRecordType());
-
-                switch (effectiveLocal.getRecordType()) {
-                    case RAW:
-                        readRaw(rawRecords, recordIterator);
-                        break;
-
-                    case JSON:
-                        readJson(jsonRecords, recordIterator);
-                        break;
-
-                    default:
-                        throw new RuntimeException("Unsupported record type - '" + effectiveLocal.getRecordType()
-                                + "'. Supported values are 'JSON','RAW'");
-                }
-
-            }
+            appendNewRecords(records, rawRecords, jsonRecords, effectiveLocal);
 
             handleCommitSyncAsync(consumer, consumerCommonConfigs, effectiveLocal);
 
-            if (noOfTimeOuts >= getMaxTimeOuts(effectiveLocal)) {
-                break;
-            }
         }
 
         consumer.close();
@@ -113,6 +96,26 @@ public class KafkaReceiver {
 
         return prepareResult(effectiveLocal, jsonRecords, rawRecords);
 
+    }
+
+    private void appendNewRecords(ConsumerRecords records, List<ConsumerRecord> rawRecords, List<ConsumerJsonRecord> jsonRecords, ConsumerLocalConfigs effectiveLocal) throws IOException {
+        Iterator recordIterator = records.iterator();
+
+        LOGGER.info("Consumer chosen recordType: " + effectiveLocal.getRecordType());
+
+        switch (effectiveLocal.getRecordType()) {
+            case RAW:
+                readRaw(rawRecords, recordIterator);
+                break;
+
+            case JSON:
+                readJson(jsonRecords, recordIterator);
+                break;
+
+            default:
+                throw new RuntimeException("Unsupported record type - '" + effectiveLocal.getRecordType()
+                        + "'. Supported values are 'JSON','RAW'");
+        }
     }
 
 }
