@@ -110,7 +110,7 @@ public class KafkaReceiver {
                 break;
             case PROTO:    
             case JSON:
-                readJson(jsonRecords, recordIterator,effectiveLocal.getRecordType());
+                readJson(jsonRecords, recordIterator,effectiveLocal);
                 break;
 
             default:

@@ -14,6 +14,8 @@ import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -49,6 +51,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.util.JsonFormat;
 
@@ -115,6 +119,7 @@ public class KafkaConsumerHelper {
         if (consumerLocal == null) {
             return new ConsumerLocalConfigs(
                     consumerCommon.getRecordType(),
+                    consumerCommon.getProtobufMessageClassType(),
                     consumerCommon.getFileDumpTo(),
                     consumerCommon.getCommitAsync(),
                     consumerCommon.getCommitSync(),
@@ -126,6 +131,10 @@ public class KafkaConsumerHelper {
 
         // Handle recordType
         String effectiveRecordType = ofNullable(consumerLocal.getRecordType()).orElse(consumerCommon.getRecordType());
+        
+        // Handle recordType
+        String effectiveProtobufMessageClassType = ofNullable(consumerLocal.getProtobufMessageClassType()).orElse(consumerCommon.getProtobufMessageClassType());
+
 
         // Handle fileDumpTo
         String effectiveFileDumpTo = ofNullable(consumerLocal.getFileDumpTo()).orElse(consumerCommon.getFileDumpTo());
@@ -160,6 +169,7 @@ public class KafkaConsumerHelper {
 
         return new ConsumerLocalConfigs(
                 effectiveRecordType,
+                effectiveProtobufMessageClassType,
                 effectiveFileDumpTo,
                 effectiveCommitAsync,
                 effectiveCommitSync,
@@ -201,14 +211,14 @@ public class KafkaConsumerHelper {
     }
 
     public static void readJson(List<ConsumerJsonRecord> jsonRecords,
-                                Iterator recordIterator,String recordType) throws IOException {
+                                Iterator recordIterator,ConsumerLocalConfigs consumerLocalConfig) throws IOException {
         while (recordIterator.hasNext()) {
             ConsumerRecord thisRecord = (ConsumerRecord) recordIterator.next();
 
             Object key = thisRecord.key();
             Object valueObj = thisRecord.value();
             Headers headers = thisRecord.headers();
-            String valueStr= KafkaConstants.PROTO.equalsIgnoreCase(recordType)?JsonFormat.printer().print((MessageOrBuilder)valueObj):valueObj.toString();
+            String valueStr= KafkaConstants.PROTO.equalsIgnoreCase(consumerLocalConfig.getRecordType())?convertProtobufToJson(thisRecord,consumerLocalConfig):valueObj.toString();
             LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
                     key, valueStr, thisRecord.partition(), thisRecord.offset(), headers);
 
@@ -225,7 +235,33 @@ public class KafkaConsumerHelper {
         }
     }
 
-    public static String prepareResult(ConsumerLocalConfigs testConfigs,
+	private static String convertProtobufToJson(ConsumerRecord thisRecord, ConsumerLocalConfigs consumerLocalConfig) {
+		if (org.apache.commons.lang3.StringUtils.isEmpty(consumerLocalConfig.getProtobufMessageClassType())) {
+			throw new IllegalArgumentException(
+					"[ProtobufMessageClassType] is required consumer config for PROTO record Type.");
+		}
+		MessageOrBuilder builderOrMessage = (MessageOrBuilder) createMessageOrBuilder(
+				consumerLocalConfig.getProtobufMessageClassType(), (byte[]) thisRecord.value());
+		try {
+			return JsonFormat.printer().print(builderOrMessage);
+		} catch (InvalidProtocolBufferException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	private static MessageOrBuilder createMessageOrBuilder(String messageClass, byte[] value) {
+		try {
+			Class<Message> msgClass = (Class<Message>) Class.forName(messageClass);
+			Method method = msgClass.getMethod("parseFrom", new Class[] { byte[].class });
+			return (MessageOrBuilder) method.invoke(null, value);
+		} catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException
+				| IllegalArgumentException | InvocationTargetException e) {
+			throw new IllegalArgumentException(e);
+		}
+
+	}
+
+	public static String prepareResult(ConsumerLocalConfigs testConfigs,
                                        List<ConsumerJsonRecord> jsonRecords,
                                        List<ConsumerRecord> rawRecords) throws JsonProcessingException {
 

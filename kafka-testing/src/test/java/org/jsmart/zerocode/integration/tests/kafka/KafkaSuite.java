@@ -23,6 +23,7 @@ import org.jsmart.zerocode.integration.tests.kafka.produce.file.KafkaProduceAsyn
 import org.jsmart.zerocode.integration.tests.kafka.produce.file.KafkaProduceSyncFromFileJsonTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.file.KafkaProduceSyncFromFileRawTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.negative.KafkaProduceSyncWrongFileNameTest;
+import org.jsmart.zerocode.integration.tests.kafka.protobuf.KafkaProtobufTest;
 import org.jsmart.zerocode.integration.tests.more.customclient.KafkaProduceCustomClientTest;
 import org.jsmart.zerocode.integration.tests.more.ksql.KafkaKsqlTest;
 import org.junit.runner.RunWith;
@@ -53,7 +54,8 @@ import org.junit.runners.Suite;
         KafkaProduceSyncFromFileJsonTest.class,
         KafkaProduceSyncWrongFileNameTest.class,
         KafkaConsumeSeekOffsetTest.class,
-        KafkaKsqlTest.class
+        KafkaKsqlTest.class,
+        KafkaProtobufTest.class
 })
 @RunWith(Suite.class)
 public class KafkaSuite {

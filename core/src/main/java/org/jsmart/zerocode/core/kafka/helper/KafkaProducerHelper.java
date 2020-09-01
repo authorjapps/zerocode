@@ -92,7 +92,7 @@ public class KafkaProducerHelper {
 		} catch (InvalidProtocolBufferException e) {
 			throw new IllegalArgumentException(e);
 		}
-		return builder.build();
+		return builder.build().toByteArray();
 	}
 
 	private static Builder createBuilder(String messageClass) {
