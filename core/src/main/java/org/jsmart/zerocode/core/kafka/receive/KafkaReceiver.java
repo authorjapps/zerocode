@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import static java.time.Duration.ofMillis;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.PROTO;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.createConsumer;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.deriveEffectiveConfigs;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.getMaxTimeOuts;
@@ -107,9 +108,9 @@ public class KafkaReceiver {
             case RAW:
                 readRaw(rawRecords, recordIterator);
                 break;
-
+            case PROTO:    
             case JSON:
-                readJson(jsonRecords, recordIterator);
+                readJson(jsonRecords, recordIterator,effectiveLocal.getRecordType());
                 break;
 
             default:

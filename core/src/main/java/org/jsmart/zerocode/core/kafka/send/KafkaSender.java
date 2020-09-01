@@ -29,6 +29,7 @@ import static org.jsmart.zerocode.core.constants.ZerocodeConstants.FAILED;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.OK;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.PROTO;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RECORD_TYPE_JSON_PATH;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.createProducer;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.prepareJsonRecordToSend;
@@ -49,7 +50,7 @@ public class KafkaSender {
     private final Gson gson = new GsonSerDeProvider().get();
 
     public String send(String brokers, String topicName, String requestJson) throws JsonProcessingException {
-        Producer<Long, String> producer = createProducer(brokers, producerPropertyFile);
+        Producer<?, ?> producer = createProducer(brokers, producerPropertyFile);
         String deliveryDetails = null;
 
         ProducerRawRecords rawRecords;
@@ -85,7 +86,7 @@ public class KafkaSender {
                     }
 
                     break;
-
+                case PROTO:    
                 case JSON:
                     jsonRecords = objectMapper.readValue(requestJson, ProducerJsonRecords.class);
 
@@ -97,14 +98,14 @@ public class KafkaSender {
                             for (int i = 0; (line = br.readLine()) != null; i++) {
                                 ProducerJsonRecord record = objectMapper.readValue(line, ProducerJsonRecord.class);
                                 LOGGER.info("From file:'{}', Sending record number: {}\n", fileName, i);
-                                deliveryDetails = sendJson(topicName, producer, record, jsonRecords.getAsync());
+                                deliveryDetails = sendJson(topicName, producer, record, jsonRecords.getAsync(),recordType,requestJson);
                             }
                         }
                     } else {
                         List<ProducerJsonRecord> records = jsonRecords.getRecords();
                         validateProduceRecord(records);
                         for (int i = 0; i < records.size(); i++) {
-                            deliveryDetails = sendJson(topicName, producer, records.get(i), jsonRecords.getAsync());
+                            deliveryDetails = sendJson(topicName, producer, records.get(i), jsonRecords.getAsync(),recordType,requestJson);
                         }
                     }
 
@@ -127,7 +128,7 @@ public class KafkaSender {
     }
 
     private String sendRaw(String topicName,
-                           Producer<Long, String> producer,
+                           Producer<?, ?> producer,
                            ProducerRecord recordToSend,
                            Boolean isAsync) throws InterruptedException, ExecutionException {
         ProducerRecord qualifiedRecord = prepareRecordToSend(topicName, recordToSend);
@@ -153,10 +154,10 @@ public class KafkaSender {
     }
 
     private String sendJson(String topicName,
-                            Producer<Long, String> producer,
+                            Producer<?, ?> producer,
                             ProducerJsonRecord recordToSend,
-                            Boolean isAsync) throws InterruptedException, ExecutionException {
-        ProducerRecord record = prepareJsonRecordToSend(topicName, recordToSend);
+                            Boolean isAsync, String recordType, String requestJson) throws InterruptedException, ExecutionException {
+        ProducerRecord record = prepareJsonRecordToSend(topicName, recordToSend,recordType, requestJson);
 
         RecordMetadata metadata;
         if (Boolean.TRUE.equals(isAsync)) {
@@ -179,7 +180,9 @@ public class KafkaSender {
         return deliveryDetails;
     }
 
-    private File validateAndGetFile(String fileName) {
+    
+
+	private File validateAndGetFile(String fileName) {
         try{
             URL resource = getClass().getClassLoader().getResource(fileName);
             return new File(resource.getFile());
