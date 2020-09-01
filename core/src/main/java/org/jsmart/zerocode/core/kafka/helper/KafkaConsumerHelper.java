@@ -218,7 +218,7 @@ public class KafkaConsumerHelper {
             Object key = thisRecord.key();
             Object valueObj = thisRecord.value();
             Headers headers = thisRecord.headers();
-            String valueStr= KafkaConstants.PROTO.equalsIgnoreCase(consumerLocalConfig.getRecordType())?convertProtobufToJson(thisRecord,consumerLocalConfig):valueObj.toString();
+            String valueStr= consumerLocalConfig!=null && KafkaConstants.PROTO.equalsIgnoreCase(consumerLocalConfig.getRecordType())?convertProtobufToJson(thisRecord,consumerLocalConfig):valueObj.toString();
             LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
                     key, valueStr, thisRecord.partition(), thisRecord.offset(), headers);
 
