@@ -20,13 +20,13 @@ public class ConsumerLocalConfigs {
     private final Integer maxNoOfRetryPollsOrTimeouts;
     private final Long pollingTime;
     private final String seek;
-    private final String protobufMessageClassType;
+    private final String protoClassType;
     
 
     @JsonCreator
     public ConsumerLocalConfigs(
             @JsonProperty("recordType") String recordType,
-            @JsonProperty("protobufMessageClassType") String protobufMessageClassType,
+            @JsonProperty("protoClassType") String protobufMessageClassType,
             @JsonProperty("fileDumpTo") String fileDumpTo,
             @JsonProperty("commitAsync") Boolean commitAsync,
             @JsonProperty("commitSync") Boolean commitSync,
@@ -35,7 +35,7 @@ public class ConsumerLocalConfigs {
             @JsonProperty("pollingTime") Long pollingTime,
             @JsonProperty("seek") String seek) {
         this.recordType = recordType;
-        this.protobufMessageClassType= protobufMessageClassType;
+        this.protoClassType= protobufMessageClassType;
         this.fileDumpTo = fileDumpTo;
         this.commitAsync = commitAsync;
         this.commitSync = commitSync;
@@ -63,8 +63,8 @@ public class ConsumerLocalConfigs {
         return recordType != null ? recordType : RAW;
     }
     
-	public String getProtobufMessageClassType() {
-		return protobufMessageClassType;
+	public String getProtoClassType() {
+		return protoClassType;
 	}
 
 
@@ -107,7 +107,7 @@ public class ConsumerLocalConfigs {
         if (o == null || getClass() != o.getClass()) return false;
         ConsumerLocalConfigs that = (ConsumerLocalConfigs) o;
         return Objects.equals(recordType, that.recordType) &&
-        		Objects.equals(protobufMessageClassType, that.protobufMessageClassType) &&
+        		Objects.equals(protoClassType, that.protoClassType) &&
                 Objects.equals(fileDumpTo, that.fileDumpTo) &&
                 Objects.equals(commitAsync, that.commitAsync) &&
                 Objects.equals(commitSync, that.commitSync) &&
@@ -127,7 +127,7 @@ public class ConsumerLocalConfigs {
     public String toString() {
         return "ConsumerLocalConfigs{" +
                 "recordType='" + recordType + '\'' +
-                "protobufMessageClassType='" + protobufMessageClassType + '\'' +
+                "protobufMessageClassType='" + protoClassType + '\'' +
                 ", fileDumpTo='" + fileDumpTo + '\'' +
                 ", commitAsync=" + commitAsync +
                 ", commitSync=" + commitSync +

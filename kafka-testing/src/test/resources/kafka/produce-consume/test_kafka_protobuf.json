@@ -7,7 +7,7 @@
 			"operation": "produce",
 			"request": {
 				"recordType": "PROTO",
-				"protobufMessageClassType": "org.jsmart.zerocode.proto.PersonsProto$Person",
+				"protoClassType": "org.jsmart.zerocode.proto.PersonsProto$Person",
 				"records": [
 					{
 						"key": 700,
@@ -39,7 +39,7 @@
 					"recordType": "PROTO",
 					"commitSync": true,
 					"maxNoOfRetryPollsOrTimeouts": 5,
-					"protobufMessageClassType": "org.jsmart.zerocode.proto.PersonsProto$Person"
+					"protoClassType": "org.jsmart.zerocode.proto.PersonsProto$Person"
 				}
 			},
 			"assertions": {

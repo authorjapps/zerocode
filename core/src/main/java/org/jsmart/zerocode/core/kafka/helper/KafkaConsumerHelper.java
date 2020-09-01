@@ -119,7 +119,7 @@ public class KafkaConsumerHelper {
         if (consumerLocal == null) {
             return new ConsumerLocalConfigs(
                     consumerCommon.getRecordType(),
-                    consumerCommon.getProtobufMessageClassType(),
+                    consumerCommon.getProtoClassType(),
                     consumerCommon.getFileDumpTo(),
                     consumerCommon.getCommitAsync(),
                     consumerCommon.getCommitSync(),
@@ -133,7 +133,7 @@ public class KafkaConsumerHelper {
         String effectiveRecordType = ofNullable(consumerLocal.getRecordType()).orElse(consumerCommon.getRecordType());
         
         // Handle recordType
-        String effectiveProtobufMessageClassType = ofNullable(consumerLocal.getProtobufMessageClassType()).orElse(consumerCommon.getProtobufMessageClassType());
+        String effectiveProtobufMessageClassType = ofNullable(consumerLocal.getProtoClassType()).orElse(consumerCommon.getProtoClassType());
 
 
         // Handle fileDumpTo
@@ -236,12 +236,12 @@ public class KafkaConsumerHelper {
     }
 
 	private static String convertProtobufToJson(ConsumerRecord thisRecord, ConsumerLocalConfigs consumerLocalConfig) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(consumerLocalConfig.getProtobufMessageClassType())) {
+		if (org.apache.commons.lang3.StringUtils.isEmpty(consumerLocalConfig.getProtoClassType())) {
 			throw new IllegalArgumentException(
 					"[ProtobufMessageClassType] is required consumer config for PROTO record Type.");
 		}
 		MessageOrBuilder builderOrMessage = (MessageOrBuilder) createMessageOrBuilder(
-				consumerLocalConfig.getProtobufMessageClassType(), (byte[]) thisRecord.value());
+				consumerLocalConfig.getProtoClassType(), (byte[]) thisRecord.value());
 		try {
 			return JsonFormat.printer().print(builderOrMessage);
 		} catch (InvalidProtocolBufferException e) {

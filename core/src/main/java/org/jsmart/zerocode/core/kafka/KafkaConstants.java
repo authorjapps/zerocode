@@ -14,6 +14,6 @@ public interface KafkaConstants {
 
     String RECORD_TYPE_JSON_PATH = "$.recordType";
     
-    String PROTO_BUF_MESSAGE_CLASS_TYPE = "$.protobufMessageClassType";
+    String PROTO_BUF_MESSAGE_CLASS_TYPE = "$.protoClassType";
 
 }

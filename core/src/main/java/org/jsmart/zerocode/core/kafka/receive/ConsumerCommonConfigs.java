@@ -24,8 +24,8 @@ public class ConsumerCommonConfigs {
     private String recordType;
     
     @Inject(optional = true)
-    @Named("consumer.protobufMessageClassType")
-    private String protobufMessageClassType;
+    @Named("consumer.protoClassType")
+    private String protoClassType;
 
     @Inject(optional = true)
     @Named("consumer.showRecordsConsumed")
@@ -51,7 +51,7 @@ public class ConsumerCommonConfigs {
                                  Boolean commitAsync,
                                  String fileDumpTo,
                                  String recordType,
-                                 String protobufMessageClassType,
+                                 String protoClassType,
                                  Boolean showRecordsConsumed,
                                  Integer maxNoOfRetryPollsOrTimeouts,
                                  Long pollingTime,
@@ -60,7 +60,7 @@ public class ConsumerCommonConfigs {
     ) {
         this.commitSync = commitSync;
         this.commitAsync = commitAsync;
-		this.protobufMessageClassType = protobufMessageClassType;
+		this.protoClassType = protoClassType;
         this.fileDumpTo = fileDumpTo;
         this.recordType = recordType;
         this.showRecordsConsumed = showRecordsConsumed;
@@ -114,8 +114,8 @@ public class ConsumerCommonConfigs {
     public String getSeek() {
         return seek;
     }
-	public String getProtobufMessageClassType() {
-		return protobufMessageClassType;
+	public String getProtoClassType() {
+		return protoClassType;
 	}
 
     @Override
@@ -125,7 +125,7 @@ public class ConsumerCommonConfigs {
                 ", commitAsync=" + commitAsync +
                 ", fileDumpTo='" + fileDumpTo + '\'' +
                 ", recordType='" + recordType + '\'' +
-                ", protobufMessageClassType='" + protobufMessageClassType + '\'' +
+                ", protobufMessageClassType='" + protoClassType + '\'' +
                 ", showRecordsConsumed=" + showRecordsConsumed +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +
