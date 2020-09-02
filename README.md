@@ -194,4 +194,4 @@ The bottom line is that Zerocode Open Source makes automated API testing declara
 
 Zerocode Open Source is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their microservices. Learn more about [Validators Vs Matchers](https://github.com/authorjapps/zerocode/wiki/Validators-and-Matchers) here.
 
-Happy testing! 🐼
+Happy testing!
