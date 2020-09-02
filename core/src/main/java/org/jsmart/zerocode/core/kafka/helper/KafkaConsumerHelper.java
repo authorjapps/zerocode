@@ -243,7 +243,7 @@ public class KafkaConsumerHelper {
 		MessageOrBuilder builderOrMessage = (MessageOrBuilder) createMessageOrBuilder(
 				consumerLocalConfig.getProtoClassType(), (byte[]) thisRecord.value());
 		try {
-			return JsonFormat.printer().print(builderOrMessage);
+			return JsonFormat.printer().includingDefaultValueFields().preservingProtoFieldNames().print(builderOrMessage);
 		} catch (InvalidProtocolBufferException e) {
 			throw new IllegalArgumentException(e);
 		}
