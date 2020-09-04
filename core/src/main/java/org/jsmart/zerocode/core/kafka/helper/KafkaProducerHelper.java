@@ -69,50 +69,61 @@ public class KafkaProducerHelper {
                 recordToSend.headers());
     }
 
-    public static ProducerRecord<Object, Object> prepareJsonRecordToSend(String topicName, ProducerJsonRecord recordToSend, String recordType,
-			String requestJson) {
+    public static ProducerRecord<Object, Object> prepareJsonRecordToSend(String topicName,
+                                                                         ProducerJsonRecord recordToSend,
+                                                                         String recordType,
+                                                                         String requestJson) {
         return ProducerRecordBuilder.from(topicName,
                 recordToSend.getKey(),
                 // --------------------------------------------
                 // It's a JSON as String. Nothing to worry !
                 // Kafka StringSerializer needs in this format.
                 // --------------------------------------------
-                KafkaConstants.PROTO.equalsIgnoreCase(recordType)?buildProtoMessage(recordToSend.getValue().toString(),requestJson):recordToSend.getValue().toString())
+                KafkaConstants.PROTO.equalsIgnoreCase(recordType) ? buildProtoMessage(recordToSend.getValue().toString(), requestJson) : recordToSend.getValue().toString())
                 .withHeaders(recordToSend.getHeaders())
                 .build();
     }
-    
 
 
-	private static Object buildProtoMessage(String message, String requestJson) {
-		String protobufMessageClassName = readRecordType(requestJson, KafkaConstants.PROTO_BUF_MESSAGE_CLASS_TYPE);
-		Builder builder = createBuilder(protobufMessageClassName);
-		try {
-			JsonFormat.parser().merge(message, builder);
-		} catch (InvalidProtocolBufferException e) {
-			throw new IllegalArgumentException(e);
-		}
-		return builder.build().toByteArray();
-	}
+    private static Object buildProtoMessage(String message, String requestJson) {
+        String protobufMessageClassName = protoClassType(requestJson, KafkaConstants.PROTO_BUF_MESSAGE_CLASS_TYPE);
+        Builder builder = createBuilder(protobufMessageClassName);
+        try {
+            JsonFormat.parser().merge(message, builder);
+        } catch (InvalidProtocolBufferException e) {
+            throw new IllegalArgumentException(e);
+        }
+        return builder.build().toByteArray();
+    }
 
-	private static Builder createBuilder(String messageClass) {
-		try {
-			Class<Message> msgClass = (Class<Message>) Class.forName(messageClass);
-			Method method = msgClass.getMethod("newBuilder", null);
-			return (Builder) method.invoke(null, null);
-		} catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException
-				| IllegalArgumentException | InvocationTargetException e) {
-			throw new IllegalArgumentException(e);
-		}
+    private static Builder createBuilder(String messageClass) {
+        try {
+            Class<Message> msgClass = (Class<Message>) Class.forName(messageClass);
+            Method method = msgClass.getMethod("newBuilder", null);
+            return (Builder) method.invoke(null, null);
+        } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException
+                | IllegalArgumentException | InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
+        }
 
-	}
+    }
 
-	public static String readRecordType(String requestJson, String jsonPath) {
+    public static String readRecordType(String requestJson, String jsonPath) {
         try {
             return JsonPath.read(requestJson, jsonPath);
         } catch (PathNotFoundException pEx) {
             LOGGER.warn("Could not find path '" + jsonPath + "' in the request. returned default type 'RAW'.");
             return RAW;
+        }
+    }
+
+    public static String protoClassType(String requestJson, String classTypeJsonPath) {
+        try {
+            return JsonPath.read(requestJson, classTypeJsonPath);
+        } catch (PathNotFoundException pEx) {
+            LOGGER.error("Could not find path '" + classTypeJsonPath + "' in the request. returned default type 'RAW'.");
+            String errMsg = "Missing 'protoClassType' for 'recordType:PROTO'. Please provide 'protoClassType' and rerun ";
+            throw new RuntimeException(errMsg);
         }
     }
 

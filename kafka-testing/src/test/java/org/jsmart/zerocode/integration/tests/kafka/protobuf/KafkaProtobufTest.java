@@ -15,5 +15,4 @@ public class KafkaProtobufTest {
     public void testProduceConsume() throws Exception {
     }
 
-
 }

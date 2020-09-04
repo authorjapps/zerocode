@@ -156,7 +156,9 @@ public class KafkaSender {
     private String sendJson(String topicName,
                             Producer<?, ?> producer,
                             ProducerJsonRecord recordToSend,
-                            Boolean isAsync, String recordType, String requestJson) throws InterruptedException, ExecutionException {
+                            Boolean isAsync,
+                            String recordType,
+                            String requestJson) throws InterruptedException, ExecutionException {
         ProducerRecord record = prepareJsonRecordToSend(topicName, recordToSend,recordType, requestJson);
 
         RecordMetadata metadata;
