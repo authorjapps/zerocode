@@ -238,7 +238,7 @@ public class KafkaConsumerHelper {
 	private static String convertProtobufToJson(ConsumerRecord thisRecord, ConsumerLocalConfigs consumerLocalConfig) {
 		if (org.apache.commons.lang3.StringUtils.isEmpty(consumerLocalConfig.getProtoClassType())) {
 			throw new IllegalArgumentException(
-					"[ProtobufMessageClassType] is required consumer config for PROTO record Type.");
+					"[protoClassType] is required consumer config for recordType PROTO.");
 		}
 		MessageOrBuilder builderOrMessage = (MessageOrBuilder) createMessageOrBuilder(
 				consumerLocalConfig.getProtoClassType(), (byte[]) thisRecord.value());
