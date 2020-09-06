@@ -267,13 +267,11 @@
     			<artifactId>protobuf-java</artifactId>
     			<version>${google.protobuf.version}</version>
 			</dependency>
-			<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
 			<dependency>
     			<groupId>com.google.protobuf</groupId>
     			<artifactId>protobuf-java</artifactId>
     			<version>${google.protobuf.version}</version>
 			</dependency>
-			<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java-util -->
 			<dependency>
     			<groupId>com.google.protobuf</groupId>
     			<artifactId>protobuf-java-util</artifactId>
