@@ -9,7 +9,7 @@
 
     <artifactId>zerocode-tdd-parent</artifactId>
     <groupId>org.jsmart</groupId>
-    <version>1.3.24-SNAPSHOT</version>
+    <version>1.3.25-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>ZeroCode TDD Parent</name>
@@ -267,13 +267,11 @@
     			<artifactId>protobuf-java</artifactId>
     			<version>${google.protobuf.version}</version>
 			</dependency>
-			<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
 			<dependency>
     			<groupId>com.google.protobuf</groupId>
     			<artifactId>protobuf-java</artifactId>
     			<version>${google.protobuf.version}</version>
 			</dependency>
-			<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java-util -->
 			<dependency>
     			<groupId>com.google.protobuf</groupId>
     			<artifactId>protobuf-java-util</artifactId>
