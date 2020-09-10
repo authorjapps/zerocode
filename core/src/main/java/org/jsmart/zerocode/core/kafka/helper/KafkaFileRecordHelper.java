@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.PROTO;
 
 public class KafkaFileRecordHelper {
 
@@ -35,7 +36,7 @@ public class KafkaFileRecordHelper {
                 case RAW:
                     dumpRawRecordsIfEnabled(consumeLocalTestProps.getFileDumpTo(), rawRecords);
                     break;
-
+                case PROTO:   
                 case JSON:
                     dumpJsonRecordsIfEnabled(consumeLocalTestProps.getFileDumpTo(), jsonRecords);
                     break;

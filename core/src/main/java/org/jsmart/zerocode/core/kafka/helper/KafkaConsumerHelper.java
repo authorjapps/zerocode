@@ -1,12 +1,23 @@
 package org.jsmart.zerocode.core.kafka.helper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
-import com.google.gson.Gson;
+import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.PROTO;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
+import static org.jsmart.zerocode.core.kafka.common.KafkaCommonUtils.resolveValuePlaceHolders;
+import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +36,7 @@ import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.jsmart.zerocode.core.kafka.KafkaConstants;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigsWrap;
 import org.jsmart.zerocode.core.kafka.receive.ConsumerCommonConfigs;
@@ -34,19 +46,15 @@ import org.jsmart.zerocode.core.kafka.receive.message.ConsumerRawRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-
-import static java.lang.Integer.parseInt;
-import static java.lang.Long.parseLong;
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
-import static org.jsmart.zerocode.core.kafka.common.KafkaCommonUtils.resolveValuePlaceHolders;
-import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.Resources;
+import com.google.gson.Gson;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
+import com.google.protobuf.MessageOrBuilder;
+import com.google.protobuf.util.JsonFormat;
 
 public class KafkaConsumerHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerHelper.class);
@@ -111,6 +119,7 @@ public class KafkaConsumerHelper {
         if (consumerLocal == null) {
             return new ConsumerLocalConfigs(
                     consumerCommon.getRecordType(),
+                    consumerCommon.getProtoClassType(),
                     consumerCommon.getFileDumpTo(),
                     consumerCommon.getCommitAsync(),
                     consumerCommon.getCommitSync(),
@@ -122,6 +131,10 @@ public class KafkaConsumerHelper {
 
         // Handle recordType
         String effectiveRecordType = ofNullable(consumerLocal.getRecordType()).orElse(consumerCommon.getRecordType());
+        
+        // Handle recordType
+        String effectiveProtobufMessageClassType = ofNullable(consumerLocal.getProtoClassType()).orElse(consumerCommon.getProtoClassType());
+
 
         // Handle fileDumpTo
         String effectiveFileDumpTo = ofNullable(consumerLocal.getFileDumpTo()).orElse(consumerCommon.getFileDumpTo());
@@ -156,6 +169,7 @@ public class KafkaConsumerHelper {
 
         return new ConsumerLocalConfigs(
                 effectiveRecordType,
+                effectiveProtobufMessageClassType,
                 effectiveFileDumpTo,
                 effectiveCommitAsync,
                 effectiveCommitSync,
@@ -197,17 +211,18 @@ public class KafkaConsumerHelper {
     }
 
     public static void readJson(List<ConsumerJsonRecord> jsonRecords,
-                                Iterator recordIterator) throws IOException {
+                                Iterator recordIterator,ConsumerLocalConfigs consumerLocalConfig) throws IOException {
         while (recordIterator.hasNext()) {
             ConsumerRecord thisRecord = (ConsumerRecord) recordIterator.next();
 
             Object key = thisRecord.key();
-            Object value = thisRecord.value();
+            Object valueObj = thisRecord.value();
             Headers headers = thisRecord.headers();
+            String valueStr= consumerLocalConfig!=null && KafkaConstants.PROTO.equalsIgnoreCase(consumerLocalConfig.getRecordType())?convertProtobufToJson(thisRecord,consumerLocalConfig):valueObj.toString();
             LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
-                    key, value, thisRecord.partition(), thisRecord.offset(), headers);
+                    key, valueStr, thisRecord.partition(), thisRecord.offset(), headers);
 
-            JsonNode valueNode = objectMapper.readTree(value.toString());
+            JsonNode valueNode = objectMapper.readTree(valueStr);
             Map<String, String> headersMap = null;
             if (headers != null) {
                 headersMap = new HashMap<>();
@@ -220,7 +235,33 @@ public class KafkaConsumerHelper {
         }
     }
 
-    public static String prepareResult(ConsumerLocalConfigs testConfigs,
+	private static String convertProtobufToJson(ConsumerRecord thisRecord, ConsumerLocalConfigs consumerLocalConfig) {
+		if (org.apache.commons.lang3.StringUtils.isEmpty(consumerLocalConfig.getProtoClassType())) {
+			throw new IllegalArgumentException(
+					"[protoClassType] is required consumer config for recordType PROTO.");
+		}
+		MessageOrBuilder builderOrMessage = (MessageOrBuilder) createMessageOrBuilder(
+				consumerLocalConfig.getProtoClassType(), (byte[]) thisRecord.value());
+		try {
+			return JsonFormat.printer().includingDefaultValueFields().preservingProtoFieldNames().print(builderOrMessage);
+		} catch (InvalidProtocolBufferException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	private static MessageOrBuilder createMessageOrBuilder(String messageClass, byte[] value) {
+		try {
+			Class<Message> msgClass = (Class<Message>) Class.forName(messageClass);
+			Method method = msgClass.getMethod("parseFrom", new Class[] { byte[].class });
+			return (MessageOrBuilder) method.invoke(null, value);
+		} catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException
+				| IllegalArgumentException | InvocationTargetException e) {
+			throw new IllegalArgumentException(e);
+		}
+
+	}
+
+	public static String prepareResult(ConsumerLocalConfigs testConfigs,
                                        List<ConsumerJsonRecord> jsonRecords,
                                        List<ConsumerRecord> rawRecords) throws JsonProcessingException {
 
@@ -233,7 +274,7 @@ public class KafkaConsumerHelper {
         } else if (testConfigs != null && RAW.equals(testConfigs.getRecordType())) {
             result = prettyPrintJson(gson.toJson(new ConsumerRawRecords(rawRecords)));
 
-        } else if (testConfigs != null && JSON.equals(testConfigs.getRecordType())) {
+        } else if (testConfigs != null && (JSON.equals(testConfigs.getRecordType()) || PROTO.equalsIgnoreCase(testConfigs.getRecordType()))) {
             result = prettyPrintJson(objectMapper.writeValueAsString(new ConsumerJsonRecords(jsonRecords)));
 
         } else {

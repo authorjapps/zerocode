@@ -6,6 +6,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.internals.RecordHeaders;
+import org.jsmart.zerocode.core.kafka.KafkaConstants;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigsWrap;
 import org.jsmart.zerocode.core.kafka.receive.ConsumerCommonConfigs;
@@ -147,7 +148,7 @@ public class KafkaConsumerHelperTest {
 
         // when
         List<ConsumerJsonRecord> consumerJsonRecords = new ArrayList<>();
-        KafkaConsumerHelper.readJson(consumerJsonRecords, Iterators.forArray(consumerRecord));
+        KafkaConsumerHelper.readJson(consumerJsonRecords, Iterators.forArray(consumerRecord),null);
 
         // then
         Assert.assertEquals(1, consumerJsonRecords.size());

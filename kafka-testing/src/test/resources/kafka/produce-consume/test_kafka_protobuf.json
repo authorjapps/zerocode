@@ -1,0 +1,59 @@
+{
+	"scenarioName": "Produce and consume a protobuf message",
+	"steps": [
+		{
+			"name": "produce_protobuf_person",
+			"url": "kafka-topic:demo-protobuf-topic",
+			"operation": "produce",
+			"request": {
+				"recordType": "PROTO",
+				"protoClassType": "org.jsmart.zerocode.proto.PersonsProto$Person",
+				"records": [
+					{
+						"key": 700,
+						"value": {
+							"name": "John Doe",
+							"id": 700,
+							"email": "john.doe@zerocode.com",
+							"phones": [
+								{
+									"number": "123-321-1234",
+									"type": "HOME"
+								}
+							]
+						}
+					}
+				]
+			},
+			"assertions": {
+				"status": "Ok",
+				"recordMetadata": "$NOT.NULL"
+			}
+		},
+		{
+			"name": "consume_protobuf_person",
+			"url": "kafka-topic:demo-protobuf-topic",
+			"operation": "unload",
+			"request": {
+				"consumerLocalConfigs": {
+					"recordType": "PROTO",
+					"commitSync": true,
+					"maxNoOfRetryPollsOrTimeouts": 5,
+					"protoClassType": "org.jsmart.zerocode.proto.PersonsProto$Person"
+				}
+			},
+			"assertions": {
+				"size": 1,
+				"records": [
+					{
+						"key": 700,
+						"value": {
+							"name": "John Doe",
+							"email": "john.doe@zerocode.com"
+						}
+					}
+				]
+			}
+		}
+	]
+}
