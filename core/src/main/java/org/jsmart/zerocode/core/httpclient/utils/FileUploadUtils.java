@@ -57,7 +57,7 @@ public class FileUploadUtils {
             if (entry.getKey().equals(FILES_FIELD) || entry.getKey().equals(BOUNDARY_FIELD)) {
                 continue;
             }
-            multipartEntityBuilder.addPart(entry.getKey(), new StringBody((String) entry.getValue(), TEXT_PLAIN));
+            multipartEntityBuilder.addPart(entry.getKey(), new StringBody(entry.getValue().toString(), TEXT_PLAIN));
         }
     }
 
