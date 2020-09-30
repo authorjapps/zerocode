@@ -1,6 +1,10 @@
 # ![Zerocode Logo](https://user-images.githubusercontent.com/12598420/86005149-287ee480-ba0c-11ea-91a0-d0811f15be75.png)
 
-Automated API testing has never been so easy
+**Zerocode means Infinite Possibilites!**
+
+**Automated API testing has never been so easy**
+
+
 
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)
@@ -34,6 +38,7 @@ Maven Dependency
 Introduction
 ===
 Zerocode Open Source is a lightweight, simple and extensible framework for writing test intentions in a simple JSON or YAML format that facilitates both declarative configuration and automation.
+
 
 Put simply, Zerocode solves API Development pain points and brings simplicity to API automation. The framework provides a unified solution to manage response validations, target API invocations, load/stress testing and security testing using a the simple domain specific languages (DSL) JSON and YAML.
 
