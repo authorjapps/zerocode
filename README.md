@@ -35,7 +35,7 @@ Introduction
 ===
 Zerocode Open Source is a lightweight, simple and extensible framework for writing test intentions in a simple JSON or YAML format that facilitates both declarative configuration and automation.
 
-Put simply, Zerocode solves API Development pain points and brings simplicity to API automation. The framework provides a unified solution to manage response validations, target API invocations, load/stress testing and security testing using a the simple domain specific languages (DSL) JSON and YAML.
+Put simply, Zerocode solves API Development pain points and brings simplicity to API automation. The framework provides a unified solution to manage response validations, target API invocations, load/stress testing and security testing using a simple domain specific languages (DSL) JSON and YAML.
 
 For example, if your REST API URL `https://localhost:8080/api/v1/customers/123` with `GET` method and `"Content-Type": "application/json"` returns the following payload and a `http` status code `200(OK)` ,
 ```javaScript
