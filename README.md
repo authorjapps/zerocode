@@ -5,7 +5,7 @@ Automated API testing has never been so easy
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
-[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeTDD)
+[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeTDD.svg?style=social&label=Follow)](https://twitter.com/Zerocodeio)
 
 
 **Latest release:🏹** [![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) <br/>
