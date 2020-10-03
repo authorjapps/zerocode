@@ -75,7 +75,7 @@ validators:
 - field: "$.status"
   value: 200
 - field: "$.body.type"
-  value: Premium Visa
+  value: Premium High Value
 - field: "$.body.addresses[0].line1"
   value: 10 Random St
 ```
@@ -104,7 +104,7 @@ Using JSON
     },
     {
       "field": "$.body.type",
-      "value": "Premium Visa"
+      "value": "Premium High Value"
     },
     {
       "field": "$.body.addresses[0].line1",
@@ -136,7 +136,7 @@ verify:
     - application/json; charset=utf-8
   body:
     id: 123
-    type: Premium Visa
+    type: Premium High Value
     addresses:
     - type: Billing
       line1: 10 Random St
@@ -167,7 +167,7 @@ Using JSON
     },
     "body": {
       "id": 123,
-      "type": "Premium Visa",
+      "type": "Premium High Value",
       "addresses": [
         {
           "type": "Billing",
