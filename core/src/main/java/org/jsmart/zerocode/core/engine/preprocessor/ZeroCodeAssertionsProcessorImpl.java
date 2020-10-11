@@ -24,42 +24,13 @@ import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.assertion.array.ArrayIsEmptyAsserterImpl;
 import org.jsmart.zerocode.core.engine.assertion.array.ArraySizeAsserterImpl;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringIgnoreCaseAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldHasDateAfterValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldHasDateBeforeValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldHasEqualNumberValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldHasExactValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldHasGreaterThanValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldHasInEqualNumberValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldHasLesserThanValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNotNullAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNullAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldIsOneOfValueAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldMatchesRegexPatternAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.*;
 
 import static java.lang.Integer.valueOf;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 import static org.apache.commons.lang.StringUtils.substringBetween;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_LOCAL_DATETIME_AFTER;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_LOCAL_DATETIME_BEFORE;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_PATH_SIZE;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_CONTAINS_STRING;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_EMPTY_ARRAY;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_EQUAL_TO_NUMBER;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_GREATER_THAN;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_IS_NOT_NULL;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_IS_NULL;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_IS_ONE_OF;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_LESSER_THAN;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_MATCHES_STRING;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NOT_EQUAL_TO_NUMBER;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NOT_NULL;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NULL;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_ONE_OF;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.RAW_BODY;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.*;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.$VALUE;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.digTypeCast;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.fieldTypes;
@@ -192,10 +163,17 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
                 JsonAsserter asserter;
                 if (ASSERT_VALUE_NOT_NULL.equals(value) || ASSERT_VALUE_IS_NOT_NULL.equals(value)) {
                     asserter = new FieldIsNotNullAsserter(path);
+
+                } else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_CUSTOM_ASSERT)) {
+                    String expected = ((String) value).substring(ASSERT_VALUE_CUSTOM_ASSERT.length());
+                    asserter = new FieldMatchesCustomAsserter(path, expected);
+
                 } else if (ASSERT_VALUE_NULL.equals(value) || ASSERT_VALUE_IS_NULL.equals(value)) {
                     asserter = new FieldIsNullAsserter(path);
+
                 } else if (ASSERT_VALUE_EMPTY_ARRAY.equals(value)) {
                     asserter = new ArrayIsEmptyAsserterImpl(path);
+
                 } else if (path.endsWith(ASSERT_PATH_SIZE)) {
                     path = path.substring(0, path.length() - ASSERT_PATH_SIZE.length());
                     if (value instanceof Number) {

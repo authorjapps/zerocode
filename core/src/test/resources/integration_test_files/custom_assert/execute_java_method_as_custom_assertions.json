@@ -1,0 +1,25 @@
+{
+    "scenarioName": "User a custom asserter to assert a field value @Chakru #Fidelity",
+    "steps": [
+        {
+            "name": "find_match",
+            "url": "/api/v1/search/persons",
+            "operation": "GET",
+            "request": {
+                "queryParams": {
+                    "lang": "Amazing",
+                    "city": "Lon"
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "exactMatches": true,
+                    "name": "$CUSTOM.ASSERT:org.jsmart.zerocode.integrationtests.customassert.MyCustomComparator#asserted:{\"expectLen\":7}",
+                    "lang": "$CUSTOM.ASSERT:org.jsmart.zerocode.integrationtests.customassert.MyCustomComparator#assertLength:{\"expectLen\":7}",
+                    "city": "Lon"
+                }
+            }
+        }
+    ]
+}
