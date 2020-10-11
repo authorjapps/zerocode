@@ -15,6 +15,7 @@ public class ZeroCodeAssertionTokens {
     public static final String ASSERT_VALUE_NOT_NULL = "$NOT.NULL";
     public static final String ASSERT_VALUE_IS_NULL = "$IS.NULL";
     public static final String ASSERT_VALUE_NULL = "$NULL";
+    public static final String ASSERT_VALUE_CUSTOM_ASSERT = "$CUSTOM.ASSERT:";
     public static final String ASSERT_VALUE_EMPTY_ARRAY = "$[]";
     public static final String ASSERT_PATH_SIZE = ".SIZE";
     public static final String ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE = "$CONTAINS.STRING.IGNORECASE:";
