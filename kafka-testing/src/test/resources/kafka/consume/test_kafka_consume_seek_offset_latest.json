@@ -1,0 +1,71 @@
+{
+    "scenarioName": "Consume latest n messages from a partition @Kushagra-HedgeFund #SIT",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-c3",
+            "operation": "PRODUCE",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World1"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "load_kafka2",
+            "url": "kafka-topic:demo-c3",
+            "operation": "PRODUCE",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World2"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "consume_last1",
+            "url": "kafka-topic:demo-c3",
+            "operation": "CONSUME",
+            "request": {
+                "consumerLocalConfigs": {
+                    "seek": "demo-c3,0,-1", // Read the last message
+                    "commitSync": true,
+                    "recordType": "RAW",
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "size": 1
+            }
+        },
+        {
+            "name": "consume_last2",
+            "url": "kafka-topic:demo-c3",
+            "operation": "CONSUME",
+            "request": {
+                "consumerLocalConfigs": {
+                    "seek": "demo-c3,0,-2", // To consume last "n" records, use "-n"
+                    "commitSync": true,
+                    "recordType": "RAW",
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "assertions": {
+                "size": 2
+            }
+        }
+    ]
+}
