@@ -20,7 +20,7 @@ Zerocode Open Source makes it easy to create, change, orchestrate and maintain a
 Quick Links
 ===
 To get started with Zerocode Open Source and its features, visit 
-+ [Zerocode Knowledge Base](https://knowledge.zerocode.io/knowledge)
++ [Zerocode Documentation](https://knowledge.zerocode.io/knowledge)
 + [Quick Start guide](https://knowledge.zerocode.io/en/knowledge/zerocode-quick-start-guide)
 + [Release frequency](https://github.com/authorjapps/zerocode/wiki/Zerocode-release-frequency-and-schedule)
 
