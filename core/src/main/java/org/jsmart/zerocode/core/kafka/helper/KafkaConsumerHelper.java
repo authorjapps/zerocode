@@ -131,7 +131,7 @@ public class KafkaConsumerHelper {
 
         // Handle recordType
         String effectiveRecordType = ofNullable(consumerLocal.getRecordType()).orElse(consumerCommon.getRecordType());
-        
+
         // Handle recordType
         String effectiveProtobufMessageClassType = ofNullable(consumerLocal.getProtoClassType()).orElse(consumerCommon.getProtoClassType());
 
@@ -211,14 +211,14 @@ public class KafkaConsumerHelper {
     }
 
     public static void readJson(List<ConsumerJsonRecord> jsonRecords,
-                                Iterator recordIterator,ConsumerLocalConfigs consumerLocalConfig) throws IOException {
+                                Iterator recordIterator, ConsumerLocalConfigs consumerLocalConfig) throws IOException {
         while (recordIterator.hasNext()) {
             ConsumerRecord thisRecord = (ConsumerRecord) recordIterator.next();
 
             Object key = thisRecord.key();
             Object valueObj = thisRecord.value();
             Headers headers = thisRecord.headers();
-            String valueStr= consumerLocalConfig!=null && KafkaConstants.PROTO.equalsIgnoreCase(consumerLocalConfig.getRecordType())?convertProtobufToJson(thisRecord,consumerLocalConfig):valueObj.toString();
+            String valueStr = consumerLocalConfig != null && KafkaConstants.PROTO.equalsIgnoreCase(consumerLocalConfig.getRecordType()) ? convertProtobufToJson(thisRecord, consumerLocalConfig) : valueObj.toString();
             LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
                     key, valueStr, thisRecord.partition(), thisRecord.offset(), headers);
 
@@ -235,33 +235,33 @@ public class KafkaConsumerHelper {
         }
     }
 
-	private static String convertProtobufToJson(ConsumerRecord thisRecord, ConsumerLocalConfigs consumerLocalConfig) {
-		if (org.apache.commons.lang3.StringUtils.isEmpty(consumerLocalConfig.getProtoClassType())) {
-			throw new IllegalArgumentException(
-					"[protoClassType] is required consumer config for recordType PROTO.");
-		}
-		MessageOrBuilder builderOrMessage = (MessageOrBuilder) createMessageOrBuilder(
-				consumerLocalConfig.getProtoClassType(), (byte[]) thisRecord.value());
-		try {
-			return JsonFormat.printer().includingDefaultValueFields().preservingProtoFieldNames().print(builderOrMessage);
-		} catch (InvalidProtocolBufferException e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
+    private static String convertProtobufToJson(ConsumerRecord thisRecord, ConsumerLocalConfigs consumerLocalConfig) {
+        if (org.apache.commons.lang3.StringUtils.isEmpty(consumerLocalConfig.getProtoClassType())) {
+            throw new IllegalArgumentException(
+                    "[protoClassType] is required consumer config for recordType PROTO.");
+        }
+        MessageOrBuilder builderOrMessage = (MessageOrBuilder) createMessageOrBuilder(
+                consumerLocalConfig.getProtoClassType(), (byte[]) thisRecord.value());
+        try {
+            return JsonFormat.printer().includingDefaultValueFields().preservingProtoFieldNames().print(builderOrMessage);
+        } catch (InvalidProtocolBufferException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 
-	private static MessageOrBuilder createMessageOrBuilder(String messageClass, byte[] value) {
-		try {
-			Class<Message> msgClass = (Class<Message>) Class.forName(messageClass);
-			Method method = msgClass.getMethod("parseFrom", new Class[] { byte[].class });
-			return (MessageOrBuilder) method.invoke(null, value);
-		} catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException
-				| IllegalArgumentException | InvocationTargetException e) {
-			throw new IllegalArgumentException(e);
-		}
+    private static MessageOrBuilder createMessageOrBuilder(String messageClass, byte[] value) {
+        try {
+            Class<Message> msgClass = (Class<Message>) Class.forName(messageClass);
+            Method method = msgClass.getMethod("parseFrom", new Class[]{byte[].class});
+            return (MessageOrBuilder) method.invoke(null, value);
+        } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException
+                | IllegalArgumentException | InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
+        }
 
-	}
+    }
 
-	public static String prepareResult(ConsumerLocalConfigs testConfigs,
+    public static String prepareResult(ConsumerLocalConfigs testConfigs,
                                        List<ConsumerJsonRecord> jsonRecords,
                                        List<ConsumerRecord> rawRecords) throws JsonProcessingException {
 
@@ -325,15 +325,24 @@ public class KafkaConsumerHelper {
     public static void handleSeekOffset(ConsumerLocalConfigs effectiveLocal, Consumer consumer) {
         String seek = effectiveLocal.getSeek();
         if (!isEmpty(seek)) {
-            String[] seekPosition = effectiveLocal.getSeekTopicPartitionOffset();
-            TopicPartition topicPartition = new TopicPartition(seekPosition[0], parseInt(seekPosition[1]));
+            String[] seekParts = effectiveLocal.getSeekTopicPartitionOffset();
+            String topic = seekParts[0];
+            int partition = parseInt(seekParts[1]);
+            long offset = parseLong(seekParts[2]);
 
+            TopicPartition topicPartition = new TopicPartition(topic, partition);
             Set<TopicPartition> topicPartitions = new HashSet<>();
             topicPartitions.add(topicPartition);
 
             consumer.unsubscribe();
             consumer.assign(topicPartitions);
-            consumer.seek(topicPartition, parseLong(seekPosition[2]));
+
+            if (offset <= -1) {
+                consumer.seekToEnd(topicPartitions);
+                consumer.seek(topicPartition, consumer.position(topicPartition) + offset);
+            } else {
+                consumer.seek(topicPartition, offset);
+            }
         }
     }
 
