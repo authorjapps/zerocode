@@ -1,6 +1,7 @@
 package org.jsmart.zerocode.core.kafka.client;
 
 import com.google.inject.Inject;
+import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.kafka.receive.KafkaReceiver;
 import org.jsmart.zerocode.core.kafka.send.KafkaSender;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ public class BasicKafkaClient {
     public BasicKafkaClient() {
     }
 
-    public String execute(String brokers, String topicName, String operation, String requestJson) {
+    public String execute(String brokers, String topicName, String operation, String requestJson, ScenarioExecutionState scenarioExecutionState) {
         LOGGER.info("brokers:{}, topicName:{}, operation:{}, requestJson:{}", brokers, topicName, operation, requestJson);
 
         try {
@@ -28,7 +29,7 @@ public class BasicKafkaClient {
                 case "load":
                 case "publish":
                 case "produce":
-                    return sender.send(brokers, topicName, requestJson);
+                    return sender.send(brokers, topicName, requestJson, scenarioExecutionState);
 
                 case "unload":
                 case "consume":

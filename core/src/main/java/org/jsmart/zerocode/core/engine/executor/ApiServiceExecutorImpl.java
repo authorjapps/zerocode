@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.jsmart.zerocode.core.engine.executor.httpapi.HttpApiExecutor;
 import org.jsmart.zerocode.core.engine.executor.javaapi.JavaMethodExecutor;
+import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,7 @@ public class ApiServiceExecutorImpl implements ApiServiceExecutor {
     }
 
     @Override
-    public String executeKafkaService(String kafkaServers, String kafkaTopic, String operation, String requestJson) {
-        return kafkaClient.execute(kafkaServers, kafkaTopic, operation, requestJson);
+    public String executeKafkaService(String kafkaServers, String kafkaTopic, String operation, String requestJson, ScenarioExecutionState scenarioExecutionState) {
+        return kafkaClient.execute(kafkaServers, kafkaTopic, operation, requestJson, scenarioExecutionState);
     }
 }
