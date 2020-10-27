@@ -1,0 +1,6 @@
+{
+    "id": "Emp-No-${RANDOM.NUMBER}",
+    "age": 16,
+    "secret": "passwwrd",
+    "addresses": "${JSON.FILE:unit_test_files/filebody_unit_test/common/comm_addresses.json}"
+}
