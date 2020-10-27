@@ -40,6 +40,18 @@ public class ZeroCodeExternalFileProcessorImplTest {
     }
 
     @Test
+    public void test_deepRecursiveFile() throws IOException {
+        String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_test_file_recursive.json");
+        Map<String, Object> map = objectMapper.readValue(jsonAsString, new TypeReference<Map<String, Object>>() {});
+
+        externalFileProcessor.digReplaceContent(map);
+        String resultJson = objectMapper.writeValueAsString(map);
+
+        assertThat(read(resultJson, "$.request.body.addresses[0].type"), is("corp-office"));
+        assertThat(read(resultJson, "$.request.body.addresses[1].type"), is("hr-office"));
+    }
+
+    @Test
     public void test_addressArray() throws IOException {
         String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_test_address_array.json");
         Map<String, Object> map = objectMapper.readValue(jsonAsString, new TypeReference<Map<String, Object>>() {});
