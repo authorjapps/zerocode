@@ -15,4 +15,9 @@ public class KafkaProduceSyncFromFileJsonTest {
     public void testProduceAnd_syncFromFileJson() throws Exception {
     }
 
+    @Test
+    @Scenario("kafka/produce/file_produce/test_kafka_produce_sync_from_file_json_with_ref.json")
+    public void testProduceAnd_syncFromFileWithVarsJson() throws Exception {
+    }
+
 }
