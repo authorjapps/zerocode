@@ -1,0 +1,2 @@
+{"key":"1546955346669","value":{"id":121,"name":"${$.load_kafka.response.recordMetadata.topicPartition.topic}-My-Value-1"}}
+{"key":"1546955346670","value":{"id":122,"name":"${$.load_kafka.response.recordMetadata.topicPartition.topic}-My-Value-2"}}

@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.kafka;
 
+import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ public class MyCustomKafkaClient extends BasicKafkaClient {
     }
 
     @Override
-    public String execute(String brokers, String topicName, String operation, String requestJson) {
+    public String execute(String brokers, String topicName, String operation, String requestJson, ScenarioExecutionState scenarioExecutionState) {
         customCodeExecuted = true;
         // ---
         // Use your custom send and receive mechanism here
@@ -30,7 +31,7 @@ public class MyCustomKafkaClient extends BasicKafkaClient {
         // Just a sanity check if flow has hit this point or not.
         assertThat(customCodeExecuted, is(true));
 
-        return super.execute(brokers, topicName, operation, requestJson);
+        return super.execute(brokers, topicName, operation, requestJson, scenarioExecutionState);
     }
 }
 

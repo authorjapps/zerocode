@@ -1,0 +1,32 @@
+{
+    "scenarioName": "POST API - File json as request content - Reuse body",
+    "steps": [
+        {
+            "name": "create_emp",
+            "url": "/api/v1/employees",
+            "method": "POST",
+            "request": {
+                "body" : "${JSON.FILE:reusable_content/request/request_body_with_address.json}"
+            },
+            "assertions": {
+                "status": 201
+            }
+        },
+        {
+            "name": "get_user_details",
+            "url": "/api/v1/employees/${$.create_emp.response.body.id}",
+            "method": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": 39001,
+                    "ldapId": "emmanorton",
+                    "name": "Emma",
+                    "surName": "Norton"
+                }
+            }
+        }
+    ]
+}

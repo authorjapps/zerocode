@@ -134,8 +134,14 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
                     if (token != null && token.startsWith(JSON_PAYLOAD_FILE)) {
                         String resourceJsonFile = token.substring(JSON_PAYLOAD_FILE.length());
                         try {
-                            Object jsonFileContent = objectMapper.readTree(readJsonAsString(resourceJsonFile));
-                            entry.setValue(jsonFileContent);
+                            JsonNode jsonNode = objectMapper.readTree(readJsonAsString(resourceJsonFile));
+                            if (jsonNode.isObject()) {
+                                //also replace content of just read json file (recursively)
+                                final Map<String, Object> jsonFileContent = objectMapper.convertValue(jsonNode, Map.class);
+                                digReplaceContent(jsonFileContent);
+                                jsonNode = objectMapper.convertValue(jsonFileContent, JsonNode.class);
+                            }
+                            entry.setValue(jsonNode);
                         } catch (Exception exx) {
                             LOGGER.error("External file reference exception - {}", exx.getMessage());
                             throw new RuntimeException(exx);
