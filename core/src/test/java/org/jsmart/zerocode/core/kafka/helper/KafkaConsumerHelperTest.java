@@ -160,6 +160,7 @@ public class KafkaConsumerHelperTest {
 
     @Test
     public void test_firstPoll_exits_early_on_assignment() {
+        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true, 3, 5000L, "");
         // given
         Consumer consumer = Mockito.mock(Consumer.class);
         HashSet<TopicPartition> partitions = new HashSet<>();
@@ -167,7 +168,7 @@ public class KafkaConsumerHelperTest {
         Mockito.when(consumer.assignment()).thenReturn(partitions);
 
         // when
-        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer);
+        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer, consumerCommon);
 
         // then
         assertThat(records.isEmpty(), is(true));
@@ -175,6 +176,7 @@ public class KafkaConsumerHelperTest {
 
     @Test
     public void test_firstPoll_exits_on_receiving_records() {
+        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true, 3, 50L, "");
         // given
         Consumer consumer = Mockito.mock(Consumer.class);
         Mockito.when(consumer.assignment()).thenReturn(new HashSet<TopicPartition>());
@@ -185,7 +187,7 @@ public class KafkaConsumerHelperTest {
         Mockito.when(consumerRecords.isEmpty()).thenReturn(false);
 
         // when
-        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer);
+        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer, consumerCommon);
 
         // then
         assertThat(records, equalTo(consumerRecords));
