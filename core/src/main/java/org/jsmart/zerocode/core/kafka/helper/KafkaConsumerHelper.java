@@ -79,29 +79,23 @@ public class KafkaConsumerHelper {
         }
     }
 
-    public static ConsumerRecords initialPollWaitingForConsumerGroupJoin(Consumer consumer, ConsumerCommonConfigs consumerCommonConfigs) {
-        // default wait time for poll
-        Long durationForPolling = 500L;
-        // use user defined consumer.pollingTime if provided
-        if (consumerCommonConfigs != null)
-            durationForPolling = ofNullable(consumerCommonConfigs.getPollingTime()).orElse(500L);
-        
-        for (int run = 0; run < 10; run++) {
-            if (!consumer.assignment().isEmpty()) {
-                return new ConsumerRecords(new HashMap());
+    public static ConsumerRecords initialPollWaitingForConsumerGroupJoin(Consumer consumer, ConsumerLocalConfigs effectiveLocalConfigs) {
+
+            Long durationForPolling = ofNullable(effectiveLocalConfigs.getPollingTime()).orElse(500L);
+
+            for (int run = 0; run < 10; run++) {
+                if (!consumer.assignment().isEmpty()) {
+                    return new ConsumerRecords(new HashMap());
+                }
+                ConsumerRecords records = consumer.poll(Duration.of(durationForPolling, ChronoUnit.MILLIS));
+                if (!records.isEmpty()) {
+                    return records;
+                }
             }
-            ConsumerRecords records = consumer.poll(Duration.of(durationForPolling, ChronoUnit.MILLIS));
-            if (!records.isEmpty()) {
-                return records;
-            }
-        }
 
         throw new RuntimeException("\n********* Kafka Consumer unable to join in time *********\n");
     }
 
-    public static ConsumerRecords initialPollWaitingForConsumerGroupJoin(Consumer consumer) {
-        return initialPollWaitingForConsumerGroupJoin(consumer,null);
-    }
 
     public static void validateLocalConfigs(ConsumerLocalConfigs localConfigs) {
         if (localConfigs != null) {

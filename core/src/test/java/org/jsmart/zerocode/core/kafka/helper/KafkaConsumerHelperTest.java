@@ -160,15 +160,18 @@ public class KafkaConsumerHelperTest {
 
     @Test
     public void test_firstPoll_exits_early_on_assignment() {
-        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true, 3, 5000L, "");
+
         // given
+        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true, 3, 1000L, "");
+        consumerLocal = null;
+        ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
         Consumer consumer = Mockito.mock(Consumer.class);
         HashSet<TopicPartition> partitions = new HashSet<>();
         partitions.add(new TopicPartition("test.topic", 0));
         Mockito.when(consumer.assignment()).thenReturn(partitions);
 
         // when
-        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer, consumerCommon);
+        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer, consumerEffectiveConfigs);
 
         // then
         assertThat(records.isEmpty(), is(true));
@@ -176,8 +179,11 @@ public class KafkaConsumerHelperTest {
 
     @Test
     public void test_firstPoll_exits_on_receiving_records() {
-        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true, 3, 50L, "");
+
         // given
+        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true, 3, 5000L, "");
+        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", true, false, false, 3, 50L, "1,0,test-topic");
+        ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
         Consumer consumer = Mockito.mock(Consumer.class);
         Mockito.when(consumer.assignment()).thenReturn(new HashSet<TopicPartition>());
 
@@ -187,7 +193,7 @@ public class KafkaConsumerHelperTest {
         Mockito.when(consumerRecords.isEmpty()).thenReturn(false);
 
         // when
-        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer, consumerCommon);
+        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer, consumerEffectiveConfigs);
 
         // then
         assertThat(records, equalTo(consumerRecords));
@@ -196,7 +202,12 @@ public class KafkaConsumerHelperTest {
 
     @Test
     public void test_firstPoll_throws_after_timeout() throws Exception {
+        
         // given
+        consumerCommon = new ConsumerCommonConfigs(true, false, "aTestFile", "JSON", true, 3, null, "");
+        consumerLocal = new ConsumerLocalConfigs("RAW", "sTestLocalFile", true, false, false, 3, 50L, "1,0,test-topic");
+        ConsumerLocalConfigs consumerEffectiveConfigs = deriveEffectiveConfigs(consumerLocal, consumerCommon);
+        
         Consumer consumer = Mockito.mock(Consumer.class);
         Mockito.when(consumer.assignment()).thenReturn(new HashSet<TopicPartition>());
 
@@ -209,6 +220,6 @@ public class KafkaConsumerHelperTest {
         expectedException.expectMessage("Kafka Consumer unable to join in time");
 
         // when
-        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer);
+        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer, consumerEffectiveConfigs);
     }
 }
