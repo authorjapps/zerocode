@@ -81,13 +81,11 @@ public class KafkaConsumerHelper {
 
     public static ConsumerRecords initialPollWaitingForConsumerGroupJoin(Consumer consumer, ConsumerLocalConfigs effectiveLocalConfigs) {
 
-            Long durationForPolling = ofNullable(effectiveLocalConfigs.getPollingTime()).orElse(500L);
-
             for (int run = 0; run < 10; run++) {
                 if (!consumer.assignment().isEmpty()) {
                     return new ConsumerRecords(new HashMap());
                 }
-                ConsumerRecords records = consumer.poll(Duration.of(durationForPolling, ChronoUnit.MILLIS));
+                ConsumerRecords records = consumer.poll(Duration.of(getPollTime(effectiveLocalConfigs), ChronoUnit.MILLIS));
                 if (!records.isEmpty()) {
                     return records;
                 }
