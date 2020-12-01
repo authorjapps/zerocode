@@ -83,7 +83,7 @@ public class KafkaConsumerHelper {
 
             Long durationForPolling = ofNullable(effectiveLocalConfigs.getPollingTime()).orElse(500L);
 
-            for (int run = 0; run < 50; run++) {
+            for (int run = 0; run < 10; run++) {
                 if (!consumer.assignment().isEmpty()) {
                     return new ConsumerRecords(new HashMap());
                 }
