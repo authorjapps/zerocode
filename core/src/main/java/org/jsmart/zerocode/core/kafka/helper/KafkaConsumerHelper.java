@@ -91,7 +91,7 @@ public class KafkaConsumerHelper {
                 }
             }
 
-        throw new RuntimeException("\n********* Kafka Consumer unable to join in time *********\n");
+        throw new RuntimeException("\n********* Kafka Consumer unable to join in time - try increasing consumer polling time setting *********\n");
     }
 
 
