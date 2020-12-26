@@ -63,7 +63,7 @@ public class KafkaReceiver {
 
         LOGGER.info("initial polling to trigger ConsumerGroupJoin");
 
-        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer);
+        ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer, effectiveLocal);
 
         if(!records.isEmpty()) {
             LOGGER.info("Received {} records on initial poll\n", records.count());
