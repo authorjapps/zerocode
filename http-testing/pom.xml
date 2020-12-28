@@ -61,6 +61,7 @@
                 <version>2.19.1</version>
                 <configuration>
                     <includes>
+                        <include>org.jsmart.zerocode.testhelp.tests.MockServerTest</include>
                         <include>org.jsmart.zerocode.zerocodejavaexec.pojo.OrderTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.HelloWorldCherryPickSuite</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldjavaexec.HelloWorldJavaApiAsProtocolTest</include>
