@@ -26,16 +26,23 @@ public class BasicKafkaClient {
         try {
             switch (operation.toLowerCase()) {
                 case "send":
+                    break;
                 case "load":
+                    break;
                 case "publish":
+                    break;
                 case "produce":
                     return sender.send(brokers, topicName, requestJson, scenarioExecutionState);
-
+                    
                 case "unload":
+                    break;
                 case "consume":
-                case "receive":
-                case "subscribe":
                     return receiver.receive(brokers, topicName, requestJson);
+                    
+                case "receive":
+                    break;
+                case "subscribe":
+                    break;
 
                 case "poll":
                     throw new RuntimeException("poll - Not yet Implemented");
