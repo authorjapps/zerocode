@@ -1,0 +1,5 @@
+{
+    "name": "Emma",
+    "surName": "Norton",
+    "address": "${JSON.FILE:reusable_content/request/office_address.json}"
+}

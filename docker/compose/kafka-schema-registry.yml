@@ -2,13 +2,13 @@
 version: '3'
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.1.0
+    image: confluentinc/cp-zookeeper:5.5.1
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:5.1.0
+    image: confluentinc/cp-kafka:5.5.1
     depends_on:
       - zookeeper
     ports:
@@ -22,7 +22,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   schema-registry:
-      image: confluentinc/cp-schema-registry:5.1.0
+      image: confluentinc/cp-schema-registry:5.5.1
       depends_on:
         - kafka
         - zookeeper
@@ -34,7 +34,7 @@ services:
         - "8081:8081"
 
   rest-proxy:
-      image: confluentinc/cp-kafka-rest:5.1.0
+      image: confluentinc/cp-kafka-rest:5.5.1
       depends_on:
         - zookeeper
         - kafka
@@ -47,22 +47,31 @@ services:
             KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       ports:
         - "8082:8082"
+  
+  ksqldb-server:
+    image: confluentinc/cp-ksqldb-server:5.5.1
+    hostname: ksqldb-server
+    container_name: ksqldb-server
+    depends_on:
+      - kafka
+    ports:
+      - "8088:8088"
+    environment:
+      KSQL_CONFIG_DIR: "/etc/ksql"
+      KSQL_BOOTSTRAP_SERVERS: "kafka:29092"
+      KSQL_HOST_NAME: ksqldb-server
+      KSQL_LISTENERS: "http://0.0.0.0:8088"
+      KSQL_CACHE_MAX_BYTES_BUFFERING: 0
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+      KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
+      KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+      KSQL_KSQL_CONNECT_URL: "http://connect:8083"
 
-  ksql-server:
-      image: "confluentinc/cp-ksql-server:5.1.0"
-      depends_on:
-        - kafka
-        - schema-registry
-      environment:
-        KSQL_BOOTSTRAP_SERVERS: kafka:29092
-        KSQL_LISTENERS: http://0.0.0.0:8088
-        KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      ports:
-        - "8088:8088"
-
-  ksql-cli:
-      image: confluentinc/cp-ksql-cli:5.1.0
-      depends_on:
-        - ksql-server
-      entrypoint: /bin/sh
-      tty: true
+  ksqldb-cli:
+    image: confluentinc/cp-ksqldb-cli:5.5.1
+    container_name: ksqldb-cli
+    depends_on:
+      - kafka
+      - ksqldb-server
+    entrypoint: /bin/sh
+    tty: true

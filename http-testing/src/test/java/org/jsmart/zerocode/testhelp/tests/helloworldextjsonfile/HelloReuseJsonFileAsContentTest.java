@@ -16,6 +16,11 @@ public class HelloReuseJsonFileAsContentTest {
     }
 
     @Test
+    @JsonTestCase("helloworld_ext_file_json/hello_world_jsonfile_as_request_body_with_inner_ref.json")
+    public void testHelloWorld_jsonFileAsBody_inception() throws Exception {
+    }
+
+    @Test
     @JsonTestCase("helloworld_ext_file_json/hello_world_jsonfile_as_response_body.json")
     public void testHello_jsonFileAsResponseBody() throws Exception {
     }

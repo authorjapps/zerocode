@@ -4,7 +4,7 @@
     <parent>
         <artifactId>zerocode-tdd-parent</artifactId>
         <groupId>org.jsmart</groupId>
-        <version>1.3.24-SNAPSHOT</version>
+        <version>1.3.27-SNAPSHOT</version>
     </parent>
 
     <artifactId>zerocode-tdd</artifactId>
@@ -180,6 +180,14 @@
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>
         </dependency>
+        <dependency>
+    			<groupId>com.google.protobuf</groupId>
+    			<artifactId>protobuf-java</artifactId>
+		</dependency>
+		<dependency>
+   			<groupId>com.google.protobuf</groupId>
+   			<artifactId>protobuf-java-util</artifactId>
+		</dependency>
     </dependencies>
 
     <profiles>

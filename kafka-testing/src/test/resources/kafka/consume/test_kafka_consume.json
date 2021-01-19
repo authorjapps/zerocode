@@ -22,6 +22,9 @@
             "url": "kafka-topic:demo-c1",
             "operation": "unload",
             "request": {
+                "consumerLocalConfigs": {
+                    "maxNoOfRetryPollsOrTimeouts": 1
+                }
             },
             "assertions": {
                 // this will be 1  only when consumer does a commit i.e. commitAsync or sync,

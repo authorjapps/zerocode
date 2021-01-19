@@ -22,6 +22,10 @@ public class ConsumerCommonConfigs {
     @Inject(optional = true)
     @Named("consumer.recordType")
     private String recordType;
+    
+    @Inject(optional = true)
+    @Named("consumer.protoClassType")
+    private String protoClassType;
 
     @Inject(optional = true)
     @Named("consumer.showRecordsConsumed")
@@ -47,6 +51,7 @@ public class ConsumerCommonConfigs {
                                  Boolean commitAsync,
                                  String fileDumpTo,
                                  String recordType,
+                                 String protoClassType,
                                  Boolean showRecordsConsumed,
                                  Integer maxNoOfRetryPollsOrTimeouts,
                                  Long pollingTime,
@@ -55,6 +60,7 @@ public class ConsumerCommonConfigs {
     ) {
         this.commitSync = commitSync;
         this.commitAsync = commitAsync;
+		this.protoClassType = protoClassType;
         this.fileDumpTo = fileDumpTo;
         this.recordType = recordType;
         this.showRecordsConsumed = showRecordsConsumed;
@@ -62,6 +68,20 @@ public class ConsumerCommonConfigs {
         this.pollingTime = pollingTime;
         this.seek = seek;
     }
+    
+    public ConsumerCommonConfigs(Boolean commitSync,
+            Boolean commitAsync,
+            String fileDumpTo,
+            String recordType,
+            Boolean showRecordsConsumed,
+            Integer maxNoOfRetryPollsOrTimeouts,
+            Long pollingTime,
+            String seek
+
+    ) {
+		this(commitSync, commitAsync, fileDumpTo, recordType, null, showRecordsConsumed, maxNoOfRetryPollsOrTimeouts,
+				pollingTime, seek);
+	}
 
     public Boolean getCommitSync() {
         return commitSync;
@@ -94,6 +114,9 @@ public class ConsumerCommonConfigs {
     public String getSeek() {
         return seek;
     }
+	public String getProtoClassType() {
+		return protoClassType;
+	}
 
     @Override
     public String toString() {
@@ -102,6 +125,7 @@ public class ConsumerCommonConfigs {
                 ", commitAsync=" + commitAsync +
                 ", fileDumpTo='" + fileDumpTo + '\'' +
                 ", recordType='" + recordType + '\'' +
+                ", protobufMessageClassType='" + protoClassType + '\'' +
                 ", showRecordsConsumed=" + showRecordsConsumed +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +

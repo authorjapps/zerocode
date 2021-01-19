@@ -1,12 +1,23 @@
 package org.jsmart.zerocode.core.kafka.helper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
-import com.google.gson.Gson;
+import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.PROTO;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
+import static org.jsmart.zerocode.core.kafka.common.KafkaCommonUtils.resolveValuePlaceHolders;
+import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,12 +29,14 @@ import java.util.Set;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.jsmart.zerocode.core.kafka.KafkaConstants;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigsWrap;
 import org.jsmart.zerocode.core.kafka.receive.ConsumerCommonConfigs;
@@ -33,16 +46,15 @@ import org.jsmart.zerocode.core.kafka.receive.message.ConsumerRawRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.Integer.parseInt;
-import static java.lang.Long.parseLong;
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
-import static org.jsmart.zerocode.core.kafka.common.KafkaCommonUtils.resolveValuePlaceHolders;
-import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.Resources;
+import com.google.gson.Gson;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
+import com.google.protobuf.MessageOrBuilder;
+import com.google.protobuf.util.JsonFormat;
 
 public class KafkaConsumerHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerHelper.class);
@@ -66,6 +78,22 @@ public class KafkaConsumerHelper {
             throw new RuntimeException("Exception while reading kafka properties and creating a consumer- " + e);
         }
     }
+
+    public static ConsumerRecords initialPollWaitingForConsumerGroupJoin(Consumer consumer, ConsumerLocalConfigs effectiveLocalConfigs) {
+
+            for (int run = 0; run < 50; run++) {
+                if (!consumer.assignment().isEmpty()) {
+                    return new ConsumerRecords(new HashMap());
+                }
+                ConsumerRecords records = consumer.poll(Duration.of(getPollTime(effectiveLocalConfigs), ChronoUnit.MILLIS));
+                if (!records.isEmpty()) {
+                    return records;
+                }
+            }
+
+        throw new RuntimeException("\n********* Kafka Consumer unable to join in time - try increasing consumer polling time setting *********\n");
+    }
+
 
     public static void validateLocalConfigs(ConsumerLocalConfigs localConfigs) {
         if (localConfigs != null) {
@@ -93,6 +121,7 @@ public class KafkaConsumerHelper {
         if (consumerLocal == null) {
             return new ConsumerLocalConfigs(
                     consumerCommon.getRecordType(),
+                    consumerCommon.getProtoClassType(),
                     consumerCommon.getFileDumpTo(),
                     consumerCommon.getCommitAsync(),
                     consumerCommon.getCommitSync(),
@@ -104,6 +133,10 @@ public class KafkaConsumerHelper {
 
         // Handle recordType
         String effectiveRecordType = ofNullable(consumerLocal.getRecordType()).orElse(consumerCommon.getRecordType());
+
+        // Handle recordType
+        String effectiveProtobufMessageClassType = ofNullable(consumerLocal.getProtoClassType()).orElse(consumerCommon.getProtoClassType());
+
 
         // Handle fileDumpTo
         String effectiveFileDumpTo = ofNullable(consumerLocal.getFileDumpTo()).orElse(consumerCommon.getFileDumpTo());
@@ -138,6 +171,7 @@ public class KafkaConsumerHelper {
 
         return new ConsumerLocalConfigs(
                 effectiveRecordType,
+                effectiveProtobufMessageClassType,
                 effectiveFileDumpTo,
                 effectiveCommitAsync,
                 effectiveCommitSync,
@@ -179,17 +213,18 @@ public class KafkaConsumerHelper {
     }
 
     public static void readJson(List<ConsumerJsonRecord> jsonRecords,
-                                Iterator recordIterator) throws IOException {
+                                Iterator recordIterator, ConsumerLocalConfigs consumerLocalConfig) throws IOException {
         while (recordIterator.hasNext()) {
             ConsumerRecord thisRecord = (ConsumerRecord) recordIterator.next();
 
             Object key = thisRecord.key();
-            Object value = thisRecord.value();
+            Object valueObj = thisRecord.value();
             Headers headers = thisRecord.headers();
+            String valueStr = consumerLocalConfig != null && KafkaConstants.PROTO.equalsIgnoreCase(consumerLocalConfig.getRecordType()) ? convertProtobufToJson(thisRecord, consumerLocalConfig) : valueObj.toString();
             LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
-                    key, value, thisRecord.partition(), thisRecord.offset(), headers);
+                    key, valueStr, thisRecord.partition(), thisRecord.offset(), headers);
 
-            JsonNode valueNode = objectMapper.readTree(value.toString());
+            JsonNode valueNode = objectMapper.readTree(valueStr);
             Map<String, String> headersMap = null;
             if (headers != null) {
                 headersMap = new HashMap<>();
@@ -200,6 +235,32 @@ public class KafkaConsumerHelper {
             ConsumerJsonRecord jsonRecord = new ConsumerJsonRecord(thisRecord.key(), null, valueNode, headersMap);
             jsonRecords.add(jsonRecord);
         }
+    }
+
+    private static String convertProtobufToJson(ConsumerRecord thisRecord, ConsumerLocalConfigs consumerLocalConfig) {
+        if (org.apache.commons.lang3.StringUtils.isEmpty(consumerLocalConfig.getProtoClassType())) {
+            throw new IllegalArgumentException(
+                    "[protoClassType] is required consumer config for recordType PROTO.");
+        }
+        MessageOrBuilder builderOrMessage = (MessageOrBuilder) createMessageOrBuilder(
+                consumerLocalConfig.getProtoClassType(), (byte[]) thisRecord.value());
+        try {
+            return JsonFormat.printer().includingDefaultValueFields().preservingProtoFieldNames().print(builderOrMessage);
+        } catch (InvalidProtocolBufferException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    private static MessageOrBuilder createMessageOrBuilder(String messageClass, byte[] value) {
+        try {
+            Class<Message> msgClass = (Class<Message>) Class.forName(messageClass);
+            Method method = msgClass.getMethod("parseFrom", new Class[]{byte[].class});
+            return (MessageOrBuilder) method.invoke(null, value);
+        } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException
+                | IllegalArgumentException | InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
+        }
+
     }
 
     public static String prepareResult(ConsumerLocalConfigs testConfigs,
@@ -215,7 +276,7 @@ public class KafkaConsumerHelper {
         } else if (testConfigs != null && RAW.equals(testConfigs.getRecordType())) {
             result = prettyPrintJson(gson.toJson(new ConsumerRawRecords(rawRecords)));
 
-        } else if (testConfigs != null && JSON.equals(testConfigs.getRecordType())) {
+        } else if (testConfigs != null && (JSON.equals(testConfigs.getRecordType()) || PROTO.equalsIgnoreCase(testConfigs.getRecordType()))) {
             result = prettyPrintJson(objectMapper.writeValueAsString(new ConsumerJsonRecords(jsonRecords)));
 
         } else {
@@ -266,15 +327,24 @@ public class KafkaConsumerHelper {
     public static void handleSeekOffset(ConsumerLocalConfigs effectiveLocal, Consumer consumer) {
         String seek = effectiveLocal.getSeek();
         if (!isEmpty(seek)) {
-            String[] seekPosition = effectiveLocal.getSeekTopicPartitionOffset();
-            TopicPartition topicPartition = new TopicPartition(seekPosition[0], parseInt(seekPosition[1]));
+            String[] seekParts = effectiveLocal.getSeekTopicPartitionOffset();
+            String topic = seekParts[0];
+            int partition = parseInt(seekParts[1]);
+            long offset = parseLong(seekParts[2]);
 
+            TopicPartition topicPartition = new TopicPartition(topic, partition);
             Set<TopicPartition> topicPartitions = new HashSet<>();
             topicPartitions.add(topicPartition);
 
             consumer.unsubscribe();
             consumer.assign(topicPartitions);
-            consumer.seek(topicPartition, parseLong(seekPosition[2]));
+
+            if (offset <= -1) {
+                consumer.seekToEnd(topicPartitions);
+                consumer.seek(topicPartition, consumer.position(topicPartition) + offset);
+            } else {
+                consumer.seek(topicPartition, offset);
+            }
         }
     }
 
@@ -286,9 +356,9 @@ public class KafkaConsumerHelper {
 
     private static void validateSeekConfig(ConsumerLocalConfigs localConfigs) {
         String seek = localConfigs.getSeek();
-        if(!isEmpty(seek)) {
+        if (!isEmpty(seek)) {
             String[] split = seek.split(",");
-            if(split == null || split.length < 3) {
+            if (split == null || split.length < 3) {
                 throw new RuntimeException("\n------> 'seek' should contain 'topic,partition,offset' e.g. 'topic1,0,2' ");
             }
         }
