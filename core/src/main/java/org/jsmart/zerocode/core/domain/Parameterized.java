@@ -13,16 +13,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Parameterized {
     private final List<Object> valueSource;
     private final List<String> csvSource;
+    private final Boolean ignoreHeader;
 
     public Parameterized(
             @JsonProperty("valueSource") List<Object> valueSource,
-            @JsonProperty("csvSource") JsonNode csvSourceJsonNode) {
+            @JsonProperty("csvSource") JsonNode csvSourceJsonNode,
+            @JsonProperty("ignoreHeader") Boolean ignoreHeader) {
         this.valueSource = valueSource;
+        this.ignoreHeader = Optional.ofNullable(ignoreHeader).orElse(false);
         this.csvSource = getCsvSourceFrom(csvSourceJsonNode);
     }
 
@@ -37,20 +41,36 @@ public class Parameterized {
     private List<String> getCsvSourceFrom(JsonNode csvSourceJsonNode) {
         try {
             if (csvSourceJsonNode.isArray()) {
-                ObjectMapper mapper = new ObjectMapper();
-                ObjectReader reader = mapper.readerFor(new TypeReference<List<String>>() {
-                });
-                return reader.readValue(csvSourceJsonNode);
+                return readCsvSourceFromJson(csvSourceJsonNode);
 
             } else {
-                String csvSourceFilePath = csvSourceJsonNode.textValue();
-                if (StringUtils.isNotBlank(csvSourceFilePath)) {
-                    Path path = Paths.get(csvSourceFilePath);
-                    return Files.lines(path).collect(Collectors.toList());
-                }
+                return readCsvSourceFromExternalCsvFile(csvSourceJsonNode);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error deserializing csvSource", e);
+        }
+    }
+
+    private List<String> readCsvSourceFromJson(JsonNode csvSourceJsonNode) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectReader reader = mapper.readerFor(new TypeReference<List<String>>() {
+        });
+        return reader.readValue(csvSourceJsonNode);
+    }
+
+    private List<String> readCsvSourceFromExternalCsvFile(JsonNode csvSourceJsonNode) throws IOException {
+        String csvSourceFilePath = csvSourceJsonNode.textValue();
+        if (StringUtils.isNotBlank(csvSourceFilePath)) {
+            Path path = Paths.get(csvSourceFilePath);
+            List<String> csvSourceFileLines = Files.lines(path)
+                    .filter(StringUtils::isNotBlank)
+                    .collect(Collectors.toList());
+            if (this.ignoreHeader) {
+                return csvSourceFileLines.stream()
+                        .skip(1)
+                        .collect(Collectors.toList());
+            }
+            return csvSourceFileLines;
         }
         return Collections.emptyList();
     }
