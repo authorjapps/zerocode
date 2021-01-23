@@ -15,4 +15,9 @@ public class HelloWorldParameterizedCsvTest {
     public void testGetByUserNames_csv() throws Exception {
     }
 
+    @Test
+    @Scenario("parameterized_csv/hello_world_test_parameterized_csv_source_files.json")
+    public void testGetByUserNames_csvSourceFiles() throws Exception {
+    }
+
 }
