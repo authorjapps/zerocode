@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
+import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.MockStep;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 public class RestEndPointMocker {
@@ -95,28 +97,36 @@ public class RestEndPointMocker {
     }
 
     private static MappingBuilder createDeleteRequestBuilder(MockStep mockStep) {
-        final MappingBuilder requestBuilder = delete(urlEqualTo(mockStep.getUrl()));
+        final MappingBuilder requestBuilder = delete(buildUrlPattern(mockStep.getUrl()));
         return createRequestBuilderWithHeaders(mockStep, requestBuilder);
     }
 
     private static MappingBuilder createPatchRequestBuilder(MockStep mockStep) {
-        final MappingBuilder requestBuilder = patch(urlEqualTo(mockStep.getUrl()));
+        final MappingBuilder requestBuilder = patch(buildUrlPattern(mockStep.getUrl()));
         return createRequestBuilderWithHeaders(mockStep, requestBuilder);
     }
 
     private static MappingBuilder createPutRequestBuilder(MockStep mockStep) {
-        final MappingBuilder requestBuilder = put(urlEqualTo(mockStep.getUrl()));
+        final MappingBuilder requestBuilder = put(buildUrlPattern(mockStep.getUrl()));
         return createRequestBuilderWithHeaders(mockStep, requestBuilder);
     }
 
     private static MappingBuilder createPostRequestBuilder(MockStep mockStep) {
-        final MappingBuilder requestBuilder = post(urlEqualTo(mockStep.getUrl()));
+        final MappingBuilder requestBuilder = post(buildUrlPattern(mockStep.getUrl()));
         return createRequestBuilderWithHeaders(mockStep, requestBuilder);
     }
 
     private static MappingBuilder createGetRequestBuilder(MockStep mockStep) {
-        final MappingBuilder requestBuilder = get(urlEqualTo(mockStep.getUrl()));
+        final MappingBuilder requestBuilder = get(buildUrlPattern(mockStep.getUrl()));
         return createRequestBuilderWithHeaders(mockStep, requestBuilder);
+    }
+
+    private static UrlPattern buildUrlPattern(String url) {
+        if (url.contains("?")) { // match url regardless query parameters
+            return urlPathEqualTo(url);
+        } else { // match url strictly, without path parameters
+            return urlEqualTo(url);
+        }
     }
 
     private static MappingBuilder createRequestBuilderWithHeaders(MockStep mockStep, MappingBuilder requestBuilder) {
