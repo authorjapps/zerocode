@@ -12,14 +12,12 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
-import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 public class RestEndPointMocker {
@@ -122,10 +120,10 @@ public class RestEndPointMocker {
     }
 
     private static UrlPattern buildUrlPattern(String url) {
-        if (url.contains("?")) { // match url regardless query parameters
-            return urlPathEqualTo(url);
-        } else { // match url strictly, without path parameters
+        if (url.contains("?")) { // if url pattern has query params then match url strictly including query params
             return urlEqualTo(url);
+        } else { // if url pattern doesn't have query params then match url with or without any query parameters
+            return urlPathEqualTo(url);
         }
     }
 

@@ -139,6 +139,32 @@ public class RestEndPointMockerTest {
     }
 
     @Test
+    public void willMockASimpleGetEndPointWithQueryParams() throws Exception {
+
+        final MockStep mockStep = mockSteps.getMocks().get(0);
+        String jsonBodyRequest = mockStep.getResponse().get("body").toString();
+
+        WireMock.configureFor(9073);
+        givenThat(get(urlPathEqualTo(mockStep.getUrl()))
+                .willReturn(aResponse()
+                        .withStatus(mockStep.getResponse().get("status").asInt())
+                        .withHeader("Content-Type", APPLICATION_JSON)
+                        .withBody(jsonBodyRequest)));
+
+        ApacheHttpClientExecutor httpClientExecutor = new ApacheHttpClientExecutor();
+        ClientRequest clientExecutor = httpClientExecutor.createRequest("http://localhost:9073" + mockStep.getUrl() +
+                "?param1=value1&param2=value2");
+        clientExecutor.setHttpMethod("GET");
+        ClientResponse serverResponse = clientExecutor.execute();
+
+        final String respBodyAsString = (String) serverResponse.getEntity(String.class);
+        JSONAssert.assertEquals(jsonBodyRequest, respBodyAsString, true);
+
+        System.out.println("### zerocode: \n" + respBodyAsString);
+
+    }
+
+    @Test
     public void willMockAPostRequest() throws Exception {
 
         final MockStep mockPost = mockSteps.getMocks().get(1);
@@ -254,6 +280,34 @@ public class RestEndPointMockerTest {
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet request = new HttpGet("http://localhost:" + WIRE_MOCK_TEST_PORT + mockGetRequest.getUrl());
+        request.addHeader("key", "key-007");
+        request.addHeader("secret", "secret-007");
+        HttpResponse response = httpClient.execute(request);
+
+        final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        System.out.println("### response: \n" + responseBodyActual);
+
+        assertThat(response.getStatusLine().getStatusCode(), is(200));
+        JSONAssert.assertEquals(respBody, responseBodyActual, true);
+
+        Assert.assertEquals("Content-Type", response.getEntity().getContentType().getName());
+        Assert.assertEquals("application/json", response.getEntity().getContentType().getValue());
+
+        getWireMockServer().stop();
+    }
+
+    @Test
+    public void willMockRequest_withAnyQueryParameters() throws Exception {
+
+        int WIRE_MOCK_TEST_PORT = 9077;
+
+        final MockStep mockGetRequest = mockSteps.getMocks().get(0);
+        String respBody = mockGetRequest.getResponse().get("body").toString();
+
+        createWithWireMock(mockSteps, WIRE_MOCK_TEST_PORT);
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet request = new HttpGet("http://localhost:" + WIRE_MOCK_TEST_PORT + mockGetRequest.getUrl() + "?param1=value1&param2=value2");
         request.addHeader("key", "key-007");
         request.addHeader("secret", "secret-007");
         HttpResponse response = httpClient.execute(request);
