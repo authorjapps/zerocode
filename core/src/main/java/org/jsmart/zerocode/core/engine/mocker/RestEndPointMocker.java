@@ -32,7 +32,7 @@ public class RestEndPointMocker {
     private static boolean hasMoreThanOneStubForUrl(List<String> urls) {
         List<String> urlsCopy = urls.stream().collect(Collectors.toList());
         urlsCopy.stream().map(e -> (e.indexOf("?") >= 0) ? e.substring(0, e.indexOf("?")) : e);
-        return urls.stream().anyMatch(e -> urls.contains(e));
+        return urlsCopy.stream().anyMatch(e -> urlsCopy.contains(e));
     }
 
     public static void createWithWireMock(MockSteps mockSteps, int mockPort) {
