@@ -15,7 +15,9 @@ import org.jsmart.zerocode.core.domain.MockSteps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -25,9 +27,22 @@ public class RestEndPointMocker {
 
     public static WireMockServer wireMockServer;
 
+    public static Boolean buildUrlPathEqualToPattern_FeatureFlag = true;
+
+    private static boolean hasMoreThanOneStubForUrl(List<String> urls) {
+        List<String> urlsCopy = urls.stream().collect(Collectors.toList());
+        urlsCopy.stream().map(e -> (e.indexOf("?") >= 0) ? e.substring(0, e.indexOf("?")) : e);
+        return urls.stream().anyMatch(e -> urls.contains(e));
+    }
+
     public static void createWithWireMock(MockSteps mockSteps, int mockPort) {
 
         restartWireMock(mockPort);
+
+        List<String> urls = mockSteps.getMocks().stream().map(e -> e.getUrl()).collect(Collectors.toList());
+        if(hasMoreThanOneStubForUrl(urls)) {
+            buildUrlPathEqualToPattern_FeatureFlag = false;
+        }
 
         mockSteps.getMocks().forEach(mockStep -> {
             JsonNode jsonNodeResponse = mockStep.getResponse();
@@ -120,18 +135,12 @@ public class RestEndPointMocker {
     }
 
     private static UrlPattern buildUrlPattern(String url) {
-        // if url pattern has query params or Wiremock has already any stub for url, then match url strictly including query params
-        if (url.contains("?") || hasAnyStubForUrl(url)) {
-            return urlEqualTo(url);
-        } else { // if url pattern doesn't have query params then match url with or without any query parameters
+        // if url pattern doesn't have query params and feature flag = true, then match url with or without any query parameters
+        if (!url.contains("?") && buildUrlPathEqualToPattern_FeatureFlag) {
             return urlPathEqualTo(url);
+        } else { // if url pattern has query params then match url strictly including query params
+            return urlEqualTo(url);
         }
-    }
-
-    private static boolean hasAnyStubForUrl(String url) {
-        return wireMockServer.listAllStubMappings().getMappings().stream().anyMatch(
-                e -> url.contains(e.getRequest().getUrlPath()) || e.getRequest().getUrlPath().contains(url)
-        );
     }
 
     private static MappingBuilder createRequestBuilderWithHeaders(MockStep mockStep, MappingBuilder requestBuilder) {
