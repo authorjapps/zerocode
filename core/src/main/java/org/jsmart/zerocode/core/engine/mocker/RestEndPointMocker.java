@@ -120,11 +120,18 @@ public class RestEndPointMocker {
     }
 
     private static UrlPattern buildUrlPattern(String url) {
-        if (url.contains("?")) { // if url pattern has query params then match url strictly including query params
+        // if url pattern has query params or Wiremock has already any stub for url, then match url strictly including query params
+        if (url.contains("?") || hasAnyStubForUrl(url)) {
             return urlEqualTo(url);
         } else { // if url pattern doesn't have query params then match url with or without any query parameters
             return urlPathEqualTo(url);
         }
+    }
+
+    private static boolean hasAnyStubForUrl(String url) {
+        return wireMockServer.listAllStubMappings().getMappings().stream().anyMatch(
+                e -> url.contains(e.getRequest().getUrlPath()) || e.getRequest().getUrlPath().contains(url)
+        );
     }
 
     private static MappingBuilder createRequestBuilderWithHeaders(MockStep mockStep, MappingBuilder requestBuilder) {
