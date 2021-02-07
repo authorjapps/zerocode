@@ -92,7 +92,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
      * @return
      */
     List<ZeroCodeReportStep> getUniqueSteps(List<ZeroCodeReportStep> steps) {
-        Map<String, ZeroCodeReportStep> result = new HashMap<>();
+        Map<String, ZeroCodeReportStep> result = new LinkedHashMap<>();
         steps.forEach(step -> {
             result.merge(step.getCorrelationId(), step,
                     (s1, s2) -> RESULT_PASS.equals(s1.getResult()) ? s1 : s2);
@@ -357,9 +357,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         List<ZeroCodeReport> scenarioReports = allEndPointFiles.stream()
                 .map(reportJsonFile -> {
                     try {
-
                         return mapper.readValue(new File(reportJsonFile), ZeroCodeReport.class);
-
                     } catch (IOException e) {
                         e.printStackTrace();
 
@@ -368,6 +366,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     }
                 })
                 .collect(Collectors.toList());
+
         for (ZeroCodeReport zeroCodeReport : scenarioReports) {
             for (ZeroCodeExecResult zeroCodeExecResult : zeroCodeReport.getResults()) {
                 zeroCodeExecResult.setSteps(getUniqueSteps(zeroCodeExecResult.getSteps()));
