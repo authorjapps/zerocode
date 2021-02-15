@@ -18,7 +18,7 @@ services:
 #Still docker images are pulled every time. We need to cahche it for best practice.
 before_install:
   - wget https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml
-  - docker login -u $DOCKER_USERNAME -p $DOCKER_TOKEN
+  - if [ -n "$DOCKER_USERNAME" ] && [ -n "$DOCKER_TOKEN" ] ; then docker login -u $DOCKER_USERNAME -p $DOCKER_TOKEN; fi
   - docker-compose -f kafka-schema-registry.yml up -d
 
 #Just compile and run tests, also print version at the beginning.

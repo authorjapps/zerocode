@@ -166,11 +166,10 @@ public class ZeroCodeReportGeneratorImplTest {
         assertEquals(uniqueSteps.stream().filter(step->step.getResult().equals(RESULT_PASS)).count(),1);
         assertEquals(uniqueSteps.stream().filter(step->step.getResult().equals(RESULT_FAIL)).count(),2);
 
-        assertThat(uniqueSteps.get(0).getCorrelationId(),is("testCorrelationId3")); // order different to original
-        assertThat(uniqueSteps.get(1).getCorrelationId(),is("testCorrelationId1")); // order different to original
-        assertThat(uniqueSteps.get(2).getCorrelationId(),is("testCorrelationId2")); // order different to original
+        assertThat(uniqueSteps.get(0).getCorrelationId(),is("testCorrelationId1"));
+        assertThat(uniqueSteps.get(1).getCorrelationId(),is("testCorrelationId2"));
+        assertThat(uniqueSteps.get(2).getCorrelationId(),is("testCorrelationId3"));
 
-        // order different to original: Not really an issue, as the CSV can be sorted ACS or DESC by a an external tool
     }
 
 }
