@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.time.Duration.ofMillis;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.AVRO;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.PROTO;
@@ -108,7 +109,8 @@ public class KafkaReceiver {
             case RAW:
                 readRaw(rawRecords, recordIterator);
                 break;
-            case PROTO:    
+            case PROTO:
+            case AVRO:
             case JSON:
                 readJson(jsonRecords, recordIterator,effectiveLocal);
                 break;

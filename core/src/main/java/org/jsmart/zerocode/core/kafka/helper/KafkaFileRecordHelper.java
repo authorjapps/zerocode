@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.AVRO;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.PROTO;
@@ -37,6 +38,7 @@ public class KafkaFileRecordHelper {
                     dumpRawRecordsIfEnabled(consumeLocalTestProps.getFileDumpTo(), rawRecords);
                     break;
                 case PROTO:   
+                case AVRO:
                 case JSON:
                     dumpJsonRecordsIfEnabled(consumeLocalTestProps.getFileDumpTo(), jsonRecords);
                     break;
