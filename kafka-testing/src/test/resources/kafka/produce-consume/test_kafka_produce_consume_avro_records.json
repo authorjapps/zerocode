@@ -18,7 +18,7 @@
       {
         "status": 200,
         "body": {
-          "id": 1
+          "id": "$IS.NOTNULL"
         }
       }
     },
@@ -39,13 +39,13 @@
       {
         "status": 200,
         "body": {
-          "id": 2
+          "id": "$IS.NOTNULL"
         }
       }
     },
     {
       "name": "produce_avro_msg_without_key_step",
-      "url": "/topics/demo-avro-1",
+      "url": "/topics/demo-avro-12",
       "operation": "POST",
       "request": {
         "headers": {
@@ -53,7 +53,7 @@
           "Accept": "application/vnd.kafka.v2+json"
         },
         "body": {
-          "value_schema_id": "1",
+          "value_schema_id": "${$.register_avro_schema_value_step.response.body.id}",
           "records": [
             {
               "key": null,
@@ -70,10 +70,8 @@
       "body": {
         "offsets": [
           {
-            "partition": 0,
-            "offset": "$NOT.NULL",
-            "error_code": null,
-            "error": null
+            "partition": "$NOT.NULL",
+            "offset": "$NOT.NULL"
           }
         ]
       }
@@ -81,7 +79,7 @@
     },
     {
       "name": "consume_avro_msg_without_key_as_avro",
-      "url": "kafka-topic:demo-avro-1",
+      "url": "kafka-topic:demo-avro-12",
       "operation": "consume",
       "request": {
         "consumerLocalConfigs": {
@@ -104,7 +102,7 @@
     },
     {
       "name": "produce_avro_msg_with_key_step",
-      "url": "/topics/demo-avro-1",
+      "url": "/topics/demo-avro-12",
       "operation": "POST",
       "request": {
         "headers": {
@@ -112,8 +110,8 @@
           "Accept": "application/vnd.kafka.v2+json"
         },
         "body": {
-          "key_schema_id": "2",
-          "value_schema_id": "1",
+          "key_schema_id": "${$.register_avro_schema_key_step.response.body.id}",
+          "value_schema_id": "${$.register_avro_schema_value_step.response.body.id}",
           "records": [
             {
               "key": {
@@ -132,10 +130,8 @@
         "body": {
           "offsets": [
             {
-              "partition": 0,
-              "offset": "$NOT.NULL",
-              "error_code": null,
-              "error": null
+              "partition": "$NOT.NULL",
+              "offset": "$NOT.NULL"
             }
           ]
         }
@@ -143,7 +139,7 @@
     },
     {
       "name": "consume_avro_msg_with_key_as_avro",
-      "url": "kafka-topic:demo-avro-1",
+      "url": "kafka-topic:demo-avro-12",
       "operation": "consume",
       "request": {
         "consumerLocalConfigs": {
