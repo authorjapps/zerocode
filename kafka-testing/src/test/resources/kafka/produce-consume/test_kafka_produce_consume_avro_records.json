@@ -1,0 +1,167 @@
+{
+  "scenarioName": "Produce a JSON message to a kafka topic",
+  "steps": [
+    {
+      "name": "register_avro_schema_value_step",
+      "url": "http://localhost:8081/subjects/myavrorecord/versions",
+      "operation": "POST",
+      "request": {
+        "headers": {
+          "Content-Type": "application/vnd.schemaregistry.v1+json",
+          "Accept": "application/vnd.schemaregistry.v1+json, application/vnd.schemaregistry+json, application/json"
+        },
+        "body": {
+          "schema": "{\"type\":\"record\",\"name\":\"myavrorecord\",\"fields\":[{\"name\":\"avrof1\",\"type\":\"string\"}]}"
+        }
+      },
+      "assertions":
+      {
+        "status": 200,
+        "body": {
+          "id": "$IS.NOTNULL"
+        }
+      }
+    },
+    {
+      "name": "register_avro_schema_key_step",
+      "url": "http://localhost:8081/subjects/myavrorecordkey/versions",
+      "operation": "POST",
+      "request": {
+        "headers": {
+          "Content-Type": "application/vnd.schemaregistry.v1+json",
+          "Accept": "application/vnd.schemaregistry.v1+json, application/vnd.schemaregistry+json, application/json"
+        },
+        "body": {
+          "schema": "{\"type\":\"record\",\"name\":\"myavrorecordkey\",\"fields\":[{\"name\":\"key\",\"type\":\"string\"}]}"
+        }
+      },
+      "assertions":
+      {
+        "status": 200,
+        "body": {
+          "id": "$IS.NOTNULL"
+        }
+      }
+    },
+    {
+      "name": "produce_avro_msg_without_key_step",
+      "url": "/topics/demo-avro-12",
+      "operation": "POST",
+      "request": {
+        "headers": {
+          "Content-Type": "application/vnd.kafka.avro.v2+json",
+          "Accept": "application/vnd.kafka.v2+json"
+        },
+        "body": {
+          "value_schema_id": "${$.register_avro_schema_value_step.response.body.id}",
+          "records": [
+            {
+              "key": null,
+              "value": {
+                "avrof1": "it works"
+              }
+            }
+          ]
+        }
+      },
+    "assertions":
+    {
+      "status": 200,
+      "body": {
+        "offsets": [
+          {
+            "partition": "$NOT.NULL",
+            "offset": "$NOT.NULL"
+          }
+        ]
+      }
+    }
+    },
+    {
+      "name": "consume_avro_msg_without_key_as_avro",
+      "url": "kafka-topic:demo-avro-12",
+      "operation": "consume",
+      "request": {
+        "consumerLocalConfigs": {
+          "recordType": "AVRO",
+          "commitSync": true,
+          "showRecordsConsumed": true,
+          "maxNoOfRetryPollsOrTimeouts": 3
+        }
+      },
+      "assertions": {
+        "size": 1,
+        "records": [
+          {
+            "value": {
+              "avrof1": "it works"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "produce_avro_msg_with_key_step",
+      "url": "/topics/demo-avro-12",
+      "operation": "POST",
+      "request": {
+        "headers": {
+          "Content-Type": "application/vnd.kafka.avro.v2+json",
+          "Accept": "application/vnd.kafka.v2+json"
+        },
+        "body": {
+          "key_schema_id": "${$.register_avro_schema_key_step.response.body.id}",
+          "value_schema_id": "${$.register_avro_schema_value_step.response.body.id}",
+          "records": [
+            {
+              "key": {
+                "key": "key works"
+              },
+              "value": {
+                "avrof1": "it works"
+              }
+            }
+          ]
+        }
+      },
+      "assertions":
+      {
+        "status": 200,
+        "body": {
+          "offsets": [
+            {
+              "partition": "$NOT.NULL",
+              "offset": "$NOT.NULL"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "consume_avro_msg_with_key_as_avro",
+      "url": "kafka-topic:demo-avro-12",
+      "operation": "consume",
+      "request": {
+        "consumerLocalConfigs": {
+          "recordType": "AVRO",
+          "commitSync": true,
+          "showRecordsConsumed": true,
+          "maxNoOfRetryPollsOrTimeouts": 3
+        }
+      },
+      "assertions": {
+        "size": 1,
+        "records": [
+          {
+            "key": {
+              "key": "key works"
+            },
+            "value": {
+              "avrof1": "it works"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

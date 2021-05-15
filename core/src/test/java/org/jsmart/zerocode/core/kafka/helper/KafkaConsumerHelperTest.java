@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.kafka.helper;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterators;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -141,7 +142,7 @@ public class KafkaConsumerHelperTest {
     public void should_read_json_with_headers_in_record() throws IOException {
         // given
         ConsumerRecord consumerRecord = Mockito.mock(ConsumerRecord.class);
-        Mockito.when(consumerRecord.key()).thenReturn("key");
+        Mockito.when(consumerRecord.key()).thenReturn("\"key\"");
         Mockito.when(consumerRecord.value()).thenReturn("\"value\"");
         Mockito.when(consumerRecord.headers())
                 .thenReturn(new RecordHeaders().add("headerKey", "headerValue".getBytes()));
@@ -153,7 +154,9 @@ public class KafkaConsumerHelperTest {
         // then
         Assert.assertEquals(1, consumerJsonRecords.size());
         ConsumerJsonRecord consumerJsonRecord = consumerJsonRecords.get(0);
-        Assert.assertEquals("key", consumerJsonRecord.getKey());
+        Assert.assertTrue(consumerJsonRecord.getKey() instanceof JsonNode);
+        Assert.assertTrue(consumerJsonRecord.getValue() instanceof JsonNode);
+        Assert.assertEquals("\"key\"", consumerJsonRecord.getKey().toString());
         Assert.assertEquals("\"value\"", consumerJsonRecord.getValue().toString());
         Assert.assertEquals(Collections.singletonMap("headerKey", "headerValue"), consumerJsonRecord.getHeaders());
     }

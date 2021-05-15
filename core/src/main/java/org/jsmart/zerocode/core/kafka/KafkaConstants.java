@@ -9,7 +9,9 @@ public interface KafkaConstants {
     String RAW = "RAW";
 
     String JSON = "JSON";
-    
+
+    String AVRO = "AVRO";
+
     String PROTO = "PROTO";
 
     String RECORD_TYPE_JSON_PATH = "$.recordType";
