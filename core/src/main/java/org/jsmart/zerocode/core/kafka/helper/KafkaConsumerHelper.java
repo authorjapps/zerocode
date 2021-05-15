@@ -4,6 +4,7 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.AVRO;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
@@ -220,11 +221,14 @@ public class KafkaConsumerHelper {
             Object key = thisRecord.key();
             Object valueObj = thisRecord.value();
             Headers headers = thisRecord.headers();
+            String keyStr =  thisRecord.key() != null ?  thisRecord.key().toString() : "";
             String valueStr = consumerLocalConfig != null && KafkaConstants.PROTO.equalsIgnoreCase(consumerLocalConfig.getRecordType()) ? convertProtobufToJson(thisRecord, consumerLocalConfig) : valueObj.toString();
             LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
                     key, valueStr, thisRecord.partition(), thisRecord.offset(), headers);
 
+            JsonNode keyNode = objectMapper.readTree(keyStr);
             JsonNode valueNode = objectMapper.readTree(valueStr);
+
             Map<String, String> headersMap = null;
             if (headers != null) {
                 headersMap = new HashMap<>();
@@ -232,7 +236,7 @@ public class KafkaConsumerHelper {
                     headersMap.put(header.key(), new String(header.value()));
                 }
             }
-            ConsumerJsonRecord jsonRecord = new ConsumerJsonRecord(thisRecord.key(), null, valueNode, headersMap);
+            ConsumerJsonRecord jsonRecord = new ConsumerJsonRecord(keyNode, valueNode, headersMap);
             jsonRecords.add(jsonRecord);
         }
     }
@@ -276,7 +280,7 @@ public class KafkaConsumerHelper {
         } else if (testConfigs != null && RAW.equals(testConfigs.getRecordType())) {
             result = prettyPrintJson(gson.toJson(new ConsumerRawRecords(rawRecords)));
 
-        } else if (testConfigs != null && (JSON.equals(testConfigs.getRecordType()) || PROTO.equalsIgnoreCase(testConfigs.getRecordType()))) {
+        } else if (testConfigs != null && (JSON.equals(testConfigs.getRecordType()) || PROTO.equalsIgnoreCase(testConfigs.getRecordType()) || AVRO.equalsIgnoreCase(testConfigs.getRecordType()))) {
             result = prettyPrintJson(objectMapper.writeValueAsString(new ConsumerJsonRecords(jsonRecords)));
 
         } else {

@@ -6,7 +6,7 @@ import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@TargetEnv("kafka_servers/kafka_test_server_unique.properties")
+@TargetEnv("kafka_servers/kafka_test_server.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class KafkaProduceUniqueClientIdTest {
 
