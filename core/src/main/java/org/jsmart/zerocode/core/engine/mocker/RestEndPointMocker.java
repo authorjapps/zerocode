@@ -28,21 +28,22 @@ public class RestEndPointMocker {
 
     public static WireMockServer wireMockServer;
 
-    public static Boolean buildUrlPathEqualToPattern_FeatureFlag = true;
+    public static Boolean shouldBuildStrictUrlMatcherForAllUrls = false;
 
-    private static boolean hasMoreThanOneStubForSameUrl(List<String> urls) {
-        if(urls == null) return false;
-        Set<String> urlsSet = urls.stream().collect(Collectors.toSet());
-        return urlsSet.size() != urls.size();
+    private static boolean hasMoreThanOneStubForSameUrlPath(List<String> urls) {
+        Set<String> urlPathsSet = urls.stream()
+                .map(u -> (u.contains("?")) ? u.substring(0, u.indexOf("?")) : u) // remove query params for comparison
+                .collect(Collectors.toSet());
+        return urlPathsSet.size() != urls.size();
     }
 
     public static void createWithWireMock(MockSteps mockSteps, int mockPort) {
 
         restartWireMock(mockPort);
 
-        List<String> urls = mockSteps.getMocks().stream().map(e -> e.getUrl()).collect(Collectors.toList());
-        if (hasMoreThanOneStubForSameUrl(urls)) {
-            buildUrlPathEqualToPattern_FeatureFlag = false;
+        List<String> urls = mockSteps.getMocks().stream().map(MockStep::getUrl).collect(Collectors.toList());
+        if (hasMoreThanOneStubForSameUrlPath(urls)) {
+            shouldBuildStrictUrlMatcherForAllUrls = true;
         }
 
         mockSteps.getMocks().forEach(mockStep -> {
@@ -136,8 +137,8 @@ public class RestEndPointMocker {
     }
 
     private static UrlPattern buildUrlPattern(String url) {
-        // if url pattern doesn't have query params and feature flag = true, then match url with or without any query parameters
-        if (url != null && !url.contains("?") && buildUrlPathEqualToPattern_FeatureFlag) {
+        // if url pattern doesn't have query params and shouldBuildStrictUrlMatcher is true, then match url regardless query parameters
+        if (url != null && !url.contains("?") && !shouldBuildStrictUrlMatcherForAllUrls) {
             return urlPathEqualTo(url);
         } else { // if url pattern has query params then match url strictly including query params
             return urlEqualTo(url);
