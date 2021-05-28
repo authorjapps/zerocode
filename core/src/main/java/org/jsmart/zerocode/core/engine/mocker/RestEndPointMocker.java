@@ -10,6 +10,7 @@ import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemp
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,7 @@ public class RestEndPointMocker {
 
     private static boolean hasMoreThanOneStubForSameUrlPath(List<String> urls) {
         Set<String> urlPathsSet = urls.stream()
+                .filter(Objects::nonNull)
                 .map(u -> (u.contains("?")) ? u.substring(0, u.indexOf("?")) : u) // remove query params for comparison
                 .collect(Collectors.toSet());
         return urlPathsSet.size() != urls.size();
@@ -45,7 +48,6 @@ public class RestEndPointMocker {
         if (hasMoreThanOneStubForSameUrlPath(urls)) {
             shouldBuildStrictUrlMatcherForAllUrls = true;
         }
-
         mockSteps.getMocks().forEach(mockStep -> {
             JsonNode jsonNodeResponse = mockStep.getResponse();
             JsonNode jsonNodeBody = jsonNodeResponse.get("body");
