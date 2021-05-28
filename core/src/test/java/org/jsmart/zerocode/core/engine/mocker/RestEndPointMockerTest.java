@@ -156,6 +156,7 @@ public class RestEndPointMockerTest {
 
         final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
         System.out.println("### response: \n" + responseBodyActual);
+        System.out.print(response);
 
         assertThat(response.getStatusLine().getStatusCode(), is(200));
         JSONAssert.assertEquals(respBody, responseBodyActual, true);
