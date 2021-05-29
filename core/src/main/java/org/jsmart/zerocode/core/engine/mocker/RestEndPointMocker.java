@@ -34,7 +34,6 @@ public class RestEndPointMocker {
 
     private static boolean hasMoreThanOneStubForSameUrlPath(List<String> urls) {
         Set<String> urlPathsSet = urls.stream()
-                .filter(Objects::nonNull)
                 .map(u -> (u.contains("?")) ? u.substring(0, u.indexOf("?")) : u) // remove query params for comparison
                 .collect(Collectors.toSet());
         return urlPathsSet.size() != urls.size();
@@ -44,10 +43,16 @@ public class RestEndPointMocker {
 
         restartWireMock(mockPort);
 
-        List<String> urls = mockSteps.getMocks().stream().map(MockStep::getUrl).collect(Collectors.toList());
-        if (hasMoreThanOneStubForSameUrlPath(urls)) {
+        List<String> urls = mockSteps.getMocks()
+                .stream()
+                .map(MockStep::getUrl)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        if (urls.size() != 0 && hasMoreThanOneStubForSameUrlPath(urls)) {
             shouldBuildStrictUrlMatcherForAllUrls = true;
         }
+        LOGGER.info("Going to build strict url matcher - {}",shouldBuildStrictUrlMatcherForAllUrls);
         mockSteps.getMocks().forEach(mockStep -> {
             JsonNode jsonNodeResponse = mockStep.getResponse();
             JsonNode jsonNodeBody = jsonNodeResponse.get("body");
@@ -141,8 +146,10 @@ public class RestEndPointMocker {
     private static UrlPattern buildUrlPattern(String url) {
         // if url pattern doesn't have query params and shouldBuildStrictUrlMatcher is true, then match url regardless query parameters
         if (url != null && !url.contains("?") && !shouldBuildStrictUrlMatcherForAllUrls) {
+            LOGGER.info("Going to build lenient matcher for url={}",url);
             return urlPathEqualTo(url);
         } else { // if url pattern has query params then match url strictly including query params
+            LOGGER.info("Going to build strict matcher for url={}",url);
             return urlEqualTo(url);
         }
     }
