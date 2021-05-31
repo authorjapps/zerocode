@@ -63,7 +63,7 @@
         <junit5.version>5.4.2</junit5.version>
         <junit.vintage.version>5.4.2</junit.vintage.version>
         <junit-platform-runner.version>1.4.2</junit-platform-runner.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <jackson-databind.version>2.10.0</jackson-databind.version>
         <guava.version>23.0</guava.version>
         <jsonassert.version>1.5.0</jsonassert.version>
