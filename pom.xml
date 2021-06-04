@@ -79,7 +79,7 @@
         <jackson-dataformat-csv.version>2.9.8</jackson-dataformat-csv.version>
         <commons-io.version>2.4</commons-io.version>
         <micro-simulator.version>1.1.10</micro-simulator.version>
-        <httpclient.version>4.5</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <h2.db.version>1.4.191</h2.db.version>
         <extentreports.version>4.0.9</extentreports.version>
         <version.kafka-clients>2.1.0</version.kafka-clients>
