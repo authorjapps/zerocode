@@ -73,7 +73,7 @@
         <commons-lang.version>2.6</commons-lang.version>
         <jayway-version>2.2.0</jayway-version>
         <resteasy-jaxrs.version>2.2.1.GA</resteasy-jaxrs.version>
-        <logback.version>1.0.7</logback.version>
+        <logback.version>1.2.0</logback.version>
         <wiremock.version>2.19.0</wiremock.version>
         <velocity.version>1.7</velocity.version>
         <jackson-dataformat-csv.version>2.9.8</jackson-dataformat-csv.version>
