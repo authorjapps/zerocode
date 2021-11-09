@@ -10,11 +10,15 @@ import com.google.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.google.inject.name.Named;
 import org.jsmart.zerocode.core.domain.Step;
 import org.slf4j.Logger;
 
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.JSON_PAYLOAD_FILE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.YML_PAYLOAD_FILE;
 import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
+import static org.jsmart.zerocode.core.utils.SmartUtils.readYamlAsString;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -41,6 +45,10 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
     private static final Logger LOGGER = getLogger(ZeroCodeExternalFileProcessorImpl.class);
 
     private final ObjectMapper objectMapper;
+
+    @Inject
+    @Named("YamlMapper")
+    private ObjectMapper yamlMapper;
 
     @Inject
     public ZeroCodeExternalFileProcessorImpl(ObjectMapper objectMapper) {
@@ -127,7 +135,7 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
 
             } else {
                 LOGGER.debug("Leaf node found = {}, checking for any external json file...", value);
-                if (value != null && value.toString().contains(JSON_PAYLOAD_FILE)) {
+                if (value != null && (value.toString().contains(JSON_PAYLOAD_FILE) || value.toString().contains(YML_PAYLOAD_FILE))) {
                     LOGGER.info("Found external JSON file place holder = {}. Replacing with content", value);
                     String valueString = value.toString();
                     String token = getJsonFilePhToken(valueString);
@@ -140,6 +148,21 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
                                 final Map<String, Object> jsonFileContent = objectMapper.convertValue(jsonNode, Map.class);
                                 digReplaceContent(jsonFileContent);
                                 jsonNode = objectMapper.convertValue(jsonFileContent, JsonNode.class);
+                            }
+                            entry.setValue(jsonNode);
+                        } catch (Exception exx) {
+                            LOGGER.error("External file reference exception - {}", exx.getMessage());
+                            throw new RuntimeException(exx);
+                        }
+                    }
+                    if (token != null && token.startsWith(YML_PAYLOAD_FILE)) {
+                        String resourceJsonFile = token.substring(YML_PAYLOAD_FILE.length());
+                        try {
+                            JsonNode jsonNode = yamlMapper.readTree(readYamlAsString(resourceJsonFile));
+                            if (jsonNode.isObject()) {
+                                final Map<String, Object> yamlFileContent = objectMapper.convertValue(jsonNode, Map.class);
+                                digReplaceContent(yamlFileContent);
+                                jsonNode = objectMapper.convertValue(yamlFileContent, JsonNode.class);
                             }
                             entry.setValue(jsonNode);
                         } catch (Exception exx) {
@@ -184,7 +207,7 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
         String stepJson = objectMapper.writeValueAsString(thisStep);
         List<String> allTokens = getTestCaseTokens(stepJson);
 
-        return allTokens.toString().contains(JSON_PAYLOAD_FILE);
+        return allTokens.toString().contains(JSON_PAYLOAD_FILE) || allTokens.toString().contains(YML_PAYLOAD_FILE);
     }
 
 }

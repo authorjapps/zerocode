@@ -10,6 +10,7 @@ import static java.util.Arrays.asList;
  */
 public class ZeroCodeValueTokens {
     public static final String JSON_PAYLOAD_FILE = "JSON.FILE:";
+    public static final String YML_PAYLOAD_FILE = "YML.FILE:";
     public static final String PREFIX_ASU = "ASU";
     public static final String XML_FILE = "XML.FILE:";
     public static final String GQL_FILE = "GQL.FILE:";
