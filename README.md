@@ -13,15 +13,15 @@ Automated API testing has never been so easy
 **Issue Discussions:** [Slack](https://join.slack.com/t/zerocode-workspace/shared_invite/enQtNzYxMDAwNTQ3MjY1LTA2YmJjODJhNzQ4ZjBiYTQwZDBmZmNkNmExYjA3ZDk2OGFiZWFmNWJlNGRkOTdiMDQ4ZmQyNzcyNzVjNWQ4ODQ) <br/> 
 **Mailing List:** [Mailing List](https://groups.google.com/forum/#!forum/zerocode-automation) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
-**LinkedIn:** [Zerocode](https://www.linkedin.com/company/49160481)
 
-Zerocode Open Source makes it easy to create, change, orchestrate and maintain automated tests with the absolute minimum overhead for [REST](https://knowledge.zerocode.io/en/knowledge/automation-of-user-journey-create-update-and-get-employee-rest-apis), [SOAP](https://knowledge.zerocode.io/en/knowledge/soap-testing-automation-with-xml-input), [Kafka Real Time Data Streams](https://knowledge.zerocode.io/knowledge/kafka-testing-introduction) and much more. Tests created in Zerocode Open Source can be easily shared between teams for reviewing, editing, and versioning. The platform incorporates the best feedback and suggestions from the community to make it incredibly powerful, and we’re seeing rapid adoption across the developer/tester community
+
+Zerocode Open Source makes it easy to create, change, orchestrate and maintain automated tests with the absolute minimum overhead for **REST** **SOAP** **Kafka** Real Time Data Streams and much more. Tests created in Zerocode Open Source can be easily shared between teams for reviewing, editing, and versioning. The platform incorporates the best feedback and suggestions from the community to make it incredibly powerful, and we’re seeing rapid adoption across the developer/tester community
 
 Quick Links
 ===
 To get started with Zerocode Open Source and its features, visit 
-+ [Zerocode Documentation](https://knowledge.zerocode.io/knowledge)
-+ [Quick Start guide](https://knowledge.zerocode.io/en/knowledge/zerocode-quick-start-guide)
++ [Zerocode Documentation](https://github.com/authorjapps/zerocode/wiki)
++ [Quick Start guide](https://github.com/authorjapps/zerocode/wiki/Getting-Started)
 + [Release frequency](https://github.com/authorjapps/zerocode/wiki/Zerocode-release-frequency-and-schedule)
 
 Maven Dependency
@@ -190,8 +190,14 @@ The test can then be run simply by pointing to the above JSON/YAML file from a J
    }
 ```
 
-The bottom line is that Zerocode Open Source makes automated API testing declarative and simple. If you’d like to learn more, visit the [quick-start guide](https://knowledge.zerocode.io/en/knowledge/zerocode-quick-start-guide) to get started testing - fast!
+The bottom line is that Zerocode Open Source makes automated API testing declarative and simple. If you’d like to learn more, visit the [quick-start guide](https://github.com/authorjapps/zerocode/wiki/Getting-Started) to get started testing - fast!
 
-Zerocode Open Source is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://knowledge.zerocode.io/knowledge/smart-projects-using-zerocode) to achieve an accurate production drop of their microservices. Learn more about [Validators Vs Matchers](https://knowledge.zerocode.io/knowledge/validators-and-matchers) here.
+Zerocode Open Source is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and many others to achieve an accurate production drop of their microservices. Learn more about [Validators Vs Matchers](https://github.com/authorjapps/zerocode/wiki/Validators-and-Matchers) here.
 
 Happy testing!
+
+
+## Credits
+![Jetbrains](images/jetbrains.svg)
+
+ Our gratitude to Jetbrains team for providing free IDE licenses.
