@@ -5,39 +5,39 @@ Automated API testing has never been so easy
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
-[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeTDD.svg?style=social&label=Follow)](https://twitter.com/Zerocodeio)
+[![Twitter Follow](https://img.shields.io/twitter/follow/Zerocodeio.svg)](https://twitter.com/Zerocodeio)
 
 
 **Latest release:🏹** [![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) <br/>
 **Continuous Integration:** [![Build Status](https://travis-ci.org/authorjapps/zerocode.svg?branch=master)](https://travis-ci.org/authorjapps/zerocode) <br/>
-**Issue Discussions:** [Slack](https://join.slack.com/t/zerocode-workspace/shared_invite/enQtNzYxMDAwNTQ3MjY1LTA2YmJjODJhNzQ4ZjBiYTQwZDBmZmNkNmExYjA3ZDk2OGFiZWFmNWJlNGRkOTdiMDQ4ZmQyNzcyNzVjNWQ4ODQ) <br/> 
+**Issue Discussions:** [Slack](https://join.slack.com/t/zerocode-workspace/shared_invite/enQtNzYxMDAwNTQ3MjY1LTA2YmJjODJhNzQ4ZjBiYTQwZDBmZmNkNmExYjA3ZDk2OGFiZWFmNWJlNGRkOTdiMDQ4ZmQyNzcyNzVjNWQ4ODQ) <br/>
 **Mailing List:** [Mailing List](https://groups.google.com/forum/#!forum/zerocode-automation) <br/>
 **License:** [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) <br/>
-**LinkedIn:** [Zerocode](https://www.linkedin.com/company/49160481)
 
-Zerocode Open Source makes it easy to create, change, orchestrate and maintain automated tests with the absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details), [SOAP](https://github.com/authorjapps/zerocode/wiki/SOAP-method-validation-with-xml-input), [Kafka Real Time Data Streams](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) and much more. Tests created in Zerocode Open Source can be easily shared between teams for reviewing, editing, and versioning. The platform incorporates the best feedback and suggestions from the community to make it incredibly powerful, and we’re seeing rapid adoption across the developer/tester community
+
+Zerocode Open Source makes it easy to create, change, orchestrate and maintain automated tests with the absolute minimum overhead for **REST** **SOAP** **Kafka** Real Time Data Streams and much more. Tests created in Zerocode Open Source can be easily shared between teams for reviewing, editing, and versioning. The platform incorporates the best feedback and suggestions from the community to make it incredibly powerful, and we’re seeing rapid adoption across the developer/tester community
 
 Quick Links
 ===
-To get started with Zerocode Open Source and its features, visit 
+To get started with Zerocode Open Source and its features, visit
 + [Zerocode Documentation](https://github.com/authorjapps/zerocode/wiki)
-+ [Quick Start guide](https://github.com/authorjapps/zerocode/wiki#developer-guide)
++ [Quick Start guide](https://github.com/authorjapps/zerocode/wiki/Getting-Started)
 + [Release frequency](https://github.com/authorjapps/zerocode/wiki/Zerocode-release-frequency-and-schedule)
 
 Maven Dependency
 ===
-+ [New releases - zerocode-tdd](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) 
-[![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/)
-+ _[Older releases - zerocode-rest-bdd](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/)_ 
-[![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/)
++ [New releases - zerocode-tdd](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/)
+  [![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/)
++ _[Older releases - zerocode-rest-bdd](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/)_
+  [![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-rest-bdd/)
 
 Introduction
 ===
 Zerocode Open Source is a lightweight, simple and extensible framework for writing test intentions in a simple JSON or YAML format that facilitates both declarative configuration and automation.
 
-Put simply, Zerocode is a solution for all API Development pain points. The objective is to bring simplicity to API automation. The framework provides a unified solution to manage response validations, target API invocations, perform load/stress testing and perform security testing using a the simple domain specific languages (DSL) JSON and YAML.
+Put simply, Zerocode is a sollution for all API Development pain points. The objective is to bring simplicity to API automation. The framework provides a unified solution to manage response validations, target API invocations, perform load/stress testing and perform security testing using a the simple domain specific languages (DSL) JSON and YAML.
 
-For example, if your REST API URL `https://localhost:8080/api/v1/customers/123` with `GET` method and `"Content-Type": "application/json"` returns the following payload and a `http` status code `200(OK)` , 
+For example, if your REST API URL `https://localhost:8080/api/v1/customers/123` with `GET` method and `"Content-Type": "application/json"` returns the following payload and a `http` status code `200(OK)` ,
 ```javaScript
 Response:
 {
@@ -190,8 +190,15 @@ The test can then be run simply by pointing to the above JSON/YAML file from a J
    }
 ```
 
-The bottom line is that Zerocode Open Source makes automated API testing declarative and simple. If you’d like to learn more, visit the [quick-start guide](https://github.com/authorjapps/zerocode/wiki/Getting-Started) or [user's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide) to get started testing - fast!
+The bottom line is that Zerocode Open Source makes automated API testing declarative and simple. If you’d like to learn more, visit the [quick-start guide](https://github.com/authorjapps/zerocode/wiki/Getting-Started) to get started testing - fast!
 
-Zerocode Open Source is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve an accurate production drop of their microservices. Learn more about [Validators Vs Matchers](https://github.com/authorjapps/zerocode/wiki/Validators-and-Matchers) here.
+Zerocode Open Source is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and many others to achieve an accurate production drop of their microservices. Learn more about [Validators Vs Matchers](https://github.com/authorjapps/zerocode/wiki/Validators-and-Matchers) here.
 
-Happy testing!
+
+
+## Check out our [IntelliJ plugin](https://plugins.jetbrains.com/plugin/15773-zerocode-scenario-helper)
+
+## Credits
+![Jetbrains](images/jetbrains.svg)
+
+Our gratitude to Jetbrains team for providing free IDE licenses.
