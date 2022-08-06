@@ -41,8 +41,9 @@ public class ZeroCodeTestReportListener extends RunListener {
     }
 
     private void printTestCompleted() {
-        LOGGER.info("#ZeroCode: Test run completed for this runner. Generating test reports and charts. " +
-                "\n* For more examples and help on automated Kafka data stream testing and Load testing visit https://zerocode.io");
+        LOGGER.info("#ZeroCode: Generating test reports...");
+        LOGGER.debug("#ZeroCode: Test run completed for this runner. Generating test reports... " +
+                "\n* For more examples, visit https://github.com/authorjapps/zerocode/wiki");
     }
 
     /**

@@ -26,12 +26,9 @@ mvn -pl core clean test
 ```
 
 ## With tests executed(kafka)
-Some of the tests require a running Kafka (and some related components like kafka-rest, and kafka-schema-registry).
+Some tests require a running Kafka (and some related components like kafka-rest, and kafka-schema-registry).
 
-In the [zerocode-docker-factory repository](https://github.com/authorjapps/zerocode-docker-factory/) ([direct download link](https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml)) 
-you'll find 'kafka-schema-registry.yml', a docker-compose file that provides these components.
-
-Download the file, and run(or `cd to the docker` dir and run)
+Download the file, and run(or `cd to the docker/compose` dir and run)
 ```
 docker-compose -f kafka-schema-registry.yml up -d
 
@@ -43,7 +40,10 @@ We have provided other compose-files just in-case anyone has to experiment tests
 single-node or multi-node cluster(s) independently.
 ```
 
-Then you can run
+In the [zerocode-docker-factory repository](https://github.com/authorjapps/zerocode-docker-factory/) ([direct download link](https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml)) 
+you'll find 'kafka-schema-registry.yml', a docker-compose file that provides these components.
+
+Then you can run:
 ```
 mvn clean install   <---- To build and install all the modules
 
