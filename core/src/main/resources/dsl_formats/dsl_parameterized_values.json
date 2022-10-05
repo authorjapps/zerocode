@@ -18,5 +18,9 @@
             "hello",
             123
         ]
+    },
+
+    "meta": {
+        "print2html": "Test has failed"
     }
 }
