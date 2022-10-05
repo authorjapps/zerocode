@@ -247,17 +247,17 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 // -----------------
                 // logging assertion
                 // -----------------
-                List<FieldAssertionMatcher> failureResults = compareStepResults(thisStep, executionResult, resolvedAssertionJson);
+                List<FieldAssertionMatcher> failureResults = compareStepResults(thisStep, executionResult, resolvedAssertionJson, scenarioExecutionState.getResolvedScenarioState());
 
                 if (!failureResults.isEmpty()) {
                     StringBuilder builder = new StringBuilder();
 
                     // Print expected Payload along with assertion errors
-                    builder.append("Assumed Payload: \n" + prettyPrintJson(resolvedAssertionJson) + "\n");
+                    builder.append("Assumed Payload: \n").append(prettyPrintJson(resolvedAssertionJson)).append("\n");
                     builder.append("Assertion Errors: \n");
 
                     failureResults.forEach(f -> {
-                        builder.append(f.toString() + "\n");
+                        builder.append(f.toString()).append("\n");
                     });
                     correlLogger.assertion(resolvedAssertionJson != null ? builder.toString() : expectedValidatorsAsJson(thisStep));
                 } else {
@@ -509,14 +509,14 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         return scenarioLoopTimes;
     }
 
-    private List<FieldAssertionMatcher> compareStepResults(Step thisStep, String actualResult, String expectedResult) {
+    private List<FieldAssertionMatcher> compareStepResults(Step thisStep, String actualResult, String expectedResult, String resolvedScenarioState) {
         List<FieldAssertionMatcher> failureResults = new ArrayList<>();
 
         // --------------------
         //  Validators (pyrest)
         // --------------------
         if (ofNullable(thisStep.getValidators()).orElse(null) != null) {
-            failureResults = validator.validateFlat(thisStep, actualResult);
+            failureResults = validator.validateFlat(thisStep, actualResult, resolvedScenarioState);
         }
 
         // ------------------------
