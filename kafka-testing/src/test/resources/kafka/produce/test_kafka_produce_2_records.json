@@ -28,23 +28,12 @@
             "request": {
                 "consumerLocalConfigs": {
                     "showRecordsConsumed": true,
-                    "maxNoOfRetryPollsOrTimeouts": 5
+                    "maxNoOfRetryPollsOrTimeouts": 3,
+                    "filterByJsonPath":"$.records[?(@.topic == 'demo-p6' && @.value == '${$.load_kafka.request.records[0].value}')]"
                 }
             },
             "assertions": {
-                "records": [
-                    {
-                        "topic": "demo-p6",
-                        "key": "${$.load_kafka.request.records[0].key}",
-                        "value": "Hello World 1"
-                    },
-                    {
-                        "topic": "demo-p6",
-                        "key": "${$.load_kafka.request.records[1].key}",
-                        "value": "Hello World 2"
-                    }
-                ],
-                "size": 2
+//                "size": 1
             }
         }
     ]

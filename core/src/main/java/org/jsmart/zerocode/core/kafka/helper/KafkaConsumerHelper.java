@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +29,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.jayway.jsonpath.JsonPath;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -129,6 +132,7 @@ public class KafkaConsumerHelper {
                     consumerCommon.getShowRecordsConsumed(),
                     consumerCommon.getMaxNoOfRetryPollsOrTimeouts(),
                     consumerCommon.getPollingTime(),
+                    consumerCommon.getFilterByJsonPath(),
                     consumerCommon.getSeek());
         }
 
@@ -150,6 +154,9 @@ public class KafkaConsumerHelper {
 
         // Handle pollingTime
         Long effectivePollingTime = ofNullable(consumerLocal.getPollingTime()).orElse(consumerCommon.getPollingTime());
+
+        // Handle pollingTime
+        String filterByJsonPath = ofNullable(consumerLocal.getFilterByJsonPath()).orElse(consumerCommon.getFilterByJsonPath());
 
         // Handle pollingTime
         String effectiveSeek = ofNullable(consumerLocal.getSeek()).orElse(consumerCommon.getSeek());
@@ -179,6 +186,7 @@ public class KafkaConsumerHelper {
                 effectiveShowRecordsConsumed,
                 effectiveMaxNoOfRetryPollsOrTimeouts,
                 effectivePollingTime,
+                filterByJsonPath,
                 effectiveSeek);
     }
 
@@ -283,10 +291,20 @@ public class KafkaConsumerHelper {
         } else if (testConfigs != null && (JSON.equals(testConfigs.getRecordType()) || PROTO.equalsIgnoreCase(testConfigs.getRecordType()) || AVRO.equalsIgnoreCase(testConfigs.getRecordType()))) {
             result = prettyPrintJson(objectMapper.writeValueAsString(new ConsumerJsonRecords(jsonRecords)));
 
-        } else {
+        }else {
             result = "{\"error\" : \"recordType Undecided, Please chose recordType as JSON or RAW\"}";
         }
 
+        if (testConfigs != null && testConfigs.getFilterByJsonPath() != null) {
+            String filteredResult = JsonPath.read(result, testConfigs.getFilterByJsonPath()).toString();
+            System.out.println("Filtered result====>" + filteredResult);
+//            List<ConsumerJsonRecord> filteredRecords = objectMapper.readValue(filteredResult,
+//                    new TypeReference<ArrayList<ConsumerJsonRecord>>() {});
+            List<ConsumerJsonRecord> filteredRecords = objectMapper.readValue(filteredResult, List.class);
+//            ConsumerJsonRecords records = new ConsumerJsonRecords(filteredRecords, filteredRecords.size());
+            result = prettyPrintJson(objectMapper.writeValueAsString(new ConsumerJsonRecords(filteredRecords)));
+            return result;
+        }
         return result;
     }
 
