@@ -86,10 +86,16 @@ public class ConsumerCommonConfigs {
             String seek
 
     ) {
-		this(commitSync, commitAsync,
-                fileDumpTo, recordType, null,
-                showRecordsConsumed, maxNoOfRetryPollsOrTimeouts,
-				pollingTime, filterByJsonPath, seek);
+		this(commitSync,
+                commitAsync,
+                fileDumpTo,
+                recordType,
+                null,
+                showRecordsConsumed,
+                maxNoOfRetryPollsOrTimeouts,
+				pollingTime,
+                filterByJsonPath,
+                seek);
 	}
 
     public Boolean getCommitSync() {
