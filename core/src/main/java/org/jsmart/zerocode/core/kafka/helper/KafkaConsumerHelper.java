@@ -295,16 +295,13 @@ public class KafkaConsumerHelper {
             result = "{\"error\" : \"recordType Undecided, Please chose recordType as JSON or RAW\"}";
         }
 
+        // Optional filter applied. if not supplied, original result is returned as response
         if (testConfigs != null && testConfigs.getFilterByJsonPath() != null) {
             String filteredResult = JsonPath.read(result, testConfigs.getFilterByJsonPath()).toString();
-            System.out.println("Filtered result====>" + filteredResult);
-//            List<ConsumerJsonRecord> filteredRecords = objectMapper.readValue(filteredResult,
-//                    new TypeReference<ArrayList<ConsumerJsonRecord>>() {});
             List<ConsumerJsonRecord> filteredRecords = objectMapper.readValue(filteredResult, List.class);
-//            ConsumerJsonRecords records = new ConsumerJsonRecords(filteredRecords, filteredRecords.size());
             result = prettyPrintJson(objectMapper.writeValueAsString(new ConsumerJsonRecords(filteredRecords)));
-            return result;
         }
+
         return result;
     }
 
