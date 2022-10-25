@@ -28,7 +28,7 @@
                 },
                 "body": {
                     "error_code": 42203,
-                    "message": "Conversion of JSON to Object failed: Failed to convert JSON to Avro: Expected int. Got VALUE_STRING"
+                    "message": "$CONTAINS.STRING:Failed to convert JSON to Avro: Expected int. Got VALUE_STRING"
                     // Old docker ---> "message": "Conversion of JSON to Avro failed: Failed to convert JSON to Avro: Expected int. Got VALUE_STRING",
                 }
             }
