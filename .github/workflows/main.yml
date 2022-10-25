@@ -12,13 +12,11 @@ jobs:
     
     steps:
           
-      - name: Setup docker-compose
-        # You may pin to the exact commit or the version.
-        # uses: KengoTODA/actions-setup-docker-compose@1d605d961123cbab67ef2d916746ba4d31413dcb
-        uses: KengoTODA/actions-setup-docker-compose@v1.0.9
+      - name: Install Compose
+        uses: ndeloof/install-docker-compose@latest
         with:
-          # the version of docker-compose command
-          version: 3.3
+          version: latest # defaults to 'latest'
+          legacy: true
           
       - uses: actions/checkout@v3
       - name: Set up JDK 8
