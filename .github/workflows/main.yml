@@ -8,15 +8,9 @@ on:
       - master
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     
     steps:
-          
-      - name: Install Compose
-        uses: ndeloof/install-docker-compose@v0.0.1
-        with:
-          version: latest # defaults to 'latest'
-          legacy: true
           
       - uses: actions/checkout@v3
       - name: Set up JDK 8
