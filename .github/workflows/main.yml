@@ -15,6 +15,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: $HOME/.m2
+          
       - name: Setup docker-compose
         # You may pin to the exact commit or the version.
         # uses: KengoTODA/actions-setup-docker-compose@1d605d961123cbab67ef2d916746ba4d31413dcb
@@ -22,16 +23,19 @@ jobs:
         with:
           # the version of docker-compose command
           version: 3.3
+          
       - uses: actions/checkout@v3
       - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
           java-version: '8'
           distribution: 'adopt'
-      - run: |
+      - name: Getting Docker Files
+        run: |
           wget
           https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml
-      - run: docker-compose -f kafka-schema-registry.yml up -d && sleep 10
+      - name: Running Kafka 
+        run: docker-compose -f kafka-schema-registry.yml up -d && sleep 10
       
       - name: Build with Maven
-      - run: mvn clean test
+        run: mvn clean test
