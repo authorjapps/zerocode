@@ -1,4 +1,4 @@
-name: Converted Workflow
+name: CI Build
 on:
   push:
     branches:
@@ -9,19 +9,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-          
       - uses: actions/checkout@v3
-      - name: Set up JDK 8
+      - name: Setting up JDK8
         uses: actions/setup-java@v3
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: Getting Docker Files
+      - name: Downloading docker-compose files
         run: wget https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml
-      - name: Running Kafka 
+      - name: Running Kafka
         run: docker-compose -f kafka-schema-registry.yml up -d && sleep 10
-      
-      - name: Build with Maven
+      - name: Building and testing the changes
         run: mvn clean test
