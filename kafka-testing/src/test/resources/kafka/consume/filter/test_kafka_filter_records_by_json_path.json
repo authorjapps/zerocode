@@ -1,0 +1,69 @@
+{
+    "scenarioName": "Produce - 2 records and consume 1 record filtered by JSON Path",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-p6",
+            "operation": "PRODUCE",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World 1"
+                    },
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello World 2"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "filter_message1",
+            "url": "kafka-topic:demo-p6",
+            "operation": "CONSUME",
+            "request": {
+                "consumerLocalConfigs": {
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3,
+                    "commitSync": false,
+                    "filterByJsonPath": "$.records[?(@.topic == 'demo-p6' && @.value == '${$.load_kafka.request.records[0].value}')]"
+                }
+            },
+            "assertions": {
+                "size": 1,
+                "records": [
+                    {
+                        "topic": "demo-p6",
+                        "value": "Hello World 1"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "filter_message2",
+            "url": "kafka-topic:demo-p6",
+            "operation": "CONSUME",
+            "request": {
+                "consumerLocalConfigs": {
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3,
+                    "commitSync": true,
+                    "filterByJsonPath": "$.records[?(@.topic == 'demo-p6' && @.value == 'Hello World 2')]"
+                }
+            },
+            "assertions": {
+                "size": 1,
+                "records": [
+                    {
+                        "topic": "demo-p6",
+                        "value": "Hello World 2"
+                    }
+                ]
+            }
+        }
+    ]
+}

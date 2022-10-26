@@ -25,6 +25,7 @@ public class ConsumerLocalConfigsWrapTest {
                         true,
                         3,
                         50L,
+                        "$.JSON.Path",
                         "1,0,test-topic"));
         ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
@@ -35,6 +36,7 @@ public class ConsumerLocalConfigsWrapTest {
                 "      \"commitAsync\": true,\n" +
                 "      \"maxNoOfRetryPollsOrTimeouts\": 3,\n" +
                 "      \"pollingTime\": 50,\n" +
+                "      \"filterByJsonPath\": \"$.JSON.Path\",\n" +
                 "      \"seek\": \"1,0,test-topic\"\n" +
                 "   }\n" +
                 "}",
@@ -52,6 +54,7 @@ public class ConsumerLocalConfigsWrapTest {
                         null,
                         false,
                         3,
+                        null,
                         null,
                         "1,0,test-topic"));
 
