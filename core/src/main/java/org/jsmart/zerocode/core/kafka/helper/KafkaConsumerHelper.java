@@ -19,7 +19,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,7 +28,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -64,8 +62,15 @@ public class KafkaConsumerHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerHelper.class);
     private static final Gson gson = new GsonSerDeProvider().get();
     private static final ObjectMapper objectMapper = new ObjectMapperProvider().get();
+    public static final String CONSUMER = "CONSUMER";
+    public static Map<String, Consumer> consumerCacheByTopicMap = new HashMap<>();
 
-    public static Consumer createConsumer(String bootStrapServers, String consumerPropertyFile, String topic) {
+    public static Consumer createConsumer(String bootStrapServers, String consumerPropertyFile, String topic, Boolean consumerToBeCached) {
+        Consumer sameConsumer = getCachedConsumer(topic, consumerToBeCached);
+        if (sameConsumer != null) {
+            return sameConsumer;
+        }
+
         try (InputStream propsIs = Resources.getResource(consumerPropertyFile).openStream()) {
             Properties properties = new Properties();
             properties.load(propsIs);
@@ -75,6 +80,10 @@ public class KafkaConsumerHelper {
 
             final Consumer consumer = new KafkaConsumer(properties);
             consumer.subscribe(Collections.singletonList(topic));
+
+            if(consumerToBeCached == true){
+                consumerCacheByTopicMap.put(topic, consumer);
+            }
 
             return consumer;
 
@@ -87,9 +96,12 @@ public class KafkaConsumerHelper {
 
             for (int run = 0; run < 50; run++) {
                 if (!consumer.assignment().isEmpty()) {
+                    LOGGER.info("==> WaitingForConsumerGroupJoin - Partition now assigned. No records not yet consumed");
                     return new ConsumerRecords(new HashMap());
                 }
+                LOGGER.info("==> WaitingForConsumerGroupJoin - Partition not assigned. Polling once");
                 ConsumerRecords records = consumer.poll(Duration.of(getPollTime(effectiveLocalConfigs), ChronoUnit.MILLIS));
+                LOGGER.info("==> WaitingForConsumerGroupJoin - polled records length={}", records.count());
                 if (!records.isEmpty()) {
                     return records;
                 }
@@ -132,6 +144,7 @@ public class KafkaConsumerHelper {
                     consumerCommon.getShowRecordsConsumed(),
                     consumerCommon.getMaxNoOfRetryPollsOrTimeouts(),
                     consumerCommon.getPollingTime(),
+                    consumerCommon.getCacheByTopic(),
                     consumerCommon.getFilterByJsonPath(),
                     consumerCommon.getSeek());
         }
@@ -161,6 +174,10 @@ public class KafkaConsumerHelper {
         // Handle pollingTime
         String effectiveSeek = ofNullable(consumerLocal.getSeek()).orElse(consumerCommon.getSeek());
 
+        // Handle consumerCache by topic
+        Boolean effectiveConsumerCacheByTopic = ofNullable(consumerLocal.getCacheByTopic())
+                .orElse(consumerCommon.getCacheByTopic());
+
         // Handle commitSync and commitAsync -START
         Boolean effectiveCommitSync;
         Boolean effectiveCommitAsync;
@@ -186,6 +203,7 @@ public class KafkaConsumerHelper {
                 effectiveShowRecordsConsumed,
                 effectiveMaxNoOfRetryPollsOrTimeouts,
                 effectivePollingTime,
+                effectiveConsumerCacheByTopic,
                 filterByJsonPath,
                 effectiveSeek);
     }
@@ -382,4 +400,12 @@ public class KafkaConsumerHelper {
             }
         }
     }
+
+    private static Consumer getCachedConsumer(String topic, Boolean consumerToBeCached) {
+        if(consumerToBeCached){
+            return consumerCacheByTopicMap.get(topic);
+        }
+        return null;
+    }
+
 }

@@ -1,0 +1,19 @@
+{
+    "scenarioName": "Reset offset to latest 1st",
+    "steps": [
+        {
+            "name": "reset_now",
+            "url": "kafka-topic:local-demo-topic",
+            "operation": "CONSUME",
+            "request": {
+                "consumerLocalConfigs": {
+                    "maxNoOfRetryPollsOrTimeouts": 3,
+                    "commitSync": true
+                }
+            },
+            "assertions": {
+                "size" : 0
+            }
+        }
+    ]
+}

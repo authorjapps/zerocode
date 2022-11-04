@@ -9,6 +9,7 @@ import org.jsmart.zerocode.integration.tests.kafka.consume.KafkaConsumeTest;
 import org.jsmart.zerocode.integration.tests.kafka.consume.KafkaConsumeXmlTest;
 import org.jsmart.zerocode.integration.tests.kafka.consume.KafkaProduceConsumeAvroTest;
 import org.jsmart.zerocode.integration.tests.kafka.consume.file.KafkaConsumeDumpToFileTest;
+import org.jsmart.zerocode.integration.tests.kafka.consume.latest.KafkaConsumeLatestTest;
 import org.jsmart.zerocode.integration.tests.kafka.consume.negative.KafkaConsumeAvroNegativeTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceAsyncTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceIntKeyTest;
@@ -57,7 +58,8 @@ import org.junit.runners.Suite;
         KafkaProduceSyncWrongFileNameTest.class,
         KafkaConsumeSeekOffsetTest.class,
         KafkaKsqlTest.class,
-        KafkaProtobufTest.class
+        KafkaProtobufTest.class,
+        KafkaConsumeLatestTest.class
 })
 @RunWith(Suite.class)
 public class KafkaSuite {

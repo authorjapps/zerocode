@@ -53,7 +53,9 @@ public class KafkaReceiver {
 
         LOGGER.info("\n### Kafka Consumer Effective configs:{}\n", effectiveLocal);
 
-        Consumer consumer = createConsumer(kafkaServers, consumerPropertyFile, topicName);
+        Consumer consumer = createConsumer(kafkaServers,
+                consumerPropertyFile, topicName,
+                consumerCommonConfigs.getCacheByTopic());
 
         final List<ConsumerRecord> rawRecords = new ArrayList<>();
         final List<ConsumerJsonRecord> jsonRecords = new ArrayList<>();
@@ -92,7 +94,9 @@ public class KafkaReceiver {
 
         }
 
-        consumer.close();
+        if(!consumerCommonConfigs.getCacheByTopic()){
+            consumer.close();
+        }
 
         handleRecordsDump(effectiveLocal, rawRecords, jsonRecords);
 
