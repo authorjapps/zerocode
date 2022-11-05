@@ -82,6 +82,23 @@ public class KafkaConsumerHelper {
             consumer.subscribe(Collections.singletonList(topic));
 
             if(consumerToBeCached == true){
+                consumerCacheByTopicMap.forEach((xTopic, xConsumer) -> {
+                    if(!xTopic.equals(topic)){
+                        // close the earlier consumer if in the same group for safety.
+                        // (even if not in the same group, closing it anyway will not do any harm)
+                        // Otherwise rebalance will fail while rejoining/joining the same group for a new consumer
+                        // i.e. because old consumer(xConsumer) is still consuming,
+                        // and has not let GC know that it has stopped consuming or not sent any LeaveGroup request.
+                        // If you have a single(0) partition topic in your Kafka Broker, xConsumer is still holding it,
+                        // i.e. not yet unassigned.
+                        // Note- It works fine and not required to close() if the new consumer joining the same Group for the same topic.
+                        xConsumer.close();
+                    }
+                });
+                // Remove the earlier topic-consumer from the cache.
+                // Recreate will happen above anyway if not found in cache via "new KafkaConsumer(properties)".
+                consumerCacheByTopicMap.entrySet().removeIf(xTopic -> !xTopic.equals(topic));
+
                 consumerCacheByTopicMap.put(topic, consumer);
             }
 
@@ -96,7 +113,7 @@ public class KafkaConsumerHelper {
 
             for (int run = 0; run < 50; run++) {
                 if (!consumer.assignment().isEmpty()) {
-                    LOGGER.info("==> WaitingForConsumerGroupJoin - Partition now assigned. No records not yet consumed");
+                    LOGGER.info("==> WaitingForConsumerGroupJoin - Partition now assigned. No records yet consumed");
                     return new ConsumerRecords(new HashMap());
                 }
                 LOGGER.info("==> WaitingForConsumerGroupJoin - Partition not assigned. Polling once");

@@ -19,7 +19,7 @@ import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.TestPackageRoot;
 import org.jsmart.zerocode.core.domain.UseHttpClient;
 import org.jsmart.zerocode.core.domain.UseKafkaClient;
-import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
+import org.jsmart.zerocode.core.engine.listener.TestUtilityListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
@@ -139,7 +139,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
     @Override
     public void run(RunNotifier notifier) {
-        RunListener reportListener = createReportListener();
+        RunListener reportListener = createTestUtilityListener();
         notifier.addListener(reportListener);
 
         LOGGER.info("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
@@ -152,8 +152,8 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         handleNoRunListenerReport(reportListener);
     }
 
-    protected RunListener createReportListener() {
-        return getMainModuleInjector().getInstance(ZeroCodeTestReportListener.class);
+    protected RunListener createTestUtilityListener() {
+        return getMainModuleInjector().getInstance(TestUtilityListener.class);
     }
 
 
