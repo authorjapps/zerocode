@@ -1,0 +1,50 @@
+{
+  "scenarioName": "Produce a JSON message to a kafka topic",
+  "steps": [
+    {
+      "name": "load_kafka",
+      "url": "kafka-topic:support-of-jsonpath-in-validators",
+      "operation": "load",
+      "request": {
+        "records": [
+          {
+            "key": "${RANDOM.NUMBER}",
+            "headers": {
+              "CORRELATION_ID": "${RANDOM.UUID}"
+            },
+            "value": "{\"name\": \"Ludovic\"}"
+          }
+        ]
+      },
+      "assertions": {
+        "status": "Ok",
+        "recordMetadata": "$NOT.NULL"
+      }
+    },
+    {
+      "name": "support-of-jsonpath-in-validators",
+      "url": "kafka-topic:support-of-jsonpath-in-validators",
+      "operation": "unload",
+      "request": {
+        "consumerLocalConfigs": {
+          "recordType": "JSON",
+          "commitSync": true,
+          "showRecordsConsumed": true,
+          "maxNoOfRetryPollsOrTimeouts": 1
+        }
+      },
+      "validators": [
+        {
+          "field": "$.records[?(@.headers.CORRELATION_ID == '${$.load_kafka.request.records[0].headers.CORRELATION_ID}')]",
+          "value": [
+            {
+              "value": {
+                "name": "Ludovic"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

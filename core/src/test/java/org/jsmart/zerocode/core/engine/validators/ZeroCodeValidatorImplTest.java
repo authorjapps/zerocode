@@ -3,12 +3,19 @@ package org.jsmart.zerocode.core.engine.validators;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.text.StrSubstitutor;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
+import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
+import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessorImpl;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Before;
@@ -54,11 +61,54 @@ public class ZeroCodeValidatorImplTest {
                 "                }\n" +
                 "            }";
 
-        List<FieldAssertionMatcher> matchers = codeValidator.validateFlat(step, actualResult);
+        List<FieldAssertionMatcher> matchers = codeValidator.validateFlat(step, actualResult, "resolvedScenarioState");
         assertThat(matchers.size(), is(0));
 
     }
 
+    @Test
+    public void test_validateFlat_supportJsonPathExpressions() throws Exception {
+        ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
+        scenarioExecutionState.addStepState(createResolvedScenarioState());
+        ScenarioSpec scenarioSpec =
+                smartUtils.scenarioFileToJava(
+                        "unit_test_files/engine_unit_test_jsons/16_test_validators_jsonpath_expressions_support.json", ScenarioSpec.class);
+        Step step = scenarioSpec.getSteps().get(1);
+
+        String actualResult = "{\n" +
+                "  \"records\" : [ {\n" +
+                "    \"key\" : null,\n" +
+                "    \"value\" : {\n" +
+                "      \"test\" : \"1\"\n" +
+                "    },\n" +
+                "    \"headers\" : {\n" +
+                "      \"CORRELATION_ID\" : \"test\"\n" + // THIS value allow to match with the jsonpath expression
+                "    }\n" +
+                "  } ],\n" +
+                "  \"size\" : 1\n" +
+                "}";
+
+        List<FieldAssertionMatcher> matchers = codeValidator.validateFlat(step, actualResult, scenarioExecutionState.getResolvedScenarioState());
+        assertThat(matchers.size(), is(0));
+
+    }
+
+    private String createResolvedScenarioState() {
+        Map<String, String> parammap = new HashMap<>();
+
+        parammap.put("STEP.NAME", "produce_step");
+        parammap.put("STEP.REQUEST", "{\n" +
+                        "\"recordType\":\"JSON\"," +
+                        "\"records\":[{\"key\":null,\"headers\":{\"CORRELATION_ID\":\"test\"},\"value\":{\"test\":\"1\"}}]\n" +
+                "}");
+        parammap.put("STEP.RESPONSE", "{\n" +
+                "    \"id\" : 10101\n" +
+                "}");
+
+        StrSubstitutor sub = new StrSubstitutor(parammap);
+
+        return sub.replace((new StepExecutionState()).getRequestResponseState());
+    }
     @Test
     public void test_validateFlat_nonMatching() throws Exception {
 
@@ -74,7 +124,7 @@ public class ZeroCodeValidatorImplTest {
                 "                }\n" +
                 "            }";
 
-        List<FieldAssertionMatcher> matchers = codeValidator.validateFlat(step, actualResult);
+        List<FieldAssertionMatcher> matchers = codeValidator.validateFlat(step, actualResult, "resolvedScenarioState");
         assertThat(matchers.size(), is(2));
         assertThat(matchers.get(0).toString(), containsString("actual value 'Mrs X' did not match the expected value 'Mr Bean'"));
         assertThat(matchers.get(1).toString(), containsString("actual value '201' did not match the expected value '200'"));
