@@ -5,7 +5,6 @@ Automated API testing has never been so easy
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
-[![Twitter Follow](https://img.shields.io/twitter/follow/ZerocodeTDD.svg?style=social&label=Follow)](https://twitter.com/ZerocodeTDD)
 
 
 **Latest release:🏹** [![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) <br/>
@@ -23,6 +22,11 @@ For a quick introduction to Zerocode and its features, visit the
 + [Zerocode Wiki](https://github.com/authorjapps/zerocode/wiki)
 + [User's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide)
 + [Release frequency](https://github.com/authorjapps/zerocode/wiki/Zerocode-release-frequency-and-schedule)
+
+IDE Support By 
+===
+[<img width="135"  height="120" alt="Jetbrains IDE" src="images/jetbrains.svg">](https://www.jetbrains.com/idea/)
+
 
 Maven Dependency
 ===
