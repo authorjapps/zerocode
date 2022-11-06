@@ -20,7 +20,7 @@ import org.jsmart.zerocode.core.domain.UseHttpClient;
 import org.jsmart.zerocode.core.domain.UseKafkaClient;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
-import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
+import org.jsmart.zerocode.core.engine.listener.TestUtilityListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
@@ -97,7 +97,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier) {
-        RunListener reportListener = createReportListener();
+        RunListener reportListener = createTestUtilityListener();
 
         LOGGER.info("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
         if (!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
@@ -193,8 +193,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
      * End User experience can be enhanced via this
      * @return An instance of the Junit RunListener
      */
-    protected RunListener createReportListener() {
-        return getMainModuleInjector().getInstance(ZeroCodeTestReportListener.class);
+    protected RunListener createTestUtilityListener() {
+        return getMainModuleInjector().getInstance(TestUtilityListener.class);
     }
 
     protected SmartUtils getInjectedSmartUtilsClass() {

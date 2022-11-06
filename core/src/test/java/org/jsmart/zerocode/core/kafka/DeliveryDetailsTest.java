@@ -61,22 +61,20 @@ public class DeliveryDetailsTest {
         jsonMsg = gson.toJson(deliveryDetails);
 
         JSONAssert.assertEquals("{\n" +
-                "    \"status\": \"Ok\",\n" +
-                "    \"recordMetadata\": {\n" +
-                "        \"offset\": 2,\n" +
-                "        \"timestamp\": 1546008192846,\n" +
-                "        \"serializedKeySize\": 1,\n" +
-                "        \"serializedValueSize\": 45,\n" +
-                "        \"topicPartition\": {\n" +
-                "            \"hash\": 0,\n" +
-                "            \"partition\": 0,\n" +
-                "            \"topic\": \"test-topic\"\n" +
-                "        },\n" +
-                "        \"checksum\": 100\n" +
-                "    }\n" +
-                "}",
+                        "    \"status\": \"Ok\",\n" +
+                        "    \"recordMetadata\": {\n" +
+                        "        \"offset\": 2,\n" +
+                        "        \"timestamp\": 1546008192846,\n" +
+                        "        \"serializedKeySize\": 1,\n" +
+                        "        \"serializedValueSize\": 45,\n" +
+                        "        \"topicPartition\": {\n" +
+                        "            \"hash\": 0,\n" +
+                        "            \"partition\": 0,\n" +
+                        "            \"topic\": \"test-topic\"\n" +
+                        "        }\n" +
+                        "    }\n" +
+                        "}",
                 jsonMsg, LENIENT);
 
     }
-
 }

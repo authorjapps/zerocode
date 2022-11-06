@@ -82,7 +82,7 @@
         <httpclient.version>4.5</httpclient.version>
         <h2.db.version>1.4.191</h2.db.version>
         <extentreports.version>4.0.9</extentreports.version>
-        <version.kafka-clients>2.1.0</version.kafka-clients>
+        <version.kafka-clients>3.3.1</version.kafka-clients>
         <version.gson>2.6.2</version.gson>
         <version.univocity-parsers>2.8.2</version.univocity-parsers>
         <!-- Maven plugins, build properties  -->
