@@ -25,6 +25,7 @@ public class ConsumerLocalConfigsWrapTest {
                         true,
                         3,
                         50L,
+                        false,
                         "$.JSON.Path",
                         "1,0,test-topic"));
         ObjectMapper objectMapper = new ObjectMapperProvider().get();
@@ -55,6 +56,7 @@ public class ConsumerLocalConfigsWrapTest {
                         false,
                         3,
                         null,
+                        false,
                         null,
                         "1,0,test-topic"));
 

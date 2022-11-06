@@ -21,6 +21,7 @@ public class ConsumerLocalConfigs {
     private final Long pollingTime;
     private final String seek;
     private final String protoClassType;
+    private final Boolean cacheByTopic;
     private final String filterByJsonPath;
 
     @JsonCreator
@@ -33,6 +34,7 @@ public class ConsumerLocalConfigs {
             @JsonProperty("showRecordsConsumed") Boolean showRecordsConsumed,
             @JsonProperty("maxNoOfRetryPollsOrTimeouts") Integer maxNoOfRetryPollsOrTimeouts,
             @JsonProperty("pollingTime") Long pollingTime,
+            @JsonProperty("cacheByTopic") Boolean cacheByTopic,
             @JsonProperty("filterByJsonPath") String filterByJsonPath,
             @JsonProperty("seek") String seek) {
         this.recordType = recordType;
@@ -43,6 +45,7 @@ public class ConsumerLocalConfigs {
         this.showRecordsConsumed = showRecordsConsumed;
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
         this.pollingTime = pollingTime;
+        this.cacheByTopic = cacheByTopic;
         this.filterByJsonPath = filterByJsonPath;
         this.seek = seek;
     }
@@ -56,6 +59,7 @@ public class ConsumerLocalConfigs {
             Boolean showRecordsConsumed,
             Integer maxNoOfRetryPollsOrTimeouts,
             Long pollingTime,
+            Boolean cacheByTopic,
             String filterByJsonPath,
             String seek) {
 		this(recordType, null,
@@ -65,6 +69,7 @@ public class ConsumerLocalConfigs {
                 showRecordsConsumed,
                 maxNoOfRetryPollsOrTimeouts,
 				pollingTime,
+                cacheByTopic,
                 filterByJsonPath,
                 seek);
     }
@@ -102,6 +107,10 @@ public class ConsumerLocalConfigs {
         return pollingTime;
     }
 
+    public Boolean getCacheByTopic() {
+        return cacheByTopic;
+    }
+
     public String getFilterByJsonPath() {
         return filterByJsonPath;
     }
@@ -129,13 +138,14 @@ public class ConsumerLocalConfigs {
                 Objects.equals(maxNoOfRetryPollsOrTimeouts, that.maxNoOfRetryPollsOrTimeouts) &&
                 Objects.equals(pollingTime, that.pollingTime) &&
                 Objects.equals(filterByJsonPath, that.filterByJsonPath) &&
+                Objects.equals(cacheByTopic, that.cacheByTopic) &&
                 Objects.equals(seek, that.seek);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(recordType, fileDumpTo, commitAsync, commitSync, showRecordsConsumed, maxNoOfRetryPollsOrTimeouts, pollingTime, filterByJsonPath, seek);
+        return Objects.hash(recordType, fileDumpTo, commitAsync, commitSync, showRecordsConsumed, maxNoOfRetryPollsOrTimeouts, pollingTime,cacheByTopic, filterByJsonPath, seek);
     }
 
     @Override
@@ -149,6 +159,7 @@ public class ConsumerLocalConfigs {
                 ", showRecordsConsumed=" + showRecordsConsumed +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +
+                ", cacheByTopic=" + cacheByTopic +
                 ", filterByJsonPath=" + filterByJsonPath +
                 ", seek=" + seek +
                 '}';

@@ -40,6 +40,12 @@ public class ConsumerCommonConfigs {
     private Long pollingTime;
 
     @Inject(optional = true)
+    @Named("consumer.cacheByTopic")
+    private Boolean cacheByTopic = false;
+
+    // TODO - Delete this config from common configs.
+    // This is not needed as global settings(double check)
+    @Inject(optional = true)
     @Named("consumer.filterByJsonPath")
     private String filterByJsonPath;
 
@@ -59,6 +65,7 @@ public class ConsumerCommonConfigs {
                                  Boolean showRecordsConsumed,
                                  Integer maxNoOfRetryPollsOrTimeouts,
                                  Long pollingTime,
+                                 Boolean cacheByTopic,
                                  String filterByJsonPath,
                                  String seek
 
@@ -71,6 +78,7 @@ public class ConsumerCommonConfigs {
         this.showRecordsConsumed = showRecordsConsumed;
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
         this.pollingTime = pollingTime;
+        this.cacheByTopic = cacheByTopic;
         this.filterByJsonPath = filterByJsonPath;
         this.seek = seek;
     }
@@ -82,6 +90,7 @@ public class ConsumerCommonConfigs {
             Boolean showRecordsConsumed,
             Integer maxNoOfRetryPollsOrTimeouts,
             Long pollingTime,
+            Boolean cacheByTopic,
             String filterByJsonPath,
             String seek
 
@@ -94,6 +103,7 @@ public class ConsumerCommonConfigs {
                 showRecordsConsumed,
                 maxNoOfRetryPollsOrTimeouts,
 				pollingTime,
+                cacheByTopic,
                 filterByJsonPath,
                 seek);
 	}
@@ -134,6 +144,10 @@ public class ConsumerCommonConfigs {
 	}
 
 
+    public Boolean getCacheByTopic() {
+        return cacheByTopic;
+    }
+
     public String getFilterByJsonPath() {
         return filterByJsonPath;
     }
@@ -149,6 +163,7 @@ public class ConsumerCommonConfigs {
                 ", showRecordsConsumed=" + showRecordsConsumed +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +
+                ", cacheByTopic=" + cacheByTopic +
                 ", filterByJsonPath=" + filterByJsonPath +
                 ", seek=" + seek +
                 '}';
