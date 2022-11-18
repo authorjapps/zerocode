@@ -9,15 +9,15 @@ import org.junit.runner.notification.RunListener;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class ZeroCodeTestReportListener extends RunListener {
-    private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeTestReportListener.class);
+public class TestUtilityListener extends RunListener {
+    private static final org.slf4j.Logger LOGGER = getLogger(TestUtilityListener.class);
 
     private final ObjectMapper mapper;
 
     private final ZeroCodeReportGenerator reportGenerator;
 
     @Inject
-    public ZeroCodeTestReportListener(ObjectMapper mapper, ZeroCodeReportGenerator injectedReportGenerator) {
+    public TestUtilityListener(ObjectMapper mapper, ZeroCodeReportGenerator injectedReportGenerator) {
         this.mapper = mapper;
         this.reportGenerator = injectedReportGenerator;
     }
@@ -41,8 +41,9 @@ public class ZeroCodeTestReportListener extends RunListener {
     }
 
     private void printTestCompleted() {
-        LOGGER.info("#ZeroCode: Test run completed for this runner. Generating test reports and charts. " +
-                "\n* For more examples and help on automated Kafka data stream testing and Load testing visit https://zerocode.io");
+        LOGGER.info("Generating test-statistics reports...");
+        LOGGER.debug("#ZeroCode: Test run completed for this runner. Generating test reports... " +
+                "\n* For more examples, visit https://github.com/authorjapps/zerocode/wiki");
     }
 
     /**
@@ -59,8 +60,8 @@ public class ZeroCodeTestReportListener extends RunListener {
         reportGenerator.generateCsvReport();
 
         /**
-         * Not compatible with open source license i.e. why not activated But if it has to be used inside intranet,
-         * then a single Developer's license should do. But visit www.highcharts.com for details.
+         * Not compatible with open source license i.e. why not activated. But if it has to be used inside intranet,
+         * then a single Developer's license should do. Anyway visit www.highcharts.com for details.
 
          * https://shop.highsoft.com/faq
          * If I am using the Software on a commercial company´s intranet, does it require a license?
