@@ -16,7 +16,7 @@ import org.jsmart.zerocode.core.domain.Step;
 import org.slf4j.Logger;
 
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.JSON_PAYLOAD_FILE;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.YML_PAYLOAD_FILE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.YAML_PAYLOAD_FILE;
 import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
 import static org.jsmart.zerocode.core.utils.SmartUtils.readYamlAsString;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
@@ -135,34 +135,18 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
 
             } else {
                 LOGGER.debug("Leaf node found = {}, checking for any external json file...", value);
-                if (value != null && (value.toString().contains(JSON_PAYLOAD_FILE) || value.toString().contains(YML_PAYLOAD_FILE))) {
-                    LOGGER.info("Found external JSON file place holder = {}. Replacing with content", value);
+                if (value != null && (value.toString().contains(JSON_PAYLOAD_FILE) || value.toString().contains(YAML_PAYLOAD_FILE))) {
+                    LOGGER.info("Found external JSON/YAML file place holder = {}. Replacing with content", value);
                     String valueString = value.toString();
                     String token = getJsonFilePhToken(valueString);
-                    if (token != null && token.startsWith(JSON_PAYLOAD_FILE)) {
-                        String resourceJsonFile = token.substring(JSON_PAYLOAD_FILE.length());
+                    if (token != null && (token.startsWith(JSON_PAYLOAD_FILE) || token.startsWith(YAML_PAYLOAD_FILE))) {
                         try {
-                            JsonNode jsonNode = objectMapper.readTree(readJsonAsString(resourceJsonFile));
+                            JsonNode jsonNode = token.startsWith(YAML_PAYLOAD_FILE) ? yamlMapper.readTree(readYamlAsString(token.substring(YAML_PAYLOAD_FILE.length()))) : objectMapper.readTree(readJsonAsString(token.substring(JSON_PAYLOAD_FILE.length())));
                             if (jsonNode.isObject()) {
-                                //also replace content of just read json file (recursively)
+                                //also replace content of just read json/yaml file (recursively)
                                 final Map<String, Object> jsonFileContent = objectMapper.convertValue(jsonNode, Map.class);
                                 digReplaceContent(jsonFileContent);
                                 jsonNode = objectMapper.convertValue(jsonFileContent, JsonNode.class);
-                            }
-                            entry.setValue(jsonNode);
-                        } catch (Exception exx) {
-                            LOGGER.error("External file reference exception - {}", exx.getMessage());
-                            throw new RuntimeException(exx);
-                        }
-                    }
-                    if (token != null && token.startsWith(YML_PAYLOAD_FILE)) {
-                        String resourceJsonFile = token.substring(YML_PAYLOAD_FILE.length());
-                        try {
-                            JsonNode jsonNode = yamlMapper.readTree(readYamlAsString(resourceJsonFile));
-                            if (jsonNode.isObject()) {
-                                final Map<String, Object> yamlFileContent = objectMapper.convertValue(jsonNode, Map.class);
-                                digReplaceContent(yamlFileContent);
-                                jsonNode = objectMapper.convertValue(yamlFileContent, JsonNode.class);
                             }
                             entry.setValue(jsonNode);
                         } catch (Exception exx) {
@@ -207,7 +191,7 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
         String stepJson = objectMapper.writeValueAsString(thisStep);
         List<String> allTokens = getTestCaseTokens(stepJson);
 
-        return allTokens.toString().contains(JSON_PAYLOAD_FILE) || allTokens.toString().contains(YML_PAYLOAD_FILE);
+        return allTokens.toString().contains(JSON_PAYLOAD_FILE) || allTokens.toString().contains(YAML_PAYLOAD_FILE);
     }
 
 }
