@@ -1,0 +1,12 @@
+name: "get_user_details"
+url: "/users/octocat"
+operation: "GET"
+request:
+  -
+verify:
+  status: 200
+  body:
+    login: "octocat"
+    id: 583231
+    type: "User"
+    location: "$MATCHES.STRING:San Fra(.*)"

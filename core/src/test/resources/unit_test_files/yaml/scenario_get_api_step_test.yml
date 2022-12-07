@@ -1,0 +1,4 @@
+---
+scenarioName: "GIVEN-the GitHub REST end point, WHEN-I invoke GET, THEN-I will receive the 200 status with body"
+steps:
+  - stepFile: ${YAML.FILE:unit_test_files/yaml/scenario_get_api_step.yml}
