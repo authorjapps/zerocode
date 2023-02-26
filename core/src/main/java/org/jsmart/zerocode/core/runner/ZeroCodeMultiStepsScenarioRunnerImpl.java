@@ -246,7 +246,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 // ---------------------------------
                 // Handle sort section
                 // ---------------------------------
-                if (Objects.nonNull(thisStep.getSort())) {
+                if (!thisStep.getSort().isNull()) {
                     executionResult = sorter.sortArrayAndReplaceInResponse(thisStep, executionResult, scenarioExecutionState.getResolvedScenarioState());
                     correlLogger.customLog("Updated response: " + executionResult);
                     stepExecutionState.addResponse(executionResult);

@@ -81,6 +81,7 @@ public class ZeroCodeSorterImpl implements ZeroCodeSorter {
                 valA = (Comparable) a.get(key);
                 valB = (Comparable) b.get(key);
             } catch (Exception e) {
+                LOGGER.error("Objects can't be compared" + e);
                 throw new RuntimeException("Objects can't be compared", e.getCause());
             }
             return order.equalsIgnoreCase(SortOrder.NATURAL.getValue()) ? valA.compareTo(valB)
