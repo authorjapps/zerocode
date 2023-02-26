@@ -58,8 +58,8 @@ public class ZeroCodeSorterImpl implements ZeroCodeSorter {
             JSONArray arrayToSort = (JSONArray) result;
 
             // sorting passed array
-            String sortedArray = sortArray(arrayToSort, key, order).toJSONString();
-            return replaceArrayWithSorted(results, sortedArray, transformedPath);
+            JSONArray sortedArray = sortArray(arrayToSort, key, order);
+            return replaceArrayWithSorted(results, transformedPath, sortedArray);
         } else {
             throw new RuntimeException("Can't sort not an array");
         }
@@ -68,18 +68,18 @@ public class ZeroCodeSorterImpl implements ZeroCodeSorter {
     private JSONArray sortArray(JSONArray arrayToSort, String key, String order) {
         JSONArray sortedJsonArray = new JSONArray();
 
-        List<JSONObject> jsonValues = new ArrayList<>();
+        List<Map<String, ?>> jsonValues = new ArrayList<>();
         for (Object o : arrayToSort) {
-            jsonValues.add((JSONObject) o);
+            jsonValues.add((Map<String, ?>) o);
         }
 
         jsonValues.sort((a, b) -> {
-            String valA;
-            String valB;
+            Comparable valA;
+            Comparable valB;
 
             try {
-                valA = (String) a.get(key);
-                valB = (String) b.get(key);
+                valA = (Comparable) a.get(key);
+                valB = (Comparable) b.get(key);
             } catch (Exception e) {
                 throw new RuntimeException("Objects can't be compared", e.getCause());
             }

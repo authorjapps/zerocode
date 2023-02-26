@@ -21,6 +21,8 @@ import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcesso
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessorImpl;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessorImpl;
+import org.jsmart.zerocode.core.engine.sorter.ZeroCodeSorter;
+import org.jsmart.zerocode.core.engine.sorter.ZeroCodeSorterImpl;
 import org.jsmart.zerocode.core.engine.validators.ZeroCodeValidator;
 import org.jsmart.zerocode.core.engine.validators.ZeroCodeValidatorImpl;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
@@ -65,6 +67,7 @@ public class ApplicationMainModule extends AbstractModule {
         bind(ZeroCodeReportGenerator.class).to(ZeroCodeReportGeneratorImpl.class);
         bind(ZeroCodeExternalFileProcessor.class).to(ZeroCodeExternalFileProcessorImpl.class);
         bind(ZeroCodeParameterizedProcessor.class).to(ZeroCodeParameterizedProcessorImpl.class);
+        bind(ZeroCodeSorter.class).to(ZeroCodeSorterImpl.class);
 
         // ------------------------------------------------
         // Bind properties for localhost, CI, DIT, SIT etc
