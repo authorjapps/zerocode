@@ -1,0 +1,99 @@
+{
+    "scenarioName": "As simple GET API - Strict validation for sorted response",
+    "steps": [
+        {
+            "name": "Sort by String field test",
+            "url": "/api/v1/search/persons",
+            "method": "GET",
+            "request": {
+                "queryParams": {
+                    "country": "UK"
+                }
+            },
+            "sort": {
+                "key": "name",
+                "order": "natural",
+                "path": "$.body.persons"
+            },
+            "verifyMode":"STRICT",
+            "verify": {
+                "status": 200,
+                "body": {
+                    "persons": [
+                        {
+                            "id": 2,
+                            "name": "Andrew"
+                        },
+                        {
+                            "id": 1,
+                            "name": "Ihor"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Sort by id field with reverse order test",
+            "url": "/api/v1/search/persons",
+            "method": "GET",
+            "request": {
+                "queryParams": {
+                    "country": "UK"
+                }
+            },
+            "sort": {
+                "key": "id",
+                "order": "reverse",
+                "path": "$.body.persons"
+            },
+            "verifyMode":"STRICT",
+            "verify": {
+                "status": 200,
+                "body": {
+                    "persons": [
+                        {
+                            "id": 2,
+                            "name": "Andrew"
+                        },
+                        {
+                            "id": 1,
+                            "name": "Ihor"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Sort already sorted array test",
+            "url": "/api/v1/search/persons",
+            "method": "GET",
+            "request": {
+                "queryParams": {
+                    "country": "UK"
+                }
+            },
+            "sort": {
+                "key": "id",
+                "order": "natural",
+                "path": "$.body.persons"
+            },
+            "verifyMode":"STRICT",
+            "verify": {
+                "status": 200,
+                "body": {
+                    "persons": [
+                        {
+                            "id": 1,
+                            "name": "Ihor"
+                        },
+                        {
+                            "id": 2,
+                            "name": "Andrew"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
+

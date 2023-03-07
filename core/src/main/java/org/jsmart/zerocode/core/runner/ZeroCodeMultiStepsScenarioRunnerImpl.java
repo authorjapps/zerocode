@@ -6,10 +6,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.univocity.parsers.csv.CsvParser;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
+
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
@@ -21,6 +24,7 @@ import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
+import org.jsmart.zerocode.core.engine.sorter.ZeroCodeSorter;
 import org.jsmart.zerocode.core.engine.validators.ZeroCodeValidator;
 import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.jsmart.zerocode.core.utils.ApiTypeUtils;
@@ -55,6 +59,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     @Inject
     private ZeroCodeParameterizedProcessor parameterizedProcessor;
+
+    @Inject
+    private ZeroCodeSorter sorter;
 
     @Inject
     private ApiServiceExecutor apiExecutor;
@@ -235,6 +242,16 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 correlLogger.aResponseBuilder().customLog(thisStep.getCustomLog());
                 stepExecutionState.addResponse(executionResult);
                 scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
+
+                // ---------------------------------
+                // Handle sort section
+                // ---------------------------------
+                if (!thisStep.getSort().isNull()) {
+                    executionResult = sorter.sortArrayAndReplaceInResponse(thisStep, executionResult, scenarioExecutionState.getResolvedScenarioState());
+                    correlLogger.customLog("Updated response: " + executionResult);
+                    stepExecutionState.addResponse(executionResult);
+                    scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
+                }
 
                 // ---------------------------------
                 // Handle assertion section -START

@@ -1,0 +1,85 @@
+{
+    "scenarioName": "Produce - 2 records and consume them and sort by JSON Path",
+    "steps": [
+        {
+            "name": "load_kafka",
+            "url": "kafka-topic:demo-sorting-topicx",
+            "operation": "PRODUCE",
+            "request": {
+                "records": [
+                    {
+                        "key": "101",
+                        "value": "Hello World 1"
+                    },
+                    {
+                        "key": "102",
+                        "value": "Hello World 2"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "natural sort",
+            "url": "kafka-topic:demo-sorting-topicx",
+            "operation": "CONSUME",
+            "request": {
+                "consumerLocalConfigs": {
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3,
+                    "commitSync": false
+                }
+            },
+            "sort": {
+                "key": "value",
+                "order": "natural",
+                "path": "$.records"
+            },
+            "assertions": {
+                "size": 2,
+                "records": [
+                    {
+                        "key": "101",
+                        "value": "Hello World 1"
+                    },
+                    {
+                        "key": "102",
+                        "value": "Hello World 2"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "reverse sort",
+            "url": "kafka-topic:demo-sorting-topicx",
+            "operation": "CONSUME",
+            "request": {
+                "consumerLocalConfigs": {
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3,
+                    "commitSync": false
+                }
+            },
+            "sort": {
+                "key": "key",
+                "order": "reverse",
+                "path": "$.records"
+            },
+            "assertions": {
+                "size": 2,
+                "records": [
+                    {
+                        "key": "102",
+                        "value": "Hello World 2"
+                    },
+                    {
+                        "key": "101",
+                        "value": "Hello World 1"
+                    }
+                ]
+            }
+        }
+    ]
+}

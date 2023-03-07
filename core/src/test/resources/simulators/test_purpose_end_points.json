@@ -122,6 +122,26 @@
                     ]
                 }
             }
+        },
+        {
+            "name": "request with query params",
+            "operation": "GET",
+            "url": "/api/v1/search/persons?country=UK",
+            "response": {
+                "status": 200,
+                "body": {
+                    "persons": [
+                        {
+                            "id": 1,
+                            "name": "Ihor"
+                        },
+                        {
+                            "id": 2,
+                            "name": "Andrew"
+                        }
+                    ]
+                }
+            }
         }
     ]
 }
