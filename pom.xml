@@ -92,7 +92,7 @@
         <maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
         <!-- Release Build will not fail if error occurs during javadoc generation -->
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-        <google.protobuf.version>3.13.0</google.protobuf.version>
+        <google.protobuf.version>3.16.3</google.protobuf.version>
         <version.snappy-java>1.1.8.4</version.snappy-java>
     </properties>
 
