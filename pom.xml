@@ -77,7 +77,7 @@
         <wiremock.version>2.19.0</wiremock.version>
         <velocity.version>1.7</velocity.version>
         <jackson-dataformat-csv.version>2.9.8</jackson-dataformat-csv.version>
-        <commons-io.version>2.4</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <micro-simulator.version>1.1.10</micro-simulator.version>
         <httpclient.version>4.5</httpclient.version>
         <h2.db.version>1.4.191</h2.db.version>
