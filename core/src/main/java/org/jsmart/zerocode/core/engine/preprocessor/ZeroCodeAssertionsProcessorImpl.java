@@ -32,7 +32,7 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 import static org.apache.commons.lang.StringUtils.substringBetween;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.*;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.$VALUE;
-import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.digTypeCast;
+import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.deepTypeCast;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.fieldTypes;
 import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsoluteProperties;
 import static org.jsmart.zerocode.core.utils.SmartUtils.isValidAbsolutePath;
@@ -392,7 +392,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
             }
 
             Map<String, Object> fieldMap = mapper.readValue(resolvedJson, new TypeReference<Map<String, Object>>() { });
-            digTypeCast(fieldMap);
+            deepTypeCast(fieldMap);
 
             return mapper.writeValueAsString(fieldMap);
 
