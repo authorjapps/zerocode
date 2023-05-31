@@ -55,7 +55,7 @@ public class FieldTypeConversionUtilsTest {
                 "    }," +
                 "   \"ids\": [\n" +
                 "              \"(int)${$.results[0].id}\",\n" +
-                "              \"(int)${$.results[0].id}\"\n" +
+                "              \"(float)${$.results[1].id}\"\n" +
                 "            ]," +
                 "    \"results\": [\n" +
                 "        {\n" +
@@ -100,7 +100,8 @@ public class FieldTypeConversionUtilsTest {
                 jsonNode.get("results").get(1).toString());
         assertEquals("address line1", jsonNode.get("currentAddress").get("line1").asText());
         assertEquals(jsonNode.get("ids").get(0).asInt(), jsonNode.get("results").get(0).get("id").asInt());
-        assertEquals(jsonNode.get("ids").get(0).asInt(), 1);
+        assertEquals(1, jsonNode.get("ids").get(0).asInt() );
+        assertEquals(2, jsonNode.get("ids").get(1).asInt());
     }
 
     @Test
