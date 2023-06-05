@@ -85,7 +85,7 @@ public class FieldTypeConversionUtils {
             }
         } catch (Exception exx) {
             String errorMsg = "Can not convert '" + entry.getValue() + "'.";
-            LOGGER.error(errorMsg + "\nException Details:" + exx);
+            LOGGER.error("{} with exception details: {}",  errorMsg, exx);
             throw new RuntimeException(errorMsg + exx);
         }
     }
