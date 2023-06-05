@@ -2,6 +2,21 @@
     "name": "Mock endpoints Simulator - API Stubs",
     "apis": [
         {
+            "name": "Get Bank Account by Id",
+            "operation": "GET",
+            "url": "/home/accounts/1",
+            "response": {
+                "status": 200,
+                "body": {
+                    "ids": [
+                        1
+                    ],
+                    "name": "HBSC",
+                    "current": true
+                }
+            }
+        },
+        {
             "name": "Get Bathroom by Id",
             "operation": "GET",
             "url": "/home/bathroom/1",
