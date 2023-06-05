@@ -101,7 +101,7 @@ public class FieldTypeConversionUtilsTest {
         assertEquals("address line1", jsonNode.get("currentAddress").get("line1").asText());
         assertEquals(jsonNode.get("ids").get(0).asInt(), jsonNode.get("results").get(0).get("id").asInt());
         assertEquals(1, jsonNode.get("ids").get(0).asInt() );
-        assertEquals(2, jsonNode.get("ids").get(1).asInt());
+        assertEquals(2.35F, Float.valueOf(jsonNode.get("ids").get(1).asText()), 0);
     }
 
     @Test
