@@ -14,7 +14,7 @@ public class MyCustomKafkaClient extends BasicKafkaClient {
 
     public MyCustomKafkaClient() {
         super();
-        LOGGER.info("Running via Deloitte custom-Kafka-client...");
+        LOGGER.debug("Running via Deloitte custom-Kafka-client...");
     }
 
     @Override

@@ -87,10 +87,10 @@ public class ZeroCodeIoWriteBuilder {
         this.build();
         final ObjectMapper mapper = new ObjectMapperProvider().get();
 
-        LOGGER.info("executorService(hashCode)>>" + executorService.hashCode());
+        LOGGER.debug("executorService(hashCode)>>" + executorService.hashCode());
 
         executorService.execute(() -> {
-            LOGGER.info("Writing to file async - " + fileName);
+            LOGGER.debug("Writing to file async - " + fileName);
             File file = new File(TARGET_REPORT_DIR + fileName);
             file.getParentFile().mkdirs();
             try {
@@ -110,6 +110,6 @@ public class ZeroCodeIoWriteBuilder {
             // wait for all tasks to finish executing
             // LOGGER.info("Still waiting for all threads to complete execution...");
         }
-        LOGGER.info("Pass-Fail JSON report written target -done. Finished all threads");
+        LOGGER.debug("Pass-Fail JSON report written target -done. Finished all threads");
     }
 }

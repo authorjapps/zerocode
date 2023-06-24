@@ -59,7 +59,7 @@ public class SslTrustHttpClient extends BasicHttpClient {
      */
     @Override
     public CloseableHttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
-        LOGGER.info("###Used SSL Enabled Http Client for http/https/TLS connections");
+        LOGGER.debug("###Used SSL Enabled Http Client for http/https/TLS connections");
 
         SSLContext sslContext = new SSLContextBuilder()
                 .loadTrustMaterial(null, (certificate, authType) -> true).build();
@@ -88,7 +88,7 @@ public class SslTrustHttpClient extends BasicHttpClient {
         RequestConfig timeOutConfig;
         if (implicitWait == null) {
             timeOutConfig = RequestConfig.DEFAULT;
-            LOGGER.debug("\n*Implicit-Wait/Connection-Timeout not configured.*" +
+            LOGGER.warn("\n*Implicit-Wait/Connection-Timeout not configured.*" +
                             "\nE.g. to configure it for 10sec, use: '{}={}' in the host-config properties. " +
                             "\n**You can safely ignore this warning to retain the default httpClient behavior**\n",
                     HTTP_MAX_TIMEOUT_MILLISECONDS, 10000);
@@ -99,7 +99,7 @@ public class SslTrustHttpClient extends BasicHttpClient {
                     .setSocketTimeout(timeout)
                     .setConnectionRequestTimeout(timeout)
                     .build();
-            LOGGER.info("\n----------------------------------------------------------------\n" +
+            LOGGER.debug("\n----------------------------------------------------------------\n" +
                     "Implicit-Wait/Connection-Timeout config = " + implicitWait +
                     " milli-second." +
                     "\n----------------------------------------------------------------\n");

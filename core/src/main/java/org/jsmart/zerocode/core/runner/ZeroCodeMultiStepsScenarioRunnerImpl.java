@@ -106,7 +106,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     @Override
     public synchronized boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
 
-        LOGGER.info("\n-------------------------- BDD: Scenario:{} -------------------------\n", scenario.getScenarioName());
+        LOGGER.debug("\n-------------------------- BDD: Scenario:{} -------------------------\n", scenario.getScenarioName());
 
         ioWriterBuilder = ZeroCodeIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
 
@@ -515,7 +515,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         if (null != wireMockServer) {
             wireMockServer.stop();
             wireMockServer = null;
-            LOGGER.info("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
+            LOGGER.debug("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
         }
     }
 

@@ -109,11 +109,11 @@ public class LoadProcessor {
 
     private Runnable createRunnable(Class<?> testClass, String testMathod) {
         return () -> {
-            LOGGER.info(Thread.currentThread().getName() + " Parallel Junit test- *Start. Time = " + now());
+            LOGGER.debug(Thread.currentThread().getName() + " Parallel Junit test- *Start. Time = " + now());
 
             Result result = (new JUnitCore()).run(Request.method(testClass, testMathod));
 
-            LOGGER.info(Thread.currentThread().getName() + " Parallel Junit test- *  End. Time = " + now());
+            LOGGER.debug(Thread.currentThread().getName() + " Parallel Junit test- *  End. Time = " + now());
 
             if (result.wasSuccessful()) {
                 passedCounter.incrementAndGet();

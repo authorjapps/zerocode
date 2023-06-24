@@ -58,7 +58,7 @@ public class ApiTypeUtils {
     }
 
     private String findMapping(String javaApiProtoMappings, String url) {
-        LOGGER.info("Locating protocol service mapping for - '{}'", url);
+        LOGGER.debug("Locating protocol service mapping for - '{}'", url);
 
         if (isEmpty(javaApiProtoMappings)) {
             LOGGER.error("Protocol mapping was null or empty. Please create the mappings first and then rerun");
@@ -71,7 +71,7 @@ public class ApiTypeUtils {
                 .orElseThrow(() -> new RuntimeException("\nurl '" + url + "' Not found"));
 
         String qualifiedClazz = foundMapping.split("\\|")[1];
-        LOGGER.info("Found protocol mapping for - '{} -> {}'", url, qualifiedClazz);
+        LOGGER.debug("Found protocol mapping for - '{} -> {}'", url, qualifiedClazz);
 
         return qualifiedClazz;
     }

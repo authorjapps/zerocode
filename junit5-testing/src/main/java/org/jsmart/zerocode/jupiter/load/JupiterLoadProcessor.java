@@ -56,7 +56,7 @@ public class JupiterLoadProcessor extends LoadProcessor {
     private Runnable createJupiterRunnable(Class<?> testClass, String testMethod) {
         return () -> {
 
-            LOGGER.info(Thread.currentThread().getName() + "\n - Parallel Junit5 test- *Start-Time = " + now());
+            LOGGER.debug(Thread.currentThread().getName() + "\n - Parallel Junit5 test- *Start-Time = " + now());
 
             final LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                     .selectors(selectMethod(testClass, testMethod))
@@ -75,7 +75,7 @@ public class JupiterLoadProcessor extends LoadProcessor {
             launcher.registerTestExecutionListeners(summaryListener);
 
             launcher.execute(request);
-            LOGGER.info(Thread.currentThread().getName() + "\n   - Parallel Junit5 test- *End-Time = " + now());
+            LOGGER.debug(Thread.currentThread().getName() + "\n   - Parallel Junit5 test- *End-Time = " + now());
 
             updatePassFailCount(summaryListener);
 
