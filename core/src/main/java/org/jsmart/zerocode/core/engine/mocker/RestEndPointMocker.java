@@ -52,7 +52,7 @@ public class RestEndPointMocker {
         if (urls.size() != 0 && hasMoreThanOneStubForSameUrlPath(urls)) {
             shouldBuildStrictUrlMatcherForAllUrls = true;
         }
-        LOGGER.info("Going to build strict url matcher - {}",shouldBuildStrictUrlMatcherForAllUrls);
+        LOGGER.debug("Going to build strict url matcher - {}",shouldBuildStrictUrlMatcherForAllUrls);
         mockSteps.getMocks().forEach(mockStep -> {
             JsonNode jsonNodeResponse = mockStep.getResponse();
             JsonNode jsonNodeBody = jsonNodeResponse.get("body");
@@ -60,30 +60,30 @@ public class RestEndPointMocker {
 
 
             if ("GET".equals(mockStep.getOperation())) {
-                LOGGER.info("*****WireMock- Mocking the GET endpoint");
+                LOGGER.debug("*****WireMock- Mocking the GET endpoint");
                 givenThat(createGetRequestBuilder(mockStep)
                         .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
-                LOGGER.info("WireMock- Mocking the GET endpoint -done- *****");
+                LOGGER.debug("WireMock- Mocking the GET endpoint -done- *****");
             } else if ("POST".equals(mockStep.getOperation())) {
-                LOGGER.info("*****WireMock- Mocking the POST endpoint");
+                LOGGER.debug("*****WireMock- Mocking the POST endpoint");
                 givenThat(createPostRequestBuilder(mockStep)
                         .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
-                LOGGER.info("WireMock- Mocking the POST endpoint -done-*****");
+                LOGGER.debug("WireMock- Mocking the POST endpoint -done-*****");
             } else if ("PUT".equals(mockStep.getOperation())) {
-                LOGGER.info("*****WireMock- Mocking the PUT endpoint");
+                LOGGER.debug("*****WireMock- Mocking the PUT endpoint");
                 givenThat(createPutRequestBuilder(mockStep)
                         .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
-                LOGGER.info("WireMock- Mocking the PUT endpoint -done-*****");
+                LOGGER.debug("WireMock- Mocking the PUT endpoint -done-*****");
             } else if ("PATCH".equals(mockStep.getOperation())) {
-                LOGGER.info("*****WireMock- Mocking the PATCH endpoint");
+                LOGGER.debug("*****WireMock- Mocking the PATCH endpoint");
                 givenThat(createPatchRequestBuilder(mockStep)
                         .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
-                LOGGER.info("WireMock- Mocking the PATCH endpoint -done-*****");
+                LOGGER.debug("WireMock- Mocking the PATCH endpoint -done-*****");
             } else if ("DELETE".equals(mockStep.getOperation())) {
-                LOGGER.info("*****WireMock- Mocking the DELETE endpoint");
+                LOGGER.debug("*****WireMock- Mocking the DELETE endpoint");
                 givenThat(createDeleteRequestBuilder(mockStep)
                         .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
-                LOGGER.info("WireMock- Mocking the DELETE endpoint -done-*****");
+                LOGGER.debug("WireMock- Mocking the DELETE endpoint -done-*****");
             }
 
         });
@@ -114,7 +114,7 @@ public class RestEndPointMocker {
         if (null != wireMockServer) {
             wireMockServer.stop();
             wireMockServer = null;
-            LOGGER.info("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
+            LOGGER.debug("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
         }
     }
 
@@ -146,10 +146,10 @@ public class RestEndPointMocker {
     private static UrlPattern buildUrlPattern(String url) {
         // if url pattern doesn't have query params and shouldBuildStrictUrlMatcher is true, then match url regardless query parameters
         if (url != null && !url.contains("?") && !shouldBuildStrictUrlMatcherForAllUrls) {
-            LOGGER.info("Going to build lenient matcher for url={}",url);
+            LOGGER.debug("Going to build lenient matcher for url={}",url);
             return urlPathEqualTo(url);
         } else { // if url pattern has query params then match url strictly including query params
-            LOGGER.info("Going to build strict matcher for url={}",url);
+            LOGGER.debug("Going to build strict matcher for url={}",url);
             return urlEqualTo(url);
         }
     }

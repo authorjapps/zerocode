@@ -155,7 +155,7 @@ public class HelperJsonUtils {
         try {
             return mapper.writeValueAsString(payload);
         } catch (JsonProcessingException ex) {
-            LOGGER.debug("Exception while reading payload - " + ex);
+            LOGGER.error("Exception while reading payload - " + ex);
             throw new RuntimeException(ex);
         }
     }
@@ -164,7 +164,7 @@ public class HelperJsonUtils {
         try {
             return JsonPath.read(requestJson, jsonPath);
         } catch (PathNotFoundException pEx) {
-            LOGGER.debug("No " + jsonPath + " was present in the request. returned null.");
+            LOGGER.warn("No " + jsonPath + " was present in the request. returned null.");
             return null;
         }
     }

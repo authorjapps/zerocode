@@ -21,7 +21,7 @@ public class BasicKafkaClient {
     }
 
     public String execute(String brokers, String topicName, String operation, String requestJson, ScenarioExecutionState scenarioExecutionState) {
-        LOGGER.info("brokers:{}, topicName:{}, operation:{}, requestJson:{}", brokers, topicName, operation, requestJson);
+        LOGGER.debug("brokers:{}, topicName:{}, operation:{}, requestJson:{}", brokers, topicName, operation, requestJson);
 
         try {
             switch (operation.toLowerCase()) {

@@ -10,7 +10,7 @@ public class KafkaCommonUtils {
 
     public static void printBrokerProperties(String kafkaServers) {
 
-        LOGGER.info("\n---------------------------------------------------------\n" +
+        LOGGER.debug("\n---------------------------------------------------------\n" +
                 format("kafka.bootstrap.servers - %s", kafkaServers) +
                 "\n---------------------------------------------------------");
 

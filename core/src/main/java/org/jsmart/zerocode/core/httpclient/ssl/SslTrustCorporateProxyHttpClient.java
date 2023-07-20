@@ -43,7 +43,7 @@ public class SslTrustCorporateProxyHttpClient extends BasicHttpClient {
 
     @Override
     public CloseableHttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
-        LOGGER.info("###Used SSL Enabled Http Client with Corporate Proxy, for both Http and Https connections");
+        LOGGER.debug("###Used SSL Enabled Http Client with Corporate Proxy, for both Http and Https connections");
 
         SSLContext sslContext = new SSLContextBuilder()
                 .loadTrustMaterial(null, (certificate, authType) -> true).build();

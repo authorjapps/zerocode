@@ -51,7 +51,7 @@ public class KafkaReceiver {
 
         ConsumerLocalConfigs effectiveLocal = deriveEffectiveConfigs(consumerLocalConfigs, consumerCommonConfigs);
 
-        LOGGER.info("\n### Kafka Consumer Effective configs:{}\n", effectiveLocal);
+        LOGGER.debug("\n### Kafka Consumer Effective configs:{}\n", effectiveLocal);
 
         Consumer consumer = createConsumer(kafkaServers,
                 consumerPropertyFile, topicName,
@@ -64,12 +64,12 @@ public class KafkaReceiver {
 
         handleSeekOffset(effectiveLocal, consumer);
 
-        LOGGER.info("initial polling to trigger ConsumerGroupJoin");
+        LOGGER.debug("initial polling to trigger ConsumerGroupJoin");
 
         ConsumerRecords records = initialPollWaitingForConsumerGroupJoin(consumer, effectiveLocal);
 
         if(!records.isEmpty()) {
-            LOGGER.info("Received {} records on initial poll\n", records.count());
+            LOGGER.debug("Received {} records on initial poll\n", records.count());
 
             appendNewRecords(records, rawRecords, jsonRecords, effectiveLocal);
 
@@ -77,7 +77,7 @@ public class KafkaReceiver {
         }
 
         while (noOfTimeOuts < getMaxTimeOuts(effectiveLocal)) {
-            LOGGER.info("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
+            LOGGER.debug("polling records  - noOfTimeOuts reached : " + noOfTimeOuts);
 
             records = consumer.poll(ofMillis(getPollTime(effectiveLocal)));
             noOfTimeOuts++;
@@ -86,7 +86,7 @@ public class KafkaReceiver {
                 continue;
             }
 
-            LOGGER.info("Received {} records after {} timeouts\n", records.count(), noOfTimeOuts);
+            LOGGER.debug("Received {} records after {} timeouts\n", records.count(), noOfTimeOuts);
 
             appendNewRecords(records, rawRecords, jsonRecords, effectiveLocal);
 
@@ -107,7 +107,7 @@ public class KafkaReceiver {
     private void appendNewRecords(ConsumerRecords records, List<ConsumerRecord> rawRecords, List<ConsumerJsonRecord> jsonRecords, ConsumerLocalConfigs effectiveLocal) throws IOException {
         Iterator recordIterator = records.iterator();
 
-        LOGGER.info("Consumer chosen recordType: " + effectiveLocal.getRecordType());
+        LOGGER.debug("Consumer chosen recordType: " + effectiveLocal.getRecordType());
 
         switch (effectiveLocal.getRecordType()) {
             case RAW:
