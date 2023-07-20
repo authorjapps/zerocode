@@ -88,7 +88,7 @@ public class SslTrustHttpClient extends BasicHttpClient {
         RequestConfig timeOutConfig;
         if (implicitWait == null) {
             timeOutConfig = RequestConfig.DEFAULT;
-            LOGGER.warn("\n*Implicit-Wait/Connection-Timeout not configured.*" +
+            LOGGER.debug("\n*Implicit-Wait/Connection-Timeout not configured.*" +
                             "\nE.g. to configure it for 10sec, use: '{}={}' in the host-config properties. " +
                             "\n**You can safely ignore this warning to retain the default httpClient behavior**\n",
                     HTTP_MAX_TIMEOUT_MILLISECONDS, 10000);
