@@ -106,7 +106,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     @Override
     public synchronized boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
 
-        LOGGER.warn("\n-------------------------- BDD: Scenario:{} -------------------------\n", scenario.getScenarioName());
+        LOGGER.warn("\n-----------------------------------------------------------------------------------\n" +
+                "\nScenario:\n+++++++++\n\n{} \n" +
+                "\n-----------------------------------------------------------------------------------",
+                scenario.getScenarioName());
 
         ioWriterBuilder = ZeroCodeIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
 

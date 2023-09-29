@@ -147,7 +147,7 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
         try {
             return JsonPath.read(requestJson, jsonPath);
         } catch (PathNotFoundException pEx) {
-            LOGGER.warn("No " + jsonPath + " was present in the request. returned null.");
+            LOGGER.info("No " + jsonPath + " was present in the request. returned null.");
             return null;
         }
     }
