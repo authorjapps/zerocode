@@ -18,6 +18,9 @@ Automated API, Kafka and Micro-services testing has never been so easy
 Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka Real Time Data Streams](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) and much more. 
 It has the best of best ideas and practices from the community to keep it super simple, and the adoption is rapidly growing among the developer/tester community.
 
+# Documentation
+Here is the link to the searchable site : https://next.zerocode-tdd-docs.pages.dev
+
 Quick Links
 ===
 For a quick introduction to Zerocode and its features, visit the 
