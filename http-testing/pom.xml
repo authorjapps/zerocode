@@ -14,10 +14,6 @@
     <name>Zerocode Http Testing With Simple YAML and JSON DSL</name>
     <description>How to use zerocode in your project</description>
 
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <artifactId>zerocode-tdd</artifactId>
@@ -52,8 +48,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>${java-compiler-source.version}</source>
+                    <target>${java-compiler-target.version}</target>
                 </configuration>
             </plugin>
             <plugin>
