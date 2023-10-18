@@ -69,7 +69,7 @@
         <jsonassert.version>1.5.0</jsonassert.version>
         <classpath-explorer.version>1.0</classpath-explorer.version>
         <jukito.version>1.4.1</jukito.version>
-        <guice.version>4.0</guice.version>
+        <guice.version>5.1.0</guice.version>
         <commons-lang.version>2.6</commons-lang.version>
         <jayway-version>2.2.0</jayway-version>
         <resteasy-jaxrs.version>2.2.1.GA</resteasy-jaxrs.version>

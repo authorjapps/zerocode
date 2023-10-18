@@ -57,7 +57,7 @@ public class ExecutorServiceRunner {
         return this;
     }
 
-    public ExecutorServiceRunner addCallable(Callable callable) {
+    public ExecutorServiceRunner addCallable(Callable<Object> callable) {
         callables.add(callable);
         return this;
     }
