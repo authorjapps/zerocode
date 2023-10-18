@@ -86,10 +86,10 @@
         <version.gson>2.6.2</version.gson>
         <version.univocity-parsers>2.8.2</version.univocity-parsers>
         <!-- Maven plugins, build properties  -->
-        <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <java-compiler-source.version>1.8</java-compiler-source.version>
         <java-compiler-target.version>1.8</java-compiler-target.version>
-        <maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <!-- Release Build will not fail if error occurs during javadoc generation -->
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
         <google.protobuf.version>3.13.0</google.protobuf.version>

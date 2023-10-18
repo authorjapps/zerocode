@@ -49,8 +49,6 @@
 
     <properties>
         <!-- This project properties -->
-        <junit.version>4.12</junit.version>
-        <version.gson>2.6.2</version.gson>
     </properties>
 
     <repositories>
@@ -164,7 +162,6 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jsmart</groupId>
