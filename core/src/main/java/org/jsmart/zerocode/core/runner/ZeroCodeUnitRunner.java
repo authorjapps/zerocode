@@ -159,13 +159,10 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             Class<? extends BasicHttpClient> runtimeHttpClient = createCustomHttpClientOrDefault();
             Class<? extends BasicKafkaClient> runtimeKafkaClient = createCustomKafkaClientOrDefault();
 
-            try { 
-	            injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv))
-	                    .with(
-	                            new RuntimeHttpClientModule(runtimeHttpClient),
-	                            new RuntimeKafkaClientModule(runtimeKafkaClient)
-	                    )
-	            );
+            try {
+                injector = Guice.createInjector(Modules.override(new ApplicationMainModule(serverEnv)).with(
+                        new RuntimeHttpClientModule(runtimeHttpClient),
+                        new RuntimeKafkaClientModule(runtimeKafkaClient)));
 	        } catch (Throwable e) {
 	        	LOGGER.info("Exception while creating guice injector:",e);
 	        	throw e;
