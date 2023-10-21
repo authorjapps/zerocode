@@ -4,16 +4,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import org.apache.commons.text.StringSubstitutor;
+import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.text.StrSubstitutor;
-import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.deepTypeCast;
 import static org.junit.Assert.assertEquals;
@@ -85,7 +86,7 @@ public class FieldTypeConversionUtilsTest {
             paramMap.put(thisPath, pathValue);
         });
 
-        StrSubstitutor sub = new StrSubstitutor(paramMap);
+        StringSubstitutor sub = new StringSubstitutor(paramMap);
         String resolvedJson = sub.replace(jsonViaPath);
 
         Map<String, Object> stepMap = mapper.readValue(resolvedJson, new TypeReference<Map<String, Object>>() {
@@ -157,7 +158,7 @@ public class FieldTypeConversionUtilsTest {
             paramMap.put(thisPath, pathValue);
         });
 
-        StrSubstitutor sub = new StrSubstitutor(paramMap);
+        StringSubstitutor sub = new StringSubstitutor(paramMap);
         String resolvedJson = sub.replace(jsonViaPath);
 
         Map<String, Object> stepMap = mapper.readValue(resolvedJson, new TypeReference<Map<String, Object>>() {

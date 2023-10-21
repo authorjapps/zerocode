@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.core.utils;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 
 import java.io.File;
 import java.net.URL;
@@ -47,7 +47,7 @@ public class TokenUtils {
             populateParamMap(paramMap, runTimeToken);
         });
 
-        StrSubstitutor sub = new StrSubstitutor(paramMap);
+        StringSubstitutor sub = new StringSubstitutor(paramMap);
 
         return sub.replace(requestJsonOrAnyString);
     }

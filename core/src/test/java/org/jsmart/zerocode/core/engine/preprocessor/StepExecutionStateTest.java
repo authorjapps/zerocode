@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -31,7 +31,7 @@ public class StepExecutionStateTest {
                 "    \"id\" : 10101\n" +
                 "}");
 
-        StrSubstitutor sub = new StrSubstitutor(parammap);
+        StringSubstitutor sub = new StringSubstitutor(parammap);
         String resolvedString = sub.replace(stepExecutionState.getRequestResponseState());
 
         JSONAssert.assertEquals(String.format("{%s}", resolvedString), "{\n" +

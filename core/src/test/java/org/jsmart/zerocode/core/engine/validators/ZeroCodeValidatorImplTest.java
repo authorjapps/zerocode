@@ -3,12 +3,7 @@ package org.jsmart.zerocode.core.engine.validators;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
@@ -20,6 +15,10 @@ import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessorI
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.core.Is.is;
@@ -105,7 +104,7 @@ public class ZeroCodeValidatorImplTest {
                 "    \"id\" : 10101\n" +
                 "}");
 
-        StrSubstitutor sub = new StrSubstitutor(parammap);
+        StringSubstitutor sub = new StringSubstitutor(parammap);
 
         return sub.replace((new StepExecutionState()).getRequestResponseState());
     }
