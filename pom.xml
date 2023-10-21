@@ -70,7 +70,7 @@
         <classpath-explorer.version>1.0</classpath-explorer.version>
         <jukito.version>1.4.1</jukito.version>
         <guice.version>5.1.0</guice.version>
-        <commons-lang.version>2.6</commons-lang.version>
+        <commons-lang3.version>3.13.0</commons-lang3.version>
         <jayway-version>2.2.0</jayway-version>
         <resteasy-jaxrs.version>2.2.1.GA</resteasy-jaxrs.version>
         <logback.version>1.0.7</logback.version>
@@ -185,9 +185,9 @@
                 <version>${jayway-version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commons-lang.version}</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.classpath-explorer</groupId>
