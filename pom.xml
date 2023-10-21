@@ -64,15 +64,15 @@
         <junit.vintage.version>5.4.2</junit.vintage.version>
         <junit-platform-runner.version>1.4.2</junit-platform-runner.version>
         <junit.version>4.12</junit.version>
-        <jackson-databind.version>2.10.0</jackson-databind.version>
+        <jackson-databind.version>2.11.0</jackson-databind.version>
         <guava.version>23.0</guava.version>
-        <jsonassert.version>1.5.0</jsonassert.version>
+        <jsonassert.version>1.5.1</jsonassert.version>
         <classpath-explorer.version>1.0</classpath-explorer.version>
-        <jukito.version>1.4.1</jukito.version>
+        <jukito.version>1.5</jukito.version>
         <guice.version>5.1.0</guice.version>
         <commons-lang3.version>3.13.0</commons-lang3.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <jayway-version>2.2.0</jayway-version>
+        <jayway-version>2.7.0</jayway-version>
         <resteasy-jaxrs.version>2.2.1.GA</resteasy-jaxrs.version>
         <logback.version>1.0.7</logback.version>
         <wiremock.version>2.19.0</wiremock.version>
