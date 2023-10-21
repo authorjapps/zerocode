@@ -80,7 +80,7 @@
         <jackson-dataformat-csv.version>2.11.0</jackson-dataformat-csv.version>
         <commons-io.version>2.14.0</commons-io.version>
         <micro-simulator.version>1.1.10</micro-simulator.version>
-        <httpclient.version>4.5</httpclient.version>
+        <httpclient.version>5.2.1</httpclient.version>
         <h2.db.version>1.4.191</h2.db.version>
         <extentreports.version>4.0.9</extentreports.version>
         <version.kafka-clients>3.3.1</version.kafka-clients>
@@ -247,8 +247,8 @@
                 <!--<scope>test</scope>--> <!-- added with compile scope. Do not change this -->
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
                 <version>${httpclient.version}</version>
             </dependency>
             <dependency>
