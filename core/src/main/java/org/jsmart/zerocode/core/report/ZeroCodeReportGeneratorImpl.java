@@ -12,7 +12,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory;
 import org.jsmart.zerocode.core.domain.builders.HighChartColumnHtmlBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueArrayBuilder;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang.StringUtils.substringBetween;
+import static org.apache.commons.lang3.StringUtils.substringBetween;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.AUTHOR_MARKER_NEW;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CATEGORY_MARKER;
 import static org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory.getReportName;

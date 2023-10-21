@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.core.utils;
 
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.io.File;
 import java.net.URL;
@@ -16,9 +16,9 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
-import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.ABS_PATH;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.GLOBAL_RANDOM_NUMBER;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.GQL_FILE;

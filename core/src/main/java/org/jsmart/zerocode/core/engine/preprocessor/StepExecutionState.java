@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.util.HashMap;
 import java.util.Map;
