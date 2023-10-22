@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.junit.Rule;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -36,7 +36,7 @@ public class WireMockJsonContentTesting {
                         .withHeader("Content-Type", APPLICATION_JSON)
                         .withBody(jsonBodyRequest)));
 
-        ApacheHttpClientExecutor httpClientExecutor = new ApacheHttpClientExecutor();
+        ApacheHttpClient4Executor httpClientExecutor = new ApacheHttpClient4Executor();
         ClientRequest clientExecutor = httpClientExecutor.createRequest("http://localhost:9073/identitymanagement-services/identitymanagement-services/person/internalHandle/person_id_009/biographics/default");
         clientExecutor.setHttpMethod("GET");
         ClientResponse serverResponse = clientExecutor.execute();

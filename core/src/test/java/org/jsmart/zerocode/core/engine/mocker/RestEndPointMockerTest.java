@@ -16,7 +16,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
@@ -126,7 +126,7 @@ public class RestEndPointMockerTest {
                         .withHeader("Content-Type", APPLICATION_JSON)
                         .withBody(jsonBodyRequest)));
 
-        ApacheHttpClientExecutor httpClientExecutor = new ApacheHttpClientExecutor();
+        ApacheHttpClient4Executor httpClientExecutor = new ApacheHttpClient4Executor();
         ClientRequest clientExecutor = httpClientExecutor.createRequest("http://localhost:9073" + mockStep.getUrl());
         clientExecutor.setHttpMethod("GET");
         ClientResponse serverResponse = clientExecutor.execute();
