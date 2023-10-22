@@ -10,9 +10,7 @@
                     {
                         "name": "Template 001",
                         "operation": "GET",
-                        "request": {
-                            "urlPath": "/template/001"
-                        },
+                        "url": "/template/001",
                         "response": {
                             "status": 200,
                             "headers" : {
