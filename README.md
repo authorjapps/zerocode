@@ -19,7 +19,7 @@ Zerocode makes it easy to create and maintain automated tests with absolute mini
 It has the best of best ideas and practices from the community to keep it super simple, and the adoption is rapidly growing among the developer/tester community.
 
 # Documentation
-Here is the link to the searchable site : https://next.zerocode-tdd-docs.pages.dev
+- Site Link: https://next.zerocode-tdd-docs.pages.dev (Click)
 
 Quick Links
 ===
