@@ -281,24 +281,42 @@
         </dependencies>
     </dependencyManagement>
 
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java-compiler-source.version}</source>
+                        <target>${java-compiler-target.version}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
     <!-- Uncomment this for uber jar -->
-    <!--<build>
+        <!--
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>-->
+                 <plugin>
+                         <groupId>org.apache.maven.plugins</groupId>
+                         <artifactId>maven-shade-plugin</artifactId>
+                         <configuration>
+                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                         </configuration>
+                         <executions>
+                             <execution>
+                                 <phase>package</phase>
+                                 <goals>
+                                     <goal>shade</goal>
+                                 </goals>
+                             </execution>
+                         </executions>
+                     </plugin>
+                 </plugins>
+        -->
+
+    </build>
 </project>
