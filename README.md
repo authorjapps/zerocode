@@ -21,7 +21,7 @@ It has the best of best ideas and practices from the community to keep it super 
 Documentation
 ===
 For a quick introduction to Zerocode and its features, visit the 
-+ [Zerocode TDD Doc Site](https://next.zerocode-tdd-docs.pages.dev/)
++ [Zerocode TDD Doc Site](https://zerocode-tdd-docs.pages.dev)
 
 IDE Support By 
 ===
