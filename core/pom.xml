@@ -50,7 +50,6 @@
     <properties>
         <!-- This project properties -->
         <junit.version>4.12</junit.version>
-        <version.gson>2.6.2</version.gson>
     </properties>
 
     <repositories>
@@ -103,10 +102,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
@@ -127,6 +122,7 @@
         <dependency>
             <groupId>org.jukito</groupId>
             <artifactId>jukito</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
@@ -153,10 +149,6 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk8</artifactId>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <!--<scope>test</scope>--> <!-- added with compile scope. Do not change this -->
@@ -164,7 +156,10 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jsmart</groupId>
