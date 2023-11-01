@@ -67,6 +67,7 @@
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldjavaexec.HelloWorldJavaApiAsProtocolTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldarrayelementmatching.HelloWorldArrayElementPickerTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldimplicitdelay.JustHelloImplicitDelayTimeOutTest</include>
+                        <include>org.jsmart.zerocode.testhelp.tests.helloworldfileupload.HelloWorldFileUploadTest</include>
                     </includes>
                 </configuration>
             </plugin>

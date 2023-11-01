@@ -12,6 +12,6 @@ public class HelloWorldFileUploadTest {
 
     @Test
     @Scenario("helloworld_file_upload/hello_world_file_upload_test.json")
-    public void fileUploadTest() throws Exception {
+    public void testFileUpload() throws Exception {
     }
 }
