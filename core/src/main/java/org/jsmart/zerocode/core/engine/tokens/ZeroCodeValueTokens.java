@@ -31,6 +31,8 @@ public class ZeroCodeValueTokens {
     public static final String SYSTEM_ENV = "SYSTEM.ENV:";
     public static final String $VALUE = ".$VALUE";
     public static final String ABS_PATH = "ABS.PATH:";
+    public static final String JSON_CONTENT = "JSON.CONTENT:";
+
 
     public static Map<String, Object> globalTokenCache = new HashMap<>();
 

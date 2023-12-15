@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
+import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 
@@ -18,4 +19,7 @@ public interface ZeroCodeAssertionsProcessor {
     List<JsonAsserter> createJsonAsserters(String resolvedAssertionJson);
 
     List<FieldAssertionMatcher> assertAllAndReturnFailed(List<JsonAsserter> asserters, String executionResult);
+
+    Step resolveJsonContent(Step thisStep, ScenarioExecutionState scenarioExecutionState);
+
 }

@@ -181,6 +181,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                           ScenarioExecutionState scenarioExecutionState,
                                           ScenarioSpec scenario, Step thisStep) {
         thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
+        thisStep = zeroCodeAssertionsProcessor.resolveJsonContent(thisStep, scenarioExecutionState);
+        
         List<Step> thisSteps = extFileProcessor.createFromStepFile(thisStep, thisStep.getId());
         if(null == thisSteps || thisSteps.isEmpty()) thisSteps.add(thisStep);
         Boolean wasExecSuccess = null;
