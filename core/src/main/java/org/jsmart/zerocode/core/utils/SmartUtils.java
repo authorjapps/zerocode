@@ -264,6 +264,13 @@ public class SmartUtils {
         return allTokens.toString().contains(tokenString) || allTokens.toString().contains(alternateTokenString);
     }
 
+    /**
+     * Retrieves the first token from the given value string that matches the format "${token}".
+     * Ph = Placeholder (e.g. ${JSON.FILE:unit_test_files/filebody_unit_test/common/common_content.json} )
+     *
+     * @param valueString The string from which to extract the jsonfile path
+     * @return The extracted token, or null if no token is found
+     */
     public static String getJsonFilePhToken(String valueString) {
         if (valueString != null) {
             List<String> allTokens = getTestCaseTokens(valueString);
