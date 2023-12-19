@@ -451,7 +451,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
     }
 
 
-    private void digReplaceContent(Map<String, Object> map, ScenarioExecutionState scenarioExecutionState) {
+    void digReplaceContent(Map<String, Object> map, ScenarioExecutionState scenarioExecutionState) {
         map.entrySet().forEach(entry -> {
             Object value = entry.getValue();
 

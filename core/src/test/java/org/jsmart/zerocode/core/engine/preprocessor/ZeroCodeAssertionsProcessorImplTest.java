@@ -1,17 +1,25 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.jayway.jsonpath.JsonPath;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.hamcrest.core.Is;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
+import org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,6 +29,8 @@ import org.junit.rules.ExpectedException;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
+import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
@@ -1448,5 +1458,27 @@ public class ZeroCodeAssertionsProcessorImplTest {
         expectedException.expectMessage("Index: 3, Size: 2");
         expectedException.expect(IndexOutOfBoundsException.class);
         jsonPreProcessor.resolveLeafOnlyNodeValue(scenarioState, paramMap, thisPath);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void test_wrongJsonPath() throws JsonProcessingException {
+        String jsonAsString = readJsonAsString("unit_test_files/json_content_unit_test/json_step_test_wrong_json_path.json");
+        Map<String, Object> map = mapper.readValue(jsonAsString, new TypeReference<Map<String, Object>>() {});
+
+        jsonPreProcessor.digReplaceContent(map, new ScenarioExecutionState());
+    }
+
+    @Test
+    public void test_NoJSONContentCheckDigNeeded() throws IOException {
+        String jsonAsString = readJsonAsString("unit_test_files/json_content_unit_test/json_step_no_json_content_test.json");
+        Step step = mapper.readValue(jsonAsString, Step.class);
+        assertThat(checkDigNeeded(mapper, step, ZeroCodeValueTokens.JSON_CONTENT), Is.is(false));
+
+
+        ScenarioSpec scenarioSpec =
+            smartUtils.scenarioFileToJava(
+                "unit_test_files/json_content_unit_test/json_step_test_json_content.json", ScenarioSpec.class);
+        step = scenarioSpec.getSteps().get(1);
+        assertThat(checkDigNeeded(mapper, step, ZeroCodeValueTokens.JSON_CONTENT), Is.is(true));
     }
 }
