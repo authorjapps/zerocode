@@ -29,6 +29,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import static com.jayway.jsonpath.JsonPath.read;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -1533,6 +1534,18 @@ public class ZeroCodeAssertionsProcessorImplTest {
         step = scenarioSpec.getSteps().get(1);
         assertThat(checkDigNeeded(mapper, step, ZeroCodeValueTokens.JSON_CONTENT), Is.is(true));
     }
+
+    @Test
+    public void test_textNode() throws IOException {
+        String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_text_request.json");
+        Step step = mapper.readValue(jsonAsString, Step.class);
+
+        jsonPreProcessor.resolveJsonContent(step, new ScenarioExecutionState());
+        String resultJsonStep = mapper.writeValueAsString(step);
+
+        assertThat(read(resultJsonStep, "$.request"), Is.is("I am a simple text"));
+    }
+
 
     protected String createStepWith(String stepName, String body) {
         Map<String, String> parammap = new HashMap<>();
