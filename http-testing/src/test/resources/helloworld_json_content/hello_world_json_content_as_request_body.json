@@ -1,0 +1,39 @@
+{
+  "scenarioName": "POST API - JSON content as request body",
+  "steps": [
+    {
+      "name": "get_screening",
+      "url": "/api/v1/employees/screening/SCRUNIQUEID5003",
+      "method": "GET",
+      "request": {},
+      "assertions": {
+        "status": 200,
+        "body": {
+          "id": "SCRUNIQUEID5003",
+          "empId": "EMP39001",
+          "originAddress": {
+            "addressId":"lon-hsbc-5432",
+            "countryOfOrigin":"UK"
+          }
+        }
+      }
+    },
+    {
+      "name": "create_screening",
+      "url": "/api/v1/employees/screening",
+      "method": "POST",
+      "request": {
+        "body": {
+          "empId": "${JSON.CONTENT:$.get_screening.response.body.empId}",
+          "originAddress":"${JSON.CONTENT:$.get_screening.response.body.originAddress}"
+        }
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": "SCRUNIQUEID5003"
+        }
+      }
+    }
+  ]
+}

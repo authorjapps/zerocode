@@ -1518,7 +1518,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
             "$.request.body.names");
 
 
-        Assert.assertEquals(result, jsonPathValue.toString().replace("\\", ""));
+        Assert.assertEquals(result, jsonPathValue.toString());
     }
 
     @Test

@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -469,7 +469,14 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
                             String resolvedRequestJson = resolveStringJson(
                                 "${" + token.substring(JSON_CONTENT.length()) + "}",
                                 scenarioExecutionState.getResolvedScenarioState());
-                            entry.setValue(resolvedRequestJson);
+                            resolvedRequestJson = resolvedRequestJson.replaceAll("\\\\", "");
+                            try {
+                                JsonNode jsonNode = mapper.readTree(resolvedRequestJson);
+                                entry.setValue(jsonNode);
+                            } catch (JsonParseException e) {
+                                //value is not a json string, but a string value
+                                entry.setValue(resolvedRequestJson);
+                            }
                         } catch (Exception exx) {
                             LOGGER.error("External file reference exception - {}", exx.getMessage());
                             throw new RuntimeException(exx);
