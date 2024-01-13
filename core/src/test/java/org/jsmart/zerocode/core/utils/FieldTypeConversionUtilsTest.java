@@ -15,7 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.digTypeCast;
+import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.deepTypeCast;
 import static org.junit.Assert.assertEquals;
 
 public class FieldTypeConversionUtilsTest {
@@ -53,6 +53,10 @@ public class FieldTypeConversionUtilsTest {
                 "      \"line1\": \"address line1\",\n" +
                 "      \"line2\": \"address line2\"\n" +
                 "    }," +
+                "   \"ids\": [\n" +
+                "              \"(int)${$.results[0].id}\",\n" +
+                "              \"(float)${$.results[1].id}\"\n" +
+                "            ]," +
                 "    \"results\": [\n" +
                 "        {\n" +
                 "            \"id\": \"(int)${$.results[0].id}\",\n" +
@@ -87,7 +91,7 @@ public class FieldTypeConversionUtilsTest {
         Map<String, Object> stepMap = mapper.readValue(resolvedJson, new TypeReference<Map<String, Object>>() {
         });
 
-        digTypeCast(stepMap);
+        deepTypeCast(stepMap);
 
         JsonNode jsonNode = mapper.valueToTree(stepMap);
 
@@ -95,6 +99,9 @@ public class FieldTypeConversionUtilsTest {
         assertEquals("{\"id\":2.35,\"name\":\"Bar - 2.35\",\"isActive\":false,\"longField\":1569683094000}",
                 jsonNode.get("results").get(1).toString());
         assertEquals("address line1", jsonNode.get("currentAddress").get("line1").asText());
+        assertEquals(jsonNode.get("ids").get(0).asInt(), jsonNode.get("results").get(0).get("id").asInt());
+        assertEquals(1, jsonNode.get("ids").get(0).asInt() );
+        assertEquals(2.35F, Float.valueOf(jsonNode.get("ids").get(1).asText()), 0);
     }
 
     @Test
@@ -158,6 +165,6 @@ public class FieldTypeConversionUtilsTest {
 
         expectedException.expectMessage("Can not convert '(int)false");
         expectedException.expect(RuntimeException.class);
-        digTypeCast(stepMap);
+        deepTypeCast(stepMap);
     }
 }

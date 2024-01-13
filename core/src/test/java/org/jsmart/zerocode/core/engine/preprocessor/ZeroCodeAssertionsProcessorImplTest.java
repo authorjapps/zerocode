@@ -150,6 +150,53 @@ public class ZeroCodeAssertionsProcessorImplTest {
     }
 
     @Test
+    public void willResolveAndTypeCast_SingleDimentionArrayElements_FromScenarioState() throws Exception {
+        String specAsString =
+                smartUtils.getJsonDocumentAsString(
+                        "unit_test_files/test_engine/02_2_resolve_typecast_in_single_dimention_arraylist_assertion.json");
+
+        final List<String> jsonPaths = jsonPreProcessor.getAllJsonPathTokens(specAsString);
+        assertThat(jsonPaths.size(), is(6));
+
+        String scenarioState =
+                "{\n"
+                        + "    \"step1\": {\n"
+                        + "        \"request\": {\n"
+                        + "            \"body\": {\n"
+                        + "                \"customer\": {\n"
+                        + "\"ids\": [\n" +
+                        "              10101,\n" +
+                        "              10102\n" +
+                        "            ],"
+                        + "                    \"firstName\": \"FIRST_NAME\",\n"
+                        + "                    \"staticName\": \"ANOTHER_NAME\",\n"
+                        + "                    \"addresses\":[\"office-1\", \"home-2\"]\n"
+                        + "                }\n"
+                        + "            }\n"
+                        + "        },\n"
+                        + "        \"response\": {\n"
+                        + "            \"id\": 10101\n"
+                        + "        }\n"
+                        + "    }\n"
+                        + "}";
+        final String resolvedSpecWithPaths =
+                jsonPreProcessor.resolveStringJson(specAsString, scenarioState);
+        System.out.println("resolvedSpecWithPaths ==> " + resolvedSpecWithPaths);
+
+        Object jsonPathValue = JsonPath.read(resolvedSpecWithPaths,
+                "$.steps[1].request.body.Customer.accounts[0]");
+
+        assertThat(jsonPathValue.getClass().getName(), is("java.lang.String"));
+
+        assertThat(resolvedSpecWithPaths, containsString("\"staticName\":\"abcde\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"firstName\":\"FIRST_NAME\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"firstName2\":\"FIRST_NAME\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"actualName\":\"ANOTHER_NAME\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"noOfAddresses\":\"2\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"accounts\":[\"10101\",\"10102\"]"));
+    }
+
+    @Test
     public void willResolveJsonPathOfJayWayFor_AssertionSection() throws Exception {
         ScenarioSpec scenarioSpec =
                 smartUtils.scenarioFileToJava(

@@ -1,0 +1,26 @@
+name: CI Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setting up JDK8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Downloading docker-compose files
+        run: wget https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml
+      - name: Running Kafka
+        run: docker-compose -f kafka-schema-registry.yml up -d && sleep 10
+      - name: Building and testing the changes
+        run: mvn clean test

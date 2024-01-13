@@ -84,7 +84,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
     }
 
     private ScenarioSpec resolveParamsValues(ScenarioSpec scenario, int paramIndex) {
-        LOGGER.info("Resolving parameter value-source for index - {}", paramIndex);
+        LOGGER.debug("Resolving parameter value-source for index - {}", paramIndex);
 
         try {
             String stepJson = objectMapper.writeValueAsString(scenario);
@@ -107,7 +107,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
     }
 
     private ScenarioSpec resolveParamsCsv(ScenarioSpec scenario, int paramIndex) {
-        LOGGER.info("Resolving parameter CSV-source for row number - {}", paramIndex);
+        LOGGER.debug("Resolving parameter CSV-source for row number - {}", paramIndex);
         try {
             String stepJson = objectMapper.writeValueAsString(scenario);
             List<String> parameterizedCsvList = scenario.getParameterized().getCsvSource();

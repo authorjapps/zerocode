@@ -18,6 +18,24 @@ public class TokenUtilsTest {
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
+    static String globalRandomNumber = "";
+
+    @Test
+    public void testGlobalRandomNumberSameness_1(){
+        String result = resolveKnownTokens("${GLOBAL.RANDOM.NUMBER},${GLOBAL.RANDOM.NUMBER}");
+        String[] split = result.split(",");
+        assertTrue(split[0].equals(split[1]));
+        globalRandomNumber = split[0];
+    }
+
+    @Test
+    public void testGlobalRandomNumberSameness_2(){
+        String result = resolveKnownTokens("${GLOBAL.RANDOM.NUMBER},${GLOBAL.RANDOM.NUMBER}");
+        String[] split = result.split(",");
+        assertTrue(split[0].equals(split[1]));
+        assertTrue(split[0].equals(globalRandomNumber));
+    }
+
     @Test
     public void testResolve_knownTokens() {
         String clientId = "zerocode-clientid_${RANDOM.NUMBER}";

@@ -1,37 +1,42 @@
 package org.jsmart.zerocode.core.utils;
 
+import org.apache.commons.lang.text.StrSubstitutor;
+
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang.text.StrSubstitutor;
 
-import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.ABS_PATH;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.GLOBAL_RANDOM_NUMBER;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.GQL_FILE;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATETIME_NOW;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATE_TODAY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER_FIXED;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_STRING_ALPHA;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_STRING_ALPHA_NUMERIC;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_UU_ID;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_UU_ID_FIXED;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.STATIC_ALPHABET;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.SYSTEM_ENV;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.SYSTEM_PROPERTY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.XML_FILE;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_UU_ID_FIXED;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER_FIXED;
-
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.getKnownTokens;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.globalTokenCache;
+
 public class TokenUtils {
 
     public static String resolveKnownTokens(String requestJsonOrAnyString) {
@@ -66,15 +71,27 @@ public class TokenUtils {
                                 }
                             }
 
-                        } else if (runTimeToken.startsWith(RANDOM_STRING_ALPHA)) {
+                        }
+                        else if (runTimeToken.startsWith(GLOBAL_RANDOM_NUMBER)) {
+                            String globalRandomNumber = (String) globalTokenCache.get(GLOBAL_RANDOM_NUMBER);
+                            if(globalRandomNumber == null){
+                                globalRandomNumber = new RandomNumberGenerator().toString();
+                                globalTokenCache.put(GLOBAL_RANDOM_NUMBER, globalRandomNumber);
+                            }
+                            paramaMap.put(runTimeToken, globalRandomNumber);
+
+                        }
+                        else if (runTimeToken.startsWith(RANDOM_STRING_ALPHA)) {
                             int length = Integer.parseInt(runTimeToken.substring(RANDOM_STRING_ALPHA.length()));
                             paramaMap.put(runTimeToken, createRandomAlphaString(length));
 
-                        } else if (runTimeToken.startsWith(RANDOM_STRING_ALPHA_NUMERIC)) {
+                        }
+                        else if (runTimeToken.startsWith(RANDOM_STRING_ALPHA_NUMERIC)) {
                             int length = Integer.parseInt(runTimeToken.substring(RANDOM_STRING_ALPHA_NUMERIC.length()));
                             paramaMap.put(runTimeToken, createRandomAlphaNumericString(length));
 
-                        } else if (runTimeToken.startsWith(STATIC_ALPHABET)) {
+                        }
+                        else if (runTimeToken.startsWith(STATIC_ALPHABET)) {
                             int length = Integer.parseInt(runTimeToken.substring(STATIC_ALPHABET.length()));
                             paramaMap.put(runTimeToken, createStaticAlphaString(length));
 

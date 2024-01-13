@@ -23,12 +23,12 @@ public class CustomHttpClient extends BasicHttpClient {
 
     public CustomHttpClient() {
         super();
-        LOGGER.info("###Initialized 0 args - ");
+        LOGGER.debug("###Initialized 0 args - ");
     }
 
     public CustomHttpClient(CloseableHttpClient httpclient) {
         super(httpclient);
-        LOGGER.info("###Initialized 1 arg - ");
+        LOGGER.debug("###Initialized 1 arg - ");
     }
 
     /**
@@ -45,7 +45,7 @@ public class CustomHttpClient extends BasicHttpClient {
      */
     @Override
     public CloseableHttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
-        LOGGER.info("###Used SSL Enabled Http Client for http/https/TLS connections");
+        LOGGER.debug("###Used SSL Enabled Http Client for http/https/TLS connections");
 
         SSLContext sslContext = new SSLContextBuilder()
                 .loadTrustMaterial(null, (certificate, authType) -> true).build();
@@ -87,7 +87,7 @@ public class CustomHttpClient extends BasicHttpClient {
         String x_token_value = "secret_value_001";
         headers.put("x_token", x_token_value);
 
-        LOGGER.info("###Added custom headers my_key={}, x_token={} to headers", my_value, x_token_value);
+        LOGGER.debug("###Added custom headers my_key={}, x_token={} to headers", my_value, x_token_value);
     }
 }
 

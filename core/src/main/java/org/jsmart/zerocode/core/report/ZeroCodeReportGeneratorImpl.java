@@ -230,7 +230,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
     @Override
     public void generateHighChartReport() {
-        LOGGER.info("####spikeChartReportEnabled: " + spikeChartReportEnabled);
+        LOGGER.debug("####spikeChartReportEnabled: " + spikeChartReportEnabled);
 
         /*
          * Generate: Spike Chart using HighChart

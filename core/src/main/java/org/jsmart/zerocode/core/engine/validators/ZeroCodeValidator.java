@@ -6,7 +6,7 @@ import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 
 public interface ZeroCodeValidator {
 
-    List<FieldAssertionMatcher> validateFlat(Step thisStep, String actualResult);
+    List<FieldAssertionMatcher> validateFlat(Step thisStep, String actualResult, String resolvedScenarioState);
 
     List<FieldAssertionMatcher> validateStrict(String expectedResult, String actualResult);
 

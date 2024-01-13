@@ -1,0 +1,35 @@
+{
+    "scenarioName": "Reset offset to latest 1st",
+    "steps": [
+        {
+            "name": "just_to_auto_create_the_topic", //<--- Otherwise this step is not needed
+            "url": "kafka-topic:local-demo-topic",
+            "operation": "PRODUCE",
+            "request": {
+                "records": [
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello - I am a Message. I need a topic please"
+                    }
+                ]
+            },
+            "assertions": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "reset_now",
+            "url": "kafka-topic:local-demo-topic",
+            "operation": "CONSUME",
+            "request": {
+                "consumerLocalConfigs": {
+                    "maxNoOfRetryPollsOrTimeouts": 3,
+                    "commitSync": true
+                }
+            },
+            "assertions": {
+                "size": 0
+            }
+        }
+    ]
+}
