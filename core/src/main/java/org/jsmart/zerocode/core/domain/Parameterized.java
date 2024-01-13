@@ -61,7 +61,7 @@ public class Parameterized {
     private List<String> readCsvSourceFromExternalCsvFile(JsonNode csvSourceJsonNode) throws IOException {
         String csvSourceFilePath = csvSourceJsonNode.textValue();
         if (StringUtils.isNotBlank(csvSourceFilePath)) {
-            Path path = Paths.get(csvSourceFilePath);
+            Path path = Paths.get("./src/test/resources/",csvSourceFilePath);
             List<String> csvSourceFileLines = Files.lines(path)
                     .filter(StringUtils::isNotBlank)
                     .collect(Collectors.toList());

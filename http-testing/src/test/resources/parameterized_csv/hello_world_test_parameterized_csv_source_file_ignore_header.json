@@ -21,6 +21,6 @@
     ],
     "parameterized": {
         "ignoreHeader": true,
-        "csvSource":"./src/test/resources/parameterized_csv/params_with_header.csv"
+        "csvSource":"parameterized_csv/params_with_header.csv"
     }
 }

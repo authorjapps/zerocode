@@ -20,6 +20,6 @@
         }
     ],
     "parameterized": {
-        "csvSource":"./src/test/resources/parameterized_csv/params.csv"
+        "csvSource":"parameterized_csv/params.csv"
     }
 }
