@@ -7,7 +7,7 @@ public class AddService {
     private static final Logger logger = LoggerFactory.getLogger(AddService.class);
 
     public int add(int i, int i1) {
-        logger.info("i= " + i + ", j= " + i1);
+        logger.debug("i= " + i + ", j= " + i1);
         return i + i1;
     }
 
@@ -17,12 +17,12 @@ public class AddService {
     }
 
     public Integer squareMyNumber(MyNumber myNumber) {
-        logger.info("Calculating Square of " + myNumber.getNumber());
+        logger.debug("Calculating Square of " + myNumber.getNumber());
         return myNumber.getNumber() * myNumber.getNumber();
     }
 
     public Integer anInteger() {
-        logger.info("Returning a number ");
+        logger.debug("Returning a number ");
 
         return 30;
     }

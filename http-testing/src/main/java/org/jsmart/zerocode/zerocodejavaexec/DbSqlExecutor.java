@@ -48,7 +48,7 @@ public class DbSqlExecutor {
     }
 
     private Map<String, List<DbResult>> executeSelectSql(String sqlStatement) {
-        LOGGER.info("\n\nDB Connection user:{}, password:{}\n\n", dbUserName, dbPassword);
+        LOGGER.debug("\n\nDB Connection user:{}, password:{}\n\n", dbUserName, dbPassword);
 
         /**
          * ----------------------------------------------------------------------------------

@@ -7,6 +7,6 @@ public class LogHello {
     private static final Logger LOGGER = LoggerFactory.getLogger(LogHello.class);
 
     public static void main(String[] args) {
-        LOGGER.info("###Hello - " + LogHello.class.getName());
+        LOGGER.debug("###Hello - " + LogHello.class.getName());
     }
 }

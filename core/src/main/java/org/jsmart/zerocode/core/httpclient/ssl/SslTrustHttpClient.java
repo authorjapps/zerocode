@@ -59,7 +59,7 @@ public class SslTrustHttpClient extends BasicHttpClient {
      */
     @Override
     public CloseableHttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
-        LOGGER.info("###Used SSL Enabled Http Client for http/https/TLS connections");
+        LOGGER.debug("###Used SSL Enabled Http Client for http/https/TLS connections");
 
         SSLContext sslContext = new SSLContextBuilder()
                 .loadTrustMaterial(null, (certificate, authType) -> true).build();
@@ -99,7 +99,7 @@ public class SslTrustHttpClient extends BasicHttpClient {
                     .setSocketTimeout(timeout)
                     .setConnectionRequestTimeout(timeout)
                     .build();
-            LOGGER.info("\n----------------------------------------------------------------\n" +
+            LOGGER.debug("\n----------------------------------------------------------------\n" +
                     "Implicit-Wait/Connection-Timeout config = " + implicitWait +
                     " milli-second." +
                     "\n----------------------------------------------------------------\n");

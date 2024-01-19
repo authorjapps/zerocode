@@ -41,7 +41,7 @@ public class TestUtilityListener extends RunListener {
     }
 
     private void printTestCompleted() {
-        LOGGER.info("Generating test-statistics reports...");
+        LOGGER.info("Generating test-statistics reports. please wait...");
         LOGGER.debug("#ZeroCode: Test run completed for this runner. Generating test reports... " +
                 "\n* For more examples, visit https://github.com/authorjapps/zerocode/wiki");
     }

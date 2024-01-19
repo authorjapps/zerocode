@@ -18,7 +18,7 @@
         </layout>
     </appender>
 
-    <root level="INFO"> <!-- Change this value to have or prevent verbose outputs e.g. WARN or DEBUG -->
+    <root level="WARN"> <!-- Update this value to see or prevent verbose outputs -->
         <appender-ref ref="fileAppender" />
         <appender-ref ref="consoleAppender" />
     </root>

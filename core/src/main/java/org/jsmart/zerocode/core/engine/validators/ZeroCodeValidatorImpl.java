@@ -27,7 +27,7 @@ public class ZeroCodeValidatorImpl implements ZeroCodeValidator {
 
     @Override
     public List<FieldAssertionMatcher> validateFlat(Step thisStep, String actualResult, String resolvedScenarioState) {
-        LOGGER.info("Comparing results via flat validators");
+        LOGGER.debug("Comparing results via flat validators");
 
         List<FieldAssertionMatcher> failureResults = new ArrayList<>();
         List<Validator> validators = thisStep.getValidators();
@@ -51,14 +51,14 @@ public class ZeroCodeValidatorImpl implements ZeroCodeValidator {
 
     @Override
     public List<FieldAssertionMatcher> validateStrict(String expectedResult, String actualResult) {
-        LOGGER.info("Comparing results via STRICT matchers");
+        LOGGER.debug("Comparing results via STRICT matchers");
 
         return strictComparePayload(expectedResult, actualResult);
     }
 
     @Override
     public List<FieldAssertionMatcher> validateLenient(String expectedResult, String actualResult) {
-        LOGGER.info("Comparing results via LENIENT matchers");
+        LOGGER.debug("Comparing results via LENIENT matchers");
 
         List<JsonAsserter> asserters = zeroCodeAssertionsProcessor.createJsonAsserters(expectedResult);
         return zeroCodeAssertionsProcessor.assertAllAndReturnFailed(asserters, actualResult);

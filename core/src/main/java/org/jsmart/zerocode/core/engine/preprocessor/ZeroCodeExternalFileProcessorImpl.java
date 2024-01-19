@@ -136,7 +136,7 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
             } else {
                 LOGGER.debug("Leaf node found = {}, checking for any external json file...", value);
                 if (value != null && (value.toString().contains(JSON_PAYLOAD_FILE) || value.toString().contains(YAML_PAYLOAD_FILE))) {
-                    LOGGER.info("Found external JSON/YAML file place holder = {}. Replacing with content", value);
+                    LOGGER.debug("Found external JSON/YAML file place holder = {}. Replacing with content", value);
                     String valueString = value.toString();
                     String token = getJsonFilePhToken(valueString);
                     if (token != null && (token.startsWith(JSON_PAYLOAD_FILE) || token.startsWith(YAML_PAYLOAD_FILE))) {

@@ -104,7 +104,7 @@ public class RequestLogBuilder {
         return relationshipId +
                 "\n*requestTimeStamp:" + requestTimeStamp +
                 "\nstep:" + stepName +
-                "\nid:" + id +
+                "\nid:" + (id != null? id : "None") +
                 "\nurl:" + url +
                 "\nmethod:" + method +
                 "\nrequest:\n" + request;

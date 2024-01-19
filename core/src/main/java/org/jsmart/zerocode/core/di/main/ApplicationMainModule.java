@@ -92,7 +92,7 @@ public class ApplicationMainModule extends AbstractModule {
             checkAndLoadOldProperties(properties);
 
         } catch (Exception e) {
-            LOGGER.info("###Oops!Exception### while reading target env file: " + host + ". Have you mentioned env details?");
+            LOGGER.warning("###Oops!Exception### while reading target env file: " + host + ". Have you mentioned env details?");
             throw new RuntimeException("could not read the target-env properties file --" + host + "-- from the classpath.");
         }
 

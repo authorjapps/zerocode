@@ -113,12 +113,12 @@ public class KafkaConsumerHelper {
 
             for (int run = 0; run < 50; run++) {
                 if (!consumer.assignment().isEmpty()) {
-                    LOGGER.info("==> WaitingForConsumerGroupJoin - Partition now assigned. No records yet consumed");
+                    LOGGER.debug("==> WaitingForConsumerGroupJoin - Partition now assigned. No records yet consumed");
                     return new ConsumerRecords(new HashMap());
                 }
-                LOGGER.info("==> WaitingForConsumerGroupJoin - Partition not assigned. Polling once");
+                LOGGER.debug("==> WaitingForConsumerGroupJoin - Partition not assigned. Polling once");
                 ConsumerRecords records = consumer.poll(Duration.of(getPollTime(effectiveLocalConfigs), ChronoUnit.MILLIS));
-                LOGGER.info("==> WaitingForConsumerGroupJoin - polled records length={}", records.count());
+                LOGGER.debug("==> WaitingForConsumerGroupJoin - polled records length={}", records.count());
                 if (!records.isEmpty()) {
                     return records;
                 }
@@ -250,7 +250,7 @@ public class KafkaConsumerHelper {
     public static void readRaw(List<ConsumerRecord> rawRecords, Iterator recordIterator) {
         while (recordIterator.hasNext()) {
             ConsumerRecord thisRecord = (ConsumerRecord) recordIterator.next();
-            LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}",
+            LOGGER.debug("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}",
                     thisRecord.key(), thisRecord.value(), thisRecord.partition(), thisRecord.offset());
             rawRecords.add(thisRecord);
         }
@@ -266,7 +266,7 @@ public class KafkaConsumerHelper {
             Headers headers = thisRecord.headers();
             String keyStr =  thisRecord.key() != null ?  thisRecord.key().toString() : "";
             String valueStr = consumerLocalConfig != null && KafkaConstants.PROTO.equalsIgnoreCase(consumerLocalConfig.getRecordType()) ? convertProtobufToJson(thisRecord, consumerLocalConfig) : valueObj.toString();
-            LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
+            LOGGER.debug("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
                     key, valueStr, thisRecord.partition(), thisRecord.offset(), headers);
 
             JsonNode keyNode = objectMapper.readTree(keyStr);
