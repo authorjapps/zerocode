@@ -1,0 +1,46 @@
+{
+  "scenarioName": "Validate jsonpath in validators",
+  "steps": [
+    {
+      "name": "produce_step",
+      "url": "kafka-topic:any-topic",
+      "operation": "produce",
+      "request": {
+        "recordType": "JSON",
+        "records": [
+          {
+            "key": null,
+            "headers": {
+              "CORRELATION_ID": "test"
+            },
+            "value": {
+              "test": "1"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "consume the response",
+      "url": "kafka-topic:test-topic",
+      "operation": "consume",
+      "request": {
+        "consumerLocalConfigs": {
+          "recordType": "JSON"
+        }
+      },
+      "validators": [
+        {
+          "field": "$.records[?(@.headers.CORRELATION_ID == '${$.produce_step.request.records[0].headers.CORRELATION_ID}')]",
+          "value": [
+            {
+              "value": {
+                "test": "1"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

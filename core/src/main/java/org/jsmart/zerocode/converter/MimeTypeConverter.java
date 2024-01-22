@@ -84,7 +84,7 @@ public class MimeTypeConverter implements Converter {
 
         final String formattedXml = prettyXmlWithIndentType(input, 2);
 
-        LOGGER.info("\n--------------------- Pretty XML -------------------------\n"
+        LOGGER.debug("\n--------------------- Pretty XML -------------------------\n"
                 + formattedXml +
                 "\n------------------------- * -----------------------------\n");
 

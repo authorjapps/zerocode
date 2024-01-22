@@ -7,15 +7,20 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
+import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
-import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -25,10 +30,29 @@ public class RestEndPointMocker {
 
     public static WireMockServer wireMockServer;
 
+    public static Boolean shouldBuildStrictUrlMatcherForAllUrls = false;
+
+    private static boolean hasMoreThanOneStubForSameUrlPath(List<String> urls) {
+        Set<String> urlPathsSet = urls.stream()
+                .map(u -> (u.contains("?")) ? u.substring(0, u.indexOf("?")) : u) // remove query params for comparison
+                .collect(Collectors.toSet());
+        return urlPathsSet.size() != urls.size();
+    }
+
     public static void createWithWireMock(MockSteps mockSteps, int mockPort) {
 
         restartWireMock(mockPort);
 
+        List<String> urls = mockSteps.getMocks()
+                .stream()
+                .map(MockStep::getUrl)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        if (urls.size() != 0 && hasMoreThanOneStubForSameUrlPath(urls)) {
+            shouldBuildStrictUrlMatcherForAllUrls = true;
+        }
+        LOGGER.debug("Going to build strict url matcher - {}",shouldBuildStrictUrlMatcherForAllUrls);
         mockSteps.getMocks().forEach(mockStep -> {
             JsonNode jsonNodeResponse = mockStep.getResponse();
             JsonNode jsonNodeBody = jsonNodeResponse.get("body");
@@ -36,30 +60,30 @@ public class RestEndPointMocker {
 
 
             if ("GET".equals(mockStep.getOperation())) {
-                LOGGER.info("*****WireMock- Mocking the GET endpoint");
+                LOGGER.debug("*****WireMock- Mocking the GET endpoint");
                 givenThat(createGetRequestBuilder(mockStep)
                         .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
-                LOGGER.info("WireMock- Mocking the GET endpoint -done- *****");
+                LOGGER.debug("WireMock- Mocking the GET endpoint -done- *****");
             } else if ("POST".equals(mockStep.getOperation())) {
-                LOGGER.info("*****WireMock- Mocking the POST endpoint");
+                LOGGER.debug("*****WireMock- Mocking the POST endpoint");
                 givenThat(createPostRequestBuilder(mockStep)
                         .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
-                LOGGER.info("WireMock- Mocking the POST endpoint -done-*****");
+                LOGGER.debug("WireMock- Mocking the POST endpoint -done-*****");
             } else if ("PUT".equals(mockStep.getOperation())) {
-                LOGGER.info("*****WireMock- Mocking the PUT endpoint");
+                LOGGER.debug("*****WireMock- Mocking the PUT endpoint");
                 givenThat(createPutRequestBuilder(mockStep)
                         .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
-                LOGGER.info("WireMock- Mocking the PUT endpoint -done-*****");
+                LOGGER.debug("WireMock- Mocking the PUT endpoint -done-*****");
             } else if ("PATCH".equals(mockStep.getOperation())) {
-                LOGGER.info("*****WireMock- Mocking the PATCH endpoint");
+                LOGGER.debug("*****WireMock- Mocking the PATCH endpoint");
                 givenThat(createPatchRequestBuilder(mockStep)
                         .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
-                LOGGER.info("WireMock- Mocking the PATCH endpoint -done-*****");
+                LOGGER.debug("WireMock- Mocking the PATCH endpoint -done-*****");
             } else if ("DELETE".equals(mockStep.getOperation())) {
-                LOGGER.info("*****WireMock- Mocking the DELETE endpoint");
+                LOGGER.debug("*****WireMock- Mocking the DELETE endpoint");
                 givenThat(createDeleteRequestBuilder(mockStep)
                         .willReturn(responseBuilder(mockStep, jsonBodyRequest)));
-                LOGGER.info("WireMock- Mocking the DELETE endpoint -done-*****");
+                LOGGER.debug("WireMock- Mocking the DELETE endpoint -done-*****");
             }
 
         });
@@ -90,33 +114,44 @@ public class RestEndPointMocker {
         if (null != wireMockServer) {
             wireMockServer.stop();
             wireMockServer = null;
-            LOGGER.info("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
+            LOGGER.debug("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
         }
     }
 
     private static MappingBuilder createDeleteRequestBuilder(MockStep mockStep) {
-        final MappingBuilder requestBuilder = delete(urlEqualTo(mockStep.getUrl()));
+        final MappingBuilder requestBuilder = delete(buildUrlPattern(mockStep.getUrl()));
         return createRequestBuilderWithHeaders(mockStep, requestBuilder);
     }
 
     private static MappingBuilder createPatchRequestBuilder(MockStep mockStep) {
-        final MappingBuilder requestBuilder = patch(urlEqualTo(mockStep.getUrl()));
+        final MappingBuilder requestBuilder = patch(buildUrlPattern(mockStep.getUrl()));
         return createRequestBuilderWithHeaders(mockStep, requestBuilder);
     }
 
     private static MappingBuilder createPutRequestBuilder(MockStep mockStep) {
-        final MappingBuilder requestBuilder = put(urlEqualTo(mockStep.getUrl()));
+        final MappingBuilder requestBuilder = put(buildUrlPattern(mockStep.getUrl()));
         return createRequestBuilderWithHeaders(mockStep, requestBuilder);
     }
 
     private static MappingBuilder createPostRequestBuilder(MockStep mockStep) {
-        final MappingBuilder requestBuilder = post(urlEqualTo(mockStep.getUrl()));
+        final MappingBuilder requestBuilder = post(buildUrlPattern(mockStep.getUrl()));
         return createRequestBuilderWithHeaders(mockStep, requestBuilder);
     }
 
     private static MappingBuilder createGetRequestBuilder(MockStep mockStep) {
-        final MappingBuilder requestBuilder = get(urlEqualTo(mockStep.getUrl()));
+        final MappingBuilder requestBuilder = get(buildUrlPattern(mockStep.getUrl()));
         return createRequestBuilderWithHeaders(mockStep, requestBuilder);
+    }
+
+    private static UrlPattern buildUrlPattern(String url) {
+        // if url pattern doesn't have query params and shouldBuildStrictUrlMatcher is true, then match url regardless query parameters
+        if (url != null && !url.contains("?") && !shouldBuildStrictUrlMatcherForAllUrls) {
+            LOGGER.debug("Going to build lenient matcher for url={}",url);
+            return urlPathEqualTo(url);
+        } else { // if url pattern has query params then match url strictly including query params
+            LOGGER.debug("Going to build strict matcher for url={}",url);
+            return urlEqualTo(url);
+        }
     }
 
     private static MappingBuilder createRequestBuilderWithHeaders(MockStep mockStep, MappingBuilder requestBuilder) {

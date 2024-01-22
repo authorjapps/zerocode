@@ -113,7 +113,7 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
             if (mockPort > 0) {
                 createWithWireMock(mockSteps, mockPort);
 
-                LOGGER.info("#SUCCESS: End points simulated via wiremock.");
+                LOGGER.debug("#SUCCESS: End points simulated via wiremock.");
 
                 return true;
             }
@@ -123,20 +123,20 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
                     "mock.api.port=8888\n\n");
             return false;
         } else if (httpUrl.contains("/$MOCK") && methodName.equals("$USE.VIRTUOSO")) {
-            LOGGER.info("\n#body:\n" + bodyContent);
+            LOGGER.debug("\n#body:\n" + bodyContent);
 
             //read the content of the "request". This contains the complete rest API.
             createWithVirtuosoMock(bodyContent != null ? bodyContent.toString() : null);
 
-            LOGGER.info("#SUCCESS: End point simulated via virtuoso.");
+            LOGGER.debug("#SUCCESS: End point simulated via virtuoso.");
             return true;
         } else if (httpUrl.contains("/$MOCK") && methodName.equals("$USE.SIMULATOR")) {
-            LOGGER.info("\n#body:\n" + bodyContent);
+            LOGGER.debug("\n#body:\n" + bodyContent);
 
             //read the content of the "request". This contains the complete rest API.
             createWithLocalMock(bodyContent != null ? bodyContent.toString() : null);
 
-            LOGGER.info("#SUCCESS: End point simulated via local simulator.");
+            LOGGER.debug("#SUCCESS: End point simulated via local simulator.");
 
             return true;
         }
@@ -147,7 +147,7 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
         try {
             return JsonPath.read(requestJson, jsonPath);
         } catch (PathNotFoundException pEx) {
-            LOGGER.debug("No " + jsonPath + " was present in the request. returned null.");
+            LOGGER.info("No " + jsonPath + " was present in the request. returned null.");
             return null;
         }
     }
@@ -157,7 +157,7 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
             objectMapper.readTree(potentialJsonString);
             return true;
         } catch (IOException e) {
-            LOGGER.warn("\n---------------------------------------------\n\n"
+            LOGGER.info("\n---------------------------------------------\n\n"
                     + "\t\t\t\t\t\t * Warning *  \n\nOutput was not a valid JSON body. It was treated as a simple rawBody."
                     + " If it was intentional, you can ignore this warning. "
                     + "\n -OR- Update your assertions block with \"rawBody\" instead of \"body\" "

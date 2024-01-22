@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 public class FieldTypeConversionUtils {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(FieldTypeConversionUtils.class);
-    private static ObjectMapper mapper = new ObjectMapperProvider().get();
 
     public static final String INT = "(int)";
     public static final String LONG = "(long)";
@@ -49,23 +48,24 @@ public class FieldTypeConversionUtils {
         }
     };
 
-    public static void digTypeCast(Map<String, Object> map) {
+    public static void deepTypeCast(Map<String, Object> map) {
 
         map.entrySet().stream().forEach(entry -> {
 
             Object value = entry.getValue();
 
             if (value instanceof Map) {
-                digTypeCast((Map<String, Object>) value);
+                deepTypeCast((Map<String, Object>) value);
 
             } else if (value instanceof ArrayList) {
-                ((ArrayList) value).forEach(thisItem -> {
-                    if (thisItem instanceof Map) {
-                        digTypeCast((Map<String, Object>) thisItem);
+                for(int index = 0; index < ((ArrayList<?>) value).size(); index++){
+                    Object thisItemValue = ((ArrayList<?>) value).get(index);
+                    if (thisItemValue instanceof Map) {
+                        deepTypeCast((Map<String, Object>) thisItemValue);
+                    } else{
+                        replacePrimitiveValues(((ArrayList) value), index, thisItemValue);
                     }
-                    LOGGER.debug("ARRAY - Leaf node found = {}, checking for type value...", thisItem);
-                    replaceNodeValue(entry, thisItem);
-                });
+                }
             } else {
                 LOGGER.debug("Leaf node found = {}, checking for type value...", value);
                 replaceNodeValue(entry, value);
@@ -85,9 +85,24 @@ public class FieldTypeConversionUtils {
             }
         } catch (Exception exx) {
             String errorMsg = "Can not convert '" + entry.getValue() + "'.";
+            LOGGER.error("{} with exception details: {}",  errorMsg, exx);
+            throw new RuntimeException(errorMsg + exx);
+        }
+    }
+
+    private static void replacePrimitiveValues(ArrayList<Object> valueList, Integer index, Object thisItem) {
+        try {
+            if (thisItem != null) {
+                fieldTypes.stream().forEach(currentType -> {
+                    if (thisItem.toString().startsWith(currentType)) {
+                        valueList.set(index, (typeMap.get(currentType)).apply(thisItem.toString()));
+                    }
+                });
+            }
+        } catch (Exception exx) {
+            String errorMsg = "Can not convert '" + thisItem + "'.";
             LOGGER.error(errorMsg + "\nException Details:" + exx);
             throw new RuntimeException(errorMsg + exx);
         }
-
     }
 }

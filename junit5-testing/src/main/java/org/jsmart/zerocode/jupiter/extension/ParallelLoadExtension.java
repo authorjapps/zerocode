@@ -69,7 +69,7 @@ public class ParallelLoadExtension implements BeforeEachCallback {
         if (hasFailed) {
             failTest(testMethod, testClass);
         } else {
-            LOGGER.info("\nAll Passed \uD83D\uDC3C. \nSee the granular 'csv report' for individual test statistics.");
+            LOGGER.debug("\nAll Passed \uD83D\uDC3C. \nSee the granular 'csv report' for individual test statistics.");
         }
 
     }

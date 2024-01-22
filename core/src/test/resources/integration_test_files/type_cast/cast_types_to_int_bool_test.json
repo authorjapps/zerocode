@@ -40,6 +40,23 @@
                     "availability": "(boolean)${$.another_get_call.response.body.availability}"
                 }
             }
+        },
+        {
+            "name": "assert_array_elements_1D_array",
+            "url": "http://localhost:9998/home/accounts/1",
+            "operation": "GET",
+            "request": {},
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "ids": [
+                        "(int)${$.another_get_call.response.body.id}"
+                    ],
+                    "name": "HBSC",
+                    "current": true
+                }
+            }
         }
+
     ]
 }

@@ -81,7 +81,7 @@ public class BasicHttpClient {
          *   - return HttpClients.createDefault();
          */
 
-        LOGGER.info("###Creating SSL Enabled Http Client for both http/https/TLS connections");
+        LOGGER.debug("###Creating SSL Enabled Http Client for both http/https/TLS connections");
 
         SSLContext sslContext = new SSLContextBuilder()
                 .loadTrustMaterial(null, (certificate, authType) -> true).build();

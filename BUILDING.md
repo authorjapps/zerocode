@@ -26,12 +26,9 @@ mvn -pl core clean test
 ```
 
 ## With tests executed(kafka)
-Some of the tests require a running Kafka (and some related components like kafka-rest, and kafka-schema-registry).
+Some tests require a running Kafka (and some related components like kafka-rest, and kafka-schema-registry).
 
-In the [zerocode-docker-factory repository](https://github.com/authorjapps/zerocode-docker-factory/) ([direct download link](https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml)) 
-you'll find 'kafka-schema-registry.yml', a docker-compose file that provides these components.
-
-Download the file, and run(or `cd to the docker` dir and run)
+Download the file, and run(or `cd to the docker/compose` dir and run)
 ```
 docker-compose -f kafka-schema-registry.yml up -d
 
@@ -43,7 +40,10 @@ We have provided other compose-files just in-case anyone has to experiment tests
 single-node or multi-node cluster(s) independently.
 ```
 
-Then you can run
+In the [zerocode-docker-factory repository](https://github.com/authorjapps/zerocode-docker-factory/) ([direct download link](https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml)) 
+you'll find 'kafka-schema-registry.yml', a docker-compose file that provides these components.
+
+Then you can run:
 ```
 mvn clean install   <---- To build and install all the modules
 
@@ -61,3 +61,49 @@ As explained above, in the root/parent folder, please issue the below command(th
 ```
 mvn clean install   <---- To build and install all the modules
 ```
+
+## Compiling in ARM Processors
+You might get the following error when you do a "mvn clean install -DskipTests"
+
+```java
+[ERROR] Failed to execute goal com.github.os72:protoc-jar-maven-plugin:3.11.4:run (default) on project kafka-testing: 
+    Error extracting protoc for version 3.11.4: Unsupported platform: protoc-3.11.4-osx-aarch_64.exe -> [Help 1]
+
+//
+// more details >>
+//        
+[INFO] ZeroCode TDD Parent ................................ SUCCESS [  0.504 s]
+[INFO] Zerocode TDD Core .................................. SUCCESS [  2.365 s]
+[INFO] Zerocode Http Testing With Simple YAML and JSON DSL  SUCCESS [  0.413 s]
+[INFO] Zerocode Kafka Testing With Simple YAML and JSON DSL FAILURE [  0.507 s]
+[INFO] Zerocode JUnit5 Jupiter Load Testing ............... SKIPPED
+[INFO] Zerocode Automated Testing Maven Archetype ......... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.858 s
+[INFO] Finished at: 2023-12-16T10:31:44Z
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal com.github.os72:protoc-jar-maven-plugin:3.11.4:run (default) on project kafka-testing: Error extracting protoc for version 3.11.4: Unsupported platform: protoc-3.11.4-osx-aarch_64.exe -> [Help 1]
+
+```
+
+### Fix:
+Go to --> .../zerocode/kafka-testing/pom.xml --> Comment the following line:
+
+```shell
+<!--
+<plugin>
+				<groupId>com.github.os72</groupId>
+				<artifactId>protoc-jar-maven-plugin</artifactId>
+				<version>3.11.4</version>
+                ...
+			</plugin>-->
+```
+Then execute ""mvn clean install -DskipTests"" --> It should be SUCCESS.
+
+Raise an Issue if you want to locally execute the tests involving "protos" and you aren't able to do it.
+
+Visit here for more details:
+- https://github.com/os72/protoc-jar-maven-plugin?tab=readme-ov-file
+- https://github.com/os72/protoc-jar/issues/93

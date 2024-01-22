@@ -40,7 +40,10 @@ public class ExtentReportsFactory {
         final String javaVersion = systemProperties.get("java.version");
         final String javaVendor = systemProperties.get("java.vendor");
 
-        LOGGER.info("Where were the tests fired? Ans: OS:{}, Architecture:{}, Java:{}, Vendor:{}",
+        LOGGER.debug("System Info: OS:{}, Architecture:{}, Java:{}, Vendor:{}",
+                osName, osArchitecture, javaVersion, javaVendor);
+
+        LOGGER.debug("Where were the tests fired? Ans: OS:{}, Architecture:{}, Java:{}, Vendor:{}",
                 osName, osArchitecture, javaVersion, javaVendor);
 
         extentReports.setSystemInfo("OS : ", osName);

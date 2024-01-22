@@ -4,6 +4,7 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.AVRO;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.jayway.jsonpath.JsonPath;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -60,8 +62,15 @@ public class KafkaConsumerHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerHelper.class);
     private static final Gson gson = new GsonSerDeProvider().get();
     private static final ObjectMapper objectMapper = new ObjectMapperProvider().get();
+    public static final String CONSUMER = "CONSUMER";
+    public static Map<String, Consumer> consumerCacheByTopicMap = new HashMap<>();
 
-    public static Consumer createConsumer(String bootStrapServers, String consumerPropertyFile, String topic) {
+    public static Consumer createConsumer(String bootStrapServers, String consumerPropertyFile, String topic, Boolean consumerToBeCached) {
+        Consumer sameConsumer = getCachedConsumer(topic, consumerToBeCached);
+        if (sameConsumer != null) {
+            return sameConsumer;
+        }
+
         try (InputStream propsIs = Resources.getResource(consumerPropertyFile).openStream()) {
             Properties properties = new Properties();
             properties.load(propsIs);
@@ -71,6 +80,27 @@ public class KafkaConsumerHelper {
 
             final Consumer consumer = new KafkaConsumer(properties);
             consumer.subscribe(Collections.singletonList(topic));
+
+            if(consumerToBeCached == true){
+                consumerCacheByTopicMap.forEach((xTopic, xConsumer) -> {
+                    if(!xTopic.equals(topic)){
+                        // close the earlier consumer if in the same group for safety.
+                        // (even if not in the same group, closing it anyway will not do any harm)
+                        // Otherwise rebalance will fail while rejoining/joining the same group for a new consumer
+                        // i.e. because old consumer(xConsumer) is still consuming,
+                        // and has not let GC know that it has stopped consuming or not sent any LeaveGroup request.
+                        // If you have a single(0) partition topic in your Kafka Broker, xConsumer is still holding it,
+                        // i.e. not yet unassigned.
+                        // Note- It works fine and not required to close() if the new consumer joining the same Group for the same topic.
+                        xConsumer.close();
+                    }
+                });
+                // Remove the earlier topic-consumer from the cache.
+                // Recreate will happen above anyway if not found in cache via "new KafkaConsumer(properties)".
+                consumerCacheByTopicMap.entrySet().removeIf(xTopic -> !xTopic.equals(topic));
+
+                consumerCacheByTopicMap.put(topic, consumer);
+            }
 
             return consumer;
 
@@ -83,9 +113,12 @@ public class KafkaConsumerHelper {
 
             for (int run = 0; run < 50; run++) {
                 if (!consumer.assignment().isEmpty()) {
+                    LOGGER.debug("==> WaitingForConsumerGroupJoin - Partition now assigned. No records yet consumed");
                     return new ConsumerRecords(new HashMap());
                 }
+                LOGGER.debug("==> WaitingForConsumerGroupJoin - Partition not assigned. Polling once");
                 ConsumerRecords records = consumer.poll(Duration.of(getPollTime(effectiveLocalConfigs), ChronoUnit.MILLIS));
+                LOGGER.debug("==> WaitingForConsumerGroupJoin - polled records length={}", records.count());
                 if (!records.isEmpty()) {
                     return records;
                 }
@@ -128,6 +161,8 @@ public class KafkaConsumerHelper {
                     consumerCommon.getShowRecordsConsumed(),
                     consumerCommon.getMaxNoOfRetryPollsOrTimeouts(),
                     consumerCommon.getPollingTime(),
+                    consumerCommon.getCacheByTopic(),
+                    consumerCommon.getFilterByJsonPath(),
                     consumerCommon.getSeek());
         }
 
@@ -151,7 +186,14 @@ public class KafkaConsumerHelper {
         Long effectivePollingTime = ofNullable(consumerLocal.getPollingTime()).orElse(consumerCommon.getPollingTime());
 
         // Handle pollingTime
+        String filterByJsonPath = ofNullable(consumerLocal.getFilterByJsonPath()).orElse(consumerCommon.getFilterByJsonPath());
+
+        // Handle pollingTime
         String effectiveSeek = ofNullable(consumerLocal.getSeek()).orElse(consumerCommon.getSeek());
+
+        // Handle consumerCache by topic
+        Boolean effectiveConsumerCacheByTopic = ofNullable(consumerLocal.getCacheByTopic())
+                .orElse(consumerCommon.getCacheByTopic());
 
         // Handle commitSync and commitAsync -START
         Boolean effectiveCommitSync;
@@ -178,6 +220,8 @@ public class KafkaConsumerHelper {
                 effectiveShowRecordsConsumed,
                 effectiveMaxNoOfRetryPollsOrTimeouts,
                 effectivePollingTime,
+                effectiveConsumerCacheByTopic,
+                filterByJsonPath,
                 effectiveSeek);
     }
 
@@ -206,7 +250,7 @@ public class KafkaConsumerHelper {
     public static void readRaw(List<ConsumerRecord> rawRecords, Iterator recordIterator) {
         while (recordIterator.hasNext()) {
             ConsumerRecord thisRecord = (ConsumerRecord) recordIterator.next();
-            LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}",
+            LOGGER.debug("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}",
                     thisRecord.key(), thisRecord.value(), thisRecord.partition(), thisRecord.offset());
             rawRecords.add(thisRecord);
         }
@@ -220,11 +264,14 @@ public class KafkaConsumerHelper {
             Object key = thisRecord.key();
             Object valueObj = thisRecord.value();
             Headers headers = thisRecord.headers();
+            String keyStr =  thisRecord.key() != null ?  thisRecord.key().toString() : "";
             String valueStr = consumerLocalConfig != null && KafkaConstants.PROTO.equalsIgnoreCase(consumerLocalConfig.getRecordType()) ? convertProtobufToJson(thisRecord, consumerLocalConfig) : valueObj.toString();
-            LOGGER.info("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
+            LOGGER.debug("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
                     key, valueStr, thisRecord.partition(), thisRecord.offset(), headers);
 
+            JsonNode keyNode = objectMapper.readTree(keyStr);
             JsonNode valueNode = objectMapper.readTree(valueStr);
+
             Map<String, String> headersMap = null;
             if (headers != null) {
                 headersMap = new HashMap<>();
@@ -232,7 +279,7 @@ public class KafkaConsumerHelper {
                     headersMap.put(header.key(), new String(header.value()));
                 }
             }
-            ConsumerJsonRecord jsonRecord = new ConsumerJsonRecord(thisRecord.key(), null, valueNode, headersMap);
+            ConsumerJsonRecord jsonRecord = new ConsumerJsonRecord(keyNode, valueNode, headersMap);
             jsonRecords.add(jsonRecord);
         }
     }
@@ -276,11 +323,18 @@ public class KafkaConsumerHelper {
         } else if (testConfigs != null && RAW.equals(testConfigs.getRecordType())) {
             result = prettyPrintJson(gson.toJson(new ConsumerRawRecords(rawRecords)));
 
-        } else if (testConfigs != null && (JSON.equals(testConfigs.getRecordType()) || PROTO.equalsIgnoreCase(testConfigs.getRecordType()))) {
+        } else if (testConfigs != null && (JSON.equals(testConfigs.getRecordType()) || PROTO.equalsIgnoreCase(testConfigs.getRecordType()) || AVRO.equalsIgnoreCase(testConfigs.getRecordType()))) {
             result = prettyPrintJson(objectMapper.writeValueAsString(new ConsumerJsonRecords(jsonRecords)));
 
-        } else {
+        }else {
             result = "{\"error\" : \"recordType Undecided, Please chose recordType as JSON or RAW\"}";
+        }
+
+        // Optional filter applied. if not supplied, original result is returned as response
+        if (testConfigs != null && testConfigs.getFilterByJsonPath() != null) {
+            String filteredResult = JsonPath.read(result, testConfigs.getFilterByJsonPath()).toString();
+            List<ConsumerJsonRecord> filteredRecords = objectMapper.readValue(filteredResult, List.class);
+            result = prettyPrintJson(objectMapper.writeValueAsString(new ConsumerJsonRecords(filteredRecords)));
         }
 
         return result;
@@ -363,4 +417,12 @@ public class KafkaConsumerHelper {
             }
         }
     }
+
+    private static Consumer getCachedConsumer(String topic, Boolean consumerToBeCached) {
+        if(consumerToBeCached){
+            return consumerCacheByTopicMap.get(topic);
+        }
+        return null;
+    }
+
 }

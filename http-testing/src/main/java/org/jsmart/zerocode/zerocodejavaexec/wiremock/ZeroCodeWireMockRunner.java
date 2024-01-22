@@ -24,7 +24,7 @@ public class ZeroCodeWireMockRunner extends ZeroCodeUnitRunner {
 
 
     public static void simulateServerDelay() {
-        LOGGER.info("Setting up WireMock with server delay...");
+        LOGGER.debug("Setting up WireMock with server delay...");
 
         basePath = "http://localhost:" + port;
         String path = "/delay/ids/2";
