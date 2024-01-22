@@ -44,6 +44,20 @@
             }
         },
         {
+            "name": "PUT Bathroom - Update",
+            "operation": "PUT",
+            "url": "/home/bathroom/21",
+            "ignoreBody": true,
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": 21,
+                    "name": "Shower-21",
+                    "availability": true
+                }
+            }
+        },
+        {
             "name": "Get Bathroom by Id 21",
             "operation": "GET",
             "url": "/home/bathroom/21",
