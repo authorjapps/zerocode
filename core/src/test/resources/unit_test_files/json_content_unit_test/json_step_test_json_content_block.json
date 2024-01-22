@@ -24,7 +24,7 @@
           "fullName": "Bob Luis",
           "empLogin": "bolu_lon",
           "type": "CONTRACT",
-          "addressId": "${JSON.CONTENT:$.create_emp.response.body.id}"
+          "address": "${JSON.CONTENT:$.create_emp.response.body.address}"
         }
       },
       "verify": {

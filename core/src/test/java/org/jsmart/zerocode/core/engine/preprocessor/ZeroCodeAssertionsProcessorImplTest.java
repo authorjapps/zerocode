@@ -1465,7 +1465,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void test_wrongJsonPathException() throws JsonProcessingException {
+    public void test_wrongJsonPathBy_JSONCONTENT_Exception() throws JsonProcessingException {
         String jsonAsString = readJsonAsString("unit_test_files/json_content_unit_test/json_step_test_wrong_json_path.json");
         Map<String, Object> map = mapper.readValue(jsonAsString, new TypeReference<Map<String, Object>>() {});
 
@@ -1473,10 +1473,10 @@ public class ZeroCodeAssertionsProcessorImplTest {
     }
 
     @Test
-    public void test_deepHashMapTraverse() throws IOException {
+    public void test_JSONCONTENT_leafNode() throws IOException {
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
-        final String step1 =  createStepWith("create_emp", "\"body\" : {\n    \"id\" : 39001,\n    \"ldapId\" : \"emmanorton\"\n  }\n}\n  }");
+        final String step1 =  createStepWithRequestAndResponse("create_emp", "\"body\" : {\n    \"id\" : 39001,\n    \"ldapId\" : \"emmanorton\"\n  }\n}\n  }");
         scenarioExecutionState.addStepState(step1);
 
         ScenarioSpec scenarioSpec =
@@ -1490,15 +1490,15 @@ public class ZeroCodeAssertionsProcessorImplTest {
 
         String jsonResult = mapper.writeValueAsString(map);
 
-        assertThat(JsonPath.read(jsonResult, "$.request.body.address"), is("39001"));
+        assertThat(JsonPath.read(jsonResult, "$.request.body.addressId"), is(39001));
     }
 
 
     @Test
-    public void test_nameArray() throws IOException {
+    public void test_JSONCONTENT_stringArray() throws IOException {
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
-        final String step1 =  createStepWith("create_emp", "\"body\": {\"id\": 38001,\n     \"names\": [\"test1\", \"test2\"]\n}");
+        final String step1 =  createStepWithRequestAndResponse("create_emp", "\"body\": {\"id\": 38001,\n     \"names\": [\"test1\", \"test2\"]\n}");
         scenarioExecutionState.addStepState(step1);
 
         ScenarioSpec scenarioSpec =
@@ -1517,8 +1517,78 @@ public class ZeroCodeAssertionsProcessorImplTest {
         Object jsonPathValue = JsonPath.read(jsonResult,
             "$.request.body.names");
 
-
         Assert.assertEquals(result, jsonPathValue.toString());
+    }
+
+    @Test
+    public void test_JSONCONTENT_objectArray() throws IOException {
+        ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
+        /**
+         * {
+         *     "id": 38001,
+         *     "allAddresses": [
+         *         {
+         *             "type": "Home",
+         *             "line1": "North Lon",
+         *             "id": 43
+         *         },
+         *         {
+         *             "type": "Office",
+         *             "line1": "Central Lon"
+         *         }
+         *     ]
+         * }
+         */
+        final String step1 =  createStepWithRequestAndResponse("create_emp",
+                "\"body\": {\"id\": 38001, \"allAddresses\": [{\"type\": \"Home\", \"line1\": \"North Lon\", \"id\": 47}, {\"type\": \"Office\", \"line1\": \"Central Lon\"}]}");
+        scenarioExecutionState.addStepState(step1);
+
+        ScenarioSpec scenarioSpec =
+            smartUtils.scenarioFileToJava(
+                "unit_test_files/json_content_unit_test/json_step_test_json_content_objectarray.json", ScenarioSpec.class);
+
+        Step thisStep = scenarioSpec.getSteps().get(1);
+        JsonNode stepNode = mapper.convertValue(thisStep, JsonNode.class);
+        Map<String, Object> map = mapper.readValue(stepNode.toString(), new TypeReference<Map<String, Object>>() {});
+
+        jsonPreProcessor.digReplaceContent(map, scenarioExecutionState);
+
+        String jsonResult = mapper.writeValueAsString(map);
+
+        assertThat(JsonPath.read(jsonResult, "$.request.body.allAddresses[0].id"), is(47));
+        assertThat(JsonPath.read(jsonResult, "$.request.body.allAddresses[0].type"), is("Home"));
+        assertThat(JsonPath.read(jsonResult, "$.request.body.allAddresses[1].type"), is("Office"));
+        assertThat(JsonPath.read(jsonResult, "$.request.body.allAddresses[0].line1"), is("North Lon"));
+        assertThat(JsonPath.read(jsonResult, "$.request.body.allAddresses[1].line1"), is("Central Lon"));
+    }
+
+    @Test
+    public void test_JSONCONTENT_jsonBlock() throws IOException {
+        ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
+
+        final String step1 =  createStepWithRequestAndResponse("create_emp",
+                "\"body\": {\n" +
+                        "    \"id\": 38001,\n" +
+                        "    \"address\": {\n" +
+                        "        \"type\": \"Home\",\n" +
+                        "        \"line1\": \"River Side\"\n" +
+                        "    }\n" +
+                        "}");
+        scenarioExecutionState.addStepState(step1);
+
+        ScenarioSpec scenarioSpec =
+            smartUtils.scenarioFileToJava(
+                "unit_test_files/json_content_unit_test/json_step_test_json_content_block.json", ScenarioSpec.class);
+        Step thisStep = scenarioSpec.getSteps().get(1);
+        JsonNode stepNode = mapper.convertValue(thisStep, JsonNode.class);
+        Map<String, Object> map = mapper.readValue(stepNode.toString(), new TypeReference<Map<String, Object>>() {});
+
+        jsonPreProcessor.digReplaceContent(map, scenarioExecutionState);
+
+        String jsonResult = mapper.writeValueAsString(map);
+
+        assertThat(JsonPath.read(jsonResult, "$.request.body.address.type"), is("Home"));
+        assertThat(JsonPath.read(jsonResult, "$.request.body.address.line1"), is("River Side"));
     }
 
     @Test
@@ -1547,7 +1617,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
     }
 
 
-    protected String createStepWith(String stepName, String body) {
+    protected String createStepWithRequestAndResponse(String stepName, String body) {
         Map<String, String> parammap = new HashMap<>();
 
         parammap.put("STEP.NAME", stepName);
