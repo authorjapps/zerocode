@@ -1,0 +1,9 @@
+{
+    "valueSource": [
+        "hello",
+        123,
+        true
+    ],
+    "ignoreHeader": true,
+    "csvSource": "unit_test_files/engine_unit_test_jsons/params_with_header.csv"
+}
