@@ -19,20 +19,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.jayway.jsonpath.JsonPath;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
@@ -135,6 +128,14 @@ public class KafkaConsumerHelper {
             validateCommitFlags(localCommitSync, localCommitAsync);
 
             validateSeekConfig(localConfigs);
+            validateSeekToTimestamp(localConfigs);
+        }
+    }
+
+    private static void validateSeekToTimestamp(ConsumerLocalConfigs localConfigs) {
+        Long seekToTimestamp = localConfigs.getSeekToTimestamp();
+        if (Objects.nonNull(seekToTimestamp) && (seekToTimestamp > System.currentTimeMillis() || seekToTimestamp < 0L)) {
+            throw new RuntimeException("\n------> 'seekToTimestamp' is not a valid epoch/Unix timestamp");
         }
     }
 
@@ -163,7 +164,8 @@ public class KafkaConsumerHelper {
                     consumerCommon.getPollingTime(),
                     consumerCommon.getCacheByTopic(),
                     consumerCommon.getFilterByJsonPath(),
-                    consumerCommon.getSeek());
+                    consumerCommon.getSeek(),
+                    null);
         }
 
         // Handle recordType
@@ -210,6 +212,8 @@ public class KafkaConsumerHelper {
             effectiveCommitSync = localCommitSync;
             effectiveCommitAsync = localCommitAsync;
         }
+        // this property doesn't make sense in a common context. should always be picked from local config
+        Long effectiveSeekToTimestamp = consumerLocal.getSeekToTimestamp();
 
         return new ConsumerLocalConfigs(
                 effectiveRecordType,
@@ -222,7 +226,8 @@ public class KafkaConsumerHelper {
                 effectivePollingTime,
                 effectiveConsumerCacheByTopic,
                 filterByJsonPath,
-                effectiveSeek);
+                effectiveSeek,
+                effectiveSeekToTimestamp);
     }
 
     public static ConsumerLocalConfigs readConsumerLocalTestProperties(String requestJsonWithConfigWrapped) {
@@ -378,27 +383,58 @@ public class KafkaConsumerHelper {
         // --------------------------------------------------------
     }
 
-    public static void handleSeekOffset(ConsumerLocalConfigs effectiveLocal, Consumer consumer) {
+    public static void handleSeek(ConsumerLocalConfigs effectiveLocal, Consumer consumer, String topicName) {
         String seek = effectiveLocal.getSeek();
         if (!isEmpty(seek)) {
-            String[] seekParts = effectiveLocal.getSeekTopicPartitionOffset();
-            String topic = seekParts[0];
-            int partition = parseInt(seekParts[1]);
-            long offset = parseLong(seekParts[2]);
+            handleSeekByOffset(effectiveLocal, consumer);
+        } else if (Objects.nonNull(effectiveLocal.getSeekToTimestamp())) {
+            handleSeekByTimestamp(effectiveLocal, consumer, topicName);
+        }
+    }
 
-            TopicPartition topicPartition = new TopicPartition(topic, partition);
-            Set<TopicPartition> topicPartitions = new HashSet<>();
-            topicPartitions.add(topicPartition);
+    private static void handleSeekByTimestamp(ConsumerLocalConfigs effectiveLocal, Consumer consumer, String topicName) {
+        if (Objects.nonNull(effectiveLocal.getSeekToTimestamp())) {
+            List<PartitionInfo> partitionInfos = consumer.partitionsFor(topicName);
 
+            //fetch partitions on topic
+            List<TopicPartition> topicPartitions = partitionInfos.stream()
+                    .map(info -> new TopicPartition(info.topic(), info.partition()))
+                    .collect(Collectors.toList());
+
+            //fetch offsets for each partition-timestamp pair
+            Map<TopicPartition, Long> topicPartitionTimestampMap = topicPartitions.stream()
+                    .collect(Collectors.toMap(Function.identity(), ignore -> effectiveLocal.getSeekToTimestamp()));
+            Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = consumer.offsetsForTimes(topicPartitionTimestampMap);
+
+            //assign to fetched partitions
             consumer.unsubscribe();
-            consumer.assign(topicPartitions);
+            consumer.assign(topicPartitionOffsetAndTimestampMap.keySet());
 
-            if (offset <= -1) {
-                consumer.seekToEnd(topicPartitions);
-                consumer.seek(topicPartition, consumer.position(topicPartition) + offset);
-            } else {
-                consumer.seek(topicPartition, offset);
+            //seek to fetched offsets for partitions
+            for (Map.Entry<TopicPartition, OffsetAndTimestamp> topicOffsetEntry : topicPartitionOffsetAndTimestampMap.entrySet()) {
+                consumer.seek(topicOffsetEntry.getKey(), topicOffsetEntry.getValue().offset());
             }
+        }
+    }
+
+    private static void handleSeekByOffset(ConsumerLocalConfigs effectiveLocal, Consumer consumer) {
+        String[] seekParts = effectiveLocal.getSeekTopicPartitionOffset();
+        String topic = seekParts[0];
+        int partition = parseInt(seekParts[1]);
+        long offset = parseLong(seekParts[2]);
+
+        TopicPartition topicPartition = new TopicPartition(topic, partition);
+        Set<TopicPartition> topicPartitions = new HashSet<>();
+        topicPartitions.add(topicPartition);
+
+        consumer.unsubscribe();
+        consumer.assign(topicPartitions);
+
+        if (offset <= -1) {
+            consumer.seekToEnd(topicPartitions);
+            consumer.seek(topicPartition, consumer.position(topicPartition) + offset);
+        } else {
+            consumer.seek(topicPartition, offset);
         }
     }
 

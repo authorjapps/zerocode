@@ -23,6 +23,7 @@ public class ConsumerLocalConfigs {
     private final String protoClassType;
     private final Boolean cacheByTopic;
     private final String filterByJsonPath;
+    private final Long seekToTimestamp;
 
     @JsonCreator
     public ConsumerLocalConfigs(
@@ -36,7 +37,8 @@ public class ConsumerLocalConfigs {
             @JsonProperty("pollingTime") Long pollingTime,
             @JsonProperty("cacheByTopic") Boolean cacheByTopic,
             @JsonProperty("filterByJsonPath") String filterByJsonPath,
-            @JsonProperty("seek") String seek) {
+            @JsonProperty("seek") String seek,
+            @JsonProperty("seekToTimestamp") Long seekToTimestamp) {
         this.recordType = recordType;
         this.protoClassType= protobufMessageClassType;
         this.fileDumpTo = fileDumpTo;
@@ -48,13 +50,14 @@ public class ConsumerLocalConfigs {
         this.cacheByTopic = cacheByTopic;
         this.filterByJsonPath = filterByJsonPath;
         this.seek = seek;
+        this.seekToTimestamp = seekToTimestamp;
     }
-    
+
 
     public ConsumerLocalConfigs(
-             String recordType,
-             String fileDumpTo,
-             Boolean commitAsync,
+            String recordType,
+            String fileDumpTo,
+            Boolean commitAsync,
             Boolean commitSync,
             Boolean showRecordsConsumed,
             Integer maxNoOfRetryPollsOrTimeouts,
@@ -62,16 +65,17 @@ public class ConsumerLocalConfigs {
             Boolean cacheByTopic,
             String filterByJsonPath,
             String seek) {
-		this(recordType, null,
+        this(recordType, null,
                 fileDumpTo,
                 commitAsync,
                 commitSync,
                 showRecordsConsumed,
                 maxNoOfRetryPollsOrTimeouts,
-				pollingTime,
+                pollingTime,
                 cacheByTopic,
                 filterByJsonPath,
-                seek);
+                seek,
+                null);
     }
 
     public String getRecordType() {
@@ -119,6 +123,10 @@ public class ConsumerLocalConfigs {
         return seek;
     }
 
+    public Long getSeekToTimestamp() {
+        return seekToTimestamp;
+    }
+
     @JsonIgnore
     public String[] getSeekTopicPartitionOffset() {
         return seek.split(",");
@@ -139,7 +147,8 @@ public class ConsumerLocalConfigs {
                 Objects.equals(pollingTime, that.pollingTime) &&
                 Objects.equals(filterByJsonPath, that.filterByJsonPath) &&
                 Objects.equals(cacheByTopic, that.cacheByTopic) &&
-                Objects.equals(seek, that.seek);
+                Objects.equals(seek, that.seek) &&
+                Objects.equals(seekToTimestamp, that.seekToTimestamp);
     }
 
     @Override
@@ -162,6 +171,7 @@ public class ConsumerLocalConfigs {
                 ", cacheByTopic=" + cacheByTopic +
                 ", filterByJsonPath=" + filterByJsonPath +
                 ", seek=" + seek +
+                ", seekToTimestamp=" + seekToTimestamp +
                 '}';
     }
 }
