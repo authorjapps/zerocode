@@ -157,7 +157,7 @@ public class TokenUtils {
         return aString;
     }
 
-    public static String getMaskedTokensRemoved(String aString) {
+    public static String getMasksRemoved(String aString) {
         String regex = "\\$\\{MASKED:([^\\}]*)\\}";
         Matcher maskMatcher = Pattern.compile(regex).matcher(aString);
         while(maskMatcher.find()) {
