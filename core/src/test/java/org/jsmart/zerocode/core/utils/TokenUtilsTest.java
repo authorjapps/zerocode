@@ -10,7 +10,7 @@ import org.junit.rules.ExpectedException;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.jsmart.zerocode.core.utils.TokenUtils.absolutePathOf;
-import static org.jsmart.zerocode.core.utils.TokenUtils.getMaskedTokensReplaced;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksReplaced;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksRemoved;
 import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
 import static org.junit.Assert.*;
@@ -175,22 +175,22 @@ public class TokenUtilsTest {
 
     @Test
     public void testGetMaskedTokensReplaced_multipleOccurrences(){
-        assertEquals("This is a ***masked*** message with ***masked*** tokens.", getMaskedTokensReplaced("This is a ${MASKED:secret} message with ${MASKED:masked} tokens."));
+        assertEquals("This is a ***masked*** message with ***masked*** tokens.", getMasksReplaced("This is a ${MASKED:secret} message with ${MASKED:masked} tokens."));
     }
 
     @Test
     public void testGetMaskedTokensReplaced_noOccurrences(){
-        assertEquals("This string has no masked tokens.", getMaskedTokensReplaced("This string has no masked tokens."));
+        assertEquals("This string has no masked tokens.", getMasksReplaced("This string has no masked tokens."));
     }
 
     @Test
     public void testGetMaskedTokensReplaced_emptyString(){
-        assertEquals("", getMaskedTokensReplaced(""));
+        assertEquals("", getMasksReplaced(""));
     }
 
     @Test
     public void testGetMaskedTokensReplaced_specialCharacters(){
-        assertEquals("***masked*** and ***masked***", getMaskedTokensReplaced("${MASKED:abc@123} and ${MASKED:!@#$%^}"));
+        assertEquals("***masked*** and ***masked***", getMasksReplaced("${MASKED:abc@123} and ${MASKED:!@#$%^}"));
     }
 
     @Test

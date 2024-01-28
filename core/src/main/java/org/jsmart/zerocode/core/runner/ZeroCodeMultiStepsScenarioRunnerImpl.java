@@ -414,6 +414,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         // --------------------------------
         url = zeroCodeAssertionsProcessor.resolveStringJson(url, scenarioExecutionState.getResolvedScenarioState());
 
+        // ------------------------------------------------
+        // 1) Removed the MASKED wrapper for API execution (For logging)
+        // 2) Replace the MASKED field with masked content (For API executions)
+        // ------------------------------------------------
+        String resolvedRequestJsonMaskRemoved = zeroCodeAssertionsProcessor.fieldMasksRemoved(resolvedRequestJson);
+        String resolvedRequestJsonMaskApplied = zeroCodeAssertionsProcessor.fieldMasksApplied(resolvedRequestJson);
+
         final LocalDateTime requestTimeStamp = LocalDateTime.now();
 
         String executionResult;
@@ -428,9 +435,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .url(url)
                         .method(operationName)
                         .id(stepId)
-                        .request(prettyPrintJson(resolvedRequestJson));
+                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
 
-                executionResult = apiExecutor.executeHttpApi(url, operationName, resolvedRequestJson);
+                executionResult = apiExecutor.executeHttpApi(url, operationName, resolvedRequestJsonMaskRemoved);
                 break;
 
             case JAVA_CALL:
@@ -441,10 +448,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .id(stepId)
                         .url(url)
                         .method(operationName)
-                        .request(prettyPrintJson(resolvedRequestJson));
+                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
 
                 url = apiTypeUtils.getQualifiedJavaApi(url);
-                executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJson);
+                executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJsonMaskRemoved);
                 break;
 
             case KAFKA_CALL:
@@ -459,10 +466,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .url(url)
                         .method(operationName.toUpperCase())
                         .id(stepId)
-                        .request(prettyPrintJson(resolvedRequestJson));
+                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
 
                 String topicName = url.substring(KAFKA_TOPIC.length());
-                executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJson, scenarioExecutionState);
+                executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJsonMaskRemoved, scenarioExecutionState);
                 break;
 
             case NONE:
@@ -473,14 +480,14 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .id(stepId)
                         .url(url)
                         .method(operationName)
-                        .request(prettyPrintJson(resolvedRequestJson));
+                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
 
                 executionResult = prettyPrintJson(resolvedRequestJson);
                 break;
 
             default:
                 throw new RuntimeException("Oops! API Type Undecided. If it is intentional, " +
-                        "then keep the value as empty to receive the request in the response");
+                        "then keep the value as empty to receive the request as response");
         }
 
         return executionResult;

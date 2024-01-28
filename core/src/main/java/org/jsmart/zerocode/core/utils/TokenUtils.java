@@ -146,7 +146,7 @@ public class TokenUtils {
         return keyTokens;
     }
 
-    public static String getMaskedTokensReplaced(String aString) {
+    public static String getMasksReplaced(String aString) {
         String regex = "\\$\\{MASKED:([^\\}]*)\\}";
         Matcher maskMatcher = Pattern.compile(regex).matcher(aString);
         while(maskMatcher.find()) {
