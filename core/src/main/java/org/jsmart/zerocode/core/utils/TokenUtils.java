@@ -19,23 +19,7 @@ import java.util.regex.Pattern;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.ABS_PATH;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.GLOBAL_RANDOM_NUMBER;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.GQL_FILE;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATETIME_NOW;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.LOCALDATE_TODAY;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_NUMBER_FIXED;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_STRING_ALPHA;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_STRING_ALPHA_NUMERIC;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_UU_ID;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.RANDOM_UU_ID_FIXED;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.STATIC_ALPHABET;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.SYSTEM_ENV;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.SYSTEM_PROPERTY;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.XML_FILE;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.getKnownTokens;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.globalTokenCache;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.*;
 
 public class TokenUtils {
 
@@ -160,6 +144,29 @@ public class TokenUtils {
         }
 
         return keyTokens;
+    }
+
+    public static String getMaskedTokensReplaced(String aString) {
+        String regex = "\\$\\{MASKED:([^\\}]*)\\}";
+        Matcher maskMatcher = Pattern.compile(regex).matcher(aString);
+        while(maskMatcher.find()) {
+            String foundMatch = maskMatcher.group(0);
+            aString = aString.replace(foundMatch, MASKED_STR);
+        }
+
+        return aString;
+    }
+
+    public static String getMaskedTokensRemoved(String aString) {
+        String regex = "\\$\\{MASKED:([^\\}]*)\\}";
+        Matcher maskMatcher = Pattern.compile(regex).matcher(aString);
+        while(maskMatcher.find()) {
+            String foundFullMatch = maskMatcher.group(0);
+            String innerContent = maskMatcher.group(1);
+            aString = aString.replace(foundFullMatch, innerContent);
+        }
+
+        return aString;
     }
 
     public static String createRandomAlphaString(int length) {
