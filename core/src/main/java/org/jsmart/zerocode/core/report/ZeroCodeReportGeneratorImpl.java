@@ -414,12 +414,4 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                 ".html";
     }
 
-    public static void main(String[] args) {
-        String sss = "A quick brown fox jumps over   a lazy dog   @ODS-X   @Licenc_Y Z";
-        for(String st : sss.trim().split(" ")){
-            if(st.startsWith("@")){
-                System.out.println(st);
-            }
-        }
-    }
 }
