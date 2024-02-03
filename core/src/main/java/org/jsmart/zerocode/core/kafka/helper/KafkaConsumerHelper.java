@@ -4,6 +4,7 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.AVRO;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
@@ -17,6 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -24,6 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.jayway.jsonpath.JsonPath;
+import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
@@ -34,6 +39,7 @@ import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.KafkaConstants;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigsWrap;
+import org.jsmart.zerocode.core.kafka.consume.SeekTimestamp;
 import org.jsmart.zerocode.core.kafka.receive.ConsumerCommonConfigs;
 import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecord;
 import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecords;
@@ -133,9 +139,26 @@ public class KafkaConsumerHelper {
     }
 
     private static void validateSeekToTimestamp(ConsumerLocalConfigs localConfigs) {
-        Long seekToTimestamp = localConfigs.getSeekToTimestamp();
-        if (Objects.nonNull(seekToTimestamp) && (seekToTimestamp > System.currentTimeMillis() || seekToTimestamp < 0L)) {
-            throw new RuntimeException("\n------> 'seekToTimestamp' is not a valid epoch/Unix timestamp");
+        String seekToTimestamp = localConfigs.getSeekEpoch();
+        if (isEmpty(seekToTimestamp)) {
+            if (isNumeric(seekToTimestamp) && (Long.parseLong(seekToTimestamp) > System.currentTimeMillis() || Long.parseLong(seekToTimestamp) < 0L)) {
+                throw new RuntimeException("\n------> 'seekEpoch' is not a valid epoch/Unix timestamp");
+            }
+            if (!isEmpty(localConfigs.getSeek()) && Objects.nonNull(localConfigs.getSeekTimestamp())) {
+                throw new RuntimeException("Only one of 'seek', 'seekEpoch' and 'seekTimestamp' should be provided, but not both. Please fix and rerun");
+            }
+        }
+        if (Objects.nonNull(localConfigs.getSeekTimestamp())) {
+            DateFormat dateFormat = new SimpleDateFormat(localConfigs.getSeekTimestamp().getFormat());
+            try {
+                Date date = dateFormat.parse(localConfigs.getSeekTimestamp().getTimestamp());
+                long epochMillis = date.toInstant().toEpochMilli();
+                if (epochMillis > System.currentTimeMillis() || epochMillis < 0L) {
+                    throw new RuntimeException("\n------> 'seekTimestamp' is not a valid epoch/Unix timestamp " + epochMillis);
+                }
+            } catch (ParseException e) {
+                throw new RuntimeException("Timestamp and format provided in 'seekTimestamp' cannot be parsed ", e);
+            }
         }
     }
 
@@ -164,7 +187,8 @@ public class KafkaConsumerHelper {
                     consumerCommon.getPollingTime(),
                     consumerCommon.getCacheByTopic(),
                     consumerCommon.getFilterByJsonPath(),
-                    consumerCommon.getSeek(),
+                    null,
+                    null,
                     null);
         }
 
@@ -190,9 +214,6 @@ public class KafkaConsumerHelper {
         // Handle pollingTime
         String filterByJsonPath = ofNullable(consumerLocal.getFilterByJsonPath()).orElse(consumerCommon.getFilterByJsonPath());
 
-        // Handle pollingTime
-        String effectiveSeek = ofNullable(consumerLocal.getSeek()).orElse(consumerCommon.getSeek());
-
         // Handle consumerCache by topic
         Boolean effectiveConsumerCacheByTopic = ofNullable(consumerLocal.getCacheByTopic())
                 .orElse(consumerCommon.getCacheByTopic());
@@ -212,8 +233,6 @@ public class KafkaConsumerHelper {
             effectiveCommitSync = localCommitSync;
             effectiveCommitAsync = localCommitAsync;
         }
-        // this property doesn't make sense in a common context. should always be picked from local config
-        Long effectiveSeekToTimestamp = consumerLocal.getSeekToTimestamp();
 
         return new ConsumerLocalConfigs(
                 effectiveRecordType,
@@ -226,8 +245,9 @@ public class KafkaConsumerHelper {
                 effectivePollingTime,
                 effectiveConsumerCacheByTopic,
                 filterByJsonPath,
-                effectiveSeek,
-                effectiveSeekToTimestamp);
+                consumerLocal.getSeek(),
+                consumerLocal.getSeekEpoch(),
+                consumerLocal.getSeekTimestamp());
     }
 
     public static ConsumerLocalConfigs readConsumerLocalTestProperties(String requestJsonWithConfigWrapped) {
@@ -387,13 +407,24 @@ public class KafkaConsumerHelper {
         String seek = effectiveLocal.getSeek();
         if (!isEmpty(seek)) {
             handleSeekByOffset(effectiveLocal, consumer);
-        } else if (Objects.nonNull(effectiveLocal.getSeekToTimestamp())) {
-            handleSeekByTimestamp(effectiveLocal, consumer, topicName);
+        } else if (!isEmpty(effectiveLocal.getSeekEpoch())) {
+            handleSeekByEpoch(Long.parseLong(effectiveLocal.getSeekEpoch()), consumer, topicName);
+        } else if (Objects.nonNull(effectiveLocal.getSeekTimestamp())) {
+            handleSeekByTimestamp(effectiveLocal.getSeekTimestamp(), consumer, topicName);
         }
     }
 
-    private static void handleSeekByTimestamp(ConsumerLocalConfigs effectiveLocal, Consumer consumer, String topicName) {
-        if (Objects.nonNull(effectiveLocal.getSeekToTimestamp())) {
+    @SneakyThrows
+    private static void handleSeekByTimestamp(SeekTimestamp seekTimestamp, Consumer consumer, String topicName) {
+        if (Objects.nonNull(seekTimestamp)) {
+            DateFormat dateFormat = new SimpleDateFormat(seekTimestamp.getFormat());
+            Date date = dateFormat.parse(seekTimestamp.getTimestamp());
+            handleSeekByEpoch(date.toInstant().toEpochMilli(), consumer, topicName);
+        }
+    }
+
+    private static void handleSeekByEpoch(Long epoch, Consumer consumer, String topicName) {
+        if (Objects.nonNull(epoch)) {
             List<PartitionInfo> partitionInfos = consumer.partitionsFor(topicName);
 
             //fetch partitions on topic
@@ -403,7 +434,7 @@ public class KafkaConsumerHelper {
 
             //fetch offsets for each partition-timestamp pair
             Map<TopicPartition, Long> topicPartitionTimestampMap = topicPartitions.stream()
-                    .collect(Collectors.toMap(Function.identity(), ignore -> effectiveLocal.getSeekToTimestamp()));
+                    .collect(Collectors.toMap(Function.identity(), ignore -> epoch));
             Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = consumer.offsetsForTimes(topicPartitionTimestampMap);
 
             //assign to fetched partitions

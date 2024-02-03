@@ -27,7 +27,8 @@ public class ConsumerLocalConfigsWrapTest {
                         50L,
                         false,
                         "$.JSON.Path",
-                        "1,0,test-topic"));
+                        "1,0,test-topic",
+                        null, null));
         ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
         String json = objectMapper.writeValueAsString(javaObject);
@@ -58,7 +59,8 @@ public class ConsumerLocalConfigsWrapTest {
                         null,
                         false,
                         null,
-                        "1,0,test-topic"));
+                        "1,0,test-topic",
+                        null, null));
 
         String json = objectMapper.writeValueAsString(javaObject);
         assertEquals("{\n" +

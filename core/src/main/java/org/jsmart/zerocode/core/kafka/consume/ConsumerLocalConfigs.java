@@ -23,7 +23,9 @@ public class ConsumerLocalConfigs {
     private final String protoClassType;
     private final Boolean cacheByTopic;
     private final String filterByJsonPath;
-    private final Long seekToTimestamp;
+    private final String seekEpoch;
+    private final SeekTimestamp seekTimestamp;
+
 
     @JsonCreator
     public ConsumerLocalConfigs(
@@ -38,9 +40,10 @@ public class ConsumerLocalConfigs {
             @JsonProperty("cacheByTopic") Boolean cacheByTopic,
             @JsonProperty("filterByJsonPath") String filterByJsonPath,
             @JsonProperty("seek") String seek,
-            @JsonProperty("seekToTimestamp") Long seekToTimestamp) {
+            @JsonProperty("seekEpoch") String seekEpoch,
+            @JsonProperty("seekTimestamp") SeekTimestamp seekTimestamp) {
         this.recordType = recordType;
-        this.protoClassType= protobufMessageClassType;
+        this.protoClassType = protobufMessageClassType;
         this.fileDumpTo = fileDumpTo;
         this.commitAsync = commitAsync;
         this.commitSync = commitSync;
@@ -50,7 +53,8 @@ public class ConsumerLocalConfigs {
         this.cacheByTopic = cacheByTopic;
         this.filterByJsonPath = filterByJsonPath;
         this.seek = seek;
-        this.seekToTimestamp = seekToTimestamp;
+        this.seekEpoch = seekEpoch;
+        this.seekTimestamp = seekTimestamp;
     }
 
 
@@ -64,7 +68,9 @@ public class ConsumerLocalConfigs {
             Long pollingTime,
             Boolean cacheByTopic,
             String filterByJsonPath,
-            String seek) {
+            String seek,
+            String seekEpoch,
+            SeekTimestamp seekTimestamp) {
         this(recordType, null,
                 fileDumpTo,
                 commitAsync,
@@ -75,16 +81,17 @@ public class ConsumerLocalConfigs {
                 cacheByTopic,
                 filterByJsonPath,
                 seek,
-                null);
+                seekEpoch,
+                seekTimestamp);
     }
 
     public String getRecordType() {
         return recordType != null ? recordType : RAW;
     }
-    
-	public String getProtoClassType() {
-		return protoClassType;
-	}
+
+    public String getProtoClassType() {
+        return protoClassType;
+    }
 
 
     public String getFileDumpTo() {
@@ -123,8 +130,12 @@ public class ConsumerLocalConfigs {
         return seek;
     }
 
-    public Long getSeekToTimestamp() {
-        return seekToTimestamp;
+    public String getSeekEpoch() {
+        return seekEpoch;
+    }
+
+    public SeekTimestamp getSeekTimestamp() {
+        return seekTimestamp;
     }
 
     @JsonIgnore
@@ -138,7 +149,7 @@ public class ConsumerLocalConfigs {
         if (o == null || getClass() != o.getClass()) return false;
         ConsumerLocalConfigs that = (ConsumerLocalConfigs) o;
         return Objects.equals(recordType, that.recordType) &&
-        		Objects.equals(protoClassType, that.protoClassType) &&
+                Objects.equals(protoClassType, that.protoClassType) &&
                 Objects.equals(fileDumpTo, that.fileDumpTo) &&
                 Objects.equals(commitAsync, that.commitAsync) &&
                 Objects.equals(commitSync, that.commitSync) &&
@@ -148,13 +159,13 @@ public class ConsumerLocalConfigs {
                 Objects.equals(filterByJsonPath, that.filterByJsonPath) &&
                 Objects.equals(cacheByTopic, that.cacheByTopic) &&
                 Objects.equals(seek, that.seek) &&
-                Objects.equals(seekToTimestamp, that.seekToTimestamp);
+                Objects.equals(seekEpoch, that.seekEpoch);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(recordType, fileDumpTo, commitAsync, commitSync, showRecordsConsumed, maxNoOfRetryPollsOrTimeouts, pollingTime,cacheByTopic, filterByJsonPath, seek);
+        return Objects.hash(recordType, fileDumpTo, commitAsync, commitSync, showRecordsConsumed, maxNoOfRetryPollsOrTimeouts, pollingTime, cacheByTopic, filterByJsonPath, seek);
     }
 
     @Override
@@ -171,7 +182,8 @@ public class ConsumerLocalConfigs {
                 ", cacheByTopic=" + cacheByTopic +
                 ", filterByJsonPath=" + filterByJsonPath +
                 ", seek=" + seek +
-                ", seekToTimestamp=" + seekToTimestamp +
+                ", seekEpoch=" + seekEpoch +
+                ", seekTimestamp=" + seekTimestamp +
                 '}';
     }
 }

@@ -49,11 +49,6 @@ public class ConsumerCommonConfigs {
     @Named("consumer.filterByJsonPath")
     private String filterByJsonPath;
 
-    // TODO- Remove this from Global properties, as it doesn't make sense
-    @Inject(optional = true)
-    @Named("consumer.seek")
-    private String seek;
-
     public ConsumerCommonConfigs() {
     }
 
@@ -66,8 +61,7 @@ public class ConsumerCommonConfigs {
                                  Integer maxNoOfRetryPollsOrTimeouts,
                                  Long pollingTime,
                                  Boolean cacheByTopic,
-                                 String filterByJsonPath,
-                                 String seek
+                                 String filterByJsonPath
 
     ) {
         this.commitSync = commitSync;
@@ -80,7 +74,6 @@ public class ConsumerCommonConfigs {
         this.pollingTime = pollingTime;
         this.cacheByTopic = cacheByTopic;
         this.filterByJsonPath = filterByJsonPath;
-        this.seek = seek;
     }
     
     public ConsumerCommonConfigs(Boolean commitSync,
@@ -91,8 +84,7 @@ public class ConsumerCommonConfigs {
             Integer maxNoOfRetryPollsOrTimeouts,
             Long pollingTime,
             Boolean cacheByTopic,
-            String filterByJsonPath,
-            String seek
+            String filterByJsonPath
 
     ) {
 		this(commitSync,
@@ -104,8 +96,7 @@ public class ConsumerCommonConfigs {
                 maxNoOfRetryPollsOrTimeouts,
 				pollingTime,
                 cacheByTopic,
-                filterByJsonPath,
-                seek);
+                filterByJsonPath);
 	}
 
     public Boolean getCommitSync() {
@@ -136,9 +127,6 @@ public class ConsumerCommonConfigs {
         return recordType;
     }
 
-    public String getSeek() {
-        return seek;
-    }
 	public String getProtoClassType() {
 		return protoClassType;
 	}
@@ -165,7 +153,6 @@ public class ConsumerCommonConfigs {
                 ", pollingTime=" + pollingTime +
                 ", cacheByTopic=" + cacheByTopic +
                 ", filterByJsonPath=" + filterByJsonPath +
-                ", seek=" + seek +
                 '}';
     }
 }
