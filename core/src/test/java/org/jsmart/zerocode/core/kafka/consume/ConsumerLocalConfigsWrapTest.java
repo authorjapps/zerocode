@@ -16,6 +16,86 @@ public class ConsumerLocalConfigsWrapTest {
     ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
     @Test
+    public void testSerDeser_seekEpoch() throws IOException {
+        ConsumerLocalConfigsWrap javaObject = new ConsumerLocalConfigsWrap(
+                new ConsumerLocalConfigs("RAW",
+                        "RAW:/target/ttt",
+                        true,
+                        null,
+                        true,
+                        3,
+                        50L,
+                        false,
+                        "$.JSON.Path",
+                        null,
+                        String.valueOf(System.currentTimeMillis()),
+                        null));
+        ObjectMapper objectMapper = new ObjectMapperProvider().get();
+
+        String json = objectMapper.writeValueAsString(javaObject);
+        assertEquals("{\n" +
+                        "    \"consumerLocalConfigs\":\n" +
+                        "    {\n" +
+                        "        \"recordType\": \"RAW\",\n" +
+                        "        \"fileDumpTo\": \"RAW:/target/ttt\",\n" +
+                        "        \"commitAsync\": true,\n" +
+                        "        \"showRecordsConsumed\": true,\n" +
+                        "        \"maxNoOfRetryPollsOrTimeouts\": 3,\n" +
+                        "        \"pollingTime\": 50,\n" +
+                        "        \"cacheByTopic\": false,\n" +
+                        "        \"filterByJsonPath\": \"$.JSON.Path\",\n" +
+                        "        \"seekEpoch\": \"1706940293669\"\n" +
+                        "    }\n" +
+                        "}",
+                json, LENIENT);
+
+        ConsumerLocalConfigsWrap javaPojo = objectMapper.readValue(json, ConsumerLocalConfigsWrap.class);
+        assertThat(javaPojo, is(javaObject));
+    }
+
+    @Test
+    public void testSerDeser_seekTimestamp() throws IOException {
+        ConsumerLocalConfigsWrap javaObject = new ConsumerLocalConfigsWrap(
+                new ConsumerLocalConfigs("RAW",
+                        "RAW:/target/ttt",
+                        true,
+                        null,
+                        true,
+                        3,
+                        50L,
+                        false,
+                        "$.JSON.Path",
+                        null,
+                        null,
+                        new SeekTimestamp("2024-01-29T19:35:21.959340", "yyyy-MM-dd'T'HH:mm:ss.ssssss")));
+        ObjectMapper objectMapper = new ObjectMapperProvider().get();
+
+        String json = objectMapper.writeValueAsString(javaObject);
+        assertEquals("{\n" +
+                        "    \"consumerLocalConfigs\":\n" +
+                        "    {\n" +
+                        "        \"recordType\": \"RAW\",\n" +
+                        "        \"fileDumpTo\": \"RAW:/target/ttt\",\n" +
+                        "        \"commitAsync\": true,\n" +
+                        "        \"showRecordsConsumed\": true,\n" +
+                        "        \"maxNoOfRetryPollsOrTimeouts\": 3,\n" +
+                        "        \"pollingTime\": 50,\n" +
+                        "        \"cacheByTopic\": false,\n" +
+                        "        \"filterByJsonPath\": \"$.JSON.Path\",\n" +
+                        "        \"seekTimestamp\":\n" +
+                        "        {\n" +
+                        "            \"timestamp\": \"2024-01-29T19:35:21.959340\",\n" +
+                        "            \"format\": \"yyyy-MM-dd'T'HH:mm:ss.ssssss\"\n" +
+                        "        }\n" +
+                        "    }\n" +
+                        "}",
+                json, LENIENT);
+
+        ConsumerLocalConfigsWrap javaPojo = objectMapper.readValue(json, ConsumerLocalConfigsWrap.class);
+        assertThat(javaPojo, is(javaObject));
+    }
+
+    @Test
     public void testSerDeser() throws IOException {
         ConsumerLocalConfigsWrap javaObject = new ConsumerLocalConfigsWrap(
                 new ConsumerLocalConfigs("RAW",
