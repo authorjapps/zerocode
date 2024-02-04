@@ -28,6 +28,9 @@ mvn -pl core clean test
 ## With tests executed(kafka)
 Some tests require a running Kafka (and some related components like kafka-rest, and kafka-schema-registry).
 
+Location:
+https://github.com/authorjapps/zerocode/blob/master/docker/compose/kafka-schema-registry.yml
+
 Download the file, and run(or `cd to the docker/compose` dir and run)
 ```
 docker-compose -f kafka-schema-registry.yml up -d
