@@ -482,7 +482,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .method(operationName)
                         .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
 
-                executionResult = prettyPrintJson(resolvedRequestJson);
+                executionResult = prettyPrintJson(resolvedRequestJsonMaskApplied);
                 break;
 
             default:
@@ -540,6 +540,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private List<FieldAssertionMatcher> compareStepResults(Step thisStep, String actualResult, String expectedResult, String resolvedScenarioState) {
         List<FieldAssertionMatcher> failureResults = new ArrayList<>();
+
+        expectedResult = zeroCodeAssertionsProcessor.fieldMasksRemoved(expectedResult);
 
         // --------------------
         //  Validators (pyrest)

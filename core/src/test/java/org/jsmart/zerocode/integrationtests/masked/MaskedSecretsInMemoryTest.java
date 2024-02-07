@@ -18,7 +18,12 @@ public class MaskedSecretsInMemoryTest {
     @Test
     @Scenario("integration_test_files/masked/password_or_secrets_masked_in_log_n_console.json")
     public void testSecretPrinted_masked() throws Exception {
-    
+    }
+
+    @Test
+    @Scenario("integration_test_files/masked/bearer_token_or_secret_masked_reuse_example_.json")
+    public void testSecretPrintedAssertions_masked() throws Exception {
+
     }
 
 }
