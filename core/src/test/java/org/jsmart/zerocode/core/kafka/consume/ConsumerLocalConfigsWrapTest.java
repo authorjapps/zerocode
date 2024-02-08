@@ -28,7 +28,7 @@ public class ConsumerLocalConfigsWrapTest {
                         false,
                         "$.JSON.Path",
                         null,
-                        String.valueOf(System.currentTimeMillis()),
+                        "1706940293669",
                         null));
         ObjectMapper objectMapper = new ObjectMapperProvider().get();
 
