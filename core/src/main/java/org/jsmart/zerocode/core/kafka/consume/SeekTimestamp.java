@@ -1,18 +1,38 @@
 package org.jsmart.zerocode.core.kafka.consume;
 
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.jackson.Jacksonized;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-
-@Getter
-@Builder
-@ToString
-@Jacksonized
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class SeekTimestamp {
 
     private final String timestamp;
     private final String format;
+
+
+    @JsonCreator
+    public SeekTimestamp(
+            @JsonProperty("timestamp") String timestamp,
+            @JsonProperty("format") String format) {
+        this.timestamp = timestamp;
+        this.format = format;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    @Override
+    public String toString() {
+        return "SeekTimestamp{" +
+                "timestamp='" + timestamp + '\'' +
+                ", format='" + format + '\'' +
+                '}';
+    }
 }
