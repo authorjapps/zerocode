@@ -4,17 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.univocity.parsers.csv.CsvParser;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.text.StrSubstitutor;
+import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.slf4j.Logger;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-import org.apache.commons.lang.text.StrSubstitutor;
-import org.jsmart.zerocode.core.domain.ScenarioSpec;
-import org.slf4j.Logger;
 
-import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.DSL_FORMAT;
+import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -25,17 +27,17 @@ import static org.slf4j.LoggerFactory.getLogger;
  * <p>
  * Parameters can be
  * "parameterized": [
- *      200,
- *      "Hello",
- *      true
+ * 200,
+ * "Hello",
+ * true
  * ]
  * <p>
  * -or-
  * <p>
  * "parameterizedCsv": [
- *      "1,    2,   200",
- *      "11,  22, 400",
- *      "21,  31, 500"
+ * "1,    2,   200",
+ * "11,  22, 400",
+ * "21,  31, 500"
  * ]
  * <p>
  * In each the above cases, the step will execute 3 times.
@@ -64,7 +66,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
     @Override
     public ScenarioSpec resolveParameterized(ScenarioSpec scenario, int iteration) {
 
-        if(scenario.getParameterized() == null){
+        if (scenario.getParameterized() == null) {
 
             return scenario;
 
@@ -72,7 +74,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
 
             return resolveParamsValues(scenario, iteration);
 
-        } else if (scenario.getParameterized().getCsvSource() != null) {
+        } else if (CollectionUtils.isNotEmpty(scenario.getParameterized().getCsvSource())) {
 
             return resolveParamsCsv(scenario, iteration);
 

@@ -22,6 +22,7 @@ Documentation
 ===
 For a quick introduction to Zerocode and its features, visit the 
 + [Zerocode TDD Doc Site](https://zerocode-tdd-docs.pages.dev)
++ [Wan to contribute or Improve](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)? Steps and guidelines are [here](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)
 
 IDE Support By 
 ===

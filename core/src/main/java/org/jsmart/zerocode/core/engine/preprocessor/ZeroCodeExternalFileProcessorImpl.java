@@ -13,12 +13,15 @@ import java.util.Map;
 
 import com.google.inject.name.Named;
 import org.jsmart.zerocode.core.domain.Step;
+import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.slf4j.Logger;
 
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.JSON_PAYLOAD_FILE;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.YAML_PAYLOAD_FILE;
 import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
 import static org.jsmart.zerocode.core.utils.SmartUtils.readYamlAsString;
+import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
+import static org.jsmart.zerocode.core.utils.SmartUtils.getJsonFilePhToken;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -69,7 +72,7 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
 
         try {
 
-            if (!checkDigNeeded(thisStep)) {
+            if (!checkDigNeeded(objectMapper, thisStep, JSON_PAYLOAD_FILE, YAML_PAYLOAD_FILE)) {
                 return thisStep;
             }
 
@@ -176,22 +179,4 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
             }
         });
     }
-
-    private String getJsonFilePhToken(String valueString) {
-        if (valueString != null) {
-            List<String> allTokens = getTestCaseTokens(valueString);
-            if (allTokens != null && !allTokens.isEmpty()) {
-                return allTokens.get(0);
-            }
-        }
-        return null;
-    }
-
-    boolean checkDigNeeded(Step thisStep) throws JsonProcessingException {
-        String stepJson = objectMapper.writeValueAsString(thisStep);
-        List<String> allTokens = getTestCaseTokens(stepJson);
-
-        return allTokens.toString().contains(JSON_PAYLOAD_FILE) || allTokens.toString().contains(YAML_PAYLOAD_FILE);
-    }
-
 }
