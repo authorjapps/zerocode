@@ -4,6 +4,7 @@ import org.apache.commons.lang.text.StrSubstitutor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,8 +14,8 @@ public class ScenarioExecutionState {
             "  ${STEP_REQUEST_RESPONSE_SECTION}\n" +
             "}";
 
-    List<StepExecutionState> allSteps = new ArrayList<>();
-    List<String> allStepsInStringList = new ArrayList<>();
+
+    Map<String, StepExecutionState> allStepsLinkedMap = new LinkedHashMap<>();
 
     Map<String, String> paramMap = new HashMap<>();
 
@@ -31,29 +32,23 @@ public class ScenarioExecutionState {
     }
 
     public List<StepExecutionState> getAllSteps() {
-        return allSteps;
-    }
-
-    public void setAllSteps(List<StepExecutionState> allSteps) {
-        this.allSteps = allSteps;
+        return new ArrayList<>(allStepsLinkedMap.values());
     }
 
     public List<String> getAllStepsInStringList() {
-        return allStepsInStringList;
+        return allStepsLinkedMap.values()
+                .stream().map(StepExecutionState::getResolvedStep)
+                .collect(Collectors.toList());
     }
 
-    public void setAllStepsInStringList(List<String> allStepsInStringList) {
-        this.allStepsInStringList = allStepsInStringList;
-    }
-
-    public void addStepState(String stepState){
-        allStepsInStringList.add(stepState);
+    public void addStepState(StepExecutionState stepState){
+        //removing key so that order of step state is changed
+        allStepsLinkedMap.remove(stepState.getStepName());
+        allStepsLinkedMap.put(stepState.getStepName(), stepState);
     }
 
     public String getResolvedScenarioState() {
-        final String commaSeparatedStepResults = getAllStepsInStringList().stream()
-                .map(i -> i)
-                .collect(Collectors.joining(", "));
+        final String commaSeparatedStepResults = String.join(", ", getAllStepsInStringList());
         paramMap.put("STEP_REQUEST_RESPONSE_SECTION", commaSeparatedStepResults);
 
         return (new StrSubstitutor(paramMap)).replace(scenarioStateTemplate);

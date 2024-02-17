@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class StepExecutionState {
     Map<String, String> paramMap = new HashMap<>();
+    private String stepName;
 
     private static String requestResponseState = "\"${STEP.NAME}\": {\n" +
             "    \"request\":${STEP.REQUEST},\n" +
@@ -27,6 +28,7 @@ public class StepExecutionState {
 
     public void addStep(String stepName) {
         paramMap.put("STEP.NAME", stepName);
+        this.stepName = stepName;
     }
 
     public void addRequest(String requestJson) {
@@ -41,5 +43,9 @@ public class StepExecutionState {
     public String getResolvedStep() {
         StrSubstitutor sub = new StrSubstitutor(paramMap);
         return sub.replace(requestResponseState);
+    }
+
+    public String getStepName() {
+        return stepName;
     }
 }
