@@ -25,8 +25,16 @@ or
 mvn -pl core clean test
 ```
 
+## Runing Only The Integration tests(core)
+Right click and run the "integrationtests" package. It picks the tests ending with "*Test.java"
+<img width="632" alt="integration_tests_only_running_" src="https://github.com/authorjapps/zerocode/assets/12598420/6b6e8e33-16c1-43ce-8179-62a18e9a2290">
+
+
 ## With tests executed(kafka)
 Some tests require a running Kafka (and some related components like kafka-rest, and kafka-schema-registry).
+
+Location:
+https://github.com/authorjapps/zerocode/blob/master/docker/compose/kafka-schema-registry.yml
 
 Download the file, and run(or `cd to the docker/compose` dir and run)
 ```

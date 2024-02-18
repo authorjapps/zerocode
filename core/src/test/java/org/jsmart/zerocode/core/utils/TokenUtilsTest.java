@@ -10,6 +10,8 @@ import org.junit.rules.ExpectedException;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.jsmart.zerocode.core.utils.TokenUtils.absolutePathOf;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksReplaced;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksRemoved;
 import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
 import static org.junit.Assert.*;
 
@@ -169,4 +171,48 @@ public class TokenUtilsTest {
         assertThat(absolutePathOf("unit_test_files/jks_files/dummy_key_store.jks"),
                 containsString("zerocode/core/target/test-classes/unit_test_files/jks_files/dummy_key_store.jks"));
     }
+
+
+    @Test
+    public void testGetMaskedTokensReplaced_multipleOccurrences(){
+        assertEquals("This is a ***masked*** message with ***masked*** tokens.", getMasksReplaced("This is a ${MASKED:secret} message with ${MASKED:masked} tokens."));
+    }
+
+    @Test
+    public void testGetMaskedTokensReplaced_noOccurrences(){
+        assertEquals("This string has no masked tokens.", getMasksReplaced("This string has no masked tokens."));
+    }
+
+    @Test
+    public void testGetMaskedTokensReplaced_emptyString(){
+        assertEquals("", getMasksReplaced(""));
+    }
+
+    @Test
+    public void testGetMaskedTokensReplaced_specialCharacters(){
+        assertEquals("***masked*** and ***masked***", getMasksReplaced("${MASKED:abc@123} and ${MASKED:!@#$%^}"));
+    }
+
+    @Test
+    public void testGetMaskedTokensRemoved_multipleOccurrences(){
+        assertEquals("This is a secret message with masked tokens.", getMasksRemoved("This is a ${MASKED:secret} message with ${MASKED:masked} tokens."));
+    }
+
+    @Test
+    public void testGetMaskedTokensRemoved_noOccurrences(){
+        assertEquals("This string has no masked tokens.", getMasksRemoved("This string has no masked tokens."));
+    }
+
+    @Test
+    public void testGetMaskedTokensRemoved_emptyString(){
+        assertEquals("", getMasksRemoved(""));
+    }
+
+    @Test
+    public void testGetMaskedTokensRemoved_specialCharacters(){
+        assertEquals("abc@123 and !@#$%^", getMasksRemoved("${MASKED:abc@123} and ${MASKED:!@#$%^}"));
+    }
+
+
+
 }

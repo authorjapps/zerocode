@@ -25,7 +25,7 @@ import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.deriveEf
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.getMaxTimeOuts;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.getPollTime;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.handleCommitSyncAsync;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.handleSeekOffset;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.handleSeek;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.initialPollWaitingForConsumerGroupJoin;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.prepareResult;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaConsumerHelper.readConsumerLocalTestProperties;
@@ -62,7 +62,7 @@ public class KafkaReceiver {
 
         int noOfTimeOuts = 0;
 
-        handleSeekOffset(effectiveLocal, consumer);
+        handleSeek(effectiveLocal, consumer, topicName);
 
         LOGGER.debug("initial polling to trigger ConsumerGroupJoin");
 
