@@ -79,9 +79,6 @@ import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
 import static org.slf4j.LoggerFactory.getLogger;
 
-;
-;
-
 public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProcessor {
 
     private static final org.slf4j.Logger LOGGER = getLogger(ZeroCodeAssertionsProcessorImpl.class);
@@ -385,8 +382,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
      * First the logic checks if dig-deep needed to avoid unwanted recursions. If not needed, the step definition is
      * returned intact. Otherwise calls the dig deep method to perform the operation.
      *
-     * @param thisStep
-     * @return The effective step definition
+     * returns: The effective step definition
      */
     @Override
     public Step resolveJsonContent(Step thisStep, ScenarioExecutionState scenarioExecutionState) {

@@ -20,30 +20,29 @@ import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARA
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * <h3>Parameterized Tests Steps</h3>
- * <p>
+ * Parameterized Tests Steps
+ *
  * Processes the Step for each line in the parameterized/parameterizedCsv section.
- * <p>
- * <p>
+ *
  * Parameters can be
  * "parameterized": [
  * 200,
  * "Hello",
  * true
  * ]
- * <p>
+ *
  * -or-
- * <p>
+ *
  * "parameterizedCsv": [
  * "1,    2,   200",
  * "11,  22, 400",
  * "21,  31, 500"
  * ]
- * <p>
+ *
  * In each the above cases, the step will execute 3 times.
- * <p>
+ *
  * For "parameterized" case, ${0} will resolve to 200, "Hello", true respectively for each run.
- * <p>
+ *
  * For "parameterizedCsv" case, ${0}, ${1}, ${2} will resolve to "1", "2", "200" for the first run.
  * Then it will resolve to "11",  "22", "400" for the 2nd run ans so on.
  */
