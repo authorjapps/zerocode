@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ScenarioExecutionState {
@@ -29,6 +30,10 @@ public class ScenarioExecutionState {
 
     public void setScenarioStateTemplate(String scenarioStateTemplate) {
         this.scenarioStateTemplate = scenarioStateTemplate;
+    }
+
+    public Optional<StepExecutionState> getExecutedStepState(String stepName) {
+        return Optional.of(allStepsLinkedMap.get(stepName));
     }
 
     public List<StepExecutionState> getAllSteps() {
