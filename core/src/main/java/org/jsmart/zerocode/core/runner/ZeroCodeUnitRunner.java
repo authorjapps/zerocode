@@ -70,8 +70,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
-     * @param klass
-     * @throws InitializationError if the test class is malformed.
+     * klass:
+     * InitializationError if the test class is malformed.
      */
     public ZeroCodeUnitRunner(Class<?> klass) throws InitializationError {
         super(klass);

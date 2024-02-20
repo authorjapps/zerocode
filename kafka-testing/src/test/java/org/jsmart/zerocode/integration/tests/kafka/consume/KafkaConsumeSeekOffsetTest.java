@@ -26,4 +26,10 @@ public class KafkaConsumeSeekOffsetTest {
     public void testKafkaConsume_seekOffsetLatest() throws Exception {
     }
 
+    @Test
+    @Scenario("kafka/consume/test_kafka_consume_seek_epoch_and_timestamp.json")
+    public void testKafkaConsume_seekEpochAndTimestamp() {
+
+    }
+
 }

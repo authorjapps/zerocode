@@ -8,6 +8,28 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONArray;
+import org.apache.commons.lang.text.StrSubstitutor;
+import org.jsmart.zerocode.core.domain.Step;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
+import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
+import org.jsmart.zerocode.core.engine.assertion.array.ArrayIsEmptyAsserterImpl;
+import org.jsmart.zerocode.core.engine.assertion.array.ArraySizeAsserterImpl;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldContainsStringIgnoreCaseAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasDateAfterValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasDateBeforeValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasEqualNumberValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasExactValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasGreaterThanValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasInEqualNumberValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldHasLesserThanValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNotNullAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNullAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldIsOneOfValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldMatchesCustomAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldMatchesRegexPatternAsserter;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,33 +41,40 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import net.minidev.json.JSONArray;
-import org.apache.commons.lang.text.StrSubstitutor;
-import org.jsmart.zerocode.core.domain.Step;
-import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
-import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
-import org.jsmart.zerocode.core.engine.assertion.array.ArrayIsEmptyAsserterImpl;
-import org.jsmart.zerocode.core.engine.assertion.array.ArraySizeAsserterImpl;
-import org.jsmart.zerocode.core.engine.assertion.field.*;
-import org.jsmart.zerocode.core.utils.SmartUtils;
 
 import static java.lang.Integer.valueOf;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 import static org.apache.commons.lang.StringUtils.substringBetween;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.*;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_LOCAL_DATETIME_AFTER;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_LOCAL_DATETIME_BEFORE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_PATH_SIZE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_CONTAINS_STRING;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_CUSTOM_ASSERT;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_EMPTY_ARRAY;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_EQUAL_TO_NUMBER;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_GREATER_THAN;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_IS_NOT_NULL;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_IS_NULL;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_IS_ONE_OF;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_LESSER_THAN;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_MATCHES_STRING;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NOT_EQUAL_TO_NUMBER;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NOT_NULL;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_NULL;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_ONE_OF;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.RAW_BODY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.$VALUE;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.JSON_CONTENT;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.JSON_PAYLOAD_FILE;
-import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.YAML_PAYLOAD_FILE;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.deepTypeCast;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.fieldTypes;
 import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsoluteProperties;
+import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
+import static org.jsmart.zerocode.core.utils.SmartUtils.getJsonFilePhToken;
 import static org.jsmart.zerocode.core.utils.SmartUtils.isValidAbsolutePath;
-import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
-import static org.jsmart.zerocode.core.utils.SmartUtils.readYamlAsString;
-import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;;
-import static org.jsmart.zerocode.core.utils.SmartUtils.getJsonFilePhToken;;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksRemoved;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksReplaced;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -353,8 +382,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
      * First the logic checks if dig-deep needed to avoid unwanted recursions. If not needed, the step definition is
      * returned intact. Otherwise calls the dig deep method to perform the operation.
      *
-     * @param thisStep
-     * @return The effective step definition
+     * returns: The effective step definition
      */
     @Override
     public Step resolveJsonContent(Step thisStep, ScenarioExecutionState scenarioExecutionState) {
@@ -378,6 +406,16 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
             LOGGER.error("Json content reading exception - {}", e.getMessage());
             throw new RuntimeException("Json content reading exception. Details - " + e);
         }
+    }
+
+    @Override
+    public String fieldMasksRemoved(String resolvedRequestJson) {
+        return getMasksRemoved(resolvedRequestJson);
+    }
+
+    @Override
+    public String fieldMasksApplied(String resolvedRequestJson) {
+        return getMasksReplaced(resolvedRequestJson);
     }
 
     private void loadAnnotatedHostProperties() {

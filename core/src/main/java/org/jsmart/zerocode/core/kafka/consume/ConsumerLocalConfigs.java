@@ -23,6 +23,9 @@ public class ConsumerLocalConfigs {
     private final String protoClassType;
     private final Boolean cacheByTopic;
     private final String filterByJsonPath;
+    private final String seekEpoch;
+    private final SeekTimestamp seekTimestamp;
+
 
     @JsonCreator
     public ConsumerLocalConfigs(
@@ -36,9 +39,11 @@ public class ConsumerLocalConfigs {
             @JsonProperty("pollingTime") Long pollingTime,
             @JsonProperty("cacheByTopic") Boolean cacheByTopic,
             @JsonProperty("filterByJsonPath") String filterByJsonPath,
-            @JsonProperty("seek") String seek) {
+            @JsonProperty("seek") String seek,
+            @JsonProperty("seekEpoch") String seekEpoch,
+            @JsonProperty("seekTimestamp") SeekTimestamp seekTimestamp) {
         this.recordType = recordType;
-        this.protoClassType= protobufMessageClassType;
+        this.protoClassType = protobufMessageClassType;
         this.fileDumpTo = fileDumpTo;
         this.commitAsync = commitAsync;
         this.commitSync = commitSync;
@@ -48,39 +53,45 @@ public class ConsumerLocalConfigs {
         this.cacheByTopic = cacheByTopic;
         this.filterByJsonPath = filterByJsonPath;
         this.seek = seek;
+        this.seekEpoch = seekEpoch;
+        this.seekTimestamp = seekTimestamp;
     }
-    
+
 
     public ConsumerLocalConfigs(
-             String recordType,
-             String fileDumpTo,
-             Boolean commitAsync,
+            String recordType,
+            String fileDumpTo,
+            Boolean commitAsync,
             Boolean commitSync,
             Boolean showRecordsConsumed,
             Integer maxNoOfRetryPollsOrTimeouts,
             Long pollingTime,
             Boolean cacheByTopic,
             String filterByJsonPath,
-            String seek) {
-		this(recordType, null,
+            String seek,
+            String seekEpoch,
+            SeekTimestamp seekTimestamp) {
+        this(recordType, null,
                 fileDumpTo,
                 commitAsync,
                 commitSync,
                 showRecordsConsumed,
                 maxNoOfRetryPollsOrTimeouts,
-				pollingTime,
+                pollingTime,
                 cacheByTopic,
                 filterByJsonPath,
-                seek);
+                seek,
+                seekEpoch,
+                seekTimestamp);
     }
 
     public String getRecordType() {
         return recordType != null ? recordType : RAW;
     }
-    
-	public String getProtoClassType() {
-		return protoClassType;
-	}
+
+    public String getProtoClassType() {
+        return protoClassType;
+    }
 
 
     public String getFileDumpTo() {
@@ -119,6 +130,14 @@ public class ConsumerLocalConfigs {
         return seek;
     }
 
+    public String getSeekEpoch() {
+        return seekEpoch;
+    }
+
+    public SeekTimestamp getSeekTimestamp() {
+        return seekTimestamp;
+    }
+
     @JsonIgnore
     public String[] getSeekTopicPartitionOffset() {
         return seek.split(",");
@@ -130,7 +149,7 @@ public class ConsumerLocalConfigs {
         if (o == null || getClass() != o.getClass()) return false;
         ConsumerLocalConfigs that = (ConsumerLocalConfigs) o;
         return Objects.equals(recordType, that.recordType) &&
-        		Objects.equals(protoClassType, that.protoClassType) &&
+                Objects.equals(protoClassType, that.protoClassType) &&
                 Objects.equals(fileDumpTo, that.fileDumpTo) &&
                 Objects.equals(commitAsync, that.commitAsync) &&
                 Objects.equals(commitSync, that.commitSync) &&
@@ -139,13 +158,14 @@ public class ConsumerLocalConfigs {
                 Objects.equals(pollingTime, that.pollingTime) &&
                 Objects.equals(filterByJsonPath, that.filterByJsonPath) &&
                 Objects.equals(cacheByTopic, that.cacheByTopic) &&
-                Objects.equals(seek, that.seek);
+                Objects.equals(seek, that.seek) &&
+                Objects.equals(seekEpoch, that.seekEpoch);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(recordType, fileDumpTo, commitAsync, commitSync, showRecordsConsumed, maxNoOfRetryPollsOrTimeouts, pollingTime,cacheByTopic, filterByJsonPath, seek);
+        return Objects.hash(recordType, fileDumpTo, commitAsync, commitSync, showRecordsConsumed, maxNoOfRetryPollsOrTimeouts, pollingTime, cacheByTopic, filterByJsonPath, seek);
     }
 
     @Override
@@ -162,6 +182,8 @@ public class ConsumerLocalConfigs {
                 ", cacheByTopic=" + cacheByTopic +
                 ", filterByJsonPath=" + filterByJsonPath +
                 ", seek=" + seek +
+                ", seekEpoch=" + seekEpoch +
+                ", seekTimestamp=" + seekTimestamp +
                 '}';
     }
 }
