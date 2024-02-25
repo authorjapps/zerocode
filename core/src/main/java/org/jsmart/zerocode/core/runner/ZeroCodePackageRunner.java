@@ -113,7 +113,6 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
      * Returns a {@link Description} for {@code child}, which can be assumed to
      * be an element of the list returned by {@link ParentRunner#getChildren()}
      *
-     * @param child
      */
     @Override
     protected Description describeChild(ScenarioSpec child) {
@@ -163,8 +162,6 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
      * Subclasses are responsible for making sure that relevant test events are
      * reported through {@code notifier}
      *
-     * @param child
-     * @param notifier
      */
     @Override
     protected void runChild(ScenarioSpec child, RunNotifier notifier) {

@@ -245,11 +245,9 @@ public class SmartUtils {
     }
 
     /**
-     *
-     * @param thisStep --> Currently executing step
-     * @param tokenString --> JSON_PAYLAOD_FILE or JSON_CONTENT
-     * @return if there is a match for the token, then the json traversal will happen
-     * @throws JsonProcessingException
+     * thisStep : Currently executing step
+     * tokenString : JSON_PAYLAOD_FILE or JSON_CONTENT
+     * if there is a match for the token, then the json traversal will happen
      */
     public static boolean checkDigNeeded(ObjectMapper mapper, Step thisStep, String tokenString) throws JsonProcessingException {
         String stepJson = mapper.writeValueAsString(thisStep);
