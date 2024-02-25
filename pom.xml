@@ -68,7 +68,7 @@
         <guava.version>23.0</guava.version>
         <jsonassert.version>1.5.0</jsonassert.version>
         <classpath-explorer.version>1.0</classpath-explorer.version>
-        <jukito.version>1.4.1</jukito.version>
+        <jukito.version>1.5</jukito.version>
         <guice.version>4.0</guice.version>
         <commons-lang.version>2.6</commons-lang.version>
         <jayway-version>2.2.0</jayway-version>
@@ -77,22 +77,31 @@
         <wiremock.version>2.19.0</wiremock.version>
         <velocity.version>1.7</velocity.version>
         <jackson-dataformat-csv.version>2.9.8</jackson-dataformat-csv.version>
-        <commons-io.version>2.4</commons-io.version>
+        <commons-io.version>2.15.0</commons-io.version>
         <micro-simulator.version>1.1.10</micro-simulator.version>
         <httpclient.version>4.5</httpclient.version>
+        <httpmime.version>4.5.12</httpmime.version>
         <h2.db.version>1.4.191</h2.db.version>
-        <extentreports.version>4.0.9</extentreports.version>
+        <extentreports.version>5.0.9</extentreports.version>
         <version.kafka-clients>3.3.1</version.kafka-clients>
-        <version.gson>2.6.2</version.gson>
+        <version.gson>2.10.1</version.gson>
         <version.univocity-parsers>2.8.2</version.univocity-parsers>
+
         <!-- Maven plugins, build properties  -->
-        <maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <java-compiler-source.version>1.8</java-compiler-source.version>
         <java-compiler-target.version>1.8</java-compiler-target.version>
-        <maven-assembly-plugin.version>2.5.4</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
+        <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
+        <maven-surefire-plugin.version>3.2.1</maven-surefire-plugin.version>
+        <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
+
         <!-- Release Build will not fail if error occurs during javadoc generation -->
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-        <google.protobuf.version>3.13.0</google.protobuf.version>
+        <google.protobuf.version>3.24.4</google.protobuf.version>
         <version.snappy-java>1.1.8.4</version.snappy-java>
     </properties>
 
@@ -168,11 +177,6 @@
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
             </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
@@ -246,6 +250,11 @@
                 <version>${httpclient.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>${httpmime.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jsmart</groupId>
                 <artifactId>micro-simulator</artifactId>
                 <version>${micro-simulator.version}</version>
@@ -281,24 +290,77 @@
         </dependencies>
     </dependencyManagement>
 
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java-compiler-source.version}</source>
+                        <target>${java-compiler-target.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven-release-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven-dependency-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
     <!-- Uncomment this for uber jar -->
-    <!--<build>
+        <!--
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>-->
+                 <plugin>
+                         <groupId>org.apache.maven.plugins</groupId>
+                         <artifactId>maven-shade-plugin</artifactId>
+                         <configuration>
+                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                         </configuration>
+                         <executions>
+                             <execution>
+                                 <phase>package</phase>
+                                 <goals>
+                                     <goal>shade</goal>
+                                 </goals>
+                             </execution>
+                         </executions>
+                     </plugin>
+                 </plugins>
+        -->
+
+    </build>
 </project>
