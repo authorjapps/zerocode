@@ -10,18 +10,21 @@ public class RetryTestUtility {
     private static int helper2Count = 0;
     private static int helper3Count = 0;
 
-    public static void helperMethod1() {
+    public static Integer helperMethod1() {
         helper1Count++;
+        return helper1Count;
     }
 
-    public static void helperMethod2() {
+    public static Integer helperMethod2() {
         if (helper1Count > helper2Count)
             helper2Count++;
+        return helper2Count;
     }
 
-    public static void helperMethod3() {
+    public static Integer helperMethod3() {
         if (helper2Count > helper3Count)
             helper3Count++;
+        return helper3Count;
     }
 
     public Map<String, String> mainMethod(int requirement) {
