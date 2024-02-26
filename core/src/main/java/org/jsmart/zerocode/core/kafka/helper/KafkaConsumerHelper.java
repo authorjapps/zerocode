@@ -450,6 +450,11 @@ public class KafkaConsumerHelper {
             Map<TopicPartition, Long> topicPartitionTimestampMap = topicPartitions.stream()
                     .collect(Collectors.toMap(Function.identity(), ignore -> epoch));
             Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = consumer.offsetsForTimes(topicPartitionTimestampMap);
+            //removing partitions that are null, since we will only subscribe to partitions that have messages after the given timestamp
+            topicPartitionOffsetAndTimestampMap = topicPartitionOffsetAndTimestampMap.entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue() != null)
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
             //assign to fetched partitions
             consumer.unsubscribe();
