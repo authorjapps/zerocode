@@ -27,10 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,10 @@ import static java.nio.charset.Charset.defaultCharset;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.JSON_PAYLOAD_FILE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.YAML_PAYLOAD_FILE;
 import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsoluteProperties;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 
@@ -240,4 +243,40 @@ public class SmartUtils {
             return System.getenv(envPropertyKey);
         }
     }
+
+    /**
+     * thisStep : Currently executing step
+     * tokenString : JSON_PAYLAOD_FILE or JSON_CONTENT
+     * if there is a match for the token, then the json traversal will happen
+     */
+    public static boolean checkDigNeeded(ObjectMapper mapper, Step thisStep, String tokenString) throws JsonProcessingException {
+        String stepJson = mapper.writeValueAsString(thisStep);
+        List<String> allTokens = getTestCaseTokens(stepJson);
+
+        return allTokens.toString().contains(tokenString);
+    }
+    public static boolean checkDigNeeded(ObjectMapper mapper, Step thisStep, String tokenString, String alternateTokenString) throws JsonProcessingException {
+        String stepJson = mapper.writeValueAsString(thisStep);
+        List<String> allTokens = getTestCaseTokens(stepJson);
+
+        return allTokens.toString().contains(tokenString) || allTokens.toString().contains(alternateTokenString);
+    }
+
+    /**
+     * Retrieves the first token from the given value string that matches the format "${token}".
+     * Ph = Placeholder (e.g. ${JSON.FILE:unit_test_files/filebody_unit_test/common/common_content.json} )
+     *
+     * @param valueString The string from which to extract the jsonfile path
+     * @return The extracted token, or null if no token is found
+     */
+    public static String getJsonFilePhToken(String valueString) {
+        if (valueString != null) {
+            List<String> allTokens = getTestCaseTokens(valueString);
+            if (allTokens != null && !allTokens.isEmpty()) {
+                return allTokens.get(0);
+            }
+        }
+        return null;
+    }
+
 }
