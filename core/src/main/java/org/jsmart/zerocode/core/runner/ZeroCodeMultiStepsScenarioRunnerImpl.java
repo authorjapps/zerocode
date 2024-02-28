@@ -233,6 +233,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         String thisStepName = thisStep.getName();
 
         for (int retryCounter = 0; retryCounter < retryMaxTimes; retryCounter++) {
+            if(retryCounter > 0){
+                LOGGER.warn("\n\n------------>Retrying...[step][attempt-{}][executions-{}]:'{}' -> '{}'",
+                        retryCounter, (retryCounter+1), scenario.getScenarioName(), thisStep.getName());
+            }
             try {
                 if (retryCounter > 0 && !isEmpty(thisStep.getRetry().getWithSteps())) {
                     for (String stepName : thisStep.getRetry().getWithSteps()) {
