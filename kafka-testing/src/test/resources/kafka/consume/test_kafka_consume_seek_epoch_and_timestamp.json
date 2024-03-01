@@ -3,7 +3,7 @@
   "steps": [
     {
       "name": "load_kafka_before_timestamp",
-      "url": "kafka-topic:demo-seekTime",
+      "url": "kafka-topic:demo-seekTime-multi-partition",
       "operation": "PRODUCE",
       "request": {
         "records": [
@@ -33,7 +33,7 @@
     },
     {
       "name": "load_kafka_after_timestamp",
-      "url": "kafka-topic:demo-seekTime",
+      "url": "kafka-topic:demo-seekTime-multi-partition",
       "operation": "PRODUCE",
       "request": {
         "records": [
@@ -53,7 +53,7 @@
     },
     {
       "name": "consume_seekEpoch",
-      "url": "kafka-topic:demo-seekTime",
+      "url": "kafka-topic:demo-seekTime-multi-partition",
       "operation": "CONSUME",
       "request": {
         "consumerLocalConfigs": {
@@ -64,6 +64,11 @@
           "maxNoOfRetryPollsOrTimeouts": 3
         }
       },
+      "sort": {
+        "key": "value",
+        "order": "natural",
+        "path": "$.records"
+      },
       "verify": {
         "records": [
           {
@@ -73,10 +78,11 @@
             "value": "After Timestamp 2"
           }
         ]
-      }},
+      }
+    },
     {
       "name": "consume_seekTimestamp",
-      "url": "kafka-topic:demo-seekTime",
+      "url": "kafka-topic:demo-seekTime-multi-partition",
       "operation": "CONSUME",
       "request": {
         "consumerLocalConfigs": {
@@ -90,6 +96,11 @@
           "maxNoOfRetryPollsOrTimeouts": 3
         }
       },
+      "sort": {
+        "key": "value",
+        "order": "natural",
+        "path": "$.records"
+      },
       "verify": {
         "records": [
           {
@@ -98,7 +109,8 @@
           {
             "value": "After Timestamp 2"
           }
-        ]
+        ],
+        "size": 2
       }
     }
   ]
