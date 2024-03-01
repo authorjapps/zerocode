@@ -99,8 +99,8 @@ public class KafkaProducerHelper {
     private static Builder createBuilder(String messageClass) {
         try {
             Class<Message> msgClass = (Class<Message>) Class.forName(messageClass);
-            Method method = msgClass.getMethod("newBuilder", null);
-            return (Builder) method.invoke(null, null);
+            Method method = msgClass.getMethod("newBuilder", (Class<?>[]) null);
+            return (Builder) method.invoke(null, (Object[]) null);
         } catch (IllegalAccessException | ClassNotFoundException | NoSuchMethodException | SecurityException
                 | IllegalArgumentException | InvocationTargetException e) {
             throw new IllegalArgumentException(e);

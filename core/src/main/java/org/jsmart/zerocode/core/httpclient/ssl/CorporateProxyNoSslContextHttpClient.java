@@ -44,7 +44,7 @@ public class CorporateProxyNoSslContextHttpClient extends BasicHttpClient {
 
     @Override
     public CloseableHttpClient createHttpClient() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
-        LOGGER.info("###Used Http Client for both Http and Https connections with no SSL context");
+        LOGGER.debug("###Used Http Client for both Http and Https connections with no SSL context");
 
         //SSLContext sslContext = new SSLContextBuilder()
         //        .loadTrustMaterial(null, (certificate, authType) -> true).build();

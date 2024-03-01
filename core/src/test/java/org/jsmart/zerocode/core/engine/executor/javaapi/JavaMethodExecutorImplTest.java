@@ -87,7 +87,7 @@ public class JavaMethodExecutorImplTest {
         String serviceName = scenarioSpec.getSteps().get(0).getUrl();
         String methodName = scenarioSpec.getSteps().get(0).getOperation();
 
-        Object result = methodExecutor.executeWithParams(serviceName, methodName, null);
+        Object result = methodExecutor.executeWithParams(serviceName, methodName, (Object[]) null);
 
         assertThat(result, is(30));
     }

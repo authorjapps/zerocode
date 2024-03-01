@@ -1,0 +1,26 @@
+{
+  "scenarioName": "Assert that file has been uploaded successfully",
+  "steps": [
+    {
+      "name": "post_file",
+      "url": "/post",
+      "method": "POST",
+      "request": {
+        "headers": {
+          "Content-Type": "multipart/form-data"
+        },
+      "body": {
+        "files": ["file:helloworld_file_upload/textfile.txt"]
+        }
+      },
+      "verify": {
+        "status": 200,
+        "body": {
+          "files": {
+            "['textfile.txt']": "data:application/octet-stream;base64,SGVsbG9Xb3JsZA=="
+          }
+        }
+      }
+      }
+  ]
+}

@@ -62,10 +62,10 @@ public class RetryWithStateTest {
 
     @AfterClass
     public static void tearDown() {
-        LOGGER.info("##Stopping the mock server and then shutting down");
+        LOGGER.debug("##Stopping the mock server and then shutting down");
         mockServer.stop();
         mockServer.shutdown();
-        LOGGER.info("##Successfully stopped the mock server and then SHUTDOWN.");
+        LOGGER.debug("##Successfully stopped the mock server and then SHUTDOWN.");
     }
 
     @Test

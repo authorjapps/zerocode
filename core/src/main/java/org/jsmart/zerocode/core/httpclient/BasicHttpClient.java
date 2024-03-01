@@ -69,7 +69,7 @@ public class BasicHttpClient {
      * - org.jsmart.zerocode.core.httpclient.ssl.CorporateProxyNoSslContextHttpClient#createHttpClient()
      * }
      *
-     * @return CloseableHttpClient
+     * return CloseableHttpClient
      * @throws Exception
      */
     public CloseableHttpClient createHttpClient() throws Exception {
@@ -81,7 +81,7 @@ public class BasicHttpClient {
          *   - return HttpClients.createDefault();
          */
 
-        LOGGER.info("###Creating SSL Enabled Http Client for both http/https/TLS connections");
+        LOGGER.debug("###Creating SSL Enabled Http Client for both http/https/TLS connections");
 
         SSLContext sslContext = new SSLContextBuilder()
                 .loadTrustMaterial(null, (certificate, authType) -> true).build();
@@ -100,14 +100,13 @@ public class BasicHttpClient {
      * Override this method in case you want to execute the http call differently via your http client.
      * Otherwise the framework falls back to this implementation by default.
      *
-     * @param httpUrl     : path to end point
-     * @param methodName  : e.g. GET, PUT etc
-     * @param headers     : headers, cookies etc
-     * @param queryParams : key-value query params after the ? in the url
-     * @param body        : json body
+     * httpUrl     : path to end point
+     * methodName  : e.g. GET, PUT etc
+     * headers     : headers, cookies etc
+     * queryParams : key-value query params after the ? in the url
+     * body        : json body
      *
-     * @return : Http response consists of status code, entity, headers, cookies etc
-     * @throws Exception
+     * returns : Http response consists of status code, entity, headers, cookies etc
      */
     public Response execute(String httpUrl,
                             String methodName,
@@ -151,9 +150,9 @@ public class BasicHttpClient {
      * Once the client executes the http call, then it receives the http response. This method takes care of handling
      * that. In case you need to handle it differently you can override this method.
      *
-     * @param httpResponse  : Received Apache http response from the server
+     * httpResponse  : Received Apache http response from the server
      *
-     * @return  : Effective response with handled http session.
+     *   : Effective response with handled http session.
      * @throws IOException
      */
     public Response handleResponse(CloseableHttpResponse httpResponse) throws IOException {
@@ -178,12 +177,11 @@ public class BasicHttpClient {
      * use the Charset sent by the server e.g. UAT-8 or UTF-16 or UTF-32 etc.
      *
      * Note-
-     * See implementation of java.nio.charset.Charset#defaultCharset. Here the default is UTF-8 if the
+     * See the implementation of java.nio.charset.Charset#defaultCharset. Here the default is UTF-8 if the
      * defaultCharset is not set by the JVM, otherwise it picks the JVM provided defaultCharset
      *
-     * @param httpResponse
-     * @return  : A http response compatible with Charset received from the http server e.g. UTF-8, UTF-16 etc
-     * @throws IOException
+     * httpResponse:
+     * A http response compatible with Charset received from the http server e.g. UTF-8, UTF-16 etc
      *
      */
     public Response createCharsetResponse(CloseableHttpResponse httpResponse) throws IOException {
@@ -214,9 +212,9 @@ public class BasicHttpClient {
      * In case you need to handle it differently you can override this method to change this behaviour to roll your own
      * feature.
      *
-     * @param httpUrl - Url of the target service
-     * @param queryParams - Query parameters to pass
-     * @return : Effective url
+     * httpUrl - Url of the target service
+     * queryParams - Query parameters to pass
+     * return : Effective url
      *
      */
     public String handleUrlAndQueryParams(String httpUrl, Map<String, Object> queryParams) throws URISyntaxException {
@@ -231,9 +229,9 @@ public class BasicHttpClient {
      * If you want to override any headers, you can do that by overriding the
      * amendRequestHeaders(headers) method.
      *
-     * @param headers
-     * @param requestBuilder
-     * @return : An effective Apache http request builder object with processed headers.
+     * headers
+     * requestBuilder
+     * return : An effective Apache http request builder object with processed headers.
      */
     public RequestBuilder handleHeaders(Map<String, Object> headers, RequestBuilder requestBuilder) {
         Map<String, Object> amendedHeaders = amendRequestHeaders(headers);
@@ -246,8 +244,8 @@ public class BasicHttpClient {
      * - Add more headers to the http request or
      * - Amend or modify the headers which were supplied from the JSON test-case request step.
      *
-     * @param headers : The headers passed from the JSON test step request
-     * @return : An effective headers map.
+     * headers : The headers passed from the JSON test step request
+     * return : An effective headers map.
      */
     public Map<String, Object> amendRequestHeaders(Map<String, Object> headers) {
         return headers;
@@ -257,8 +255,8 @@ public class BasicHttpClient {
      * Override this method when you want to manipulate the request body passed from your test cases.
      * Otherwise the framework falls back to this default implementation.
      * You can override this method via @UseHttpClient(YourCustomHttpClient.class)
-     * @param body
-     * @return
+     * body
+     * return
      */
     public String handleRequestBody(Object body) {
         return getContentAsItIsJson(body);
@@ -273,10 +271,10 @@ public class BasicHttpClient {
      *
      * You can override this method via @UseHttpClient(YourCustomHttpClient.class)
      *
-     * @param httpUrl
-     * @param methodName
-     * @param reqBodyAsString
-     * @return
+     * httpUrl
+     * methodName
+     * reqBodyAsString
+     * return
      */
     public RequestBuilder createDefaultRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) {
         RequestBuilder requestBuilder = RequestBuilder
@@ -298,11 +296,6 @@ public class BasicHttpClient {
      * is passed in the request.  In case you want to build or prepare the requests differently,
      * you can override this method via @UseHttpClient(YourCustomHttpClient.class).
      *
-     * @param httpUrl
-     * @param methodName
-     * @param reqBodyAsString
-     * @return
-     * @throws IOException
      */
     public RequestBuilder createFormUrlEncodedRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) throws IOException {
         RequestBuilder requestBuilder = RequestBuilder
@@ -333,11 +326,9 @@ public class BasicHttpClient {
      *
      * You can override this method via @UseHttpClient(YourCustomHttpClient.class)
      *
-     * @param httpUrl
-     * @param methodName
-     * @param reqBodyAsString
-     * @return
-     * @throws IOException
+     * httpUrl: The end pint
+     * methodName: meaningful name of a method
+     * reqBodyAsString:
      */
     public RequestBuilder createFileUploadRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) throws IOException {
         Map<String, Object> fileFieldNameValueMap = getFileFieldNameValue(reqBodyAsString);
@@ -367,8 +358,8 @@ public class BasicHttpClient {
      * In case the session is not needed or to be handled differently, then this
      * method can be overridden to do nothing or to roll your own feature.
      *
-     * @param serverResponse
-     * @param headerKey
+     * serverResponse
+     * headerKey
      */
     public void handleHttpSession(Response serverResponse, String headerKey) {
         /** ---------------

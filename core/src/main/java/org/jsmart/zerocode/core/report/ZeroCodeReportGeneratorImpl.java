@@ -12,12 +12,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import org.apache.commons.lang.StringUtils;
-import org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory;
-import org.jsmart.zerocode.core.domain.builders.HighChartColumnHtmlBuilder;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueArrayBuilder;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeChartKeyValueBuilder;
-import org.jsmart.zerocode.core.domain.builders.ZeroCodeCsvReportBuilder;
+import org.jsmart.zerocode.core.domain.builders.*;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeExecResult;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReport;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
@@ -35,21 +30,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang.StringUtils.substringBetween;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.AUTHOR_MARKER_NEW;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CATEGORY_MARKER;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.*;
 import static org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory.getReportName;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.ANONYMOUS_CAT;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.AUTHOR_MARKER_OLD;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.DEFAULT_REGRESSION_CATEGORY;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.HIGH_CHART_HTML_FILE_NAME;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.LINK_LABEL_NAME;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_PASS;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FILE_NAME;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FULL_REPORT_CSV_FILE_NAME;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FULL_REPORT_DIR;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_REPORT_DIR;
-import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TEST_STEP_CORRELATION_ID;
 
 public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeReportGeneratorImpl.class);
@@ -115,10 +97,21 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
             thisReport.getResults().forEach(thisScenario -> {
                 ExtentTest test = extentReports.createTest(thisScenario.getScenarioName());
-                test.assignCategory(DEFAULT_REGRESSION_CATEGORY); //Super set
-                test.assignCategory(optionalCategory(thisScenario.getScenarioName())); //Sub sets
 
-                test.assignAuthor(optionalAuthor(thisScenario.getScenarioName()));
+                // Assign Category
+                test.assignCategory(DEFAULT_REGRESSION_CATEGORY); //Super set
+                String[] hashTagsArray = optionalCategories(thisScenario.getScenarioName()).toArray(new String[0]);
+                if(hashTagsArray.length > 0) {
+                    test.assignCategory(hashTagsArray); //Sub categories
+                }
+
+                // Assign Authors
+                test.assignAuthor(DEFAULT_REGRESSION_AUTHOR); //Super set
+                String[] authorsArray = optionalAuthors(thisScenario.getScenarioName()).toArray(new String[0]);
+                if(authorsArray.length > 0) {
+                    test.assignAuthor(authorsArray); //Sub authors
+                }
+
                 List<ZeroCodeReportStep> thisScenarioUniqueSteps = getUniqueSteps(thisScenario.getSteps());
                 thisScenarioUniqueSteps.forEach(thisStep -> {
                     test.getModel().setStartTime(utilDateOf(thisStep.getRequestTimeStamp()));
@@ -166,42 +159,33 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
     /**
      * @param scenarioName String containing a name of an author
-     * @return author of the test scenario
+     * @return authors of the test scenario
      */
-    protected String optionalAuthor(String scenarioName) {
-        String authorName = deriveName(scenarioName, AUTHOR_MARKER_OLD);
-        authorName = ANONYMOUS_CAT.equals(authorName) ? deriveName(scenarioName, AUTHOR_MARKER_NEW) : authorName;
-        return authorName;
+    protected List<String> optionalAuthors(String scenarioName) {
+        return deriveNames(scenarioName, AUTHOR_MARKER_NEW);
     }
 
     /**
-     * @param scenarioName String containing hash tags of a category
-     * @return category of the test scenario
+     * @param scenarioName String containing hashtags of a category
+     * @return hashtags aka categories of the test scenario
      */
-    protected String optionalCategory(String scenarioName) {
-        return deriveName(scenarioName, CATEGORY_MARKER);
+    protected List<String> optionalCategories(String scenarioName) {
+        return deriveNames(scenarioName, CATEGORY_MARKER);
     }
 
-    private String deriveName(String scenarioName, String marker) {
-        String authorName = substringBetween(scenarioName, marker, marker);
-
-        if (authorName == null) {
-            authorName = substringBetween(scenarioName, marker, ",");
+    private List<String> deriveNames(String scenarioName, String marker) {
+        List<String> nameList = new ArrayList<>();
+        for(String thisName : scenarioName.trim().split(" ")){
+            if(thisName.startsWith(marker) && !thisName.startsWith(AUTHOR_MARKER_OLD)){
+                nameList.add(thisName);
+            }
+            // Depreciated, but still supports. Remove this via a new ticket
+            if(thisName.startsWith(AUTHOR_MARKER_OLD)){
+                nameList.add(thisName);
+            }
         }
+        return nameList;
 
-        if (authorName == null) {
-            authorName = substringBetween(scenarioName, marker, " ");
-        }
-
-        if (authorName == null) {
-            authorName = scenarioName.substring(scenarioName.lastIndexOf(marker) + marker.length());
-        }
-
-        if (scenarioName.lastIndexOf(marker) == -1 || StringUtils.isEmpty(authorName)) {
-            authorName = ANONYMOUS_CAT;
-        }
-
-        return authorName;
     }
 
     protected String onlyScenarioName(String scenarioName) {
@@ -230,7 +214,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
     @Override
     public void generateHighChartReport() {
-        LOGGER.info("####spikeChartReportEnabled: " + spikeChartReportEnabled);
+        LOGGER.debug("####spikeChartReportEnabled: " + spikeChartReportEnabled);
 
         /*
          * Generate: Spike Chart using HighChart

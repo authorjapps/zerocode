@@ -28,7 +28,7 @@ public class RunnerUtils {
     public static final int MIN_COUNT = 1;
 
     public static String getEnvSpecificConfigFile(String serverEnv, Class<?> testClass) {
-        LOGGER.info("### testClass : " + testClass);
+        LOGGER.debug("### testClass : " + testClass);
 
         final EnvProperty envProperty = testClass.getAnnotation(EnvProperty.class);
 
@@ -52,17 +52,17 @@ public class RunnerUtils {
 
             serverEnv = suffixEnvValue(serverEnv, resolvedEnvPropNameWithPrefix);
 
-            LOGGER.info("Found env specific property: '{}={}', Hence using: '{}'", propertyKey, propertyValue, serverEnv);
+            LOGGER.debug("Found env specific property: '{}={}', Hence using: '{}'", propertyKey, propertyValue, serverEnv);
 
         } else if(allTokens.size() >= 1) {
 
             final String propertyKey = allTokens.get(0);
 
-            LOGGER.info("Could not find env value for env property '{}', So using '{}'", propertyKey, serverEnv);
+            LOGGER.warn("Could not find env value for env property '{}', So using '{}'", propertyKey, serverEnv);
 
         } else {
 
-            LOGGER.info("Could not find env specific property, So using '{}'", serverEnv);
+            LOGGER.warn("Could not find env specific property, So using '{}'", serverEnv);
 
         }
 

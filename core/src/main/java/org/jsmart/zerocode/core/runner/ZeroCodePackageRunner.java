@@ -113,7 +113,6 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
      * Returns a {@link Description} for {@code child}, which can be assumed to
      * be an element of the list returned by {@link ParentRunner#getChildren()}
      *
-     * @param child
      */
     @Override
     protected Description describeChild(ScenarioSpec child) {
@@ -142,7 +141,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         RunListener reportListener = createTestUtilityListener();
         notifier.addListener(reportListener);
 
-        LOGGER.info("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
+        LOGGER.debug("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
         if (!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
             notifier.addListener(reportListener);
         }
@@ -163,8 +162,6 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
      * Subclasses are responsible for making sure that relevant test events are
      * reported through {@code notifier}
      *
-     * @param child
-     * @param notifier
      */
     @Override
     protected void runChild(ScenarioSpec child, RunNotifier notifier) {
@@ -182,7 +179,7 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         testRunCompleted = true;
 
         if (passed) {
-            LOGGER.info(String.format("\nPackageRunner- **FINISHED executing all Steps for [%s] **.\nSteps were:%s",
+            LOGGER.debug(String.format("\nPackageRunner- **FINISHED executing all Steps for [%s] **.\nSteps were:%s",
                     child.getScenarioName(),
                     child.getSteps().stream().map(step -> step.getName()).collect(Collectors.toList())));
         }

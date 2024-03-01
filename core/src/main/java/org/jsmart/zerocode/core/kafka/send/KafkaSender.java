@@ -76,7 +76,7 @@ public class KafkaSender {
                             String line;
                             for (int i = 0; (line = br.readLine()) != null; i++) {
                                 ProducerRecord record = gson.fromJson(line, ProducerRecord.class);
-                                LOGGER.info("From file:'{}', Sending record number: {}\n", fileName, i);
+                                LOGGER.debug("From file:'{}', Sending record number: {}\n", fileName, i);
                                 deliveryDetails = sendRaw(topicName, producer, record, rawRecords.getAsync());
                             }
                         } catch (Throwable ex) {
@@ -86,7 +86,7 @@ public class KafkaSender {
                         List<ProducerRecord> records = rawRecords.getRecords();
                         validateProduceRecord(records);
                         for (int i = 0; i < records.size(); i++) {
-                            LOGGER.info("Sending record number: {}\n", i);
+                            LOGGER.debug("Sending record number: {}\n", i);
                             deliveryDetails = sendRaw(topicName, producer, records.get(i), rawRecords.getAsync());
                         }
                     }
@@ -105,7 +105,7 @@ public class KafkaSender {
                                 line = zeroCodeAssertionsProcessor.resolveStringJson(line,
                                         scenarioExecutionState.getResolvedScenarioState());
                                 ProducerJsonRecord record = objectMapper.readValue(line, ProducerJsonRecord.class);
-                                LOGGER.info("From file:'{}', Sending record number: {}\n", fileName, i);
+                                LOGGER.debug("From file:'{}', Sending record number: {}\n", fileName, i);
                                 deliveryDetails = sendJson(topicName, producer, record, jsonRecords.getAsync(), recordType, requestJson);
                             }
                         }
@@ -143,21 +143,21 @@ public class KafkaSender {
 
         RecordMetadata metadata;
         if (Boolean.TRUE.equals(isAsync)) {
-            LOGGER.info("Asynchronous Producer sending record - {}", qualifiedRecord);
+            LOGGER.debug("Asynchronous Producer sending record - {}", qualifiedRecord);
             metadata = (RecordMetadata) producer.send(qualifiedRecord, new ProducerAsyncCallback()).get();
         } else {
-            LOGGER.info("Synchronous Producer sending record - {}", qualifiedRecord);
+            LOGGER.debug("Synchronous Producer sending record - {}", qualifiedRecord);
             metadata = (RecordMetadata) producer.send(qualifiedRecord).get();
         }
 
-        LOGGER.info("Record was sent to partition- {}, with offset- {} ", metadata.partition(), metadata.offset());
+        LOGGER.debug("Record was sent to partition- {}, with offset- {} ", metadata.partition(), metadata.offset());
 
         // --------------------------------------------------------------
         // Logs deliveryDetails, which shd be good enough for the caller
         // TODO- combine deliveryDetails into a list n return (if needed)
         // --------------------------------------------------------------
         String deliveryDetails = gson.toJson(new DeliveryDetails(OK, metadata));
-        LOGGER.info("deliveryDetails- {}", deliveryDetails);
+        LOGGER.debug("deliveryDetails- {}", deliveryDetails);
         return deliveryDetails;
     }
 
@@ -171,21 +171,21 @@ public class KafkaSender {
 
         RecordMetadata metadata;
         if (Boolean.TRUE.equals(isAsync)) {
-            LOGGER.info("Asynchronous - Producer sending JSON record - {}", record);
+            LOGGER.debug("Asynchronous - Producer sending JSON record - {}", record);
             metadata = (RecordMetadata) producer.send(record, new ProducerAsyncCallback()).get();
         } else {
-            LOGGER.info("Producer sending JSON record - {}", record);
+            LOGGER.debug("Producer sending JSON record - {}", record);
             metadata = (RecordMetadata) producer.send(record).get();
         }
 
-        LOGGER.info("Record was sent to partition- {}, with offset- {} ", metadata.partition(), metadata.offset());
+        LOGGER.debug("Record was sent to partition- {}, with offset- {} ", metadata.partition(), metadata.offset());
 
         // --------------------------------------------------------------
         // Logs deliveryDetails, which shd be good enough for the caller
         // TODO- combine deliveryDetails into a list n return (if needed)
         // --------------------------------------------------------------
         String deliveryDetails = gson.toJson(new DeliveryDetails(OK, metadata));
-        LOGGER.info("deliveryDetails- {}", deliveryDetails);
+        LOGGER.debug("deliveryDetails- {}", deliveryDetails);
 
         return deliveryDetails;
     }
@@ -206,7 +206,7 @@ public class KafkaSender {
             if (ex != null) {
                 LOGGER.error("Asynchronous Producer failed with exception - {} ", ex);
             } else {
-                LOGGER.info("Asynchronous Producer call was successful");
+                LOGGER.debug("Asynchronous Producer call was successful");
             }
         }
     }
