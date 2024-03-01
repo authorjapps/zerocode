@@ -18,8 +18,8 @@ public class NumberComparatorTest {
         assertThat((new BigDecimal("3.00009")).compareTo(new BigDecimal("3.00009")), is(0));
 
         NumberComparator comparator = new NumberComparator();
-        assertThat(comparator.compare(new Integer("3"), new Long("3")), is(0));
-        assertThat(comparator.compare(new Integer("3"), new Double("3.0")), is(0));
+        assertThat(comparator.compare(Integer.valueOf("3"), Long.valueOf("3")), is(0));
+        assertThat(comparator.compare(Integer.valueOf("3"), Double.valueOf("3.0")), is(0));
 
     }
 
