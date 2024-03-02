@@ -18,9 +18,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: Downloading docker-compose files
-        run: wget https://raw.githubusercontent.com/authorjapps/zerocode-docker-factory/master/compose/kafka-schema-registry.yml
       - name: Running Kafka
-        run: docker-compose -f kafka-schema-registry.yml up -d && sleep 10
+        run: docker-compose -f docker/compose/kafka-schema-registry.yml up -d && sleep 10
       - name: Building and testing the changes
         run: mvn clean test
