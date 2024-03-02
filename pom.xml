@@ -102,7 +102,7 @@
         <!-- Release Build will not fail if error occurs during javadoc generation -->
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
         <google.protobuf.version>3.24.4</google.protobuf.version>
-        <version.snappy-java>1.1.8.4</version.snappy-java>
+        <version.snappy-java>1.1.10.4</version.snappy-java>
     </properties>
 
     <dependencyManagement>
