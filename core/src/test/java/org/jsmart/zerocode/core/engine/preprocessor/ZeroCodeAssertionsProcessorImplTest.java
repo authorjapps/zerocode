@@ -7,14 +7,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.jayway.jsonpath.JsonPath;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.text.StrSubstitutor;
+import static com.jayway.jsonpath.JsonPath.read;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import org.hamcrest.core.Is;
+import org.jsmart.zerocode.TestUtility;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
@@ -23,21 +21,21 @@ import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens;
 import org.jsmart.zerocode.core.utils.SmartUtils;
+import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
+import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import org.junit.Assert;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static com.jayway.jsonpath.JsonPath.read;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
-import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
-import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ZeroCodeAssertionsProcessorImplTest {
     @Rule
@@ -1476,7 +1474,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
     public void test_JSONCONTENT_leafNode() throws IOException {
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
-        final String step1 =  createStepWithRequestAndResponse("create_emp", "\"body\" : {\n    \"id\" : 39001,\n    \"ldapId\" : \"emmanorton\"\n  }\n}\n  }");
+        final StepExecutionState step1 =  createStepWithRequestAndResponse("create_emp", "\"body\" : {\n    \"id\" : 39001,\n    \"ldapId\" : \"emmanorton\"\n  }\n}\n  }");
         scenarioExecutionState.addStepState(step1);
 
         ScenarioSpec scenarioSpec =
@@ -1498,7 +1496,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
     public void test_JSONCONTENT_stringArray() throws IOException {
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
-        final String step1 =  createStepWithRequestAndResponse("create_emp", "\"body\": {\"id\": 38001,\n     \"names\": [\"test1\", \"test2\"]\n}");
+        final StepExecutionState step1 =  createStepWithRequestAndResponse("create_emp", "\"body\": {\"id\": 38001,\n     \"names\": [\"test1\", \"test2\"]\n}");
         scenarioExecutionState.addStepState(step1);
 
         ScenarioSpec scenarioSpec =
@@ -1539,7 +1537,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
          *     ]
          * }
          */
-        final String step1 =  createStepWithRequestAndResponse("create_emp",
+        final StepExecutionState step1 =  createStepWithRequestAndResponse("create_emp",
                 "\"body\": {\"id\": 38001, \"allAddresses\": [{\"type\": \"Home\", \"line1\": \"North Lon\", \"id\": 47}, {\"type\": \"Office\", \"line1\": \"Central Lon\"}]}");
         scenarioExecutionState.addStepState(step1);
 
@@ -1566,7 +1564,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
     public void test_JSONCONTENT_jsonBlock() throws IOException {
         ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
 
-        final String step1 =  createStepWithRequestAndResponse("create_emp",
+        final StepExecutionState step1 =  createStepWithRequestAndResponse("create_emp",
                 "\"body\": {\n" +
                         "    \"id\": 38001,\n" +
                         "    \"address\": {\n" +
@@ -1617,21 +1615,17 @@ public class ZeroCodeAssertionsProcessorImplTest {
     }
 
 
-    protected String createStepWithRequestAndResponse(String stepName, String body) {
-        Map<String, String> parammap = new HashMap<>();
-
-        parammap.put("STEP.NAME", stepName);
-        parammap.put("STEP.REQUEST", "{\n" +
-            "    \"customer\": {\n" +
-            "        \"firstName\": \"FIRST_NAME\"\n" +
-            "    }\n" +
-            "}");
-        parammap.put("STEP.RESPONSE", "{\n" +
-            body +
-            "}");
-
-        StrSubstitutor sub = new StrSubstitutor(parammap);
-
-        return sub.replace((new StepExecutionState()).getRequestResponseState());
+    protected StepExecutionState createStepWithRequestAndResponse(String stepName, String body) {
+        StepExecutionState stepExecutionState = new StepExecutionState();
+        stepExecutionState.addStep(TestUtility.createDummyStep(stepName));
+        stepExecutionState.addRequest("{\n" +
+                "    \"customer\": {\n" +
+                "        \"firstName\": \"FIRST_NAME\"\n" +
+                "    }\n" +
+                "}");
+        stepExecutionState.addResponse("{\n" +
+                body +
+                "}");
+        return stepExecutionState;
     }
 }

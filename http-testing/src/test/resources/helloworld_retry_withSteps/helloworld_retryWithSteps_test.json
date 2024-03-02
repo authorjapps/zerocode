@@ -1,0 +1,37 @@
+{
+  "scenarioName": "Retry with previous steps",
+  "steps": [
+    {
+      "name" : "helper1",
+      "url": "org.jsmart.zerocode.zerocodejavaexec.RetryTestUtility",
+      "operation": "helperMethod1",
+      "assertions": {}
+    },
+    {
+      "name" : "helper2",
+      "url": "org.jsmart.zerocode.zerocodejavaexec.RetryTestUtility",
+      "operation": "helperMethod2",
+      "assertions": {}
+    },
+    {
+      "name" : "helper3",
+      "url": "org.jsmart.zerocode.zerocodejavaexec.RetryTestUtility",
+      "operation": "helperMethod3",
+      "assertions": {}
+    },
+    {
+      "name" : "main",
+      "url": "org.jsmart.zerocode.zerocodejavaexec.RetryTestUtility",
+      "operation": "mainMethod",
+      "request": "3",
+      "retry": {
+        "max": 3,
+        "delay": 10,
+        "withSteps": ["helper1","helper2", "helper3"]
+      },
+      "assertions": {
+        "success": "true"
+      }
+    }
+  ]
+}

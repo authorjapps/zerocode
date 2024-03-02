@@ -1,14 +1,17 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.jsmart.zerocode.core.domain.Step;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class StepExecutionState {
     Map<String, String> paramMap = new HashMap<>();
+    private Step step;
+    private String stepName;
 
-    private static String requestResponseState = "\"${STEP.NAME}\": {\n" +
+    private String requestResponseState = "\"${STEP.NAME}\": {\n" +
             "    \"request\":${STEP.REQUEST},\n" +
             "    \"response\": ${STEP.RESPONSE}\n" +
             "  }";
@@ -17,15 +20,9 @@ public class StepExecutionState {
         //SmartUtils.readJsonAsString("engine/request_respone_template_scene.json");
     }
 
-    public static String getRequestResponseState() {
-        return requestResponseState;
-    }
-
-    public void setRequestResponseState(String requestResponseState) {
-        this.requestResponseState = requestResponseState;
-    }
-
-    public void addStep(String stepName) {
+    public void addStep(Step step) {
+        this.step = step;
+        this.stepName = step.getName();
         paramMap.put("STEP.NAME", stepName);
     }
 
@@ -41,5 +38,13 @@ public class StepExecutionState {
     public String getResolvedStep() {
         StrSubstitutor sub = new StrSubstitutor(paramMap);
         return sub.replace(requestResponseState);
+    }
+
+    public String getStepName() {
+        return stepName;
+    }
+
+    public Step getStep() {
+        return step;
     }
 }

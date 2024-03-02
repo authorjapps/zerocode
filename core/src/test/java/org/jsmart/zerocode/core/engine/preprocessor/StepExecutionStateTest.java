@@ -1,12 +1,9 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.jsmart.zerocode.TestUtility;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class StepExecutionStateTest {
     StepExecutionState stepExecutionState;
@@ -19,22 +16,18 @@ public class StepExecutionStateTest {
     @Test
     public void willHaveReqResp_resolved() throws Exception {
 
-        Map<String, String> parammap = new HashMap<>();
-
-        parammap.put("STEP.NAME", "Step-1");
-        parammap.put("STEP.REQUEST", "{\n" +
+        StepExecutionState stepExecutionState = new StepExecutionState();
+        stepExecutionState.addStep(TestUtility.createDummyStep("Step-1"));
+        stepExecutionState.addRequest("{\n" +
                 "    \"customer\": {\n" +
                 "        \"firstName\": \"FIRST_NAME\"\n" +
                 "    }\n" +
                 "}");
-        parammap.put("STEP.RESPONSE", "{\n" +
+        stepExecutionState.addResponse("{\n" +
                 "    \"id\" : 10101\n" +
                 "}");
 
-        StrSubstitutor sub = new StrSubstitutor(parammap);
-        String resolvedString = sub.replace(stepExecutionState.getRequestResponseState());
-
-        JSONAssert.assertEquals(String.format("{%s}", resolvedString), "{\n" +
+        JSONAssert.assertEquals(String.format("{%s}", stepExecutionState.getResolvedStep()), "{\n" +
                 "    \"Step-1\": {\n" +
                 "        \"request\": {\n" +
                 "            \"customer\": {\n" +
@@ -49,8 +42,8 @@ public class StepExecutionStateTest {
     }
 
     @Test
-    public void willBeAbleToAdd_RequestAndReponse() throws Exception {
-        stepExecutionState.addStep("Step-X1");
+    public void willBeAbleToAdd_RequestAndResponse() throws Exception {
+        stepExecutionState.addStep(TestUtility.createDummyStep("Step-X1"));
         stepExecutionState.addRequest("{\n" +
                 "    \"customer\": {\n" +
                 "        \"firstName\": \"FIRST_NAME\"\n" +
