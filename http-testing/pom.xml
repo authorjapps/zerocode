@@ -63,6 +63,8 @@
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldarrayelementmatching.HelloWorldArrayElementPickerTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldimplicitdelay.JustHelloImplicitDelayTimeOutTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldfileupload.HelloWorldFileUploadTest</include>
+                        <include>org.jsmart.zerocode.testhelp.tests.helloworldretrywithsteps.HelloWorldRetryWithStepsTest</include>
+
                     </includes>
                 </configuration>
             </plugin>

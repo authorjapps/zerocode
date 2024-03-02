@@ -6,19 +6,17 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.univocity.parsers.csv.CsvParser;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.BiConsumer;
-
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
+import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
+import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
@@ -26,22 +24,23 @@ import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcesso
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
 import org.jsmart.zerocode.core.engine.sorter.ZeroCodeSorter;
 import org.jsmart.zerocode.core.engine.validators.ZeroCodeValidator;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.jsmart.zerocode.core.utils.ApiTypeUtils;
-import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
-import org.slf4j.Logger;
-
-import static java.util.Optional.ofNullable;
-import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
-import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
-import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getParameterSize;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
+import org.slf4j.Logger;
 import static org.slf4j.LoggerFactory.getLogger;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 
 @Singleton
 public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsScenarioRunner {
@@ -182,7 +181,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                           ScenarioSpec scenario, Step thisStep) {
         thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
         thisStep = zeroCodeAssertionsProcessor.resolveJsonContent(thisStep, scenarioExecutionState);
-        
+
         List<Step> thisSteps = extFileProcessor.createFromStepFile(thisStep, thisStep.getId());
         if(null == thisSteps || thisSteps.isEmpty()) thisSteps.add(thisStep);
         Boolean wasExecSuccess = null;
@@ -213,7 +212,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         // --------------------------------------
         final String requestJsonAsString = thisStep.getRequest().toString();
         StepExecutionState stepExecutionState = new StepExecutionState();
-        stepExecutionState.addStep(thisStep.getName());
+        stepExecutionState.addStep(thisStep);
         String resolvedRequestJson = zeroCodeAssertionsProcessor.resolveStringJson(
                 requestJsonAsString,
                 scenarioExecutionState.getResolvedScenarioState());
@@ -234,8 +233,20 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         String thisStepName = thisStep.getName();
 
         for (int retryCounter = 0; retryCounter < retryMaxTimes; retryCounter++) {
+            if(retryCounter > 0){
+                LOGGER.warn("\n\n------------>Retrying...[step][attempt-{}][executions-{}]:'{}' -> '{}'",
+                        retryCounter, (retryCounter+1), scenario.getScenarioName(), thisStep.getName());
+            }
             try {
-
+                if (retryCounter > 0 && !isEmpty(thisStep.getRetry().getWithSteps())) {
+                    for (String stepName : thisStep.getRetry().getWithSteps()) {
+                        Optional<StepExecutionState> retryWithStepExecState = scenarioExecutionState.getExecutedStepState(stepName);
+                        if (!retryWithStepExecState.isPresent()) {
+                            throw new RuntimeException("Invalid step to retry with : " + stepName + " has not been executed yet");
+                        }
+                        executeRetry(notifier, description, scenarioExecutionState, scenario, retryWithStepExecState.get().getStep());
+                    }
+                }
                 executionResult = executeApi(logPrefixRelationshipId, thisStep, resolvedRequestJson, scenarioExecutionState);
 
                 // logging response
@@ -246,7 +257,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .response(executionResult);
                 correlLogger.aResponseBuilder().customLog(thisStep.getCustomLog());
                 stepExecutionState.addResponse(executionResult);
-                scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
+                scenarioExecutionState.addStepState(stepExecutionState);
 
                 // ---------------------------------
                 // Handle sort section
@@ -255,7 +266,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     executionResult = sorter.sortArrayAndReplaceInResponse(thisStep, executionResult, scenarioExecutionState.getResolvedScenarioState());
                     correlLogger.customLog("Updated response: " + executionResult);
                     stepExecutionState.addResponse(executionResult);
-                    scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
+                    scenarioExecutionState.addStepState(stepExecutionState);
                 }
 
                 // ---------------------------------
