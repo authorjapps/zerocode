@@ -1,7 +1,7 @@
 # <Feature Title>
 
 ## Fixes Issue
-- [ ] Which issue or ticket was in this PR?
+- [ ] Which issue or ticket was(will be) fixed in this PR?
 
 PR Branch
 **_#ADD LINK TO THE PR BRANCH_**
