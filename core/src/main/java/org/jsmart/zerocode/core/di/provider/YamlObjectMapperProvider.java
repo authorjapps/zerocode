@@ -3,7 +3,7 @@ package org.jsmart.zerocode.core.di.provider;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 public class YamlObjectMapperProvider implements Provider<ObjectMapper> {
 

@@ -159,7 +159,7 @@ public class Step {
         this.request = request;
         this.url = url;
         this.sort = sort;
-        this.assertions = assertions.isNull() ? verify : assertions;
+        this.assertions = assertions == null || assertions.isNull() ? verify : assertions;
         this.verify = verify;
         this.ignoreStep = ignoreStep;
     }

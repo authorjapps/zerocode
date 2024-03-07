@@ -2,6 +2,7 @@ package org.jsmart.zerocode.core.runner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -39,6 +40,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -210,7 +212,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         // --------------------------------------
         // Save step execution state in a context
         // --------------------------------------
-        final String requestJsonAsString = thisStep.getRequest().toString();
+        final String requestJsonAsString = Optional.ofNullable(thisStep.getRequest()).orElse(NullNode.getInstance()).toString();
         StepExecutionState stepExecutionState = new StepExecutionState();
         stepExecutionState.addStep(thisStep);
         String resolvedRequestJson = zeroCodeAssertionsProcessor.resolveStringJson(
@@ -262,7 +264,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 // ---------------------------------
                 // Handle sort section
                 // ---------------------------------
-                if (!thisStep.getSort().isNull()) {
+                if (!Objects.isNull(thisStep.getSort())) {
                     executionResult = sorter.sortArrayAndReplaceInResponse(thisStep, executionResult, scenarioExecutionState.getResolvedScenarioState());
                     correlLogger.customLog("Updated response: " + executionResult);
                     stepExecutionState.addResponse(executionResult);
@@ -273,7 +275,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 // Handle assertion section -START
                 // ---------------------------------
                 String resolvedAssertionJson = zeroCodeAssertionsProcessor.resolveStringJson(
-                        thisStep.getAssertions().toString(),
+                        Optional.ofNullable(thisStep.getAssertions()).orElse(NullNode.getInstance()).toString(),
                         scenarioExecutionState.getResolvedScenarioState()
                 );
 
@@ -557,7 +559,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         // --------------------
         //  Validators (pyrest)
         // --------------------
-        if (ofNullable(thisStep.getValidators()).orElse(null) != null) {
+        if (thisStep.getValidators() != null) {
             failureResults = validator.validateFlat(thisStep, actualResult, resolvedScenarioState);
         }
 

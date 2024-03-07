@@ -27,7 +27,7 @@ public class Parameterized {
             @JsonProperty("ignoreHeader") Boolean ignoreHeader) {
         this.valueSource = valueSource;
         this.ignoreHeader = Optional.ofNullable(ignoreHeader).orElse(false);
-        this.csvSource = getCsvSourceFrom(csvSourceJsonNode);
+        this.csvSource = Optional.ofNullable(csvSourceJsonNode).map(this::getCsvSourceFrom).orElse(Collections.emptyList());
     }
 
     public List<Object> getValueSource() {

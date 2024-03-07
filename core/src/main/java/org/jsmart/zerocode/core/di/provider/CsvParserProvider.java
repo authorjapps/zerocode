@@ -2,7 +2,7 @@ package org.jsmart.zerocode.core.di.provider;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 public class CsvParserProvider implements Provider<CsvParser> {
     public static final String LINE_SEPARATOR = "\n";

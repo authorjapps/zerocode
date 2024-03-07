@@ -5,10 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 /**
@@ -46,31 +48,31 @@ public class MockStep {
     }
 
     public JsonNode getRequest() {
-        return request;
+        return Optional.ofNullable(request).orElse(NullNode.getInstance());
     }
 
     public JsonNode getResponse() {
-        return response;
+        return Optional.ofNullable(response).orElse(NullNode.getInstance());
     }
 
     public JsonNode getAssertions() {
-        return assertions;
+        return Optional.ofNullable(assertions).orElse(NullNode.getInstance());
     }
 
     public String getBody() {
-        final JsonNode bodyNode = request.get("body");
-        return bodyNode != null ? request.get("body").toString() : null;
+        final JsonNode bodyNode = getRequest().get("body");
+        return bodyNode != null ? getRequest().get("body").toString() : null;
     }
 
     public String getHeaders() {
-        return request.get("headers").toString();
+        return getRequest().get("headers").toString();
     }
 
     public Map<String, Object> getHeadersMap() {
         ObjectMapper objectMapper = new ObjectMapperProvider().get();
         HashMap<String, Object> headersMap = new HashMap<>();
         try {
-            final JsonNode headersNode = request.get("headers");
+            final JsonNode headersNode = getRequest().get("headers");
             if (null != headersNode) {
                 headersMap = (HashMap<String, Object>) objectMapper.readValue(headersNode.toString(), HashMap.class);
             }
