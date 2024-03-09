@@ -4,7 +4,8 @@ Automated API, Kafka and Micro-services testing has never been so easy
 
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)
-[![Performance Testing](https://img.shields.io/badge/performance-testing-ff69b4.svg)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
+[![Performance Testing](https://img.shields.io/badge/performance-testing-8A2BE2)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
+[![Kafka Testing](https://img.shields.io/badge/kafka-testing-blue)](https://zerocode-tdd-docs.pages.dev/kafka/Kafka-Testing-Introduction)
 
 
 **Latest release:🏹** [![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) <br/>
