@@ -47,11 +47,6 @@
         </repository>
     </distributionManagement>
 
-    <properties>
-        <!-- This project properties -->
-        <junit.version>4.12</junit.version>
-    </properties>
-
     <repositories>
         <!--
         <repository>
