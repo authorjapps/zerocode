@@ -75,7 +75,6 @@
         <resteasy-jaxrs.version>2.2.1.GA</resteasy-jaxrs.version>
         <logback.version>1.0.7</logback.version>
         <wiremock.version>2.19.0</wiremock.version>
-        <velocity.version>1.7</velocity.version>
         <jackson-dataformat-csv.version>2.9.8</jackson-dataformat-csv.version>
         <commons-io.version>2.15.0</commons-io.version>
         <micro-simulator.version>1.1.10</micro-simulator.version>
@@ -143,8 +142,8 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity</artifactId>
-                <version>${velocity.version}</version>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>2.3</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -247,6 +246,11 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpmime</artifactId>
                 <version>${httpmime.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>4.4</version>
             </dependency>
             <dependency>
                 <groupId>org.jsmart</groupId>
