@@ -82,7 +82,7 @@
         <httpmime.version>4.5.12</httpmime.version>
         <h2.db.version>1.4.191</h2.db.version>
         <extentreports.version>5.0.9</extentreports.version>
-        <version.kafka-clients>3.3.1</version.kafka-clients>
+        <version.kafka-clients>3.7.0</version.kafka-clients>
         <version.gson>2.10.1</version.gson>
         <version.univocity-parsers>2.8.2</version.univocity-parsers>
 
@@ -101,7 +101,6 @@
         <!-- Release Build will not fail if error occurs during javadoc generation -->
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
         <google.protobuf.version>3.24.4</google.protobuf.version>
-        <version.snappy-java>1.1.8.4</version.snappy-java>
     </properties>
 
     <dependencyManagement>
@@ -135,11 +134,6 @@
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
                 <version>${version.kafka-clients}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.xerial.snappy</groupId>
-                <artifactId>snappy-java</artifactId>
-                <version>${version.snappy-java}</version>
             </dependency>
             <dependency>
                 <groupId>org.json</groupId>
