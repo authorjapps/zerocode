@@ -2,7 +2,7 @@ package org.jsmart.zerocode.core.engine.preprocessor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.univocity.parsers.csv.CsvParser;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.utils.SmartUtils;
