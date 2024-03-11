@@ -8,7 +8,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.univocity.parsers.csv.CsvParser;
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
