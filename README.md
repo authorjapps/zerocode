@@ -368,6 +368,7 @@ Because you are asserting with an expected status as 500, but the end point actu
 }
 ```
 Using the gremlin query in Zero Code
+```
 {
     "scenarioName": "Gremlin HelloWorld query",
     "steps": [
@@ -387,8 +388,9 @@ Using the gremlin query in Zero Code
         }
     ]
 }
+```
 
-We can also pass the gremlin query from extral file location using ${XML.FILE: gremlinquery.txt}
+We can also pass the gremlin query from external file location using ${XML.FILE: gremlinquery.txt}
 
 #### 27:
 #### Generating load for performance testing aka stress testing
