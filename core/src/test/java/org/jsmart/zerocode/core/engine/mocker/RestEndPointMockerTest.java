@@ -15,9 +15,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
+
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
@@ -126,12 +128,10 @@ public class RestEndPointMockerTest {
                         .withHeader("Content-Type", APPLICATION_JSON)
                         .withBody(jsonBodyRequest)));
 
-        ApacheHttpClientExecutor httpClientExecutor = new ApacheHttpClientExecutor();
-        ClientRequest clientExecutor = httpClientExecutor.createRequest("http://localhost:9073" + mockStep.getUrl());
-        clientExecutor.setHttpMethod("GET");
-        ClientResponse serverResponse = clientExecutor.execute();
-
-        final String respBodyAsString = (String) serverResponse.getEntity(String.class);
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target("http://localhost:9073" + mockStep.getUrl());
+        Response response = target.request().get();
+        final String respBodyAsString = response.readEntity(String.class);
         JSONAssert.assertEquals(jsonBodyRequest, respBodyAsString, true);
 
         System.out.println("### zerocode: \n" + respBodyAsString);

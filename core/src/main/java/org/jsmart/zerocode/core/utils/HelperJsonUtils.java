@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.lang.StringUtils;
-import org.jboss.resteasy.client.ClientRequest;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.slf4j.LoggerFactory;
@@ -63,7 +61,7 @@ public class HelperJsonUtils {
     }
 
     public static Map<String, Object> readObjectAsMap(Object jsonContent) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map;
         try {
             map = mapper.readValue(jsonContent.toString(), HashMap.class);
         } catch (IOException exx) {
@@ -72,43 +70,6 @@ public class HelperJsonUtils {
         }
 
         return map;
-    }
-
-    public static String createAndReturnAssertionResultJson(int httpResponseCode,
-                                                            String resultBodyContent, String locationHref) {
-        LOGGER.debug("\n#locationHref: " + locationHref);
-
-        if (StringUtils.isEmpty(resultBodyContent)) {
-            resultBodyContent = "{}";
-        }
-        String locationField = locationHref != null ? "	\"Location\" : \"" + locationHref + "\",\n" : "";
-        String assertJson = "{\n" +
-                "	\"status\" : " + httpResponseCode + ",\n" +
-                locationField +
-                "	\"body\" : " + resultBodyContent + "\n" +
-                " }";
-
-        String formattedStr = SmartUtils.prettyPrintJson(assertJson);
-
-        return formattedStr;
-    }
-
-    private void setRequestHeaders(Object headers, ClientRequest clientExecutor) {
-        Map<String, Object> headersMap = HelperJsonUtils.readObjectAsMap(headers);
-        for (Object key : headersMap.keySet()) {
-            clientExecutor.header((String) key, headersMap.get(key));
-        }
-    }
-
-    public static String javaObjectAsString(Object value) {
-
-        try {
-            ObjectMapper ow = new ObjectMapperProvider().get();
-            return ow.writeValueAsString(value);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Exception while converting IPT Java Object to JsonString" + e);
-        }
     }
 
 

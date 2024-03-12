@@ -72,7 +72,8 @@
         <guice.version>7.0.0</guice.version>
         <commons-lang.version>2.6</commons-lang.version>
         <jayway-version>2.2.0</jayway-version>
-        <resteasy-jaxrs.version>2.2.1.GA</resteasy-jaxrs.version>
+        <!-- resteasy 4.7.0.Final needs JDK11 -->
+        <resteasy-jaxrs.version>3.15.6.Final</resteasy-jaxrs.version>
         <!-- logback 1.4.x and 1.5.x need JDK11 -->
         <logback.version>1.3.14</logback.version>
         <slf4j.version>2.0.12</slf4j.version>
@@ -187,6 +188,12 @@
                 <artifactId>resteasy-jaxrs</artifactId>
                 <version>${resteasy-jaxrs.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-client</artifactId>
+                <version>${resteasy-jaxrs.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.jayway.jsonpath</groupId>
                 <artifactId>json-path</artifactId>
