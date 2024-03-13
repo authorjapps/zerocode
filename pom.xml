@@ -80,7 +80,7 @@
         <jackson-dataformat-csv.version>2.9.8</jackson-dataformat-csv.version>
         <commons-io.version>2.15.0</commons-io.version>
         <micro-simulator.version>1.1.10</micro-simulator.version>
-        <httpclient.version>4.5</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <httpmime.version>4.5.12</httpmime.version>
         <h2.db.version>2.2.220</h2.db.version>
         <extentreports.version>5.0.9</extentreports.version>
