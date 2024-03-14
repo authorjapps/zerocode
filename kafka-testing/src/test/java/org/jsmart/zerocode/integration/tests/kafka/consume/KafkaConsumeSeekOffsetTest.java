@@ -46,7 +46,7 @@ public class KafkaConsumeSeekOffsetTest {
     }
 
     @Test
-    @Scenario("kafka/consume/test_kafka_consume_seek_times`tamp_multi_partition.json")
+    @Scenario("kafka/consume/test_kafka_consume_seek_timestamp_multi_partition.json")
     public void testKafkaConsume_seekTimestamp_multi_partition() {
 
     }
