@@ -10,13 +10,12 @@ import com.google.protobuf.Message;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.util.JsonFormat;
 import com.jayway.jsonpath.JsonPath;
-import static java.lang.Integer.parseInt;
-import static java.lang.Long.parseLong;
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-
-import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
@@ -24,13 +23,6 @@ import org.apache.kafka.common.header.Headers;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.kafka.KafkaConstants;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.AVRO;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.PROTO;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
-import static org.jsmart.zerocode.core.kafka.common.KafkaCommonUtils.resolveValuePlaceHolders;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigs;
 import org.jsmart.zerocode.core.kafka.consume.ConsumerLocalConfigsWrap;
 import org.jsmart.zerocode.core.kafka.consume.SeekTimestamp;
@@ -38,7 +30,6 @@ import org.jsmart.zerocode.core.kafka.receive.ConsumerCommonConfigs;
 import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecord;
 import org.jsmart.zerocode.core.kafka.receive.message.ConsumerJsonRecords;
 import org.jsmart.zerocode.core.kafka.receive.message.ConsumerRawRecords;
-import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +42,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,6 +53,20 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.AVRO;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.DEFAULT_POLLING_TIME_MILLI_SEC;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.MAX_NO_OF_RETRY_POLLS_OR_TIME_OUTS;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.PROTO;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
+import static org.jsmart.zerocode.core.kafka.common.KafkaCommonUtils.resolveValuePlaceHolders;
+import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 public class KafkaConsumerHelper {
     public static final String CONSUMER = "CONSUMER";
@@ -448,7 +452,7 @@ public class KafkaConsumerHelper {
 
             //assign to fetched partitions
             if (consumer.assignment().isEmpty()) {
-            consumer.assign(topicPartitionOffsetAndTimestampMap.keySet());
+                consumer.assign(topicPartitionOffsetAndTimestampMap.keySet());
             }
 
             //seek to end for partitions that have no offset/timestamp >= seekEpoch
@@ -461,7 +465,7 @@ public class KafkaConsumerHelper {
                 //commit the latest offsets so that they are skipped and only new messages consumed
                 Map<TopicPartition, OffsetAndMetadata> partitionLatestOffsetsToCommit =
                         noSeekPartitions.stream()
-                        .collect(Collectors.toMap(Function.identity(), tp -> new OffsetAndMetadata(consumer.position(tp) + 1)));
+                                .collect(Collectors.toMap(Function.identity(), tp -> new OffsetAndMetadata(consumer.position(tp) + 1)));
                 System.out.println("Committing the following : " + partitionLatestOffsetsToCommit);
                 consumer.commitSync(partitionLatestOffsetsToCommit);
             }
