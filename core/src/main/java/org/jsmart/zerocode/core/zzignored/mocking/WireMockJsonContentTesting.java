@@ -33,14 +33,14 @@ public class WireMockJsonContentTesting {
                 "    ]\n" +
                 "}";
 
-        givenThat(WireMock.get(urlEqualTo("/identitymanagement-services/identitymanagement-services/person/internalHandle/person_id_009/biographics/default"))
+        givenThat(WireMock.get(urlEqualTo("/id-services/id-services/person/id/p_id_009/bio/default"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", APPLICATION_JSON)
                         .withBody(jsonBodyRequest)));
 
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://localhost:9073/identitymanagement-services/identitymanagement-services/person/internalHandle/person_id_009/biographics/default");
+        WebTarget target = client.target("http://localhost:9073/id-services/id-services/person/id/p_id_009/bio/default");
         Response response = target.request().get();
         final String respBodyAsString = response.readEntity(String.class);
         JSONAssert.assertEquals(jsonBodyRequest, respBodyAsString, true);
