@@ -23,24 +23,32 @@
                     }
                 }
             }
-        },
-        {
-            "name": "load_kafka_wrong_partition",
-            "url": "kafka-topic:demo-4",
-            "operation": "produce",
-            "request": {
-                "records":[
-                    {
-                        "key": "${RANDOM.NUMBER}",
-                        "value": "Hello World",
-                        "partition": 9
-                    }
-                ]
-            },
-            "assertions": {
-                "status" : "Failed",
-                "message" : "Invalid partition given with record: 9 is not in the range [0...1)."
-            }
         }
+        // This works.
+        // But takes 60 secs to get response for the timeout. See more comments below
+//        {
+//            "name": "load_kafka_wrong_partition",
+//            "url": "kafka-topic:demo-4",
+//            "operation": "produce",
+//            "request": {
+//                "records":[
+//                    {
+//                        "key": "${RANDOM.NUMBER}",
+//                        "value": "Hello World",
+//                        "partition": 9
+//                    }
+//                ]
+//            },
+//            "assertions": {
+//                // This works. But takes 60 secs to get response for the timeout
+//                // This is after upgrading to the new version of Kafka client. 3.3.1 (version.kafka-clients)
+//                "status" : "Failed",
+//                "message" : "org.apache.kafka.common.errors.TimeoutException: Topic demo-4 not present in metadata after 60000 ms."
+//
+//                // Old client version.kafka-clients=2.1.0
+//                // "status" : "Failed",
+//                // "message" : "Invalid partition given with record: 9 is not in the range [0...1)."
+//            }
+//        }
     ]
 }

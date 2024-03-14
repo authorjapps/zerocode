@@ -39,10 +39,15 @@ public class ConsumerCommonConfigs {
     @Named("consumer.pollingTime")
     private Long pollingTime;
 
-    // TODO- Remove this from Global properties, as it doesn't make sense
     @Inject(optional = true)
-    @Named("consumer.seek")
-    private String seek;
+    @Named("consumer.cacheByTopic")
+    private Boolean cacheByTopic = false;
+
+    // TODO - Delete this config from common configs.
+    // This is not needed as global settings(double check)
+    @Inject(optional = true)
+    @Named("consumer.filterByJsonPath")
+    private String filterByJsonPath;
 
     public ConsumerCommonConfigs() {
     }
@@ -55,7 +60,8 @@ public class ConsumerCommonConfigs {
                                  Boolean showRecordsConsumed,
                                  Integer maxNoOfRetryPollsOrTimeouts,
                                  Long pollingTime,
-                                 String seek
+                                 Boolean cacheByTopic,
+                                 String filterByJsonPath
 
     ) {
         this.commitSync = commitSync;
@@ -66,7 +72,8 @@ public class ConsumerCommonConfigs {
         this.showRecordsConsumed = showRecordsConsumed;
         this.maxNoOfRetryPollsOrTimeouts = maxNoOfRetryPollsOrTimeouts;
         this.pollingTime = pollingTime;
-        this.seek = seek;
+        this.cacheByTopic = cacheByTopic;
+        this.filterByJsonPath = filterByJsonPath;
     }
     
     public ConsumerCommonConfigs(Boolean commitSync,
@@ -76,11 +83,20 @@ public class ConsumerCommonConfigs {
             Boolean showRecordsConsumed,
             Integer maxNoOfRetryPollsOrTimeouts,
             Long pollingTime,
-            String seek
+            Boolean cacheByTopic,
+            String filterByJsonPath
 
     ) {
-		this(commitSync, commitAsync, fileDumpTo, recordType, null, showRecordsConsumed, maxNoOfRetryPollsOrTimeouts,
-				pollingTime, seek);
+		this(commitSync,
+                commitAsync,
+                fileDumpTo,
+                recordType,
+                null,
+                showRecordsConsumed,
+                maxNoOfRetryPollsOrTimeouts,
+				pollingTime,
+                cacheByTopic,
+                filterByJsonPath);
 	}
 
     public Boolean getCommitSync() {
@@ -111,12 +127,18 @@ public class ConsumerCommonConfigs {
         return recordType;
     }
 
-    public String getSeek() {
-        return seek;
-    }
 	public String getProtoClassType() {
 		return protoClassType;
 	}
+
+
+    public Boolean getCacheByTopic() {
+        return cacheByTopic;
+    }
+
+    public String getFilterByJsonPath() {
+        return filterByJsonPath;
+    }
 
     @Override
     public String toString() {
@@ -129,7 +151,8 @@ public class ConsumerCommonConfigs {
                 ", showRecordsConsumed=" + showRecordsConsumed +
                 ", maxNoOfRetryPollsOrTimeouts=" + maxNoOfRetryPollsOrTimeouts +
                 ", pollingTime=" + pollingTime +
-                ", seek=" + seek +
+                ", cacheByTopic=" + cacheByTopic +
+                ", filterByJsonPath=" + filterByJsonPath +
                 '}';
     }
 }

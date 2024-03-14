@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.Step;
+import org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens;
 import org.junit.Test;
+import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
+
 
 import java.io.IOException;
 import java.util.Map;
@@ -40,6 +43,18 @@ public class ZeroCodeExternalFileProcessorImplTest {
     }
 
     @Test
+    public void test_deepRecursiveFile() throws IOException {
+        String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_test_file_recursive.json");
+        Map<String, Object> map = objectMapper.readValue(jsonAsString, new TypeReference<Map<String, Object>>() {});
+
+        externalFileProcessor.digReplaceContent(map);
+        String resultJson = objectMapper.writeValueAsString(map);
+
+        assertThat(read(resultJson, "$.request.body.addresses[0].type"), is("corp-office"));
+        assertThat(read(resultJson, "$.request.body.addresses[1].type"), is("hr-office"));
+    }
+
+    @Test
     public void test_addressArray() throws IOException {
         String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_test_address_array.json");
         Map<String, Object> map = objectMapper.readValue(jsonAsString, new TypeReference<Map<String, Object>>() {});
@@ -67,11 +82,11 @@ public class ZeroCodeExternalFileProcessorImplTest {
     public void test_NoExtFileCheckDigNeeded() throws IOException {
         String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_no_ext_json_test_file.json");
         Step step = objectMapper.readValue(jsonAsString, Step.class);
-        assertThat(externalFileProcessor.checkDigNeeded(step), is(false));
+        assertThat(checkDigNeeded(objectMapper, step, ZeroCodeValueTokens.JSON_PAYLOAD_FILE, ZeroCodeValueTokens.YAML_PAYLOAD_FILE), is(false));
 
         jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_text_node_ext_json_file_test.json");
         step = objectMapper.readValue(jsonAsString, Step.class);
-        assertThat(externalFileProcessor.checkDigNeeded(step), is(true));
+        assertThat(checkDigNeeded(objectMapper, step, ZeroCodeValueTokens.JSON_PAYLOAD_FILE, ZeroCodeValueTokens.YAML_PAYLOAD_FILE), is(true));
     }
 
     @Test

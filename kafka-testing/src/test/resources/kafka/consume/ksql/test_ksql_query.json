@@ -36,7 +36,7 @@
                 "body": [
                     {
                         "topics.SIZE": "$GT.0",
-                        "topics[?(@.name=='demo-ksql')].registered.SIZE": 1
+                        "topics[?(@.name=='demo-ksql')].replicaInfo.SIZE": 1
                     }
                 ]
             }
@@ -76,7 +76,7 @@
                 "status": 200,
                 "body": {
                     "KsqlServerInfo": {
-                        "version": "5.1.0",
+                        "version": "5.5.1",
                         "kafkaClusterId": "$NOT.NULL",
                         "ksqlServiceId": "default_"
                     }

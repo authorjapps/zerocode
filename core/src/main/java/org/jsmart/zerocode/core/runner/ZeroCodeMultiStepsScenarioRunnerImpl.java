@@ -2,42 +2,47 @@ package org.jsmart.zerocode.core.runner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.univocity.parsers.csv.CsvParser;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiConsumer;
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
+import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
+import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeExternalFileProcessor;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeParameterizedProcessor;
+import org.jsmart.zerocode.core.engine.sorter.ZeroCodeSorter;
 import org.jsmart.zerocode.core.engine.validators.ZeroCodeValidator;
+import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.jsmart.zerocode.core.utils.ApiTypeUtils;
-import org.junit.runner.Description;
-import org.junit.runner.notification.RunNotifier;
-import org.slf4j.Logger;
-
-import static java.util.Optional.ofNullable;
-import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
-import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
-import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
-import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getParameterSize;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
+import org.slf4j.Logger;
 import static org.slf4j.LoggerFactory.getLogger;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 
 @Singleton
 public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsScenarioRunner {
@@ -55,6 +60,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     @Inject
     private ZeroCodeParameterizedProcessor parameterizedProcessor;
+
+    @Inject
+    private ZeroCodeSorter sorter;
 
     @Inject
     private ApiServiceExecutor apiExecutor;
@@ -99,7 +107,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     @Override
     public synchronized boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
 
-        LOGGER.info("\n-------------------------- BDD: Scenario:{} -------------------------\n", scenario.getScenarioName());
+        LOGGER.warn("\n-----------------------------------------------------------------------------------\n" +
+                "\nScenario:\n+++++++++\n\n{} \n" +
+                "\n-----------------------------------------------------------------------------------",
+                scenario.getScenarioName());
 
         ioWriterBuilder = ZeroCodeIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
 
@@ -171,6 +182,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                           ScenarioExecutionState scenarioExecutionState,
                                           ScenarioSpec scenario, Step thisStep) {
         thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
+        thisStep = zeroCodeAssertionsProcessor.resolveJsonContent(thisStep, scenarioExecutionState);
+
         List<Step> thisSteps = extFileProcessor.createFromStepFile(thisStep, thisStep.getId());
         if(null == thisSteps || thisSteps.isEmpty()) thisSteps.add(thisStep);
         Boolean wasExecSuccess = null;
@@ -199,9 +212,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         // --------------------------------------
         // Save step execution state in a context
         // --------------------------------------
-        final String requestJsonAsString = thisStep.getRequest().toString();
+        final String requestJsonAsString = Optional.ofNullable(thisStep.getRequest()).orElse(NullNode.getInstance()).toString();
         StepExecutionState stepExecutionState = new StepExecutionState();
-        stepExecutionState.addStep(thisStep.getName());
+        stepExecutionState.addStep(thisStep);
         String resolvedRequestJson = zeroCodeAssertionsProcessor.resolveStringJson(
                 requestJsonAsString,
                 scenarioExecutionState.getResolvedScenarioState());
@@ -222,8 +235,20 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         String thisStepName = thisStep.getName();
 
         for (int retryCounter = 0; retryCounter < retryMaxTimes; retryCounter++) {
+            if(retryCounter > 0){
+                LOGGER.warn("\n\n------------>Retrying...[step][attempt-{}][executions-{}]:'{}' -> '{}'",
+                        retryCounter, (retryCounter+1), scenario.getScenarioName(), thisStep.getName());
+            }
             try {
-
+                if (retryCounter > 0 && !isEmpty(thisStep.getRetry().getWithSteps())) {
+                    for (String stepName : thisStep.getRetry().getWithSteps()) {
+                        Optional<StepExecutionState> retryWithStepExecState = scenarioExecutionState.getExecutedStepState(stepName);
+                        if (!retryWithStepExecState.isPresent()) {
+                            throw new RuntimeException("Invalid step to retry with : " + stepName + " has not been executed yet");
+                        }
+                        executeRetry(notifier, description, scenarioExecutionState, scenario, retryWithStepExecState.get().getStep());
+                    }
+                }
                 executionResult = executeApi(logPrefixRelationshipId, thisStep, resolvedRequestJson, scenarioExecutionState);
 
                 // logging response
@@ -234,30 +259,40 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .response(executionResult);
                 correlLogger.aResponseBuilder().customLog(thisStep.getCustomLog());
                 stepExecutionState.addResponse(executionResult);
-                scenarioExecutionState.addStepState(stepExecutionState.getResolvedStep());
+                scenarioExecutionState.addStepState(stepExecutionState);
+
+                // ---------------------------------
+                // Handle sort section
+                // ---------------------------------
+                if (!Objects.isNull(thisStep.getSort())) {
+                    executionResult = sorter.sortArrayAndReplaceInResponse(thisStep, executionResult, scenarioExecutionState.getResolvedScenarioState());
+                    correlLogger.customLog("Updated response: " + executionResult);
+                    stepExecutionState.addResponse(executionResult);
+                    scenarioExecutionState.addStepState(stepExecutionState);
+                }
 
                 // ---------------------------------
                 // Handle assertion section -START
                 // ---------------------------------
                 String resolvedAssertionJson = zeroCodeAssertionsProcessor.resolveStringJson(
-                        thisStep.getAssertions().toString(),
+                        Optional.ofNullable(thisStep.getAssertions()).orElse(NullNode.getInstance()).toString(),
                         scenarioExecutionState.getResolvedScenarioState()
                 );
 
                 // -----------------
                 // logging assertion
                 // -----------------
-                List<FieldAssertionMatcher> failureResults = compareStepResults(thisStep, executionResult, resolvedAssertionJson);
+                List<FieldAssertionMatcher> failureResults = compareStepResults(thisStep, executionResult, resolvedAssertionJson, scenarioExecutionState.getResolvedScenarioState());
 
                 if (!failureResults.isEmpty()) {
                     StringBuilder builder = new StringBuilder();
 
                     // Print expected Payload along with assertion errors
-                    builder.append("Assumed Payload: \n" + prettyPrintJson(resolvedAssertionJson) + "\n");
+                    builder.append("Assumed Payload: \n").append(prettyPrintJson(resolvedAssertionJson)).append("\n");
                     builder.append("Assertion Errors: \n");
 
                     failureResults.forEach(f -> {
-                        builder.append(f.toString() + "\n");
+                        builder.append(f.toString()).append("\n");
                     });
                     correlLogger.assertion(resolvedAssertionJson != null ? builder.toString() : expectedValidatorsAsJson(thisStep));
                 } else {
@@ -392,6 +427,13 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         // --------------------------------
         url = zeroCodeAssertionsProcessor.resolveStringJson(url, scenarioExecutionState.getResolvedScenarioState());
 
+        // ------------------------------------------------
+        // 1) Removed the MASKED wrapper for API execution (For logging)
+        // 2) Replace the MASKED field with masked content (For API executions)
+        // ------------------------------------------------
+        String resolvedRequestJsonMaskRemoved = zeroCodeAssertionsProcessor.fieldMasksRemoved(resolvedRequestJson);
+        String resolvedRequestJsonMaskApplied = zeroCodeAssertionsProcessor.fieldMasksApplied(resolvedRequestJson);
+
         final LocalDateTime requestTimeStamp = LocalDateTime.now();
 
         String executionResult;
@@ -406,9 +448,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .url(url)
                         .method(operationName)
                         .id(stepId)
-                        .request(prettyPrintJson(resolvedRequestJson));
+                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
 
-                executionResult = apiExecutor.executeHttpApi(url, operationName, resolvedRequestJson);
+                executionResult = apiExecutor.executeHttpApi(url, operationName, resolvedRequestJsonMaskRemoved);
                 break;
 
             case JAVA_CALL:
@@ -419,10 +461,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .id(stepId)
                         .url(url)
                         .method(operationName)
-                        .request(prettyPrintJson(resolvedRequestJson));
+                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
 
                 url = apiTypeUtils.getQualifiedJavaApi(url);
-                executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJson);
+                executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJsonMaskRemoved);
                 break;
 
             case KAFKA_CALL:
@@ -437,10 +479,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .url(url)
                         .method(operationName.toUpperCase())
                         .id(stepId)
-                        .request(prettyPrintJson(resolvedRequestJson));
+                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
 
                 String topicName = url.substring(KAFKA_TOPIC.length());
-                executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJson);
+                executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJsonMaskRemoved, scenarioExecutionState);
                 break;
 
             case NONE:
@@ -451,14 +493,14 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .id(stepId)
                         .url(url)
                         .method(operationName)
-                        .request(prettyPrintJson(resolvedRequestJson));
+                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
 
-                executionResult = prettyPrintJson(resolvedRequestJson);
+                executionResult = prettyPrintJson(resolvedRequestJsonMaskApplied);
                 break;
 
             default:
                 throw new RuntimeException("Oops! API Type Undecided. If it is intentional, " +
-                        "then keep the value as empty to receive the request in the response");
+                        "then keep the value as empty to receive the request as response");
         }
 
         return executionResult;
@@ -498,7 +540,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         if (null != wireMockServer) {
             wireMockServer.stop();
             wireMockServer = null;
-            LOGGER.info("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
+            LOGGER.debug("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
         }
     }
 
@@ -509,14 +551,16 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         return scenarioLoopTimes;
     }
 
-    private List<FieldAssertionMatcher> compareStepResults(Step thisStep, String actualResult, String expectedResult) {
+    private List<FieldAssertionMatcher> compareStepResults(Step thisStep, String actualResult, String expectedResult, String resolvedScenarioState) {
         List<FieldAssertionMatcher> failureResults = new ArrayList<>();
+
+        expectedResult = zeroCodeAssertionsProcessor.fieldMasksRemoved(expectedResult);
 
         // --------------------
         //  Validators (pyrest)
         // --------------------
-        if (ofNullable(thisStep.getValidators()).orElse(null) != null) {
-            failureResults = validator.validateFlat(thisStep, actualResult);
+        if (thisStep.getValidators() != null) {
+            failureResults = validator.validateFlat(thisStep, actualResult, resolvedScenarioState);
         }
 
         // ------------------------

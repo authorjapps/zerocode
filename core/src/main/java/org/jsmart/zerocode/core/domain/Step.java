@@ -5,10 +5,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-/**
+/*
  * Do not enable this @JsonIgnoreProperties(ignoreUnknown = true) as this will suppress the test data failure,
  * let it spit out the exception(s) in case of a bad json/test input
  */
@@ -22,6 +23,7 @@ public class Step {
     private final String url;
     private final JsonNode request;
     private final List<Validator> validators;
+    private final JsonNode sort;
     private final JsonNode assertions;
     private final String verifyMode;
     private final JsonNode verify;
@@ -65,6 +67,10 @@ public class Step {
 
     public List<Validator> getValidators() {
         return validators;
+    }
+
+    public JsonNode getSort() {
+        return sort;
     }
 
     public JsonNode getAssertions() {
@@ -138,6 +144,7 @@ public class Step {
             @JsonProperty("url") String url,
             @JsonProperty("request") JsonNode request,
             @JsonProperty("validators") List<Validator> validators,
+            @JsonProperty("sort") JsonNode sort,
             @JsonProperty("assertions") JsonNode assertions,
             @JsonProperty("verify") JsonNode verify,
             @JsonProperty("verifyMode") String verifyMode,
@@ -151,7 +158,8 @@ public class Step {
         this.method = method != null? method : operation;
         this.request = request;
         this.url = url;
-        this.assertions = assertions.isNull() ? verify : assertions;
+        this.sort = sort;
+        this.assertions = assertions == null || assertions.isNull() ? verify : assertions;
         this.verify = verify;
         this.ignoreStep = ignoreStep;
     }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import jakarta.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -14,9 +15,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
+
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
@@ -31,7 +34,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import javax.inject.Inject;
 
 import java.util.Map;
 
@@ -126,16 +128,43 @@ public class RestEndPointMockerTest {
                         .withHeader("Content-Type", APPLICATION_JSON)
                         .withBody(jsonBodyRequest)));
 
-        ApacheHttpClientExecutor httpClientExecutor = new ApacheHttpClientExecutor();
-        ClientRequest clientExecutor = httpClientExecutor.createRequest("http://localhost:9073" + mockStep.getUrl());
-        clientExecutor.setHttpMethod("GET");
-        ClientResponse serverResponse = clientExecutor.execute();
-
-        final String respBodyAsString = (String) serverResponse.getEntity(String.class);
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target("http://localhost:9073" + mockStep.getUrl());
+        Response response = target.request().get();
+        final String respBodyAsString = response.readEntity(String.class);
         JSONAssert.assertEquals(jsonBodyRequest, respBodyAsString, true);
 
         System.out.println("### zerocode: \n" + respBodyAsString);
 
+    }
+
+    @Test
+    public void willMockRequest_withAnyQueryParameters() throws Exception {
+
+        int WIRE_MOCK_TEST_PORT = 9077;
+
+        final MockStep mockGetRequest = mockSteps.getMocks().get(0);
+        String respBody = mockGetRequest.getResponse().get("body").toString();
+
+        createWithWireMock(mockSteps, WIRE_MOCK_TEST_PORT);
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet request = new HttpGet("http://localhost:" + WIRE_MOCK_TEST_PORT + mockGetRequest.getUrl() + "?param1=value1&param2=value2");
+        request.addHeader("key", "key-007");
+        request.addHeader("secret", "secret-007");
+        HttpResponse response = httpClient.execute(request);
+
+        final String responseBodyActual = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+        System.out.println("### response: \n" + responseBodyActual);
+        System.out.print(response);
+
+        assertThat(response.getStatusLine().getStatusCode(), is(200));
+        JSONAssert.assertEquals(respBody, responseBodyActual, true);
+
+        Assert.assertEquals("Content-Type", response.getEntity().getContentType().getName());
+        Assert.assertEquals("application/json", response.getEntity().getContentType().getValue());
+
+        getWireMockServer().stop();
     }
 
     @Test

@@ -1,0 +1,56 @@
+{
+  "scenarioName": "Call methods with multiple arguments",
+  "steps": [
+    {
+      "name": "sample method 1",
+      "url": "org.jsmart.zerocode.zerocodejavaexec.SampleMethods",
+      "method": "sampleMultiArgMethod1",
+      "request": {
+        "0" : "arg1",
+        "1" : "arg2"
+      },
+      "assertions": {
+        "0" : "arg1",
+        "1" : "arg2"
+      }
+    },
+    {
+      "name": "sample method 2",
+      "url": "org.jsmart.zerocode.zerocodejavaexec.SampleMethods",
+      "method": "sampleMultiArgMethod2",
+      "request": {
+        "0" : "arg1",
+        "1" : {
+          "key1" : "value1",
+          "key2" : "value2"
+        }
+      },
+      "assertions": {
+        "0" : "arg1",
+        "1" : {
+          "key1" : "value1",
+          "key2" : "value2"
+        }
+      }
+    },
+    {
+      "name": "sample method 3",
+      "url": "org.jsmart.zerocode.zerocodejavaexec.SampleMethods",
+      "method": "sampleMultiArgMethod3",
+      "request": {
+        "0" : "arg1",
+        "1" : {
+          "arg1" : "value1",
+          "arg2" : "value2"
+        }
+      },
+      "assertions": {
+        "0" : "arg1",
+        "1" : {
+          "arg1" : "value1",
+          "arg2" : "value2"
+        }
+      }
+    }
+  ]
+}

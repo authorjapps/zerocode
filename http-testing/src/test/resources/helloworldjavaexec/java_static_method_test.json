@@ -1,0 +1,24 @@
+{
+  "scenarioName": "Call static method",
+  "steps": [
+    {
+      "name": "sample static method 1",
+      "url": "org.jsmart.zerocode.zerocodejavaexec.SampleMethods",
+      "method": "sampleStaticMethod",
+      "request": {
+        "0" : "arg1",
+        "1" : "arg2"
+      },
+      "assertions": {
+        "0" : "arg1",
+        "1" : "arg2"
+      }
+    },
+    {
+      "name": "calling existing method",
+      "url": "java.lang.System",
+      "method": "currentTimeMillis",
+      "assertions": "$NOT.NULL"
+    }
+  ]
+}

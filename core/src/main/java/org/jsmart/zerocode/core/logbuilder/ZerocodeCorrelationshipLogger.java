@@ -16,6 +16,7 @@ import static java.time.LocalDateTime.now;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_FAIL;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_PASS;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TEST_STEP_CORRELATION_ID;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksReplaced;
 
 public class ZerocodeCorrelationshipLogger {
     private static final String DISPLAY_DEMARCATION_ = "\n--------- " + TEST_STEP_CORRELATION_ID + " %s ---------";
@@ -139,11 +140,12 @@ public class ZerocodeCorrelationshipLogger {
         buildResponseDelay();
 
         String customLog = responseLogBuilder.getCustomLog();
+        String assertionsWithMaskRemoved = getMasksReplaced(responseLogBuilder.getAssertion());
         logger.warn(format("%s %s \n*Response delay:%s milli-secs \n%s \n%s \n-done-\n",
                 requestLogBuilder.toString(),
                 responseLogBuilder.toString(),
                 responseDelay,
-                "---------> Expected Response: <----------\n" + responseLogBuilder.getAssertion(),
+                "---------> Expected Response: <----------\n" + assertionsWithMaskRemoved,
                 customLog == null ? "" : "---------> Custom Log: <----------\n" +customLog
                 )
         );

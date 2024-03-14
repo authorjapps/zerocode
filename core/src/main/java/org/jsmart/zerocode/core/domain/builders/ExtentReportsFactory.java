@@ -1,7 +1,8 @@
 package org.jsmart.zerocode.core.domain.builders;
 
 import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -14,14 +15,14 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ExtentReportsFactory {
     private static final org.slf4j.Logger LOGGER = getLogger(ExtentReportsFactory.class);
 
-    private static ExtentHtmlReporter extentHtmlReporter;
+    private static ExtentSparkReporter extentSparkReporter;
 
     private static ExtentReports extentReports;
 
     private static Map<Object, String> systemProperties = new HashMap<>();
 
     public static ExtentReports createReportTheme(String reportFileName) {
-        ExtentHtmlReporter extentHtmlReporter = createExtentHtmlReporter(reportFileName);
+        ExtentSparkReporter extentHtmlReporter = createExtentHtmlReporter(reportFileName);
 
         extentReports = new ExtentReports();
 
@@ -40,7 +41,10 @@ public class ExtentReportsFactory {
         final String javaVersion = systemProperties.get("java.version");
         final String javaVendor = systemProperties.get("java.vendor");
 
-        LOGGER.info("Where were the tests fired? Ans: OS:{}, Architecture:{}, Java:{}, Vendor:{}",
+        LOGGER.debug("System Info: OS:{}, Architecture:{}, Java:{}, Vendor:{}",
+                osName, osArchitecture, javaVersion, javaVendor);
+
+        LOGGER.debug("Where were the tests fired? Ans: OS:{}, Architecture:{}, Java:{}, Vendor:{}",
                 osName, osArchitecture, javaVersion, javaVendor);
 
         extentReports.setSystemInfo("OS : ", osName);
@@ -49,14 +53,14 @@ public class ExtentReportsFactory {
         extentReports.setSystemInfo("Java Vendor : ", javaVendor);
     }
 
-    public static ExtentHtmlReporter createExtentHtmlReporter(String reportFileName) {
-        extentHtmlReporter = new ExtentHtmlReporter(reportFileName);
+    public static ExtentSparkReporter createExtentHtmlReporter(String reportFileName) {
+        extentSparkReporter = new ExtentSparkReporter(reportFileName);
 
 
-        extentHtmlReporter.config().setDocumentTitle(REPORT_TITLE_DEFAULT);
-        extentHtmlReporter.config().setReportName(REPORT_DISPLAY_NAME_DEFAULT);
+        extentSparkReporter.config().setDocumentTitle(REPORT_TITLE_DEFAULT);
+        extentSparkReporter.config().setReportName(REPORT_DISPLAY_NAME_DEFAULT);
 
-        return extentHtmlReporter;
+        return extentSparkReporter;
     }
 
 
@@ -85,11 +89,11 @@ public class ExtentReportsFactory {
     }
 
     public static void reportName(String reportName) {
-        extentHtmlReporter.config().setReportName(reportName);
+        extentSparkReporter.config().setReportName(reportName);
     }
 
     public static String getReportName() {
-        return extentHtmlReporter.config().getReportName();
+        return extentSparkReporter.config().getReportName();
     }
 
 }

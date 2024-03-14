@@ -1,9 +1,8 @@
 package org.jsmart.zerocode.core.di.provider;
 
+import jakarta.inject.Provider;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
-
-import javax.inject.Provider;
 
 public class DefaultGuiceHttpClientProvider implements Provider<BasicHttpClient> {
 

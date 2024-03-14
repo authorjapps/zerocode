@@ -20,7 +20,7 @@ public class UrlQueryParamsUtils {
                 uriBuilder.addParameter(key, nullSafeQueryParams.get(key).toString())
         );
         String composedURL = uriBuilder.build().toString();
-        LOGGER.info("### Effective url is : {}", composedURL);
+        LOGGER.debug("### Effective url is : {}", composedURL);
         return composedURL;
     }
 }

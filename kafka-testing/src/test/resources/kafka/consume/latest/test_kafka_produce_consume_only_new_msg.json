@@ -1,0 +1,35 @@
+{
+    "scenarioName": "Simple produce and consume - only the new message",
+    "steps": [
+        {
+            "name": "send_to_kafka",
+            "url": "kafka-topic:local-demo-topic",
+            "operation": "PRODUCE",
+            "request": {
+                "records":[
+                    {
+                        "key": "${RANDOM.NUMBER}",
+                        "value": "Hello - A New Message 101"
+                    }
+                ]
+            },
+            "assertions": {
+                "status" : "Ok"
+            }
+        },
+        {
+            "name": "get_from_kafka",
+            "url": "kafka-topic:local-demo-topic",
+            "operation": "CONSUME",
+            "request": {
+                "consumerLocalConfigs": {
+                    "maxNoOfRetryPollsOrTimeouts": 3,
+                    "commitSync": true
+                }
+            },
+            "assertions": {
+                "size" : "$GT.0"
+            }
+        }
+    ]
+}

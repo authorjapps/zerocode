@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.apache.commons.lang.StringUtils;
-import org.jboss.resteasy.client.ClientRequest;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ public class HelperJsonUtils {
     }
 
     public static Map<String, Object> readObjectAsMap(Object jsonContent) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map;
         try {
             map = mapper.readValue(jsonContent.toString(), HashMap.class);
         } catch (IOException exx) {
@@ -91,13 +91,6 @@ public class HelperJsonUtils {
         String formattedStr = SmartUtils.prettyPrintJson(assertJson);
 
         return formattedStr;
-    }
-
-    private void setRequestHeaders(Object headers, ClientRequest clientExecutor) {
-        Map<String, Object> headersMap = HelperJsonUtils.readObjectAsMap(headers);
-        for (Object key : headersMap.keySet()) {
-            clientExecutor.header((String) key, headersMap.get(key));
-        }
     }
 
     public static String javaObjectAsString(Object value) {
@@ -155,7 +148,7 @@ public class HelperJsonUtils {
         try {
             return mapper.writeValueAsString(payload);
         } catch (JsonProcessingException ex) {
-            LOGGER.debug("Exception while reading payload - " + ex);
+            LOGGER.error("Exception while reading payload - " + ex);
             throw new RuntimeException(ex);
         }
     }
@@ -164,7 +157,7 @@ public class HelperJsonUtils {
         try {
             return JsonPath.read(requestJson, jsonPath);
         } catch (PathNotFoundException pEx) {
-            LOGGER.debug("No " + jsonPath + " was present in the request. returned null.");
+            LOGGER.warn("No " + jsonPath + " was present in the request. returned null.");
             return null;
         }
     }

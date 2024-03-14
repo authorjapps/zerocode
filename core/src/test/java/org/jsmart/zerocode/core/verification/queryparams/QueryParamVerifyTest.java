@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 @HostProperties(host="http://localhost", port=9998, context = "")
 @RunWith(TestOnlyZeroCodeUnitRunner.class)
 public class QueryParamVerifyTest {
-    
+
     /**
      * Mock end points are in test/resources: simulators/test_purpose_end_points.json
      */
@@ -17,7 +17,7 @@ public class QueryParamVerifyTest {
     @Test
     @JsonTestCase("integration_test_files/query_params/request_with_query_paramas_map_test.json")
     public void testQueryParamsAsMap() throws Exception {
-    
+
     }
 
 }

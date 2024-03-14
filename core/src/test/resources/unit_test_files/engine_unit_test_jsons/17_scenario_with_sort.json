@@ -1,0 +1,70 @@
+{
+    "scenarioName": "Sort array test",
+    "steps": [
+        {
+            "name": "StepNameWithStringField",
+            "url": "/persons",
+            "operation": "GET",
+            "request": {
+                "body": {
+                    "persons": [
+                        {
+                            "name": "Ihor"
+                        },
+                        {
+                            "name": "Andrew"
+                        }
+                    ]
+                }
+            },
+            "sort": {
+                "key": "name",
+                "order": "natural",
+                "path": "$.body.persons"
+            }
+        },
+        {
+            "name": "StepNameWithIntegerFieldAndReverseOrder",
+            "url": "/persons",
+            "operation": "GET",
+            "request": {
+                "body": {
+                    "persons": [
+                        {
+                            "id": 1
+                        },
+                        {
+                            "id": 2
+                        }
+                    ]
+                }
+            },
+            "sort": {
+                "key": "id",
+                "order": "reverse",
+                "path": "$.body.persons"
+            }
+        },
+        {
+            "name": "StepNameWithDefaultOrder",
+            "url": "/persons",
+            "operation": "GET",
+            "request": {
+                "body": {
+                    "persons": [
+                        {
+                            "id": 2
+                        },
+                        {
+                            "id": 1
+                        }
+                    ]
+                }
+            },
+            "sort": {
+                "key": "id",
+                "path": "$.body.persons"
+            }
+        }
+    ]
+}

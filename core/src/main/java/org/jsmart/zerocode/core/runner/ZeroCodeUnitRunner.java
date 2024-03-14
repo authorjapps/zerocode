@@ -20,7 +20,7 @@ import org.jsmart.zerocode.core.domain.UseHttpClient;
 import org.jsmart.zerocode.core.domain.UseKafkaClient;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
-import org.jsmart.zerocode.core.engine.listener.ZeroCodeTestReportListener;
+import org.jsmart.zerocode.core.engine.listener.TestUtilityListener;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
@@ -70,8 +70,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     /**
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
-     * @param klass
-     * @throws InitializationError if the test class is malformed.
+     * klass:
+     * InitializationError if the test class is malformed.
      */
     public ZeroCodeUnitRunner(Class<?> klass) throws InitializationError {
         super(klass);
@@ -97,9 +97,9 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(RunNotifier notifier) {
-        RunListener reportListener = createReportListener();
+        RunListener reportListener = createTestUtilityListener();
 
-        LOGGER.info("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
+        LOGGER.debug("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
         if (!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
             notifier.addListener(reportListener);
         }
@@ -193,8 +193,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
      * End User experience can be enhanced via this
      * @return An instance of the Junit RunListener
      */
-    protected RunListener createReportListener() {
-        return getMainModuleInjector().getInstance(ZeroCodeTestReportListener.class);
+    protected RunListener createTestUtilityListener() {
+        return getMainModuleInjector().getInstance(TestUtilityListener.class);
     }
 
     protected SmartUtils getInjectedSmartUtilsClass() {
@@ -230,7 +230,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         testRunCompleted = true;
 
         if (passed) {
-            LOGGER.info(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
+            LOGGER.debug(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
                     child.getScenarioName(),
                     child.getSteps().stream()
                             .map(step -> step.getName() == null ? step.getId() : step.getName())
@@ -278,7 +278,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     private final void runLeafJUnitTest(Statement statement, Description description,
                                         RunNotifier notifier) {
-        LOGGER.info("Running a pure JUnit test...");
+        LOGGER.debug("Running a pure JUnit test...");
 
         EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
         eachNotifier.fireTestStarted();
@@ -288,7 +288,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         try {
             statement.evaluate();
             passed = true;
-            LOGGER.info("JUnit test passed = {} ", passed);
+            LOGGER.debug("JUnit test passed = {} ", passed);
 
         } catch (AssumptionViolatedException e) {
             passed = false;
@@ -303,7 +303,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             eachNotifier.addFailure(e);
 
         } finally {
-            LOGGER.info("JUnit test run completed. See the results in the console or log.  passed = {}", passed);
+            LOGGER.debug("JUnit test run completed. See the results in the console or log.  passed = {}", passed);
             prepareResponseReport(logPrefixRelationshipId);
             buildReportAndPrintToFile(description);
 
@@ -322,7 +322,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
     private void prepareResponseReport(String logPrefixRelationshipId) {
         LocalDateTime timeNow = LocalDateTime.now();
-        LOGGER.info("JUnit *responseTimeStamp:{}, \nJUnit Response:{}", timeNow, logPrefixRelationshipId);
+        LOGGER.debug("JUnit *responseTimeStamp:{}, \nJUnit Response:{}", timeNow, logPrefixRelationshipId);
         corrLogger.aResponseBuilder()
                 .relationshipId(logPrefixRelationshipId)
                 .responseTimeStamp(timeNow);
@@ -341,7 +341,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
                 .relationshipId(logPrefixRelationshipId)
                 .requestTimeStamp(timeNow)
                 .step(description.getMethodName());
-        LOGGER.info("JUnit *requestTimeStamp:{}, \nJUnit Request:{}", timeNow, logPrefixRelationshipId);
+        LOGGER.debug("JUnit *requestTimeStamp:{}, \nJUnit Request:{}", timeNow, logPrefixRelationshipId);
         return logPrefixRelationshipId;
     }
 

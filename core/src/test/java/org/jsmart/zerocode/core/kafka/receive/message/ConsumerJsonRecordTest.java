@@ -22,22 +22,24 @@ public class ConsumerJsonRecordTest {
     @Test
     public void testSer() throws IOException {
         // TODO: Use assert iso sysout
-        String key = "key1";
+        JsonNode key = objectMapper.readTree("\"key1\"");
         JsonNode value = objectMapper.readTree("\"val1\"");
 
-        ConsumerJsonRecord<Object> record = new ConsumerJsonRecord<>(key, null, value, null);
+        ConsumerJsonRecord record = new ConsumerJsonRecord(key, value, null);
         String json = objectMapper.writeValueAsString(record);
         System.out.println("1 json >> " + json);
 
 
-        Integer key1 = 123;
-        record = new ConsumerJsonRecord<>(key1, null, value, null);
+        JsonNode key1 = objectMapper.readTree("123");
+
+        record = new ConsumerJsonRecord(key1, value, null);
         json = objectMapper.writeValueAsString(record);
         System.out.println("1 json >> " + json);
 
 
-        Object key2 = 23.45;
-        record = new ConsumerJsonRecord<>(key2, null, value, null);
+        JsonNode key2 = objectMapper.readTree("23.45");
+
+        record = new ConsumerJsonRecord(key2, value, null);
         json = objectMapper.writeValueAsString(record);
         System.out.println("2 json >> " + json);
     }
@@ -45,17 +47,18 @@ public class ConsumerJsonRecordTest {
     @Test
     public void should_serialize_a_record_with_headers() throws JsonProcessingException {
         // given
+        JsonNode key = objectMapper.readTree("123");
         JsonNode value = objectMapper.readTree("\"val\"");
         Map<String, String> headers = new HashMap<>();
         headers.put("hKey", "hValue");
         headers.put("hKeyWithNullValue", null);
-        ConsumerJsonRecord<Object> record = new ConsumerJsonRecord<>("123", null, value, headers);
+        ConsumerJsonRecord record = new ConsumerJsonRecord(key, value, headers);
 
         // when
         String json = objectMapper.writeValueAsString(record);
 
         // then
-        assertThat(json, CoreMatchers.equalTo("{\"key\":\"123\",\"jsonKey\":null,\"value\":\"val\",\"headers\":{\"hKey\":\"hValue\",\"hKeyWithNullValue\":null}}"));
+        assertThat(json, CoreMatchers.equalTo("{\"key\":123,\"value\":\"val\",\"headers\":{\"hKey\":\"hValue\",\"hKeyWithNullValue\":null}}"));
     }
 
     @Test

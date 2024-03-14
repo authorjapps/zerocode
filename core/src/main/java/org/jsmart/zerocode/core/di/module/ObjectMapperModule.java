@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
+import jakarta.inject.Singleton;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
-import javax.inject.Singleton;
 import org.jsmart.zerocode.core.di.provider.YamlObjectMapperProvider;
 
 public class ObjectMapperModule implements Module {

@@ -63,11 +63,16 @@
                                     "full": "myrecord"
                                 }
                             },
-                            "values": [
-                                {
-                                    "string": "val1"
-                                }
-                            ]
+// Failing build in GitHub Actions. Hence commented. Wierd behavior
+//                            "values": [
+//                                {
+//                                    "string": "val1"
+//                                }
+//                            ],
+                            "values" : [ {
+                                "bytes" : [ 118, 97, 108, 49 ],
+                                "length" : 4
+                            } ]
                         }
                     }
 

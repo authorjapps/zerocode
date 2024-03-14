@@ -1,29 +1,41 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.jayway.jsonpath.JsonPath;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static com.jayway.jsonpath.JsonPath.read;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import org.hamcrest.core.Is;
+import org.jsmart.zerocode.TestUtility;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
+import org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens;
 import org.jsmart.zerocode.core.utils.SmartUtils;
+import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
+import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
+import org.junit.Assert;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ZeroCodeAssertionsProcessorImplTest {
     @Rule
@@ -147,6 +159,53 @@ public class ZeroCodeAssertionsProcessorImplTest {
         assertThat(resolvedSpecWithPaths, containsString("\"firstName2\": \"FIRST_NAME\""));
         assertThat(resolvedSpecWithPaths, containsString("\"actualName\": \"ANOTHER_NAME\""));
         assertThat(resolvedSpecWithPaths, containsString("\"noOfAddresses\": \"2\""));
+    }
+
+    @Test
+    public void willResolveAndTypeCast_SingleDimentionArrayElements_FromScenarioState() throws Exception {
+        String specAsString =
+                smartUtils.getJsonDocumentAsString(
+                        "unit_test_files/test_engine/02_2_resolve_typecast_in_single_dimention_arraylist_assertion.json");
+
+        final List<String> jsonPaths = jsonPreProcessor.getAllJsonPathTokens(specAsString);
+        assertThat(jsonPaths.size(), is(6));
+
+        String scenarioState =
+                "{\n"
+                        + "    \"step1\": {\n"
+                        + "        \"request\": {\n"
+                        + "            \"body\": {\n"
+                        + "                \"customer\": {\n"
+                        + "\"ids\": [\n" +
+                        "              10101,\n" +
+                        "              10102\n" +
+                        "            ],"
+                        + "                    \"firstName\": \"FIRST_NAME\",\n"
+                        + "                    \"staticName\": \"ANOTHER_NAME\",\n"
+                        + "                    \"addresses\":[\"office-1\", \"home-2\"]\n"
+                        + "                }\n"
+                        + "            }\n"
+                        + "        },\n"
+                        + "        \"response\": {\n"
+                        + "            \"id\": 10101\n"
+                        + "        }\n"
+                        + "    }\n"
+                        + "}";
+        final String resolvedSpecWithPaths =
+                jsonPreProcessor.resolveStringJson(specAsString, scenarioState);
+        System.out.println("resolvedSpecWithPaths ==> " + resolvedSpecWithPaths);
+
+        Object jsonPathValue = JsonPath.read(resolvedSpecWithPaths,
+                "$.steps[1].request.body.Customer.accounts[0]");
+
+        assertThat(jsonPathValue.getClass().getName(), is("java.lang.String"));
+
+        assertThat(resolvedSpecWithPaths, containsString("\"staticName\":\"abcde\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"firstName\":\"FIRST_NAME\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"firstName2\":\"FIRST_NAME\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"actualName\":\"ANOTHER_NAME\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"noOfAddresses\":\"2\""));
+        assertThat(resolvedSpecWithPaths, containsString("\"accounts\":[\"10101\",\"10102\"]"));
     }
 
     @Test
@@ -1401,5 +1460,172 @@ public class ZeroCodeAssertionsProcessorImplTest {
         expectedException.expectMessage("Index: 3, Size: 2");
         expectedException.expect(IndexOutOfBoundsException.class);
         jsonPreProcessor.resolveLeafOnlyNodeValue(scenarioState, paramMap, thisPath);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void test_wrongJsonPathBy_JSONCONTENT_Exception() throws JsonProcessingException {
+        String jsonAsString = readJsonAsString("unit_test_files/json_content_unit_test/json_step_test_wrong_json_path.json");
+        Map<String, Object> map = mapper.readValue(jsonAsString, new TypeReference<Map<String, Object>>() {});
+
+        jsonPreProcessor.digReplaceContent(map, new ScenarioExecutionState());
+    }
+
+    @Test
+    public void test_JSONCONTENT_leafNode() throws IOException {
+        ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
+
+        final StepExecutionState step1 =  createStepWithRequestAndResponse("create_emp", "\"body\" : {\n    \"id\" : 39001,\n    \"ldapId\" : \"emmanorton\"\n  }\n}\n  }");
+        scenarioExecutionState.addStepState(step1);
+
+        ScenarioSpec scenarioSpec =
+            smartUtils.scenarioFileToJava(
+                "unit_test_files/json_content_unit_test/json_step_test_json_content.json", ScenarioSpec.class);
+        Step thisStep = scenarioSpec.getSteps().get(1);
+        JsonNode stepNode = mapper.convertValue(thisStep, JsonNode.class);
+        Map<String, Object> map = mapper.readValue(stepNode.toString(), new TypeReference<Map<String, Object>>() {});
+
+        jsonPreProcessor.digReplaceContent(map, scenarioExecutionState);
+
+        String jsonResult = mapper.writeValueAsString(map);
+
+        assertThat(JsonPath.read(jsonResult, "$.request.body.addressId"), is(39001));
+    }
+
+
+    @Test
+    public void test_JSONCONTENT_stringArray() throws IOException {
+        ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
+
+        final StepExecutionState step1 =  createStepWithRequestAndResponse("create_emp", "\"body\": {\"id\": 38001,\n     \"names\": [\"test1\", \"test2\"]\n}");
+        scenarioExecutionState.addStepState(step1);
+
+        ScenarioSpec scenarioSpec =
+            smartUtils.scenarioFileToJava(
+                "unit_test_files/json_content_unit_test/json_step_test_json_content_array.json", ScenarioSpec.class);
+        Step thisStep = scenarioSpec.getSteps().get(1);
+        JsonNode stepNode = mapper.convertValue(thisStep, JsonNode.class);
+        Map<String, Object> map = mapper.readValue(stepNode.toString(), new TypeReference<Map<String, Object>>() {});
+
+        jsonPreProcessor.digReplaceContent(map, scenarioExecutionState);
+
+        String jsonResult = mapper.writeValueAsString(map);
+
+        String result = "[\"test1\",\"test2\"]";
+
+        Object jsonPathValue = JsonPath.read(jsonResult,
+            "$.request.body.names");
+
+        Assert.assertEquals(result, jsonPathValue.toString());
+    }
+
+    @Test
+    public void test_JSONCONTENT_objectArray() throws IOException {
+        ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
+        /**
+         * {
+         *     "id": 38001,
+         *     "allAddresses": [
+         *         {
+         *             "type": "Home",
+         *             "line1": "North Lon",
+         *             "id": 43
+         *         },
+         *         {
+         *             "type": "Office",
+         *             "line1": "Central Lon"
+         *         }
+         *     ]
+         * }
+         */
+        final StepExecutionState step1 =  createStepWithRequestAndResponse("create_emp",
+                "\"body\": {\"id\": 38001, \"allAddresses\": [{\"type\": \"Home\", \"line1\": \"North Lon\", \"id\": 47}, {\"type\": \"Office\", \"line1\": \"Central Lon\"}]}");
+        scenarioExecutionState.addStepState(step1);
+
+        ScenarioSpec scenarioSpec =
+            smartUtils.scenarioFileToJava(
+                "unit_test_files/json_content_unit_test/json_step_test_json_content_objectarray.json", ScenarioSpec.class);
+
+        Step thisStep = scenarioSpec.getSteps().get(1);
+        JsonNode stepNode = mapper.convertValue(thisStep, JsonNode.class);
+        Map<String, Object> map = mapper.readValue(stepNode.toString(), new TypeReference<Map<String, Object>>() {});
+
+        jsonPreProcessor.digReplaceContent(map, scenarioExecutionState);
+
+        String jsonResult = mapper.writeValueAsString(map);
+
+        assertThat(JsonPath.read(jsonResult, "$.request.body.allAddresses[0].id"), is(47));
+        assertThat(JsonPath.read(jsonResult, "$.request.body.allAddresses[0].type"), is("Home"));
+        assertThat(JsonPath.read(jsonResult, "$.request.body.allAddresses[1].type"), is("Office"));
+        assertThat(JsonPath.read(jsonResult, "$.request.body.allAddresses[0].line1"), is("North Lon"));
+        assertThat(JsonPath.read(jsonResult, "$.request.body.allAddresses[1].line1"), is("Central Lon"));
+    }
+
+    @Test
+    public void test_JSONCONTENT_jsonBlock() throws IOException {
+        ScenarioExecutionState scenarioExecutionState = new ScenarioExecutionState();
+
+        final StepExecutionState step1 =  createStepWithRequestAndResponse("create_emp",
+                "\"body\": {\n" +
+                        "    \"id\": 38001,\n" +
+                        "    \"address\": {\n" +
+                        "        \"type\": \"Home\",\n" +
+                        "        \"line1\": \"River Side\"\n" +
+                        "    }\n" +
+                        "}");
+        scenarioExecutionState.addStepState(step1);
+
+        ScenarioSpec scenarioSpec =
+            smartUtils.scenarioFileToJava(
+                "unit_test_files/json_content_unit_test/json_step_test_json_content_block.json", ScenarioSpec.class);
+        Step thisStep = scenarioSpec.getSteps().get(1);
+        JsonNode stepNode = mapper.convertValue(thisStep, JsonNode.class);
+        Map<String, Object> map = mapper.readValue(stepNode.toString(), new TypeReference<Map<String, Object>>() {});
+
+        jsonPreProcessor.digReplaceContent(map, scenarioExecutionState);
+
+        String jsonResult = mapper.writeValueAsString(map);
+
+        assertThat(JsonPath.read(jsonResult, "$.request.body.address.type"), is("Home"));
+        assertThat(JsonPath.read(jsonResult, "$.request.body.address.line1"), is("River Side"));
+    }
+
+    @Test
+    public void test_NoJSONContentCheckDigNeeded() throws IOException {
+        String jsonAsString = readJsonAsString("unit_test_files/json_content_unit_test/json_step_no_json_content_test.json");
+        Step step = mapper.readValue(jsonAsString, Step.class);
+        assertThat(checkDigNeeded(mapper, step, ZeroCodeValueTokens.JSON_CONTENT), Is.is(false));
+
+
+        ScenarioSpec scenarioSpec =
+            smartUtils.scenarioFileToJava(
+                "unit_test_files/json_content_unit_test/json_step_test_json_content.json", ScenarioSpec.class);
+        step = scenarioSpec.getSteps().get(1);
+        assertThat(checkDigNeeded(mapper, step, ZeroCodeValueTokens.JSON_CONTENT), Is.is(true));
+    }
+
+    @Test
+    public void test_textNode() throws IOException {
+        String jsonAsString = readJsonAsString("unit_test_files/filebody_unit_test/json_step_text_request.json");
+        Step step = mapper.readValue(jsonAsString, Step.class);
+
+        jsonPreProcessor.resolveJsonContent(step, new ScenarioExecutionState());
+        String resultJsonStep = mapper.writeValueAsString(step);
+
+        assertThat(read(resultJsonStep, "$.request"), Is.is("I am a simple text"));
+    }
+
+
+    protected StepExecutionState createStepWithRequestAndResponse(String stepName, String body) {
+        StepExecutionState stepExecutionState = new StepExecutionState();
+        stepExecutionState.addStep(TestUtility.createDummyStep(stepName));
+        stepExecutionState.addRequest("{\n" +
+                "    \"customer\": {\n" +
+                "        \"firstName\": \"FIRST_NAME\"\n" +
+                "    }\n" +
+                "}");
+        stepExecutionState.addResponse("{\n" +
+                body +
+                "}");
+        return stepExecutionState;
     }
 }

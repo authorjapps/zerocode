@@ -6,18 +6,14 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.net.URL;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.jsmart.zerocode.core.di.provider.GsonSerDeProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
+import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessorImpl;
 import org.jsmart.zerocode.core.kafka.delivery.DeliveryDetails;
 import org.jsmart.zerocode.core.kafka.send.message.ProducerJsonRecord;
 import org.jsmart.zerocode.core.kafka.send.message.ProducerJsonRecords;
@@ -25,11 +21,18 @@ import org.jsmart.zerocode.core.kafka.send.message.ProducerRawRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.net.URL;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.FAILED;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.OK;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.JSON;
-import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.PROTO;
+import static org.jsmart.zerocode.core.kafka.KafkaConstants.RAW;
 import static org.jsmart.zerocode.core.kafka.KafkaConstants.RECORD_TYPE_JSON_PATH;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.createProducer;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaProducerHelper.prepareJsonRecordToSend;
@@ -46,10 +49,13 @@ public class KafkaSender {
     @Named("kafka.producer.properties")
     private String producerPropertyFile;
 
+    @Inject
+    private ZeroCodeAssertionsProcessorImpl zeroCodeAssertionsProcessor;
+
     private final ObjectMapper objectMapper = new ObjectMapperProvider().get();
     private final Gson gson = new GsonSerDeProvider().get();
 
-    public String send(String brokers, String topicName, String requestJson) throws JsonProcessingException {
+    public String send(String brokers, String topicName, String requestJson, ScenarioExecutionState scenarioExecutionState) throws JsonProcessingException {
         Producer<?, ?> producer = createProducer(brokers, producerPropertyFile);
         String deliveryDetails = null;
 
@@ -70,23 +76,23 @@ public class KafkaSender {
                             String line;
                             for (int i = 0; (line = br.readLine()) != null; i++) {
                                 ProducerRecord record = gson.fromJson(line, ProducerRecord.class);
-                                LOGGER.info("From file:'{}', Sending record number: {}\n", fileName, i);
+                                LOGGER.debug("From file:'{}', Sending record number: {}\n", fileName, i);
                                 deliveryDetails = sendRaw(topicName, producer, record, rawRecords.getAsync());
                             }
-                        } catch(Throwable ex) {
+                        } catch (Throwable ex) {
                             throw new RuntimeException(ex);
                         }
                     } else {
                         List<ProducerRecord> records = rawRecords.getRecords();
                         validateProduceRecord(records);
                         for (int i = 0; i < records.size(); i++) {
-                            LOGGER.info("Sending record number: {}\n", i);
+                            LOGGER.debug("Sending record number: {}\n", i);
                             deliveryDetails = sendRaw(topicName, producer, records.get(i), rawRecords.getAsync());
                         }
                     }
 
                     break;
-                case PROTO:    
+                case PROTO:
                 case JSON:
                     jsonRecords = objectMapper.readValue(requestJson, ProducerJsonRecords.class);
 
@@ -96,16 +102,18 @@ public class KafkaSender {
                         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                             String line;
                             for (int i = 0; (line = br.readLine()) != null; i++) {
+                                line = zeroCodeAssertionsProcessor.resolveStringJson(line,
+                                        scenarioExecutionState.getResolvedScenarioState());
                                 ProducerJsonRecord record = objectMapper.readValue(line, ProducerJsonRecord.class);
-                                LOGGER.info("From file:'{}', Sending record number: {}\n", fileName, i);
-                                deliveryDetails = sendJson(topicName, producer, record, jsonRecords.getAsync(),recordType,requestJson);
+                                LOGGER.debug("From file:'{}', Sending record number: {}\n", fileName, i);
+                                deliveryDetails = sendJson(topicName, producer, record, jsonRecords.getAsync(), recordType, requestJson);
                             }
                         }
                     } else {
                         List<ProducerJsonRecord> records = jsonRecords.getRecords();
                         validateProduceRecord(records);
                         for (int i = 0; i < records.size(); i++) {
-                            deliveryDetails = sendJson(topicName, producer, records.get(i), jsonRecords.getAsync(),recordType,requestJson);
+                            deliveryDetails = sendJson(topicName, producer, records.get(i), jsonRecords.getAsync(), recordType, requestJson);
                         }
                     }
 
@@ -135,21 +143,21 @@ public class KafkaSender {
 
         RecordMetadata metadata;
         if (Boolean.TRUE.equals(isAsync)) {
-            LOGGER.info("Asynchronous Producer sending record - {}", qualifiedRecord);
+            LOGGER.debug("Asynchronous Producer sending record - {}", qualifiedRecord);
             metadata = (RecordMetadata) producer.send(qualifiedRecord, new ProducerAsyncCallback()).get();
         } else {
-            LOGGER.info("Synchronous Producer sending record - {}", qualifiedRecord);
+            LOGGER.debug("Synchronous Producer sending record - {}", qualifiedRecord);
             metadata = (RecordMetadata) producer.send(qualifiedRecord).get();
         }
 
-        LOGGER.info("Record was sent to partition- {}, with offset- {} ", metadata.partition(), metadata.offset());
+        LOGGER.debug("Record was sent to partition- {}, with offset- {} ", metadata.partition(), metadata.offset());
 
         // --------------------------------------------------------------
         // Logs deliveryDetails, which shd be good enough for the caller
         // TODO- combine deliveryDetails into a list n return (if needed)
         // --------------------------------------------------------------
         String deliveryDetails = gson.toJson(new DeliveryDetails(OK, metadata));
-        LOGGER.info("deliveryDetails- {}", deliveryDetails);
+        LOGGER.debug("deliveryDetails- {}", deliveryDetails);
         return deliveryDetails;
     }
 
@@ -159,36 +167,35 @@ public class KafkaSender {
                             Boolean isAsync,
                             String recordType,
                             String requestJson) throws InterruptedException, ExecutionException {
-        ProducerRecord record = prepareJsonRecordToSend(topicName, recordToSend,recordType, requestJson);
+        ProducerRecord record = prepareJsonRecordToSend(topicName, recordToSend, recordType, requestJson);
 
         RecordMetadata metadata;
         if (Boolean.TRUE.equals(isAsync)) {
-            LOGGER.info("Asynchronous - Producer sending JSON record - {}", record);
+            LOGGER.debug("Asynchronous - Producer sending JSON record - {}", record);
             metadata = (RecordMetadata) producer.send(record, new ProducerAsyncCallback()).get();
         } else {
-            LOGGER.info("Producer sending JSON record - {}", record);
+            LOGGER.debug("Producer sending JSON record - {}", record);
             metadata = (RecordMetadata) producer.send(record).get();
         }
 
-        LOGGER.info("Record was sent to partition- {}, with offset- {} ", metadata.partition(), metadata.offset());
+        LOGGER.debug("Record was sent to partition- {}, with offset- {} ", metadata.partition(), metadata.offset());
 
         // --------------------------------------------------------------
         // Logs deliveryDetails, which shd be good enough for the caller
         // TODO- combine deliveryDetails into a list n return (if needed)
         // --------------------------------------------------------------
         String deliveryDetails = gson.toJson(new DeliveryDetails(OK, metadata));
-        LOGGER.info("deliveryDetails- {}", deliveryDetails);
+        LOGGER.debug("deliveryDetails- {}", deliveryDetails);
 
         return deliveryDetails;
     }
 
-    
 
-	private File validateAndGetFile(String fileName) {
-        try{
+    private File validateAndGetFile(String fileName) {
+        try {
             URL resource = getClass().getClassLoader().getResource(fileName);
             return new File(resource.getFile());
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new RuntimeException("Error accessing file: `" + fileName + "' - " + ex);
         }
     }
@@ -199,7 +206,7 @@ public class KafkaSender {
             if (ex != null) {
                 LOGGER.error("Asynchronous Producer failed with exception - {} ", ex);
             } else {
-                LOGGER.info("Asynchronous Producer call was successful");
+                LOGGER.debug("Asynchronous Producer call was successful");
             }
         }
     }

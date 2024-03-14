@@ -10,11 +10,18 @@ import com.google.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.google.inject.name.Named;
 import org.jsmart.zerocode.core.domain.Step;
+import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.slf4j.Logger;
 
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.JSON_PAYLOAD_FILE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.YAML_PAYLOAD_FILE;
 import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
+import static org.jsmart.zerocode.core.utils.SmartUtils.readYamlAsString;
+import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
+import static org.jsmart.zerocode.core.utils.SmartUtils.getJsonFilePhToken;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -43,6 +50,10 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
     private final ObjectMapper objectMapper;
 
     @Inject
+    @Named("YamlMapper")
+    private ObjectMapper yamlMapper;
+
+    @Inject
     public ZeroCodeExternalFileProcessorImpl(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
@@ -61,7 +72,7 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
 
         try {
 
-            if (!checkDigNeeded(thisStep)) {
+            if (!checkDigNeeded(objectMapper, thisStep, JSON_PAYLOAD_FILE, YAML_PAYLOAD_FILE)) {
                 return thisStep;
             }
 
@@ -127,15 +138,20 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
 
             } else {
                 LOGGER.debug("Leaf node found = {}, checking for any external json file...", value);
-                if (value != null && value.toString().contains(JSON_PAYLOAD_FILE)) {
-                    LOGGER.info("Found external JSON file place holder = {}. Replacing with content", value);
+                if (value != null && (value.toString().contains(JSON_PAYLOAD_FILE) || value.toString().contains(YAML_PAYLOAD_FILE))) {
+                    LOGGER.debug("Found external JSON/YAML file place holder = {}. Replacing with content", value);
                     String valueString = value.toString();
                     String token = getJsonFilePhToken(valueString);
-                    if (token != null && token.startsWith(JSON_PAYLOAD_FILE)) {
-                        String resourceJsonFile = token.substring(JSON_PAYLOAD_FILE.length());
+                    if (token != null && (token.startsWith(JSON_PAYLOAD_FILE) || token.startsWith(YAML_PAYLOAD_FILE))) {
                         try {
-                            Object jsonFileContent = objectMapper.readTree(readJsonAsString(resourceJsonFile));
-                            entry.setValue(jsonFileContent);
+                            JsonNode jsonNode = token.startsWith(YAML_PAYLOAD_FILE) ? yamlMapper.readTree(readYamlAsString(token.substring(YAML_PAYLOAD_FILE.length()))) : objectMapper.readTree(readJsonAsString(token.substring(JSON_PAYLOAD_FILE.length())));
+                            if (jsonNode.isObject()) {
+                                //also replace content of just read json/yaml file (recursively)
+                                final Map<String, Object> jsonFileContent = objectMapper.convertValue(jsonNode, Map.class);
+                                digReplaceContent(jsonFileContent);
+                                jsonNode = objectMapper.convertValue(jsonFileContent, JsonNode.class);
+                            }
+                            entry.setValue(jsonNode);
                         } catch (Exception exx) {
                             LOGGER.error("External file reference exception - {}", exx.getMessage());
                             throw new RuntimeException(exx);
@@ -163,22 +179,4 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
             }
         });
     }
-
-    private String getJsonFilePhToken(String valueString) {
-        if (valueString != null) {
-            List<String> allTokens = getTestCaseTokens(valueString);
-            if (allTokens != null && !allTokens.isEmpty()) {
-                return allTokens.get(0);
-            }
-        }
-        return null;
-    }
-
-    boolean checkDigNeeded(Step thisStep) throws JsonProcessingException {
-        String stepJson = objectMapper.writeValueAsString(thisStep);
-        List<String> allTokens = getTestCaseTokens(stepJson);
-
-        return allTokens.toString().contains(JSON_PAYLOAD_FILE);
-    }
-
 }

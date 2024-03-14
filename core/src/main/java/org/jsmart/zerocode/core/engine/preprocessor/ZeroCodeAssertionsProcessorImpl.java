@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,19 +8,9 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import net.minidev.json.JSONArray;
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.assertion.array.ArrayIsEmptyAsserterImpl;
@@ -36,7 +27,20 @@ import org.jsmart.zerocode.core.engine.assertion.field.FieldHasLesserThanValueAs
 import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNotNullAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldIsNullAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldIsOneOfValueAsserter;
+import org.jsmart.zerocode.core.engine.assertion.field.FieldMatchesCustomAsserter;
 import org.jsmart.zerocode.core.engine.assertion.field.FieldMatchesRegexPatternAsserter;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import static java.lang.Integer.valueOf;
 import static java.lang.String.format;
@@ -47,6 +51,7 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASS
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_PATH_SIZE;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_CONTAINS_STRING;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_CONTAINS_STRING_IGNORE_CASE;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_CUSTOM_ASSERT;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_EMPTY_ARRAY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_EQUAL_TO_NUMBER;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_GREATER_THAN;
@@ -61,10 +66,15 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASS
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASSERT_VALUE_ONE_OF;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.RAW_BODY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.$VALUE;
-import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.digTypeCast;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.JSON_CONTENT;
+import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.deepTypeCast;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.fieldTypes;
 import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsoluteProperties;
+import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
+import static org.jsmart.zerocode.core.utils.SmartUtils.getJsonFilePhToken;
 import static org.jsmart.zerocode.core.utils.SmartUtils.isValidAbsolutePath;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksRemoved;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksReplaced;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -192,10 +202,17 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
                 JsonAsserter asserter;
                 if (ASSERT_VALUE_NOT_NULL.equals(value) || ASSERT_VALUE_IS_NOT_NULL.equals(value)) {
                     asserter = new FieldIsNotNullAsserter(path);
+
+                } else if (value instanceof String && ((String) value).startsWith(ASSERT_VALUE_CUSTOM_ASSERT)) {
+                    String expected = ((String) value).substring(ASSERT_VALUE_CUSTOM_ASSERT.length());
+                    asserter = new FieldMatchesCustomAsserter(path, expected);
+
                 } else if (ASSERT_VALUE_NULL.equals(value) || ASSERT_VALUE_IS_NULL.equals(value)) {
                     asserter = new FieldIsNullAsserter(path);
+
                 } else if (ASSERT_VALUE_EMPTY_ARRAY.equals(value)) {
                     asserter = new ArrayIsEmptyAsserterImpl(path);
+
                 } else if (path.endsWith(ASSERT_PATH_SIZE)) {
                     path = path.substring(0, path.length() - ASSERT_PATH_SIZE.length());
                     if (value instanceof Number) {
@@ -359,6 +376,48 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
         return failedReports;
     }
 
+    /**
+     * Resolves JSON.CONTENT as object or array
+     *
+     * First the logic checks if dig-deep needed to avoid unwanted recursions. If not needed, the step definition is
+     * returned intact. Otherwise calls the dig deep method to perform the operation.
+     *
+     * returns: The effective step definition
+     */
+    @Override
+    public Step resolveJsonContent(Step thisStep, ScenarioExecutionState scenarioExecutionState) {
+        try {
+            if (!checkDigNeeded(mapper, thisStep, JSON_CONTENT)) {
+                return thisStep;
+            }
+
+            JsonNode stepNode = mapper.convertValue(thisStep, JsonNode.class);
+
+            Map<String, Object> stepMap = mapper.readValue(stepNode.toString(), new TypeReference<Map<String, Object>>() {
+            });
+
+            digReplaceContent(stepMap, scenarioExecutionState);
+
+            JsonNode jsonStepNode = mapper.valueToTree(stepMap);
+
+            return mapper.treeToValue(jsonStepNode, Step.class);
+
+        } catch (Exception e) {
+            LOGGER.error("Json content reading exception - {}", e.getMessage());
+            throw new RuntimeException("Json content reading exception. Details - " + e);
+        }
+    }
+
+    @Override
+    public String fieldMasksRemoved(String resolvedRequestJson) {
+        return getMasksRemoved(resolvedRequestJson);
+    }
+
+    @Override
+    public String fieldMasksApplied(String resolvedRequestJson) {
+        return getMasksReplaced(resolvedRequestJson);
+    }
+
     private void loadAnnotatedHostProperties() {
         try {
             if(isValidAbsolutePath(hostFileName)){
@@ -414,7 +473,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
             }
 
             Map<String, Object> fieldMap = mapper.readValue(resolvedJson, new TypeReference<Map<String, Object>>() { });
-            digTypeCast(fieldMap);
+            deepTypeCast(fieldMap);
 
             return mapper.writeValueAsString(fieldMap);
 
@@ -430,4 +489,39 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
     }
 
 
+    void digReplaceContent(Map<String, Object> map, ScenarioExecutionState scenarioExecutionState) {
+        map.entrySet().forEach(entry -> {
+            Object value = entry.getValue();
+
+            if (value instanceof Map) {
+                digReplaceContent((Map<String, Object>) value, scenarioExecutionState);
+            } else {
+                LOGGER.debug("Leaf node found = {}, checking for any json content...", value);
+                if (value != null && (value.toString().contains(JSON_CONTENT))) {
+                    LOGGER.debug("Found JSON content place holder = {}. Replacing with content", value);
+                    String valueString = value.toString();
+                    String token = getJsonFilePhToken(valueString);
+
+                    if (token != null && (token.startsWith(JSON_CONTENT))) {
+                        try {
+                            String resolvedRequestJson = resolveStringJson(
+                                "${" + token.substring(JSON_CONTENT.length()) + "}",
+                                scenarioExecutionState.getResolvedScenarioState());
+                            resolvedRequestJson = resolvedRequestJson.replaceAll("\\\\", "");
+                            try {
+                                JsonNode jsonNode = mapper.readTree(resolvedRequestJson);
+                                entry.setValue(jsonNode);
+                            } catch (JsonParseException e) {
+                                //value is not a json string, but a string value
+                                entry.setValue(resolvedRequestJson);
+                            }
+                        } catch (Exception exx) {
+                            LOGGER.error("External file reference exception - {}", exx.getMessage());
+                            throw new RuntimeException(exx);
+                        }
+                    }
+                }
+            }
+        });
+    }
 }

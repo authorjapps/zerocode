@@ -22,6 +22,23 @@
                 "status": 200,
                 "body" : "${JSON.FILE:integration_test_files/filebody/bodyonly/response_body.json}"
             }
+        },
+        {
+            "name": "create_bathroom_with_name",
+            "url": "/home/bathroom/21",
+            "operation": "PUT",
+            "request": {
+                "body" : {
+                    "name": "${JSON.CONTENT:$.get_user_details.response.body.name}",
+                    "availability": true
+                }
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "name": "Shower-21"
+                }
+            }
         }
     ]
 }

@@ -9,7 +9,6 @@ import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.Validator;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
-import org.jsmart.zerocode.core.engine.assertion.field.FieldHasExactValueAsserter;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
 import org.slf4j.Logger;
 
@@ -27,16 +26,20 @@ public class ZeroCodeValidatorImpl implements ZeroCodeValidator {
     }
 
     @Override
-    public List<FieldAssertionMatcher> validateFlat(Step thisStep, String actualResult) {
-        LOGGER.info("Comparing results via flat validators");
+    public List<FieldAssertionMatcher> validateFlat(Step thisStep, String actualResult, String resolvedScenarioState) {
+        LOGGER.debug("Comparing results via flat validators");
 
         List<FieldAssertionMatcher> failureResults = new ArrayList<>();
         List<Validator> validators = thisStep.getValidators();
 
         for (Validator validator : validators) {
-            String josnPath = validator.getField();
+            String jsonPath = validator.getField();
+
+            String transformed = zeroCodeAssertionsProcessor.resolveStringJson(jsonPath, resolvedScenarioState);
+
             JsonNode expectedValue = validator.getValue();
-            Object actualValue = JsonPath.read(actualResult, josnPath);
+
+            Object actualValue = JsonPath.read(actualResult, transformed);
 
             List<JsonAsserter> asserters = zeroCodeAssertionsProcessor.createJsonAsserters(expectedValue.toString());
 
@@ -48,14 +51,14 @@ public class ZeroCodeValidatorImpl implements ZeroCodeValidator {
 
     @Override
     public List<FieldAssertionMatcher> validateStrict(String expectedResult, String actualResult) {
-        LOGGER.info("Comparing results via STRICT matchers");
+        LOGGER.debug("Comparing results via STRICT matchers");
 
         return strictComparePayload(expectedResult, actualResult);
     }
 
     @Override
     public List<FieldAssertionMatcher> validateLenient(String expectedResult, String actualResult) {
-        LOGGER.info("Comparing results via LENIENT matchers");
+        LOGGER.debug("Comparing results via LENIENT matchers");
 
         List<JsonAsserter> asserters = zeroCodeAssertionsProcessor.createJsonAsserters(expectedResult);
         return zeroCodeAssertionsProcessor.assertAllAndReturnFailed(asserters, actualResult);
