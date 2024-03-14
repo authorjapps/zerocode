@@ -15,11 +15,8 @@ import static java.lang.Long.parseLong;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
+
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
@@ -54,7 +51,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -88,7 +85,6 @@ public class KafkaConsumerHelper {
             resolveValuePlaceHolders(properties);
 
             final Consumer consumer = new KafkaConsumer(properties);
-            consumer.subscribe(Collections.singletonList(topic));
 
             if (consumerToBeCached) {
                 consumerCacheByTopicMap.forEach((xTopic, xConsumer) -> {
@@ -414,8 +410,7 @@ public class KafkaConsumerHelper {
     }
 
     public static void handleSeek(ConsumerLocalConfigs effectiveLocal, Consumer consumer, String topicName) {
-        String seek = effectiveLocal.getSeek();
-        if (!isEmpty(seek)) {
+        if (!isEmpty(effectiveLocal.getSeek())) {
             handleSeekByOffset(effectiveLocal, consumer);
         } else if (!isEmpty(effectiveLocal.getSeekEpoch())) {
             handleSeekByEpoch(Long.parseLong(effectiveLocal.getSeekEpoch()), consumer, topicName);
@@ -451,20 +446,35 @@ public class KafkaConsumerHelper {
                     .collect(Collectors.toMap(Function.identity(), ignore -> epoch));
             Map<TopicPartition, OffsetAndTimestamp> topicPartitionOffsetAndTimestampMap = consumer.offsetsForTimes(topicPartitionTimestampMap);
 
-            //removing partitions that are null, since we will only subscribe to partitions that have messages after the given timestamp
-            //by default partitions with no valid offset mapped to timestamp will also be returned by the method with value null. We will skip these
-            topicPartitionOffsetAndTimestampMap = topicPartitionOffsetAndTimestampMap.entrySet()
-                    .stream()
-                    .filter(entry -> entry.getValue() != null)
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
             //assign to fetched partitions
-            consumer.unsubscribe();
+            if (consumer.assignment().isEmpty()) {
             consumer.assign(topicPartitionOffsetAndTimestampMap.keySet());
+            }
+
+            //seek to end for partitions that have no offset/timestamp >= seekEpoch
+            List<TopicPartition> noSeekPartitions = topicPartitionOffsetAndTimestampMap.entrySet().stream()
+                    .filter(tp -> tp.getValue() == null)
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+            if (!noSeekPartitions.isEmpty()) {
+                consumer.seekToEnd(noSeekPartitions);
+                //commit the latest offsets so that they are skipped and only new messages consumed
+                Map<TopicPartition, OffsetAndMetadata> partitionLatestOffsetsToCommit =
+                        noSeekPartitions.stream()
+                        .collect(Collectors.toMap(Function.identity(), tp -> new OffsetAndMetadata(consumer.position(tp) + 1)));
+                System.out.println("Committing the following : " + partitionLatestOffsetsToCommit);
+                consumer.commitSync(partitionLatestOffsetsToCommit);
+            }
+
 
             //seek to fetched offsets for partitions
             for (Map.Entry<TopicPartition, OffsetAndTimestamp> topicOffsetEntry : topicPartitionOffsetAndTimestampMap.entrySet()) {
-                consumer.seek(topicOffsetEntry.getKey(), topicOffsetEntry.getValue().offset());
+                if (Objects.nonNull(topicOffsetEntry.getValue())) {
+                    //seek to offset only if it is more than current offset position(for retry poll scenarios)
+                    if (consumer.position(topicOffsetEntry.getKey()) < topicOffsetEntry.getValue().offset())
+                        consumer.seek(topicOffsetEntry.getKey(), topicOffsetEntry.getValue().offset());
+                    System.out.println("Seeking to " + topicOffsetEntry);
+                }
             }
         }
     }
@@ -479,7 +489,6 @@ public class KafkaConsumerHelper {
         Set<TopicPartition> topicPartitions = new HashSet<>();
         topicPartitions.add(topicPartition);
 
-        consumer.unsubscribe();
         consumer.assign(topicPartitions);
 
         if (offset <= -1) {
