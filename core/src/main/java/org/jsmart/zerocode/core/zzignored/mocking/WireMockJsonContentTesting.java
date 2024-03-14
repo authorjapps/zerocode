@@ -2,12 +2,15 @@ package org.jsmart.zerocode.core.zzignored.mocking;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
@@ -36,12 +39,10 @@ public class WireMockJsonContentTesting {
                         .withHeader("Content-Type", APPLICATION_JSON)
                         .withBody(jsonBodyRequest)));
 
-        ApacheHttpClientExecutor httpClientExecutor = new ApacheHttpClientExecutor();
-        ClientRequest clientExecutor = httpClientExecutor.createRequest("http://localhost:9073/id-services/id-services/person/id/p_id_009/bio/default");
-        clientExecutor.setHttpMethod("GET");
-        ClientResponse serverResponse = clientExecutor.execute();
-
-        final String respBodyAsString = (String)serverResponse.getEntity(String.class);
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target("http://localhost:9073/id-services/id-services/person/id/p_id_009/bio/default");
+        Response response = target.request().get();
+        final String respBodyAsString = response.readEntity(String.class);
         JSONAssert.assertEquals(jsonBodyRequest, respBodyAsString, true);
 
         System.out.println("### bio response from mapping: \n" + respBodyAsString);
