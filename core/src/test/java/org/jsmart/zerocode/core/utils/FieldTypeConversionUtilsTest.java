@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.junit.Rule;
 import org.junit.Test;

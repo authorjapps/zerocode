@@ -2,7 +2,7 @@ package org.jsmart.zerocode.jupiter.demo;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

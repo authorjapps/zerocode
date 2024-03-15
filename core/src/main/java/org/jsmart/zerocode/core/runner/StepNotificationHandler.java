@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;

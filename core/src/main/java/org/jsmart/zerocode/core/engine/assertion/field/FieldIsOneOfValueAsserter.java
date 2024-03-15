@@ -6,7 +6,7 @@ import java.util.Arrays;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 
-import static org.apache.commons.lang.StringUtils.substringBetween;
+import static org.apache.commons.lang3.StringUtils.substringBetween;
 
 public class FieldIsOneOfValueAsserter implements JsonAsserter {
 	private final String path;

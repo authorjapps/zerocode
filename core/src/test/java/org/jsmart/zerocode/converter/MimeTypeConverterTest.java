@@ -4,12 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
-import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
+import static org.apache.commons.text.StringEscapeUtils.escapeJava;
+import static org.apache.commons.text.StringEscapeUtils.escapeEcmaScript;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,7 +28,7 @@ public class MimeTypeConverterTest {
     public void testXmlToJsonWithSingleQuote_willNotFail() throws Exception {
 
         String xml = "<?xml version='1.0' encoding=\"UTF-8\"?><address>Street 123</address>";
-        String escapedOut = escapeJavaScript(xml);
+        String escapedOut = escapeEcmaScript(xml);
         assertThat(escapedOut, containsString("<?xml version=\\'1.0\\' encoding=\\\"UTF-8\\\"?><address>Street 123<\\/address>"));
 
         escapedOut = escapeJava(xml);
