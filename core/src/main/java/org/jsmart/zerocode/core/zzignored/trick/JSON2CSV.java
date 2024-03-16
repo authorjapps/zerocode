@@ -2,7 +2,7 @@ package org.jsmart.zerocode.core.zzignored.trick;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.json.CDL;
 import org.json.JSONArray;
@@ -42,7 +42,7 @@ public class JSON2CSV {
 
             File file=new File("target/fromJSON.csv");
             String csv = CDL.toString(docs);
-            FileUtils.writeStringToFile(file, csv);
+            FileUtils.writeStringToFile(file, csv, Charset.defaultCharset());
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (IOException e) {

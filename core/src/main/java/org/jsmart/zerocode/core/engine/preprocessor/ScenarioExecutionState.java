@@ -1,6 +1,6 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +56,6 @@ public class ScenarioExecutionState {
         final String commaSeparatedStepResults = String.join(", ", getAllStepsInStringList());
         paramMap.put("STEP_REQUEST_RESPONSE_SECTION", commaSeparatedStepResults);
 
-        return (new StrSubstitutor(paramMap)).replace(scenarioStateTemplate);
+        return (new StringSubstitutor(paramMap)).replace(scenarioStateTemplate);
     }
 }

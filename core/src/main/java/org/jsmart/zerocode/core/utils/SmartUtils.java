@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
@@ -218,7 +218,7 @@ public class SmartUtils {
     }
 
     public static String resolveToken(String stringWithToken, Map<String, String> paramMap) {
-        StrSubstitutor sub = new StrSubstitutor(paramMap);
+        StringSubstitutor sub = new StringSubstitutor(paramMap);
         return sub.replace(stringWithToken);
     }
 

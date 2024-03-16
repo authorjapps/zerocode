@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.univocity.parsers.csv.CsvParser;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.slf4j.Logger;
 
@@ -137,7 +137,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
     }
 
     private String replaceWithValues(String stepJson, Map<String, Object> valuesMap) {
-        StrSubstitutor sub = new StrSubstitutor(valuesMap);
+        StringSubstitutor sub = new StringSubstitutor(valuesMap);
         return sub.replace(stepJson);
     }
 
