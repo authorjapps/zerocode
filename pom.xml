@@ -71,6 +71,7 @@
         <jukito.version>1.5</jukito.version>
         <guice.version>7.0.0</guice.version>
         <jayway-version>2.9.0</jayway-version>
+        <json-smart.version>2.5.0</json-smart.version>
         <!-- resteasy 4.7.0.Final needs JDK11 -->
         <resteasy-jaxrs.version>3.15.6.Final</resteasy-jaxrs.version>
         <!-- logback 1.4.x and 1.5.x need JDK11 -->
@@ -205,7 +206,7 @@
             <dependency>
                 <groupId>net.minidev</groupId>
                 <artifactId>json-smart</artifactId>
-                <version>2.5.0</version>
+                <version>${json-smart.version}</version>
             </dependency>
 
             <dependency>
