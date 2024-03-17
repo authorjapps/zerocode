@@ -466,7 +466,7 @@ public class KafkaConsumerHelper {
                 Map<TopicPartition, OffsetAndMetadata> partitionLatestOffsetsToCommit =
                         noSeekPartitions.stream()
                                 .collect(Collectors.toMap(Function.identity(), tp -> new OffsetAndMetadata(consumer.position(tp) + 1)));
-                System.out.println("Committing the following : " + partitionLatestOffsetsToCommit);
+                LOGGER.debug("==> Committing the following : " + partitionLatestOffsetsToCommit);
                 consumer.commitSync(partitionLatestOffsetsToCommit);
             }
 
@@ -477,7 +477,7 @@ public class KafkaConsumerHelper {
                     //seek to offset only if it is more than current offset position(for retry poll scenarios)
                     if (consumer.position(topicOffsetEntry.getKey()) < topicOffsetEntry.getValue().offset())
                         consumer.seek(topicOffsetEntry.getKey(), topicOffsetEntry.getValue().offset());
-                    System.out.println("Seeking to " + topicOffsetEntry);
+                    LOGGER.debug("==> Seeking to " + topicOffsetEntry);
                 }
             }
         }
