@@ -1,7 +1,5 @@
 package org.jsmart.zerocode.core.utils;
 
-import org.apache.commons.lang.text.StrSubstitutor;
-
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -16,9 +14,11 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
-import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
+import org.apache.commons.text.StringSubstitutor;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.*;
 
 public class TokenUtils {
@@ -31,7 +31,7 @@ public class TokenUtils {
             populateParamMap(paramMap, runTimeToken);
         });
 
-        StrSubstitutor sub = new StrSubstitutor(paramMap);
+        StringSubstitutor sub = new StringSubstitutor(paramMap);
 
         return sub.replace(requestJsonOrAnyString);
     }

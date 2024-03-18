@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.junit.Rule;
 import org.junit.Test;
@@ -85,7 +85,7 @@ public class FieldTypeConversionUtilsTest {
             paramMap.put(thisPath, pathValue);
         });
 
-        StrSubstitutor sub = new StrSubstitutor(paramMap);
+        StringSubstitutor sub = new StringSubstitutor(paramMap);
         String resolvedJson = sub.replace(jsonViaPath);
 
         Map<String, Object> stepMap = mapper.readValue(resolvedJson, new TypeReference<Map<String, Object>>() {
@@ -157,7 +157,7 @@ public class FieldTypeConversionUtilsTest {
             paramMap.put(thisPath, pathValue);
         });
 
-        StrSubstitutor sub = new StrSubstitutor(paramMap);
+        StringSubstitutor sub = new StringSubstitutor(paramMap);
         String resolvedJson = sub.replace(jsonViaPath);
 
         Map<String, Object> stepMap = mapper.readValue(resolvedJson, new TypeReference<Map<String, Object>>() {

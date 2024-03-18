@@ -2,7 +2,7 @@ package org.jsmart.zerocode.jupiter.demo;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,7 +56,7 @@ class CalculatorTest {
         Map<String, String> valuesMap = new HashMap<>();
         valuesMap.put("firstName", "Peter");
         valuesMap.put("lastName", "Osi");
-        StrSubstitutor sub = new StrSubstitutor(valuesMap);
+        StringSubstitutor sub = new StringSubstitutor(valuesMap);
         String message = sub.replace(WelcomeMessage);
         assertEquals("Hello Peter Osi!", message);
     }

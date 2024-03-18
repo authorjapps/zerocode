@@ -16,7 +16,7 @@ import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithLocalMock;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithVirtuosoMock;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithWireMock;

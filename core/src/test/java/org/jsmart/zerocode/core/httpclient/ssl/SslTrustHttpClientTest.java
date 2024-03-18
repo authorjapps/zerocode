@@ -16,14 +16,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -73,7 +73,7 @@ public class SslTrustHttpClientTest {
     public void testNulPointerNotThrown_emptyBody() throws Exception {
         CloseableHttpResponse mockResponse = mock(CloseableHttpResponse.class);
         HttpUriRequest mockHttpUriRequest = mock(HttpUriRequest.class);
-        when(httpClient.execute(anyObject())).thenReturn(mockResponse);
+        when(httpClient.execute(any())).thenReturn(mockResponse);
         //when(requestBuilder.build()).thenReturn(mockHttpUriRequest);
 
         //        when(httpClient.execute(anyString(), anyString(), anyMap(), anyMap(), anyObject()))

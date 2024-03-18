@@ -4,11 +4,11 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA;
 
 public class ApiTypeUtils {
