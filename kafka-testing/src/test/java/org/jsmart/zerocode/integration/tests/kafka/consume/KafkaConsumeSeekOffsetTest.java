@@ -27,9 +27,34 @@ public class KafkaConsumeSeekOffsetTest {
     }
 
     @Test
-    @Scenario("kafka/consume/test_kafka_consume_seek_epoch_and_timestamp.json")
-    public void testKafkaConsume_seekEpochAndTimestamp() {
+    @Scenario("kafka/consume/test_kafka_consume_seek_epoch_multi_partition.json")
+    public void testKafkaConsume_seekEpoch_multi_partition() {
 
     }
+
+
+    @Test
+    @Scenario("kafka/consume/test_kafka_consume_seek_epoch_retry.json")
+    public void testKafkaConsume_seekEpoch_retry() {
+
+    }
+
+    @Test
+    @Scenario("kafka/consume/test_kafka_consume_seek_epoch_continue_from_last_offset.json")
+    public void testKafkaConsume_seekEpoch_continue_consumption() {
+
+    }
+
+    @Test
+    @Scenario("kafka/consume/test_kafka_consume_seek_timestamp_multi_partition.json")
+    public void testKafkaConsume_seekTimestamp_multi_partition() {
+
+    }
+    @Test
+    @Scenario("kafka/consume/test_kafka_consume_seek_timestamp_continue_from_last_offset.json")
+    public void testKafkaConsume_seekTimestamp_continue_consumption() {
+
+    }
+
 
 }
