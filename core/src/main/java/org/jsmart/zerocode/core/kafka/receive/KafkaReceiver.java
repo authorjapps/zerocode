@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -63,6 +64,10 @@ public class KafkaReceiver {
         int noOfTimeOuts = 0;
 
         handleSeek(effectiveLocal, consumer, topicName);
+        //subscribe to topic if seek not used
+        if (consumer.assignment().isEmpty()) {
+            consumer.subscribe(Collections.singletonList(topicName));
+        }
 
         LOGGER.debug("initial polling to trigger ConsumerGroupJoin");
 

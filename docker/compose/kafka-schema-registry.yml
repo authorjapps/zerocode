@@ -30,10 +30,12 @@ services:
       "
       # rather than giving sleep 15 use this 
       # to block init container to wait for Kafka broker to be ready  
-      kafka-topics --bootstrap-server kafka:9092 --list
+      kafka-topics --bootstrap-server kafka:29092 --list
 
       # create init topics
-      kafka-topics --create --partitions 3 --bootstrap-server kafka:9092 --topic demo-seekTime-multi-partition
+      kafka-topics --create --partitions 3 --bootstrap-server kafka:29092 --topic demo-seekTime-multi-partition-1
+      kafka-topics --create --partitions 3 --bootstrap-server kafka:29092 --topic demo-seekTime-multi-partition-2
+      kafka-topics --bootstrap-server kafka:29092 --list
       "
 
 

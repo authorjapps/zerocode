@@ -1,0 +1,84 @@
+{
+  "scenarioName": "Retry consume seek epoch message until found",
+  "steps": [
+    {
+      "name": "load_kafka_before_timestamp",
+      "url": "kafka-topic:demo-seekEpoch-2",
+      "operation": "PRODUCE",
+      "request": {
+        "records": [
+          {
+            "key": "${RANDOM.NUMBER}",
+            "value": "Before Timestamp 1"
+          },
+          {
+            "key": "${RANDOM.NUMBER}",
+            "value": "Before Timestamp 2"
+          }
+        ]
+      },
+      "assertions": {
+        "status": "Ok"
+      }
+    },
+    {
+      "name": "load_timestamp_and_epoch",
+      "url": "org.jsmart.zerocode.zerocodejavaexec.utils.ExampleUtils",
+      "operation": "seekTimestampToEpoch",
+      "request": {
+        "timestamp": "${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ss.SSS}",
+        "format": "yyyy-MM-dd'T'HH:mm:ss.SSS"
+      },
+      "assertions": {}
+    },
+    {
+      "name": "load_kafka_after_timestamp",
+      "url": "kafka-topic:demo-seekEpoch-2",
+      "operation": "PRODUCE",
+      "request": {
+        "records": [
+          {
+            "key": "${RANDOM.NUMBER}",
+            "value": "After Timestamp 1"
+          },
+          {
+            "key": "${RANDOM.NUMBER}",
+            "value": "After Timestamp 2"
+          },
+          {
+            "key": "${RANDOM.NUMBER}",
+            "value": "After Timestamp 3"
+          }
+        ]
+      },
+      "assertions": {
+        "status": "Ok"
+      }
+    },
+    {
+      "name": "consume_seekEpoch",
+      "url": "kafka-topic:demo-seekEpoch-2",
+      "operation": "CONSUME",
+      "request": {
+        "consumerLocalConfigs": {
+          "seekEpoch": "${$.load_timestamp_and_epoch.response}",
+          "commitSync": true,
+          "recordType": "RAW",
+          "showRecordsConsumed": true,
+          "maxNoOfRetryPollsOrTimeouts": 1
+        }
+      },
+      "retry": {
+        "max": 2,
+        "delay": 1
+      },
+      "verify": {
+        "records": [
+          {
+            "value": "After Timestamp 3"
+          }
+        ]
+      }
+    }
+  ]
+}
