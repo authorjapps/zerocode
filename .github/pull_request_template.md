@@ -1,7 +1,7 @@
 # <Feature Title>
 
 ## Fixes Issue
-- [ ] Which issue or ticket was(will be) fixed in this PR?
+- [ ] Which issue or ticket was(will be) fixed by this PR? (capture the issue number)
 
 PR Branch
 **_#ADD LINK TO THE PR BRANCH_**
@@ -10,20 +10,25 @@ PR Branch
 
 ## Checklist:
 
-* [ ] Unit tests added
+* [ ] New Unit tests were added
+  * [ ] Covered in existing Unit tests
 
-* [ ] Integration tests added
+* [ ] Integration tests were added
+  * [ ] Covered in existing Integration tests
 
 * [ ] Test names are meaningful
 
-* [ ] Feature manually tested
+* [ ] Feature manually tested and outcome is successful
 
-* [ ] Branch build passed
+* [ ] PR doesn't break any of the earlier features for end users
+  * [ ] WARNING! This might break one or more earlier earlier features, hence left a comment tagging all reviewrs
+
+* [ ] Branch build passed in CI
 
 * [ ] No 'package.*' in the imports
 
-* [ ] Relevant Wiki page updated with clear instruction for the end user
-  * [ ] Not applicable. This was only a refactor change, no functional or behaviour changes were introduced
+* [ ] Relevant DOcumentation page added or updated with clear instructions and examples for the end user
+  * [ ] Not applicable. This was only a code refactor change, no functional or behaviourial changes were introduced
 
 * [ ] Http test added to `http-testing` module(if applicable) ?
   * [ ] Not applicable. The changes did not affect HTTP automation flow
