@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
-import net.minidev.json.JSONArray;
 import org.apache.commons.text.StringSubstitutor;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
@@ -442,7 +441,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
     }
 
     boolean isPathValueJson(Object jsonPathValue) {
-        return jsonPathValue instanceof LinkedHashMap || jsonPathValue instanceof JSONArray;
+        return jsonPathValue instanceof LinkedHashMap || jsonPathValue instanceof List<?>;
     }
 
     void resolveLeafOnlyNodeValue(String scenarioState, Map<String, String> paramMap, String thisPath) {

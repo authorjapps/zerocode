@@ -6,14 +6,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
-import static com.jayway.jsonpath.JsonPath.read;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import org.hamcrest.core.Is;
 import org.jsmart.zerocode.TestUtility;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.provider.JsonPathJacksonProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
@@ -21,12 +19,7 @@ import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens;
 import org.jsmart.zerocode.core.utils.SmartUtils;
-import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
-import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
-import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import org.junit.Assert;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,6 +29,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.jayway.jsonpath.JsonPath.read;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
+import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
+import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 
 public class ZeroCodeAssertionsProcessorImplTest {
     @Rule
@@ -53,6 +56,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
         injector = Guice.createInjector(new ApplicationMainModule(serverEnvFileName));
         smartUtils = injector.getInstance(SmartUtils.class);
         mapper = new ObjectMapperProvider().get();
+        Configuration.setDefaults(new JsonPathJacksonProvider().get());
         jsonPreProcessor =
                 new ZeroCodeAssertionsProcessorImpl(smartUtils.getMapper(), serverEnvFileName);
     }
@@ -1044,7 +1048,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
                         + "	\"status\": 200,\n"
                         + "	\"body\": {\n"
                         + "	    \"projectDetails\": {\n"
-                        + "	            \"startDateTime\": \"2015-09-14T09:49:34.000Z\",\n"
+                        + "	            \"startDateTime\": \"2015-09-14T09:49:34.000Z\"\n"
                         + "        }\n"
                         + "    }\n"
                         + "}";
@@ -1084,7 +1088,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
                         + "	\"status\": 200,\n"
                         + "	\"body\": {\n"
                         + " 		\"projectDetails\": {\n"
-                        + "			\"startDateTime\": \"2015-09-14T09:49:34.000Z\",\n"
+                        + "			\"startDateTime\": \"2015-09-14T09:49:34.000Z\"\n"
                         + "		}\n"
                         + "	}\n"
                         + "}";
@@ -1512,10 +1516,9 @@ public class ZeroCodeAssertionsProcessorImplTest {
 
         String result = "[\"test1\",\"test2\"]";
 
-        Object jsonPathValue = JsonPath.read(jsonResult,
-            "$.request.body.names");
+        Object jsonPathValue = JsonPath.parse(jsonResult).read("$.request.body.names");
 
-        Assert.assertEquals(result, jsonPathValue.toString());
+        Assert.assertEquals(result, this.mapper.writeValueAsString(jsonPathValue));
     }
 
     @Test
