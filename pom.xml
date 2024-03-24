@@ -9,7 +9,7 @@
 
     <artifactId>zerocode-tdd-parent</artifactId>
     <groupId>org.jsmart</groupId>
-    <version>1.3.39</version>
+    <version>1.3.40-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>ZeroCode TDD Parent</name>
@@ -26,7 +26,7 @@
         <url>https://github.com/authorjapps/zerocode</url>
         <connection>scm:git:git@github.com:authorjapps/zerocode.git</connection>
         <developerConnection>scm:git:git@github.com:authorjapps/zerocode.git</developerConnection>
-      <tag>zerocode-tdd-parent-1.3.39</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <modules>
