@@ -332,9 +332,9 @@
      - Option-1 : Run a maven "dry run" <- Results in error e.g. javadoc error due to JAVA_HOME not set
      - Option-2 : Run a maven "prepare" run  <- Results in error e.g. javadoc error due to JAVA_HOME not set
      -
-     - Note: Remove the build section completely and try, if "commenting out" has issues
+     - Note: or remove the specific plugins from the build section and try dry-run and prepare stages, if full "commenting out" has issues
     -->
-    <!--
+
     <build>
         <pluginManagement>
             <plugins>
@@ -347,31 +347,31 @@
                         <target>${java-compiler-target.version}</target>
                     </configuration>
                 </plugin>
-                <plugin>
+                <!--<plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven-assembly-plugin.version}</version>
-                </plugin>
+                </plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>${maven-source-plugin.version}</version>
                 </plugin>
-                <plugin>
+                <!--<plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
-                </plugin>
+                </plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>${maven-gpg-plugin.version}</version>
                 </plugin>
-                <plugin>
+                <!--<plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>${maven-release-plugin.version}</version>
-                </plugin>
+                </plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -386,7 +386,8 @@
         </pluginManagement>
 
 
-       // Uncomment this for uber jar
+       <!-- Uncomment this for uber jar -->
+        <!--
         <plugins>
                  <plugin>
                          <groupId>org.apache.maven.plugins</groupId>
@@ -403,8 +404,7 @@
                              </execution>
                          </executions>
                      </plugin>
-                 </plugins>
-
+         </plugins>
+         -->
     </build>
-    -->
 </project>
