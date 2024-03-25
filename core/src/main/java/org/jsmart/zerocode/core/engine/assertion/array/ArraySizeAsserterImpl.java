@@ -1,9 +1,10 @@
 
 package org.jsmart.zerocode.core.engine.assertion.array;
 
-import net.minidev.json.JSONArray;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
+
+import java.util.List;
 
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
@@ -41,17 +42,16 @@ public class ArraySizeAsserterImpl implements JsonAsserter {
 
     @Override
     public FieldAssertionMatcher actualEqualsToExpected(Object result) {
-        if (result instanceof JSONArray) {
-
-            final JSONArray actualArrayValue = (JSONArray) result;
+        if (result instanceof List<?>) {
+            List<?> list = (List<?>) result;
 
             if (this.expectedSize == -1 && this.expectedSizeExpression != null) {
 
-                return processRelationalExpression(actualArrayValue);
+                return processRelationalExpression(list);
 
             }
 
-            if (actualArrayValue.size() == this.expectedSize) {
+            if (list.size() == this.expectedSize) {
 
                 return aMatchingMessage();
             }
@@ -59,7 +59,7 @@ public class ArraySizeAsserterImpl implements JsonAsserter {
             return aNotMatchingMessage(
                     path,
                     String.format("Array of size %d", expectedSize),
-                    actualArrayValue.size());
+                    list.size());
 
         } else {
 
@@ -68,25 +68,25 @@ public class ArraySizeAsserterImpl implements JsonAsserter {
         }
     }
 
-    public FieldAssertionMatcher processRelationalExpression(JSONArray actualArrayValue) {
+    public FieldAssertionMatcher processRelationalExpression(List<?> list) {
         if (expectedSizeExpression.startsWith(ASSERT_VALUE_GREATER_THAN)) {
             String greaterThan = this.expectedSizeExpression.substring(ASSERT_VALUE_GREATER_THAN.length());
-            if (actualArrayValue.size() > Integer.parseInt(greaterThan)) {
+            if (list.size() > Integer.parseInt(greaterThan)) {
                 return aMatchingMessage();
             }
         } else if (expectedSizeExpression.startsWith(ASSERT_VALUE_LESSER_THAN)) {
             String lesserThan = this.expectedSizeExpression.substring(ASSERT_VALUE_LESSER_THAN.length());
-            if (actualArrayValue.size() < Integer.parseInt(lesserThan)) {
+            if (list.size() < Integer.parseInt(lesserThan)) {
                 return aMatchingMessage();
             }
         } else if (expectedSizeExpression.startsWith(ASSERT_VALUE_EQUAL_TO_NUMBER)) {
             String equalTo = this.expectedSizeExpression.substring(ASSERT_VALUE_EQUAL_TO_NUMBER.length());
-            if (actualArrayValue.size() == Integer.parseInt(equalTo)) {
+            if (list.size() == Integer.parseInt(equalTo)) {
                 return aMatchingMessage();
             }
         } else if (expectedSizeExpression.startsWith(ASSERT_VALUE_NOT_EQUAL_TO_NUMBER)) {
             String notEqualTo = this.expectedSizeExpression.substring(ASSERT_VALUE_NOT_EQUAL_TO_NUMBER.length());
-            if (actualArrayValue.size() != Integer.parseInt(notEqualTo)) {
+            if (list.size() != Integer.parseInt(notEqualTo)) {
                 return aMatchingMessage();
             }
         }
@@ -94,7 +94,7 @@ public class ArraySizeAsserterImpl implements JsonAsserter {
         return aNotMatchingMessage(
                 path,
                 String.format("Array of size %s", expectedSizeExpression),
-                actualArrayValue.size());
+                list.size());
     }
 
 

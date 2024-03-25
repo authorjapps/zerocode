@@ -3,10 +3,10 @@ package org.jsmart.zerocode.core.engine.validators;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.core.Is.is;
+import com.jayway.jsonpath.Configuration;
 import org.jsmart.zerocode.TestUtility;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.provider.JsonPathJacksonProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
@@ -15,11 +15,14 @@ import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessorImpl;
 import org.jsmart.zerocode.core.utils.SmartUtils;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class ZeroCodeValidatorImplTest {
     Injector injector;
@@ -36,6 +39,9 @@ public class ZeroCodeValidatorImplTest {
         injector = Guice.createInjector(new ApplicationMainModule(serverEnvFileName));
         smartUtils = injector.getInstance(SmartUtils.class);
         mapper = new ObjectMapperProvider().get();
+        Configuration.setDefaults(new JsonPathJacksonProvider().get());
+
+
         jsonPreProcessor =
                 new ZeroCodeAssertionsProcessorImpl(smartUtils.getMapper(), serverEnvFileName);
 

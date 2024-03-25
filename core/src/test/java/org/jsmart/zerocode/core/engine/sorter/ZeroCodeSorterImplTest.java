@@ -3,7 +3,9 @@ package org.jsmart.zerocode.core.engine.sorter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.jayway.jsonpath.Configuration;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.provider.JsonPathJacksonProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
@@ -30,6 +32,7 @@ public class ZeroCodeSorterImplTest {
         injector = Guice.createInjector(new ApplicationMainModule(serverEnvFileName));
         smartUtils = injector.getInstance(SmartUtils.class);
         mapper = new ObjectMapperProvider().get();
+        Configuration.setDefaults(new JsonPathJacksonProvider().get());
         jsonPreProcessor =
                 new ZeroCodeAssertionsProcessorImpl(smartUtils.getMapper(), serverEnvFileName);
 
@@ -64,7 +67,7 @@ public class ZeroCodeSorterImplTest {
                 "}\n";
 
         String result = sorter.sortArrayAndReplaceInResponse(step, response, scenarioExecutionState.getResolvedScenarioState());
-        JSONAssert.assertEquals(sortedResponse, result, false);
+        JSONAssert.assertEquals(sortedResponse, result, true);
     }
 
     @Test
@@ -94,7 +97,7 @@ public class ZeroCodeSorterImplTest {
                 "}\n";
 
         String result = sorter.sortArrayAndReplaceInResponse(step, response, scenarioExecutionState.getResolvedScenarioState());
-        JSONAssert.assertEquals(sortedResponse, result, false);
+        JSONAssert.assertEquals(sortedResponse, result, true);
     }
 
     @Test
@@ -124,7 +127,7 @@ public class ZeroCodeSorterImplTest {
                 "}\n";
 
         String result = sorter.sortArrayAndReplaceInResponse(step, response, scenarioExecutionState.getResolvedScenarioState());
-        JSONAssert.assertEquals(sortedResponse, result, false);
+        JSONAssert.assertEquals(sortedResponse, result, true);
     }
 
 }
