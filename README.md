@@ -1,6 +1,6 @@
 <img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
 ===
-Automated API, Kafka and Micro-services testing has never been so easy
+Kafka Data streams and Micro-services API automated regression testing via JSON or YAML
 
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)
@@ -22,8 +22,8 @@ It has the best of best ideas and practices from the community to keep it super 
 Documentation
 ===
 For a quick introduction to Zerocode and its features, visit the 
-+ [Zerocode TDD Doc Site](https://zerocode-tdd-docs.pages.dev)
-+ [Wan to contribute or Improve](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)? Steps and guidelines are [here](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)
++ [Zerocode TDD Documentation](https://zerocode-tdd-docs.pages.dev)
++ [Want to contribute/amend the docs](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)? Steps and guidelines are [here](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)
 
 IDE Support By 
 ===
