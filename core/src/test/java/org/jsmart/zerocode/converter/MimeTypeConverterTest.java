@@ -2,30 +2,33 @@ package org.jsmart.zerocode.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import org.jsmart.zerocode.core.di.provider.JsonPathJacksonProvider;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 import static org.apache.commons.text.StringEscapeUtils.escapeEcmaScript;
+import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MimeTypeConverterTest {
 
-    private ObjectMapper mapper = new ObjectMapperProvider().get();
+    private final ObjectMapper mapper = new ObjectMapperProvider().get();
 
     private Converter xmlToJsonConverter;
 
     @Before
-    public void setUpStuffs() throws Exception {
+    public void setUpStuffs() {
         xmlToJsonConverter = new MimeTypeConverter(mapper);
+        Configuration.setDefaults(new JsonPathJacksonProvider().get());
     }
 
     @Test
-    public void testXmlToJsonWithSingleQuote_willNotFail() throws Exception {
+    public void testXmlToJsonWithSingleQuote_willNotFail() {
 
         String xml = "<?xml version='1.0' encoding=\"UTF-8\"?><address>Street 123</address>";
         String escapedOut = escapeEcmaScript(xml);
@@ -180,12 +183,12 @@ public class MimeTypeConverterTest {
                 "            }\n" +
                 "        }";
 
-        String jsonArrayString = JsonPath.read(jsonBlockString, "$.addresses.address").toString();
-        System.out.println("--- jsonArray: \n" + jsonArrayString);
+        Object jsonPathValue = JsonPath.read(jsonBlockString, "$.addresses.address");
+        System.out.println("--- jsonArray: \n" + jsonPathValue.toString());
 
-        JsonNode jsonNodeInput = mapper.readTree(jsonArrayString);
+        JsonNode jsonNodeInput = this.mapper.valueToTree(jsonPathValue);
 
-        Object jsonNodeOutput = xmlToJsonConverter.jsonBlockToJson(jsonNodeInput);
+        Object jsonNodeOutput = this.xmlToJsonConverter.jsonBlockToJson(jsonNodeInput);
 
         System.out.println("--- jsonArrayBlockOutput:\n" + jsonNodeOutput);
 

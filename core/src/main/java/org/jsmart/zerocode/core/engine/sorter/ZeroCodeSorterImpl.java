@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
 import org.slf4j.Logger;
@@ -52,43 +50,37 @@ public class ZeroCodeSorterImpl implements ZeroCodeSorter {
         //
         String transformedPath = zeroCodeAssertionsProcessor.resolveStringJson(path,
                 resolvedScenarioState);
-        Object result = getArrayToSort(transformedPath, results);
+        
+        List<?> listToSort = JsonPath.parse(results).read(transformedPath, List.class);
+        // sorting passed array
+        List<Map<?, ?>> sortedList = sortList(listToSort, key, order);
+        return replaceArrayWithSorted(results, transformedPath, sortedList);
 
-        if (result instanceof JSONArray) {
-            JSONArray arrayToSort = (JSONArray) result;
-
-            // sorting passed array
-            JSONArray sortedArray = sortArray(arrayToSort, key, order);
-            return replaceArrayWithSorted(results, transformedPath, sortedArray);
-        } else {
-            throw new RuntimeException("Can't sort not an array");
-        }
     }
 
-    private JSONArray sortArray(JSONArray arrayToSort, String key, String order) {
-        JSONArray sortedJsonArray = new JSONArray();
 
-        List<Map<String, ?>> jsonValues = new ArrayList<>();
+    private List<Map<?, ?>> sortList(List<?> arrayToSort, String key, String order) {
+        List<Map<?, ?>> jsonValues = new ArrayList<>();
         for (Object o : arrayToSort) {
-            jsonValues.add((Map<String, ?>) o);
+            if (o instanceof Map<?, ?>) {
+                Map<?, ?> map = (Map<?, ?>) o;
+                jsonValues.add(map);
+            } else {
+                LOGGER.error("list item is no map and ignored during sort: {}", o);
+            }
         }
-
         jsonValues.sort((a, b) -> {
-            Comparable valA;
-            Comparable valB;
-
             try {
-                valA = (Comparable) a.get(key);
-                valB = (Comparable) b.get(key);
-            } catch (Exception e) {
-                LOGGER.error("Objects can't be compared" + e);
+                Comparable valA = (Comparable<?>) a.get(key);
+                Comparable valB = (Comparable<?>) b.get(key);
+                return order.equalsIgnoreCase(SortOrder.NATURAL.getValue()) ? valA.compareTo(valB)
+                        : -valA.compareTo(valB);
+            } catch (ClassCastException e) {
+                LOGGER.error("Objects can't be compared", e);
                 throw new RuntimeException("Objects can't be compared", e.getCause());
             }
-            return order.equalsIgnoreCase(SortOrder.NATURAL.getValue()) ? valA.compareTo(valB)
-                    : -valA.compareTo(valB);
         });
-        sortedJsonArray.addAll(jsonValues);
-        return sortedJsonArray;
+        return jsonValues;
     }
 
     private Map<String, String> convertToMap(String value) {
@@ -101,11 +93,7 @@ public class ZeroCodeSorterImpl implements ZeroCodeSorter {
         }
     }
 
-    public Object getArrayToSort(String path, String results) {
-        return JsonPath.read(results, path);
-    }
-
-    public String replaceArrayWithSorted(String results, String path, Object sortedArray) {
+    private String replaceArrayWithSorted(String results, String path, Object sortedArray) {
         return JsonPath.parse(results).set(path, sortedArray).jsonString();
     }
 
