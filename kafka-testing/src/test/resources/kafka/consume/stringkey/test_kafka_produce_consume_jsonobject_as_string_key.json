@@ -1,0 +1,50 @@
+{
+    "scenarioName": "DEMO SCENARIO - Key as String JSON(Supports, but very rare use case)",
+    "steps": [
+        {
+            "name": "do_produce",
+            "url": "kafka-topic:THE_TEST_TOPIC",
+            "operation": "produce",
+            "request": {
+                "recordType": "JSON",
+                "records": [
+                    {
+                        "key": "{\"keyId\": 789,\"keyRef\": \"EMP-123\"}",
+                        "value": {
+                            "appName": "App X"
+                        }
+                    }
+                ]
+            },
+            "verify": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "do_consume",
+            "url": "kafka-topic:THE_TEST_TOPIC",
+            "operation": "consume",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType": "JSON",
+                    "commitSync": true,
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "verify": {
+                "records": [
+                    {
+                        "key" : {
+                            "keyId" : 789, // For dynamic assertions(to avoid hardcoded values, define a variable and reuse it. Search variables in Documentation)
+                            "keyRef" : "EMP-123"
+                        },
+                        "value": {
+                            "appName": "App X"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

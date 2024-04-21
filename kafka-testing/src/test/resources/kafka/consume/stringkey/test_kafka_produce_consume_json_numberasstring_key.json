@@ -1,0 +1,47 @@
+{
+    "scenarioName": "DEMO SCENARIO - Number as a string key",
+    "steps": [
+        {
+            "name": "do_produce",
+            "url": "kafka-topic:THE_TEST_TOPIC",
+            "operation": "produce",
+            "request": {
+                "recordType": "JSON",
+                "records": [
+                    {
+                        "key": "111",
+                        "value": {
+                            "appName": "App X"
+                        }
+                    }
+                ]
+            },
+            "verify": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "do_consume",
+            "url": "kafka-topic:THE_TEST_TOPIC",
+            "operation": "consume",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType": "JSON",
+                    "commitSync": true,
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "verify": {
+                "records": [
+                    {
+                        "key": "(int)${$.do_produce.request.records[0].key}",
+                        "value": {
+                            "appName": "App X"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
