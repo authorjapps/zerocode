@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.kafka.helper;
 
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -304,6 +305,14 @@ public class KafkaConsumerHelper {
             LOGGER.debug("\nRecord Key - {} , Record value - {}, Record partition - {}, Record offset - {}, Headers - {}",
                     key, valueStr, thisRecord.partition(), thisRecord.offset(), headers);
 
+            if (!isKeyParseableAsJson(keyStr)) {
+                LOGGER.info(">>>Converting the key to JSON format for to able to read it");
+                // Most cases a bare string is used as key, not really a JSON.
+                // Hence, convert the key to JSON equivalent string for the framework able to
+                // read the already consumed key for display and assertion purpose.
+                keyStr = objectMapper.writeValueAsString(keyStr);
+            }
+
             JsonNode keyNode = objectMapper.readTree(keyStr);
             JsonNode valueNode = objectMapper.readTree(valueStr);
 
@@ -317,6 +326,17 @@ public class KafkaConsumerHelper {
             ConsumerJsonRecord jsonRecord = new ConsumerJsonRecord(keyNode, valueNode, headersMap);
             jsonRecords.add(jsonRecord);
         }
+    }
+
+    public static boolean isKeyParseableAsJson(String consumedKey) {
+        try {
+            objectMapper.readTree(consumedKey);
+        } catch (JacksonException e) {
+            LOGGER.info(">>>The key was not in a parsable JSON format:{}", consumedKey);
+            return false;
+        }
+        LOGGER.info(">>> The consumed key was fine and parseable:{}", consumedKey);
+        return true;
     }
 
     private static String convertProtobufToJson(ConsumerRecord thisRecord, ConsumerLocalConfigs consumerLocalConfig) {

@@ -12,6 +12,7 @@ import org.jsmart.zerocode.integration.tests.kafka.consume.file.KafkaConsumeDump
 import org.jsmart.zerocode.integration.tests.kafka.consume.latest.KafkaConsumeLatestExistingTopicTest;
 import org.jsmart.zerocode.integration.tests.kafka.consume.latest.KafkaConsumeLatestTest;
 import org.jsmart.zerocode.integration.tests.kafka.consume.negative.KafkaConsumeAvroNegativeTest;
+import org.jsmart.zerocode.integration.tests.kafka.consume.stringkey.KafkaConsumeJsonAlphaStringKeyTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceAsyncTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceIntKeyTest;
 import org.jsmart.zerocode.integration.tests.kafka.produce.KafkaProduceJsonTest;
@@ -48,6 +49,7 @@ import org.junit.runners.Suite;
         KafkaConsumeJsonTest.class,
         KafkaProduceIntKeyTest.class,
         KafkaConsumeIntKeyTest.class,
+        KafkaConsumeJsonAlphaStringKeyTest.class,
         KafkaConsumeAvroTest.class,
         KafkaConsumeAvroNegativeTest.class,
         KafkaProduceConsumeAvroTest.class,

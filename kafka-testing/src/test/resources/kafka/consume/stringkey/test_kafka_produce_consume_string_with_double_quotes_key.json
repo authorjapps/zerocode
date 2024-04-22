@@ -1,0 +1,48 @@
+{
+    "scenarioName": "DEMO SCENARIO - Special char in the Key(supported, but very rare use case)",
+    "steps": [
+        {
+            "name": "do_produce",
+            "url": "kafka-topic:THE_TEST_TOPIC",
+            "operation": "produce",
+            "request": {
+                "recordType": "JSON",
+                "records": [
+                    {
+                        "key": "Hello's Key\"s",
+                        "value": {
+                            "appName": "App X"
+                        }
+                    }
+                ]
+            },
+            "verify": {
+                "status": "Ok"
+            }
+        },
+        {
+            "name": "do_consume",
+            "url": "kafka-topic:THE_TEST_TOPIC",
+            "operation": "consume",
+            "request": {
+                "consumerLocalConfigs": {
+                    "recordType": "JSON",
+                    "commitSync": true,
+                    "showRecordsConsumed": true,
+                    "maxNoOfRetryPollsOrTimeouts": 3
+                }
+            },
+            "verify": {
+                "records": [
+                    {
+                        //  "key": "${$.do_produce.request.records[0].key}", // JSONPath for assertion Doesn't work. But consume works.
+                        "key": "Hello's Key\"s", // For dynamic assertions(to avoid hardcoded value, define a variable and reuse it. Search variables in Documentation for examples)
+                        "value": {
+                            "appName": "App X"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
