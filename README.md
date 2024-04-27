@@ -21,9 +21,9 @@ It has the best of best ideas and practices from the community to keep it super 
 
 Documentation
 ===
-For a quick introduction to Zerocode and its features, visit the 
-+ [Zerocode TDD Documentation](https://zerocode-tdd-docs.pages.dev)
-+ [Want to contribute/amend the docs](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)? Steps and guidelines are [here](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)
+Visit here : 
++ [Documentation](https://zerocode-tdd-docs.pages.dev) - Indexed & instantly find you the results
++ [Want to contribute or amend the docs](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)? Steps and guidelines are [here](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)
 
 IDE Support By 
 ===
@@ -60,100 +60,7 @@ Response:
 
 then, we can easily validate the above API using `Zerocode` like below.
 
-+ Using YAML described as below,
-
-> _The beauty here is, we can use the payload/headers structure for validation as it is without any manipulation or use a flat JSON path to skip the hassles of the entire object hierarchies._
-
-## Validators
-
-Using YAML
-
-```yaml
-
----
-url: api/v1/customers/123
-method: GET
-request:
-  headers:
-    Content-Type: application/json
-retry:
-  max: 3
-  delay: 1000
-validators:
-- field: "$.status"
-  value: 200
-- field: "$.body.type"
-  value: Premium Visa
-- field: "$.body.addresses[0].line1"
-  value: 10 Random St
-```
-
-or
-
-Using JSON
-
-```JSON
-{
-  "url": "api/v1/customers/123",
-  "method": "GET",
-  "request": {
-    "headers": {
-      "Content-Type": "application/json"
-    }
-  },
-  "retry": {
-    "max": 3,
-    "delay": 1000
-  },
-  "validators": [
-    {
-      "field": "$.status",
-      "value": 200
-    },
-    {
-      "field": "$.body.type",
-      "value": "Premium Visa"
-    },
-    {
-      "field": "$.body.addresses[0].line1",
-      "value": "10 Random St"
-    }
-  ]
-}
-```
-
-## Matchers
-
-Using YAML
-
-```yaml
-
----
-url: api/v1/customers/123
-method: GET
-request:
-  headers:
-    Content-Type: application/json
-retry:
-  max: 3
-  delay: 1000
-verify:
-  status: 200
-  headers:
-    Content-Type:
-    - application/json; charset=utf-8
-  body:
-    id: 123
-    type: Premium Visa
-    addresses:
-    - type: Billing
-      line1: 10 Random St
-verifyMode: LENIENT
-```
-
-or
-
-Using JSON
++ Using JSON
 
 ```JSON
 {
@@ -184,22 +91,49 @@ Using JSON
       ]
     }    
   },
-  "verifyMode": "STRICT"
+  "verifyMode": "LENIENT"
 }
 ```
 
-and run it simply by pointing to the above JSON/YAML file from a JUnit `@Test` method.
++ or Using YAML
 
-```java
-   @Test
-   @Scenario("test_customer_get_api.yml")
-   public void getCustomer_happyCase(){
-        // No code goes here. This remains empty.
-   }
+```yaml
+
+---
+url: api/v1/customers/123
+method: GET
+request:
+  headers:
+    Content-Type: application/json
+retry:
+  max: 3
+  delay: 1000
+verify:
+  status: 200
+  headers:
+    Content-Type:
+    - application/json; charset=utf-8
+  body:
+    id: 123
+    type: Premium Visa
+    addresses:
+    - type: Billing
+      line1: 10 Random St
+verifyMode: LENIENT
 ```
+
+
+> _The beauty here is, we can use the payload/headers structure for validation as it is without any manipulation
+> or
+> use a flat JSON path to skip the hassles of the entire object hierarchies._
+
 
 Looks simple n easy? Why not give it a try? Visit the [quick-start guide](https://github.com/authorjapps/zerocode/wiki/Getting-Started) or [user's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide) for more insight.
 
-Zerocode is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their microservices. Learn more about [Validators Vs Matchers](https://github.com/authorjapps/zerocode/wiki/Validators-and-Matchers) here.
+Zerocode-TDD is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their micro-services, data-pipelines etc. 
+
+Also, learn more about [Validators Vs Matchers](https://github.com/authorjapps/zerocode/wiki/Validators-and-Matchers) here.
 
 Happy Testing! <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>
+
+🔆 Visit [Documentation](https://zerocode-tdd-docs.pages.dev) - Indexed, searchable & instantly find you the results
