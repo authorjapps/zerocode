@@ -26,10 +26,10 @@ import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * <h3>External File Resolver</h3>
- * <p>
+ * External File Resolver :
+ *
  * Processes the Step definition and resolves any reference to the external file.
- * <p>
+ *
  * Given a Json Java map, it digs deep into the fields and finds the references to the external content
  * in the classpath and replaces the value of this key with the content from the file.
  *

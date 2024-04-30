@@ -339,6 +339,9 @@
                     <configuration>
                         <source>${java-compiler-source.version}</source>
                         <target>${java-compiler-target.version}</target>
+                        <compilerArgs>
+                            <arg>-proc:none</arg>
+                        </compilerArgs>
                     </configuration>
                 </plugin>
                 <!--<plugin>
