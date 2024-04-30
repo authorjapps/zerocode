@@ -9,7 +9,7 @@
 
     <artifactId>zerocode-tdd-parent</artifactId>
     <groupId>org.jsmart</groupId>
-    <version>1.3.43</version>
+    <version>1.3.44-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>ZeroCode TDD Parent</name>
@@ -324,8 +324,7 @@
      -
      - How to check or reproduce this javadoc error?
      - From your local laptop
-     - Option-1 : Run a maven "dry run" <- Results in error e.g. javadoc error due to JAVA_HOME not set - Option-2 : Run a maven "prepare" run <- Results in error e.g. javadoc error due to JAVA_HOME not set -
-     - Note: or remove the specific plugins from the build section and try dry-run and prepare stages, if full "commenting out" has issues
+     - Option-1 : Run a maven "dry run" <- Results in error e.g. javadoc error due to JAVA_HOME not set - Option-2 : Run a maven "prepare" run <- Results in error e.g. javadoc error due to JAVA_HOME not set - - Note: or remove the specific plugins from the build section and try dry-run and prepare stages, if full "commenting out" has issues
     -->
 
     <build>
