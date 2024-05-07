@@ -5,7 +5,7 @@ Kafka Data streams and Micro-services API automated regression testing via JSON 
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-8A2BE2)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
-[![Kafka Testing](https://img.shields.io/badge/kafka-testing-blue)](https://zerocode-tdd-docs.pages.dev/kafka/Kafka-Testing-Introduction)
+[![Kafka Testing](https://img.shields.io/badge/kafka-testing-blue)](https://zerocode-tdd.tddfy.com/kafka/Kafka-Testing-Introduction)
 
 
 **Latest release:🏹** [![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) <br/>
