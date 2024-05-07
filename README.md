@@ -22,7 +22,7 @@ It has the best of best ideas and practices from the community to keep it super 
 Documentation
 ===
 Visit here : 
-+ [Documentation](https://zerocode-tdd-docs.pages.dev) - Indexed & instantly find you the results
++ [Documentation](zerocode-tdd.tddfy.com) - Indexed & instantly find you the results
 + [Want to contribute or amend the docs](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)? Steps and guidelines are [here](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)
 
 IDE Support By 
@@ -136,4 +136,4 @@ Also, learn more about [Validators Vs Matchers](https://github.com/authorjapps/z
 
 Happy Testing! <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>
 
-🔆 Visit [Documentation](https://zerocode-tdd-docs.pages.dev) - Indexed, searchable & instantly finds you the results
+🔆 Visit [Documentation](https://zerocode-tdd.tddfy.com) - Indexed, searchable & instantly finds you the results
