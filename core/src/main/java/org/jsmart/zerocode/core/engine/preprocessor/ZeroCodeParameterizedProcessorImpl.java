@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.DSL_FORMAT;
 import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
@@ -136,9 +135,8 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
 
     private String[] retrieveCsvHeaders(String csvHeaderLine) {
         String[] parsedHeaderLine = csvParser.parseLine(csvHeaderLine + LINE_SEPARATOR);
-        Stream<String> headers = Arrays.stream(parsedHeaderLine);
-        boolean hasHeader = parsedHeaderLine.length > 0 && headers.allMatch(s -> s.matches("^\\|.*\\|$"));
-        return !hasHeader ? null : headers.map(s -> s.substring(1,s.length()-1)).toArray(String[]::new);
+        boolean hasHeader = parsedHeaderLine.length > 0 && Arrays.stream(parsedHeaderLine).allMatch(s -> s.matches("^\\|.*\\|$"));
+        return !hasHeader ? null : Arrays.stream(parsedHeaderLine).map(s -> s.substring(1,s.length()-1)).toArray(String[]::new);
     }
 
     private Map<String, Object> resolveCsvLine(String csvLine, String[] headers) {
