@@ -76,7 +76,7 @@ public class SmartUtilsTest {
     @Test
     public void willReadAllfileNamesFrom_TestResource() {
         List<String> allTestCaseFiles = SmartUtils.getAllEndPointFiles("unit_test_files/engine_unit_test_jsons");
-        assertThat(allTestCaseFiles.size(), is(22));
+        assertThat(allTestCaseFiles.size(), is(23));
         assertThat(allTestCaseFiles.get(0), is("unit_test_files/engine_unit_test_jsons/00_test_json_single_step_verifications.json"));
     }
 
