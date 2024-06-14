@@ -1,0 +1,30 @@
+{
+    "scenarioName": "Named Parameterized Scenario for ---> ${0}",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/users/${PARAM.USERID}",
+            "method": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "login" : "${PARAM.USERID}",
+                    "type" : "User",
+                    "name" : "${PARAM.USERNAME}",
+                    "location" : "${PARAM.ADDRESS}",
+                    "id" : "(int)${PARAM.USERNO}",
+                    "site_admin" : "(boolean)${PARAM.ISADMIN}"
+                }
+            }
+        }
+    ],
+    "parameterized": {
+        "csvSource":[
+            "|USERID|,     |USERNAME|,  |ADDRESS|,     |USERNO|,        |ISADMIN|",
+            "octocat,      The Octocat, San Francisco, 583231,          false",
+            "siddhagalaxy, Sidd,        UK,            33847730,        false"
+        ]
+    }
+}
