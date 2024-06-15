@@ -7,13 +7,14 @@ import com.univocity.parsers.csv.CsvParser;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.utils.TokenUtils;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.IntStream;
 
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.DSL_FORMAT;
 import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
@@ -115,10 +116,13 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
                 return scenario;
             }
 
-            Map<String, Object> valuesMap = new HashMap<>();
+            String[] headers = retrieveCsvHeaders(parameterizedCsvList.get(0));
+
+            paramIndex = headers == null ? paramIndex : paramIndex+1;
+
             String csvLine = parameterizedCsvList.get(paramIndex);
 
-            resolveCsvLine(valuesMap, csvLine);
+            Map<String, Object> valuesMap = resolveCsvLine(csvLine, headers);
 
             String resultantStepJson = replaceWithValues(stepJson, valuesMap);
 
@@ -129,11 +133,25 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
         }
     }
 
-    private void resolveCsvLine(Map<String, Object> valuesMap, String csvLine) {
+    private String[] retrieveCsvHeaders(String csvHeaderLine) {
+        String[] parsedHeaderLine = csvParser.parseLine(csvHeaderLine + LINE_SEPARATOR);
+        boolean hasHeader = parsedHeaderLine.length > 0 && Arrays.stream(parsedHeaderLine).allMatch(s -> s.matches("^\\|.*\\|$"));
+        return !hasHeader ? null : Arrays.stream(parsedHeaderLine).map(s -> s.substring(1,s.length()-1)).toArray(String[]::new);
+    }
+
+    private Map<String, Object> resolveCsvLine(String csvLine, String[] headers) {
+        Map<String, Object> valuesMap = new HashMap<>();
         String[] parsedLine = csvParser.parseLine(csvLine + LINE_SEPARATOR);
-        AtomicLong index = new AtomicLong(0);
-        Arrays.stream(parsedLine)
-                .forEach(thisValue -> valuesMap.put(index.getAndIncrement() + "", thisValue));
+        IntStream.range(0, parsedLine.length).forEach(i -> valuesMap.put(i + "", parsedLine[i]));
+
+        if (headers != null){
+            IntStream.range(0, headers.length).forEach(i -> {
+                if(!headers[i].contains(" ") && !headers[i].isEmpty()){
+                    valuesMap.put("PARAM."+headers[i], TokenUtils.resolveKnownTokens(parsedLine[i]).toString());
+                }
+            });
+        }
+        return valuesMap;
     }
 
     private String replaceWithValues(String stepJson, Map<String, Object> valuesMap) {

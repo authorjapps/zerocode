@@ -1,10 +1,12 @@
 package org.jsmart.zerocode.core.engine.preprocessor;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.univocity.parsers.csv.CsvParser;
 import jakarta.inject.Inject;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
 import org.jukito.TestModule;
@@ -75,7 +77,7 @@ public class ZeroCodeParameterizedProcessorImplTest {
     @Test
     public void testProcessParameterized_csv() throws Exception {
         String jsonDocumentAsString = smartUtils
-                .getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/11_scenario_parameterized_csv.json");
+                .getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/11.1_scenario_parameterized_csv.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
 
         ScenarioSpec scenarioSpecResolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 0);
@@ -86,5 +88,24 @@ public class ZeroCodeParameterizedProcessorImplTest {
         assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/11/22"));
         assertThat(scenarioSpecResolved.getSteps().get(0).getAssertions().get("status").asInt(), is(400));
 
+    }
+
+    @Test
+    public void testProcessParameterized_csv_with_named_random() throws Exception {
+        String jsonDocumentAsString = smartUtils
+                .getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/11.2_scenario_parameterized_csv_with_named_random.json");
+        ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+
+        ScenarioSpec scenarioSpecResolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 0);
+        Step step = scenarioSpecResolved.getSteps().get(0);
+        assertThat(step.getUrl(), is("/anUrl/${RANDOM.NUMBER}/${RANDOM.NUMBER}"));
+        JsonNode queryParams = step.getRequest().get("queryParams");
+        assertThat(queryParams.get("id1"), is(queryParams.get("id2")));
+        assertThat(queryParams.get("addressId1"), is(queryParams.get("addressId2")));
+        assertThat(scenarioSpecResolved.getSteps().get(0).getAssertions().get("status").asInt(), is(200));
+
+        scenarioSpecResolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 1);
+        assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/11/22"));
+        assertThat(scenarioSpecResolved.getSteps().get(0).getAssertions().get("status").asInt(), is(400));
     }
 }

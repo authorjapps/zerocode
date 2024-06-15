@@ -10,9 +10,13 @@ import com.univocity.parsers.csv.CsvParser;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
+
+import org.jsmart.zerocode.core.domain.Parameterized;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
+
+import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
@@ -30,7 +34,6 @@ import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
 import org.jsmart.zerocode.core.utils.ApiTypeUtils;
 import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
-import static org.jsmart.zerocode.core.utils.RunnerUtils.getParameterSize;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -42,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 @Singleton
@@ -549,6 +553,24 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         int parameterSize = getParameterSize(scenario.getParameterized());
         scenarioLoopTimes = parameterSize != 0 ? parameterSize : scenarioLoopTimes;
         return scenarioLoopTimes;
+    }
+
+    private int getParameterSize(Parameterized parameterized) {
+        if (parameterized == null) {
+            return 0;
+        }
+
+        List<Object> valueSource = parameterized.getValueSource();
+        List<String> csvSource = parameterized.getCsvSource();
+        int csvSourceSize = 0;
+
+        if (csvSource != null && !csvSource.isEmpty()){
+            String[] parsedHeaderLine = csvParser.parseLine(csvSource.get(0) + LINE_SEPARATOR);
+            boolean hasHeader = parsedHeaderLine.length > 0 && Arrays.stream(parsedHeaderLine).allMatch(s -> s.matches("^\\|.*\\|$"));
+            csvSourceSize = hasHeader ? csvSource.size() -1 : csvSource.size();
+        }
+
+        return valueSource != null ? valueSource.size() : csvSourceSize;
     }
 
     private List<FieldAssertionMatcher> compareStepResults(Step thisStep, String actualResult, String expectedResult, String resolvedScenarioState) {
