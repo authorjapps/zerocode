@@ -22,8 +22,8 @@ It has the best of best ideas and practices from the community to keep it super 
 Documentation
 ===
 Visit here : 
-+ [Documentation](https://zerocode-tdd.tddfy.com) - Indexed & instantly find you the results
-+ [Want to contribute or amend the docs](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)? Steps and guidelines are [here](https://github.com/authorjapps/zerocode/wiki/Documentation-How-To-Fix-Steps)
++ [Documentation](https://zerocode-tdd.tddfy.com) - Indexed & instantly finds you the results
++ Want to amend or improve any documentation? Steps and guidelines are [here](https://github.com/authorjapps/zerocode/wiki/Documentation-Steps)
 
 IDE Support By 
 ===
