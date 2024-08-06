@@ -39,9 +39,9 @@ Maven Dependency
 
 Introduction
 ===
-Zerocode is a modern lightweight, simple and extensible open-source framework for writing test intentions in simple JSON or YAML format that facilitates both declarative configuration and automation. 
+Zerocode is a modern, lightweight, and extensible open-source framework designed for writing executable test scenarios using simple JSON or YAML formats. It supports both declarative configuration and automation, making it user-friendly and efficient.
 
-Put simply, Zerocode alleviates pain and brings simplicity to modern API automation. The framework manages the response validations, target API invocations, load/stress testing and security testing in a unified way using simple YAML/JSON/Fluent steps, aka DSL.
+In essence, Zerocode simplifies the complexities of modern API and data-streaming automation, including Kafka. The framework seamlessly handles response validations, target API invocations, load/stress testing, and security testing, all through straightforward YAML/JSON/Fluent steps.
 
 For example, if your REST API URL `https://localhost:8080/api/v1/customers/123` with `GET` method and `"Content-Type": "application/json"` returns the following payload and a `http` status code `200(OK)` ,
 ```javaScript
