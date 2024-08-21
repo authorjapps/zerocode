@@ -6,13 +6,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ZeroCodeExecResult {
     private String scenarioName;
     private Integer loop;
     private List<ZeroCodeReportStep> steps = new ArrayList<>();
-
+    private Map<String, List<String>> meta;
+    
     @JsonCreator
     public ZeroCodeExecResult(
             @JsonProperty("scenarioName")String scenarioName,
@@ -46,5 +48,13 @@ public class ZeroCodeExecResult {
                 ", stepLoop=" + loop +
                 ", steps=" + steps +
                 '}';
+    }
+
+    public Map<String, List<String>> getMeta() {
+        return meta;
+    }
+
+    public void setMeta(Map<String, List<String>> meta) {
+        this.meta = meta;
     }
 }
