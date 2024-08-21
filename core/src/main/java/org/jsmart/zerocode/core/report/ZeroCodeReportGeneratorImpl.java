@@ -4,6 +4,7 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
+import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -97,6 +98,15 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
             thisReport.getResults().forEach(thisScenario -> {
                 ExtentTest test = extentReports.createTest(thisScenario.getScenarioName());
+
+                // Add meta information to the test
+                if (thisScenario.getMeta() != null) {
+                    for (Map.Entry<String, List<String>> entry : thisScenario.getMeta().entrySet()) {
+                        String key = entry.getKey();
+                        List<String> values = entry.getValue();
+                        test.info(MarkupHelper.createLabel(key + ": " + String.join(", ", values), ExtentColor.BLUE));
+                    }
+                }
 
                 // Assign Category
                 test.assignCategory(DEFAULT_REGRESSION_CATEGORY); //Super set
@@ -276,6 +286,10 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                 .addColumn("responseTimeStamp")
                 .addColumn("result")
                 .addColumn("method")
+                .addColumn("metaAuthors")
+                .addColumn("metaTickets")
+                .addColumn("metaCategories")
+                .addColumn("metaOthers")
                 .build();
 
         CsvMapper csvMapper = new CsvMapper();
@@ -309,6 +323,15 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
                     csvFileBuilder.scenarioLoop(thisResult.getLoop());
                     csvFileBuilder.scenarioName(thisResult.getScenarioName());
+
+                    // Add meta information
+                    Map<String, List<String>> meta = thisResult.getMeta();
+                    if (meta != null) {
+                        csvFileBuilder.metaAuthors(String.join(", ", meta.getOrDefault("authors", Collections.emptyList())));
+                        csvFileBuilder.metaTickets(String.join(", ", meta.getOrDefault("tickets", Collections.emptyList())));
+                        csvFileBuilder.metaCategories(String.join(", ", meta.getOrDefault("categories", Collections.emptyList())));
+                        csvFileBuilder.metaOthers(String.join(", ", meta.getOrDefault("others", Collections.emptyList())));
+                    }
 
                     thisResult.getSteps().forEach(thisStep -> {
                         csvFileBuilder.stepLoop(thisStep.getLoop());
