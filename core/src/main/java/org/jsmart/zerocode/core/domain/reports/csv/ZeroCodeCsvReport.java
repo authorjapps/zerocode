@@ -11,6 +11,7 @@ public class ZeroCodeCsvReport {
     String requestTimeStamp;
     String responseTimeStamp;
     private Double responseDelayMilliSec;
+    // defining meta data fields
     private String metaAuthors;
     private String metaTickets;
     private String metaCategories;
@@ -70,6 +71,8 @@ public class ZeroCodeCsvReport {
     public String getResponseTimeStamp() {
         return responseTimeStamp;
     }
+
+    // defining meta data field setters and getters
 
     public String getMetaAuthors() {
         return metaAuthors;
