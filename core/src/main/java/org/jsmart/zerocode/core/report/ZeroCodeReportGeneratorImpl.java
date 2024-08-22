@@ -99,7 +99,9 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
             thisReport.getResults().forEach(thisScenario -> {
                 ExtentTest test = extentReports.createTest(thisScenario.getScenarioName());
 
-                // Add meta information to the test
+                 /**This code checks if the scenario has meta data.
+                 If it does, it iterates through each meta data entry and adds it to
+                 the Extent report as an info label.**/
                 if (thisScenario.getMeta() != null) {
                     for (Map.Entry<String, List<String>> entry : thisScenario.getMeta().entrySet()) {
                         String key = entry.getKey();
@@ -286,6 +288,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                 .addColumn("responseTimeStamp")
                 .addColumn("result")
                 .addColumn("method")
+                // This adds new columns to the CSV schema for each type of meta data.
                 .addColumn("metaAuthors")
                 .addColumn("metaTickets")
                 .addColumn("metaCategories")
@@ -327,6 +330,9 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                     // Add meta information
                     Map<String, List<String>> meta = thisResult.getMeta();
                     if (meta != null) {
+                        /**This code retrieves the meta data from the test result. If meta data exists,
+                         * it joins the list of values for each meta data type into a comma-separated
+                         * string and adds it to the CSV row.**/
                         csvFileBuilder.metaAuthors(String.join(", ", meta.getOrDefault("authors", Collections.emptyList())));
                         csvFileBuilder.metaTickets(String.join(", ", meta.getOrDefault("tickets", Collections.emptyList())));
                         csvFileBuilder.metaCategories(String.join(", ", meta.getOrDefault("categories", Collections.emptyList())));
