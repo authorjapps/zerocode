@@ -19,10 +19,12 @@ public class ZeroCodeExecResult {
     public ZeroCodeExecResult(
             @JsonProperty("scenarioName")String scenarioName,
             @JsonProperty("stepLoop")Integer loop,
-            @JsonProperty("steps")List<ZeroCodeReportStep> steps) {
+            @JsonProperty("steps")List<ZeroCodeReportStep> steps,
+            @JsonProperty("meta") Map<String, List<String>> meta) {
         this.scenarioName = scenarioName;
         this.loop = loop;
         this.steps = steps;
+        this.meta = meta;
     }
 
     public String getScenarioName() {
