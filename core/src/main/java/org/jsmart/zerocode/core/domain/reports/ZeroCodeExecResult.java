@@ -56,7 +56,4 @@ public class ZeroCodeExecResult {
         return meta;
     }
 
-    public void setMeta(Map<String, List<String>> meta) {
-        this.meta = meta;
-    }
 }

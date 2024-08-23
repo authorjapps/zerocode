@@ -14,6 +14,7 @@ public class ZeroCodeExecReportBuilder {
     private Integer loop;
     private List<ZeroCodeReportStep> steps = Collections.synchronizedList(new ArrayList());
     private Map<String, List<String>> meta = ScenarioSpec.getMeta();
+
     public static ZeroCodeExecReportBuilder newInstance() {
         return new ZeroCodeExecReportBuilder();
     }
