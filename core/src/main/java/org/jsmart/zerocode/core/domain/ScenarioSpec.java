@@ -16,10 +16,10 @@ public class ScenarioSpec {
     private final String scenarioName;
     private final List<Step> steps;
     private final Parameterized parameterized;
-    private Map<String, List<String>> meta;
+    private static Map<String, List<String>> meta;
 
     // Add getter and setter for meta
-    public Map<String, List<String>> getMeta() {
+    public static Map<String, List<String>> getMeta() {
         return meta;
     }
     public void setMeta(Map<String, List<String>> meta) {
