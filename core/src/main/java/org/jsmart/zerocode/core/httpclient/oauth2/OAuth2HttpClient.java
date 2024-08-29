@@ -61,7 +61,6 @@ public class OAuth2HttpClient extends BasicHttpClient {
 			@Named(REFRESH_TOKEN) String refreshToken, @Named(ACCOUNTS_URL) String accountsURL) {
 		this.oauth2 = new OAuth2Impl(clientId, clientSecret, refreshToken, accountsURL);
 		Timer timer = new Timer();
-		System.out.println(timer);
 		timer.schedule(oauth2, 0, REFRESH_INTERVAL);
 		synchronized (oauth2) {
 			try {
