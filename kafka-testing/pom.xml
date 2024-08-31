@@ -82,31 +82,31 @@
 					</execution>
 				</executions>
 			</plugin>-->
-<!--			<plugin>-->
-<!--				<groupId>com.github.os72</groupId>-->
-<!--				<artifactId>protoc-jar-maven-plugin</artifactId>-->
-<!--				<version>3.11.4</version>-->
-<!--				<configuration>-->
-<!--				    <protocArtifact>com.google.protobuf:protoc:3.21.0-rc-2</protocArtifact>-->
-<!--				</configuration>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<phase>generate-sources</phase>-->
-<!--						<goals>-->
-<!--							<goal>run</goal>-->
-<!--						</goals>-->
-<!--						<configuration>-->
-<!--							<protocVersion>3.11.4</protocVersion>-->
-<!--							<includeDirectories>-->
-<!--								<include>src/main/proto</include>-->
-<!--							</includeDirectories>-->
-<!--							<inputDirectories>-->
-<!--								<include>src/main/proto</include>-->
-<!--							</inputDirectories>-->
-<!--						</configuration>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
+			<plugin>
+				<groupId>com.github.os72</groupId>
+				<artifactId>protoc-jar-maven-plugin</artifactId>
+				<version>3.11.4</version>
+				<configuration>
+				    <protocArtifact>com.google.protobuf:protoc:3.21.0-rc-2</protocArtifact>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<protocVersion>3.11.4</protocVersion>
+							<includeDirectories>
+								<include>src/main/proto</include>
+							</includeDirectories>
+							<inputDirectories>
+								<include>src/main/proto</include>
+							</inputDirectories>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<repositories>
