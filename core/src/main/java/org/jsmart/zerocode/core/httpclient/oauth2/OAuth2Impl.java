@@ -12,6 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slf4j.Logger;
@@ -32,15 +33,17 @@ public class OAuth2Impl extends TimerTask {
 	private String clientSecret;
 	private String refreshToken;
 	private String accessTokenURL;
+	private String grant_type;
 
 	private String accessToken;
 	private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2Impl.class);
 
-	public OAuth2Impl(String clientId, String clientSecret, String refreshToken, String accountsUrl) {
+	public OAuth2Impl(String clientId, String clientSecret, String refreshToken, String accountsUrl, String grant_type) {
 		this.clienId = clientId;
 		this.clientSecret = clientSecret;
 		this.refreshToken = refreshToken;
 		this.accessTokenURL = accountsUrl;
+		this.grant_type = grant_type;
 	}
 
 	@Override
@@ -62,31 +65,18 @@ public class OAuth2Impl extends TimerTask {
 	 */
 	private synchronized void generateToken() {
 		try (CloseableHttpClient client = HttpClients.createDefault()) {
-			
-			
+			List<NameValuePair> nameValuePairs = new ArrayList<>(4);
+			nameValuePairs.add(new BasicNameValuePair("refresh_token", refreshToken));
+			nameValuePairs.add(new BasicNameValuePair("client_id", clienId));
+			nameValuePairs.add(new BasicNameValuePair("client_secret", clientSecret));
+			nameValuePairs.add(new BasicNameValuePair("grant_type", grant_type));
+
+			String encodedParams = URLEncodedUtils.format(nameValuePairs, "UTF-8");
 			StringBuilder URL = new StringBuilder(accessTokenURL);
 			URL.append('?');
-			URL.append("refresh_token=" + refreshToken);
-			URL.append("&client_id=" + clienId);;
-			URL.append("&client_secret=" + clientSecret);
-			URL.append("&grant_type=refresh_token");
-			HttpPost post = new HttpPost(URL.toString());
-			
-			
-			/*
-			 * Below code was not compatible with simulator. In production kindly make 
-			 * use of the below code.
-			 */
-			
-			/*
-			 * List<NameValuePair> nameValuePairs = new ArrayList<>(4);
-			 * nameValuePairs.add(new BasicNameValuePair("refresh_token", refreshToken));
-			 * nameValuePairs.add(new BasicNameValuePair("client_secret", clientSecret));
-			 * nameValuePairs.add(new BasicNameValuePair("client_id", clienId));
-			 * nameValuePairs.add(new BasicNameValuePair("grant_type", "refresh_token"));
-			 * post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			 */
-			
+			URL.append(encodedParams);
+			HttpPost post = new HttpPost(String.valueOf(URL));
+
 			JSONObject jsonRespone = null;
 			try (CloseableHttpResponse response = client.execute(post);) {
 				try (InputStream stream = response.getEntity().getContent()) {

@@ -43,7 +43,7 @@ public class OAuth2HttpClient extends BasicHttpClient {
 	private static final String CLIENT_SECRET = "client_secret";
 	private static final String REFRESH_TOKEN = "refresh_token";
 	private static final String ACCOUNTS_URL = "accounts_url";
-	
+	private static final String GRANT_TYPE = "grant_type";
 	/*
 	 * If the Authorization header contains the replacement value as specified by the 
 	 * below constant, then it is replaced with the valid access token
@@ -58,16 +58,22 @@ public class OAuth2HttpClient extends BasicHttpClient {
 
 	@Inject
 	public OAuth2HttpClient(@Named(CLIENT_ID) String clientId, @Named(CLIENT_SECRET) String clientSecret,
-			@Named(REFRESH_TOKEN) String refreshToken, @Named(ACCOUNTS_URL) String accountsURL) {
-		this.oauth2 = new OAuth2Impl(clientId, clientSecret, refreshToken, accountsURL);
-		Timer timer = new Timer();
-		timer.schedule(oauth2, 0, REFRESH_INTERVAL);
-		synchronized (oauth2) {
-			try {
-				oauth2.wait();
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
+			@Named(REFRESH_TOKEN) String refreshToken, @Named(ACCOUNTS_URL) String accountsURL, @Named(GRANT_TYPE) String grant_type) {
+		this.oauth2 = new OAuth2Impl(clientId, clientSecret, refreshToken, accountsURL, grant_type);
+		if ("refresh_token".equals(grant_type)) {
+			Timer timer = new Timer();
+			timer.schedule(oauth2, 0, REFRESH_INTERVAL);
+			synchronized (oauth2) {
+				try {
+					// to ensure the access token is generated before proceeding.
+					oauth2.wait();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
 			}
+		} else {
+			// This will call generateToken() internally
+			oauth2.run();
 		}
 	}
 	
