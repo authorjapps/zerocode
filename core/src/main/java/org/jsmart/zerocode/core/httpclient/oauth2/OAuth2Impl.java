@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.TimerTask;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -46,9 +45,21 @@ public class OAuth2Impl extends TimerTask {
 		this.grant_type = grant_type;
 	}
 
+	public OAuth2Impl(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
 	@Override
 	public void run() {
 		generateToken();
+	}
+
+	/**
+	 * Part of Access Token Workflow to set access token value
+	 * @param accessToken
+	 */
+	public void runAccessToken(String accessToken) {
+		setAccessToken(accessToken);
 	}
 
 	public synchronized String getAccessToken() {
@@ -64,19 +75,22 @@ public class OAuth2Impl extends TimerTask {
 	 * Makes a POST request to the accessTokenURL to fetch the accesstoken
 	 */
 	private synchronized void generateToken() {
+		/*
+		 * The generateToken() method sends a POST request to the
+		 * OAuth2 server (at accounts_url) using the refresh_token,
+		 * client_id, and client_secret to request a new access token.
+		 */
 		try (CloseableHttpClient client = HttpClients.createDefault()) {
 			List<NameValuePair> nameValuePairs = new ArrayList<>(4);
 			nameValuePairs.add(new BasicNameValuePair("refresh_token", refreshToken));
 			nameValuePairs.add(new BasicNameValuePair("client_id", clienId));
 			nameValuePairs.add(new BasicNameValuePair("client_secret", clientSecret));
 			nameValuePairs.add(new BasicNameValuePair("grant_type", grant_type));
-
 			String encodedParams = URLEncodedUtils.format(nameValuePairs, "UTF-8");
 			StringBuilder URL = new StringBuilder(accessTokenURL);
 			URL.append('?');
 			URL.append(encodedParams);
 			HttpPost post = new HttpPost(String.valueOf(URL));
-
 			JSONObject jsonRespone = null;
 			try (CloseableHttpResponse response = client.execute(post);) {
 				try (InputStream stream = response.getEntity().getContent()) {
@@ -85,6 +99,11 @@ public class OAuth2Impl extends TimerTask {
 			}
 			if (accessToken == null) {
 				setAccessToken(jsonRespone.getString("access_token"));
+				/*
+				 * Since this is the first time generating the token, notifyAll()
+				 * is called to wake up any threads waiting for the token, allowing
+				 * them to proceed with the authenticated requests.
+				 */
 				this.notifyAll();
 			} else {
 				setAccessToken(jsonRespone.getString("access_token"));
