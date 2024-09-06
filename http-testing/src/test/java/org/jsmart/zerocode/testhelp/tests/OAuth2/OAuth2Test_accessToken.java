@@ -12,14 +12,14 @@ import org.junit.runner.RunWith;
 @TargetEnv("host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 @UseHttpClient(OAuth2HttpClient.class)
-public class OAuth2Test {
+public class OAuth2Test_accessToken {
 
-	// First run this Server for OAuth2 accounts_url be available
-	// --> RunMeFirstLocalMockRESTServer main()
-	@Test
-	@Scenario("helloworld_OAuth2/OAuth_supported _request.json")
-	public void injectOAuth() {
-		
-	}
+    // First run this Server for OAuth2 accounts_url be available
+    // --> RunMeFirstLocalMockRESTServer main()
+    @Test
+    @Scenario("helloworld_OAuth2/OAuth_supported_request_access_token.json")
+    public void testClientCredentialsFlow() {
+        // This test will use the access token flow
+    }
 
 }
