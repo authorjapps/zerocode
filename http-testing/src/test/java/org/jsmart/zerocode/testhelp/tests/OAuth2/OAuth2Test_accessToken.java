@@ -9,6 +9,10 @@ import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ *  Run this file For testing access tokens only.
+ * Provide essential values in host.properties file.
+ */
 @TargetEnv("host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 @UseHttpClient(OAuth2HttpClient.class)
