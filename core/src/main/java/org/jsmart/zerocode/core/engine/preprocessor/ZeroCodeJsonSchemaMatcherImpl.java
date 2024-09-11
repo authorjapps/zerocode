@@ -34,20 +34,5 @@ public class ZeroCodeJsonSchemaMatcherImpl implements ZeroCodeJsonSchemaMatcher{
     }
 //    TODO remember to remove this working of this ismatching for implementing ir inside the zerocode.
 
-//    public static void main(String[] args) throws IOException {
-//        ObjectMapper mapper = new ObjectMapper();
-//       SmartUtils smartUtils = new SmartUtils();
-//
-//
-//        ZeroCodeJsonSchemaMatcherImpl zero = new ZeroCodeJsonSchemaMatcherImpl();
-//        if(zero.ismatching( one , two ))
-//        {
-//            System.out.println("Matching with Schema");
-//        }
-//        else
-//        {
-//            System.out.println("Not matching with Schema");
-//        }
-//    }
 }
 
