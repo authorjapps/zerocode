@@ -222,9 +222,23 @@
         }
       },
       {
-        "name": "Mock POST to OAuth2 server",
+        "name": "Mock POST to OAuth2 server (refresh token)",
         "operation": "POST",
         "url": "/oauth/v2/token?refresh_token=refresh.token1224454564657556&client_id=client.id74528572945820&client_secret=client.secrect14879452304958245&grant_type=refresh_token",
+        "response": {
+          "status": 200,
+          "body": {
+            "access_token": "1000.59d663ba09e17428a405c37435k3uhf58affd.554a1cefccd19fdgi7ef1db62f71d4393e",
+            "expires_in_sec": 3600,
+            "token_type": "Bearer",
+            "expires_in": 3600000
+          }
+        }
+      },
+      {
+        "name": "Mock POST to OAuth2 server (access token)",
+        "operation": "POST",
+        "url": "/oauth/v2/token?grant_type=client_credentials&client_id=client.id74528572945820&client_secret=client.secrect14879452304958245",
         "response": {
           "status": 200,
           "body": {

@@ -45,8 +45,11 @@ public class OAuth2Impl extends TimerTask {
 		this.grant_type = grant_type;
 	}
 
-	public OAuth2Impl(String accessToken) {
-		this.accessToken = accessToken;
+	public OAuth2Impl(String clientId, String clientSecret, String accountsURL, String grantType) {
+		this.clienId = clientId;
+		this.clientSecret = clientSecret;
+		this.accessTokenURL = accountsURL;
+		this.grant_type = grantType;
 	}
 
 	@Override
@@ -54,13 +57,6 @@ public class OAuth2Impl extends TimerTask {
 		generateToken();
 	}
 
-	/**
-	 * Part of Access Token Workflow to set access token value
-	 * @param accessToken
-	 */
-	public void runAccessToken(String accessToken) {
-		setAccessToken(accessToken);
-	}
 
 	public synchronized String getAccessToken() {
 		return accessToken;
@@ -75,17 +71,22 @@ public class OAuth2Impl extends TimerTask {
 	 * Makes a POST request to the accessTokenURL to fetch the accesstoken
 	 */
 	private synchronized void generateToken() {
-		/*
-		 * The generateToken() method sends a POST request to the
-		 * OAuth2 server (at accounts_url) using the refresh_token,
-		 * client_id, and client_secret to request a new access token.
-		 */
 		try (CloseableHttpClient client = HttpClients.createDefault()) {
-			List<NameValuePair> nameValuePairs = new ArrayList<>(4);
-			nameValuePairs.add(new BasicNameValuePair("refresh_token", refreshToken));
-			nameValuePairs.add(new BasicNameValuePair("client_id", clienId));
-			nameValuePairs.add(new BasicNameValuePair("client_secret", clientSecret));
-			nameValuePairs.add(new BasicNameValuePair("grant_type", grant_type));
+			List<NameValuePair> nameValuePairs;
+			if ("refresh_token".equals(grant_type)) {
+				// for testing refresh tokens
+				nameValuePairs = new ArrayList<>(4);
+				nameValuePairs.add(new BasicNameValuePair("refresh_token", refreshToken));
+				nameValuePairs.add(new BasicNameValuePair("client_id", clienId));
+				nameValuePairs.add(new BasicNameValuePair("client_secret", clientSecret));
+				nameValuePairs.add(new BasicNameValuePair("grant_type", grant_type));
+			} else{
+				// for testing access tokens
+				nameValuePairs = new ArrayList<>(3);
+				nameValuePairs.add(new BasicNameValuePair("grant_type", grant_type));
+				nameValuePairs.add(new BasicNameValuePair("client_id", clienId));
+				nameValuePairs.add(new BasicNameValuePair("client_secret", clientSecret));
+			}
 			String encodedParams = URLEncodedUtils.format(nameValuePairs, "UTF-8");
 			StringBuilder URL = new StringBuilder(accessTokenURL);
 			URL.append('?');
