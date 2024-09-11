@@ -192,6 +192,15 @@
    			<groupId>com.google.protobuf</groupId>
    			<artifactId>protobuf-java-util</artifactId>
 		</dependency>
+
+        <!-- Adding this dependency for Json Schema Validation -->
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
+
     </dependencies>
 
     <profiles>

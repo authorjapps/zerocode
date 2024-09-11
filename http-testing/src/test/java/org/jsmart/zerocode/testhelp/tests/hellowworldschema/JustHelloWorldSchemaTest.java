@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.testhelp.tests.helloworldparameterizedvalue;
+package org.jsmart.zerocode.testhelp.tests.hellowworldschema;
 
 import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.Schema;
@@ -9,11 +9,15 @@ import org.junit.runner.RunWith;
 
 @TargetEnv("github_host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
-public class HelloWorldParameterizedValueTest {
+public class JustHelloWorldSchemaTest {
 
     @Test
-    @Scenario("parameterized_value/hello_world_test_parameterized_value.json")
-    public void testGetByUserNames() throws Exception {
+    @Scenario("helloworldschema/hello_world_status_ok_assertions.json")
+    @Schema("helloworldschema/hello_world_status_ok_assertions_schema.json")
+    public void testGet() throws Exception {
+
+
     }
 
 }
+

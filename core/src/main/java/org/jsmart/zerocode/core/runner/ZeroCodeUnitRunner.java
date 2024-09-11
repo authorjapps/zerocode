@@ -1,26 +1,18 @@
 package org.jsmart.zerocode.core.runner;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
-import java.lang.annotation.Annotation;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.module.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.di.module.RuntimeKafkaClientModule;
-import org.jsmart.zerocode.core.domain.HostProperties;
-import org.jsmart.zerocode.core.domain.JsonTestCase;
-import org.jsmart.zerocode.core.domain.Scenario;
-import org.jsmart.zerocode.core.domain.ScenarioSpec;
-import org.jsmart.zerocode.core.domain.TargetEnv;
-import org.jsmart.zerocode.core.domain.UseHttpClient;
-import org.jsmart.zerocode.core.domain.UseKafkaClient;
+import org.jsmart.zerocode.core.domain.*;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.listener.TestUtilityListener;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonSchemaMatcherImpl;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
@@ -40,6 +32,12 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.annotation.Annotation;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.System.getProperty;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
@@ -118,13 +116,24 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             jsonTestCaseAnno = evalScenarioToJsonTestCase(method.getMethod().getAnnotation(Scenario.class));
         }
 
+        JsonTestCase jsonTestCaseSchemaAnno = method.getMethod().getAnnotation(JsonTestCase.class);
+        if(jsonTestCaseSchemaAnno == null){
+            jsonTestCaseSchemaAnno = evalSchemaToJsonTestCase(method.getMethod().getAnnotation(Schema.class));
+        }
+
         if (isIgnored(method)) {
 
             notifier.fireTestIgnored(description);
 
         } else if (jsonTestCaseAnno != null) {
 
-            runLeafJsonTest(notifier, description, jsonTestCaseAnno);
+            if( jsonTestCaseSchemaAnno != null )
+            runLeafJsonTest(notifier, description, jsonTestCaseAnno , jsonTestCaseSchemaAnno);
+            else
+            {
+                LOGGER.warn("No Json Schema was added for validation");
+                runLeafJsonTest(notifier, description, jsonTestCaseAnno);
+            }
 
         } else {
             // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -205,7 +214,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
-    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno) {
+    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno, JsonTestCase jsonTestCaseSchemaAnno) {
         if (jsonTestCaseAnno != null) {
             currentTestCase = jsonTestCaseAnno.value();
         }
@@ -220,6 +229,68 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             LOGGER.debug("### Found currentTestCase : -" + child);
 
+            if( jsonTestCaseSchemaAnno == null )
+            {
+                LOGGER.warn("### No Json Schema was added for validation");
+            }
+            else
+            {
+                LOGGER.debug("### Found JsonSchema : -" + jsonTestCaseSchemaAnno.value());
+                ObjectMapper mapper = new ObjectMapper();
+                ZeroCodeJsonSchemaMatcherImpl zeroCodeJsonSchemaMatcher = new ZeroCodeJsonSchemaMatcherImpl();
+
+                String path1 = SmartUtils.readJsonAsString( currentTestCase );
+                JsonNode jsonFile = mapper.readTree(path1);
+
+                String path2 = SmartUtils.readJsonAsString( jsonTestCaseSchemaAnno.value() );
+
+                JsonNode schemaFile = mapper.readTree(path2);
+
+                if( zeroCodeJsonSchemaMatcher.ismatching(jsonFile , schemaFile) )
+                {
+                    LOGGER.debug("### JsonSchema matches with the JsonFile.");
+
+                }
+                else
+                {
+                    LOGGER.error("### JsonSchema does not matches with the JsonFile.");
+                    throw new Exception("JsonSchema does not matches with the JsonFile.");
+                }
+            }
+            passed = multiStepsRunner.runScenario(child, notifier, description);
+
+        } catch (Exception ioEx) {
+            ioEx.printStackTrace();
+            notifier.fireTestFailure(new Failure(description, ioEx));
+        }
+
+        testRunCompleted = true;
+
+        if (passed) {
+            LOGGER.debug(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
+                    child.getScenarioName(),
+                    child.getSteps().stream()
+                            .map(step -> step.getName() == null ? step.getId() : step.getName())
+                            .collect(Collectors.toList())));
+        }
+
+        notifier.fireTestFinished(description);
+    }
+
+    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno) {
+        if (jsonTestCaseAnno != null) {
+            currentTestCase = jsonTestCaseAnno.value();
+        }
+
+        notifier.fireTestStarted(description);
+
+        LOGGER.debug("### Running currentTestCase : " + currentTestCase);
+
+        ScenarioSpec child = null;
+        try {
+            child = smartUtils.scenarioFileToJava(currentTestCase, ScenarioSpec.class);
+
+            LOGGER.debug("### Found currentTestCase : -" + child);
             passed = multiStepsRunner.runScenario(child, notifier, description);
 
         } catch (Exception ioEx) {
@@ -363,6 +434,26 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             @Override
             public String value() {
                 return scenario != null? scenario.value(): null;
+            }
+        };
+
+        return jsonTestCase.value() == null ? null : jsonTestCase;
+    }
+
+    private JsonTestCase evalSchemaToJsonTestCase(Schema schema) {
+        // ---------------------------------------------------
+        // If Schema is present then convert to JsonTestCase
+        // ---------------------------------------------------
+        JsonTestCase jsonTestCase = new JsonTestCase() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return JsonTestCase.class;
+            }
+
+            @Override
+            public String value() {
+                return schema != null? schema.value(): null;
             }
         };
 

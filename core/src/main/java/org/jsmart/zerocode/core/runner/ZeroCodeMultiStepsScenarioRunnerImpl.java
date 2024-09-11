@@ -275,6 +275,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     scenarioExecutionState.addStepState(stepExecutionState);
                 }
 
+
+                // TODO I will be implementing the code for JSon Schema Validation here in case we are having the error specified.
+
                 // ---------------------------------
                 // Handle assertion section -START
                 // ---------------------------------
