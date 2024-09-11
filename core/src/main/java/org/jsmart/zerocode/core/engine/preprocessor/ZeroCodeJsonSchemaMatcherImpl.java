@@ -21,18 +21,17 @@ import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ZeroCodeJsonSchemaMatcherImpl implements ZeroCodeJsonSchemaMatcher{
+public class ZeroCodeJsonSchemaMatcherImpl implements ZeroCodeJsonSchemaMatcher {
 
 
     @Override
-    public boolean ismatching(JsonNode jsonFile, JsonNode schema ) {
+    public boolean ismatching(JsonNode jsonFile, JsonNode schema) {
 
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4);
         JsonSchema jsonSchema = factory.getSchema(schema);
         Set<ValidationMessage> errors = jsonSchema.validate(jsonFile);
         return errors.isEmpty();
     }
-//    TODO remember to remove this working of this ismatching for implementing ir inside the zerocode.
-
+//    TODO remember to remove the use of ismatching in main function in this CLass
 }
 
