@@ -1,6 +1,7 @@
 package org.jsmart.zerocode.core.runner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.google.inject.Inject;
@@ -13,6 +14,7 @@ import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
 
 import org.jsmart.zerocode.core.domain.Parameterized;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.SchemaStep;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 
@@ -21,6 +23,8 @@ import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
+
+import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.shouldBuildStrictUrlMatcherForAllUrls;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
@@ -35,11 +39,14 @@ import org.jsmart.zerocode.core.utils.ApiTypeUtils;
 import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
+
+import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 import static org.slf4j.LoggerFactory.getLogger;
 
+import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +115,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private Boolean stepOutcomeGreen;
 
+    private ScenarioSpec schemaScenario;
+
+
+
+
     @Override
     public synchronized boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
 
@@ -133,10 +145,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             ScenarioSpec parameterizedScenario = parameterizedProcessor.resolveParameterized(scenario, scnCount);
 
+            schemaScenario = new ScenarioSpec(parameterizedScenario.getLoop() , parameterizedScenario.getIgnoreStepFailures() , parameterizedScenario.getScenarioName() , new ArrayList<Step>() , parameterizedScenario.getParameterized());
+
             resultReportBuilder = newInstance()
                     .loop(scnCount)
                     .scenarioName(parameterizedScenario.getScenarioName());
-
             wasExecSuccessful = executeSteps(notifier, description, scenarioExecutionState, parameterizedScenario);
 
             ioWriterBuilder.result(resultReportBuilder.build());
@@ -255,6 +268,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 }
                 executionResult = executeApi(logPrefixRelationshipId, thisStep, resolvedRequestJson, scenarioExecutionState);
 
+
                 // logging response
                 final LocalDateTime responseTimeStamp = LocalDateTime.now();
                 correlLogger.aResponseBuilder()
@@ -276,7 +290,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 }
 
 
-                // TODO I will be implementing the code for JSon Schema Validation here in case we are having the error specified.
+
 
                 // ---------------------------------
                 // Handle assertion section -START
@@ -317,6 +331,16 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     stepOutcomeGreen = true;
                     continue;
                 }
+
+
+
+                JsonNode schemaRequest = objectMapper.readTree(stepExecutionState.getRequest()+"\n" );
+                JsonNode schemaResponse = objectMapper.readTree(executionResult);
+
+                SchemaStep schemaStep = new SchemaStep(thisStep.getLoop() , thisStep.getRetry() , thisStep.getName() , thisStep.getOperation()  , thisStep.getMethod() , thisStep.getUrl() ,schemaRequest , thisStep.getValidators() , thisStep.getSort() , null , null , schemaResponse , thisStep.getVerifyMode() , thisStep.getIgnoreStep());
+
+                schemaScenario.addStep(schemaStep);
+
 
                 boolean ignoreStepFailures = scenario.getIgnoreStepFailures() == null ? false : scenario.getIgnoreStepFailures();
                 if (!failureResults.isEmpty()) {
@@ -605,4 +629,11 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         return failureResults;
     }
 
+    public ScenarioSpec getSchemaScenario() {
+        return schemaScenario;
+    }
+
+    public void setSchemaScenario(ScenarioSpec scenarioSpec) {
+        this.schemaScenario = scenarioSpec;
+    }
 }

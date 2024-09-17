@@ -50,6 +50,9 @@ public class ScenarioSpec {
         return parameterized;
     }
 
+    public void addStep(Step step) {
+        this.steps.add(step);
+    }
     @Override
     public String toString() {
         return "ScenarioSpec{" +

@@ -31,6 +31,16 @@ public class StepExecutionState {
 
     }
 
+    public String getResponse()
+    {
+        return paramMap.get("STEP.RESPONSE");
+    }
+
+    public String getRequest()
+    {
+        return paramMap.get("STEP.REQUEST");
+    }
+
     public void addResponse(String responseJson) {
         paramMap.put("STEP.RESPONSE", responseJson);
     }

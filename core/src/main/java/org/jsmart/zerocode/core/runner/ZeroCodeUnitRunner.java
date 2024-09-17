@@ -116,22 +116,22 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             jsonTestCaseAnno = evalScenarioToJsonTestCase(method.getMethod().getAnnotation(Scenario.class));
         }
 
-        JsonTestCase jsonTestCaseSchemaAnno = method.getMethod().getAnnotation(JsonTestCase.class);
-        if(jsonTestCaseSchemaAnno == null){
-            jsonTestCaseSchemaAnno = evalSchemaToJsonTestCase(method.getMethod().getAnnotation(Schema.class));
-        }
+
+
+        Schema schema =  method.getMethod().getAnnotation(Schema.class);
+
 
         if (isIgnored(method)) {
 
             notifier.fireTestIgnored(description);
 
-        } else if (jsonTestCaseAnno != null) {
+        } else if (jsonTestCaseAnno != null ) {
 
-            if( jsonTestCaseSchemaAnno != null )
-            runLeafJsonTest(notifier, description, jsonTestCaseAnno , jsonTestCaseSchemaAnno);
+            if( schema != null )
+            runLeafJsonTest(notifier, description, jsonTestCaseAnno , schema);
             else
             {
-                LOGGER.warn("No Json Schema was added for validation");
+                LOGGER.debug("No Json Schema was added for validation");
                 runLeafJsonTest(notifier, description, jsonTestCaseAnno);
             }
 
@@ -214,7 +214,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
-    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno, JsonTestCase jsonTestCaseSchemaAnno) {
+    //This one is for schemaValidation
+    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno, Schema schemaAnno) {
         if (jsonTestCaseAnno != null) {
             currentTestCase = jsonTestCaseAnno.value();
         }
@@ -229,35 +230,43 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             LOGGER.debug("### Found currentTestCase : -" + child);
 
-            if( jsonTestCaseSchemaAnno == null )
+
+            passed = multiStepsRunner.runScenario(child, notifier, description);
+            // TODO Schema validation
+            if( schemaAnno == null )
             {
                 LOGGER.warn("### No Json Schema was added for validation");
             }
             else
             {
-                LOGGER.debug("### Found JsonSchema : -" + jsonTestCaseSchemaAnno.value());
+                LOGGER.debug("### Found Json Schema : - \n" + smartUtils.prettyPrintJson(smartUtils.readJsonAsString(schemaAnno.value())));
+
+                // Schema Validation is performed here...
+
                 ObjectMapper mapper = new ObjectMapper();
+
                 ZeroCodeJsonSchemaMatcherImpl zeroCodeJsonSchemaMatcher = new ZeroCodeJsonSchemaMatcherImpl();
 
-                String path1 = SmartUtils.readJsonAsString( currentTestCase );
-                JsonNode jsonFile = mapper.readTree(path1);
+                JsonNode jsonFile = mapper.valueToTree(((ZeroCodeMultiStepsScenarioRunnerImpl)multiStepsRunner).getSchemaScenario());
 
-                String path2 = SmartUtils.readJsonAsString( jsonTestCaseSchemaAnno.value() );
+                String jsonScenarioFile = SmartUtils.readJsonAsString( schemaAnno.value() );
 
-                JsonNode schemaFile = mapper.readTree(path2);
+                JsonNode schemaFile = mapper.readTree(jsonScenarioFile);
 
                 if( zeroCodeJsonSchemaMatcher.ismatching(jsonFile , schemaFile) )
                 {
-                    LOGGER.debug("### JsonSchema matches with the JsonFile.");
+                    LOGGER.debug("### Json Schema matches with the Json test file." );
 
                 }
                 else
                 {
-                    LOGGER.error("### JsonSchema does not matches with the JsonFile.");
-                    throw new Exception("JsonSchema does not matches with the JsonFile.");
+                    LOGGER.error("### Json Schema does not matches with the Json test file.");
+                    throw new Exception("Json Schema does not matches with the Json test file.");
                 }
             }
-            passed = multiStepsRunner.runScenario(child, notifier, description);
+
+
+
 
         } catch (Exception ioEx) {
             ioEx.printStackTrace();
@@ -440,25 +449,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         return jsonTestCase.value() == null ? null : jsonTestCase;
     }
 
-    private JsonTestCase evalSchemaToJsonTestCase(Schema schema) {
-        // ---------------------------------------------------
-        // If Schema is present then convert to JsonTestCase
-        // ---------------------------------------------------
-        JsonTestCase jsonTestCase = new JsonTestCase() {
 
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return JsonTestCase.class;
-            }
-
-            @Override
-            public String value() {
-                return schema != null? schema.value(): null;
-            }
-        };
-
-        return jsonTestCase.value() == null ? null : jsonTestCase;
-    }
 
 
 }
