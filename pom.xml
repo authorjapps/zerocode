@@ -107,7 +107,7 @@
 
         <!-- Release Build will not fail if error occurs during javadoc generation -->
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
-        <google.protobuf.version>3.24.4</google.protobuf.version>
+        <google.protobuf.version>3.25.5</google.protobuf.version>
     </properties>
 
     <dependencyManagement>
