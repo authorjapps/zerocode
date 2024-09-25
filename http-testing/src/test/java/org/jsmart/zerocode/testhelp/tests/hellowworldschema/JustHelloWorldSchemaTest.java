@@ -15,9 +15,6 @@ public class JustHelloWorldSchemaTest {
     @Scenario("helloworldschema/hello_world_status_ok_assertions.json")
     @Schema("helloworldschema/hello_world_status_ok_assertions_schema.json")
     public void testGet() throws Exception {
-
-
     }
 
 }
-

@@ -82,11 +82,6 @@
 					</execution>
 				</executions>
 			</plugin>-->
-
-
-			<!--Unpluggin this plug for kafka testing-->
-
-			<!--
 			<plugin>
 				<groupId>com.github.os72</groupId>
 				<artifactId>protoc-jar-maven-plugin</artifactId>
@@ -112,7 +107,6 @@
 					</execution>
 				</executions>
 			</plugin>
-					-->
 		</plugins>
 	</build>
 	<repositories>

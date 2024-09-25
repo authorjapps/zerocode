@@ -23,8 +23,6 @@ import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
-
-import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.shouldBuildStrictUrlMatcherForAllUrls;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
@@ -39,14 +37,11 @@ import org.jsmart.zerocode.core.utils.ApiTypeUtils;
 import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
-
-import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,9 +112,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private ScenarioSpec schemaScenario;
 
-
-
-
     @Override
     public synchronized boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
 
@@ -150,6 +142,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             resultReportBuilder = newInstance()
                     .loop(scnCount)
                     .scenarioName(parameterizedScenario.getScenarioName());
+
             wasExecSuccessful = executeSteps(notifier, description, scenarioExecutionState, parameterizedScenario);
 
             ioWriterBuilder.result(resultReportBuilder.build());
@@ -288,9 +281,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                     stepExecutionState.addResponse(executionResult);
                     scenarioExecutionState.addStepState(stepExecutionState);
                 }
-
-
-
 
                 // ---------------------------------
                 // Handle assertion section -START

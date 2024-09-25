@@ -8,7 +8,14 @@ import com.google.inject.util.Modules;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.module.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.di.module.RuntimeKafkaClientModule;
-import org.jsmart.zerocode.core.domain.*;
+import org.jsmart.zerocode.core.domain.HostProperties;
+import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.Scenario;
+import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.TargetEnv;
+import org.jsmart.zerocode.core.domain.UseHttpClient;
+import org.jsmart.zerocode.core.domain.UseKafkaClient;
+import org.jsmart.zerocode.core.domain.Schema;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.listener.TestUtilityListener;
@@ -116,10 +123,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             jsonTestCaseAnno = evalScenarioToJsonTestCase(method.getMethod().getAnnotation(Scenario.class));
         }
 
-
-
         Schema schema =  method.getMethod().getAnnotation(Schema.class);
-
 
         if (isIgnored(method)) {
 
@@ -230,7 +234,6 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
             LOGGER.debug("### Found currentTestCase : -" + child);
 
-
             passed = multiStepsRunner.runScenario(child, notifier, description);
             // TODO Schema validation
             if( schemaAnno == null )
@@ -264,10 +267,6 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
                     throw new Exception("Json Schema does not matches with the Json test file.");
                 }
             }
-
-
-
-
         } catch (Exception ioEx) {
             ioEx.printStackTrace();
             notifier.fireTestFailure(new Failure(description, ioEx));
@@ -448,8 +447,4 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
         return jsonTestCase.value() == null ? null : jsonTestCase;
     }
-
-
-
-
 }
