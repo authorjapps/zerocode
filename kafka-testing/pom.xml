@@ -107,7 +107,6 @@
 					</execution>
 				</executions>
 			</plugin>
-					-->
 		</plugins>
 	</build>
 	<repositories>
