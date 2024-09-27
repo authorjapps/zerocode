@@ -8,10 +8,10 @@ import org.junit.runner.RunWith;
 
 @TargetEnv("github_host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
-public class metadatatest {
+public class MetaDataTest {
     @Test
     @JsonTestCase("metadatatest/metadatatest.json")
-    public void testmetadata() throws Exception {
+    public void testMetaData() throws Exception {
 
     }
 }
