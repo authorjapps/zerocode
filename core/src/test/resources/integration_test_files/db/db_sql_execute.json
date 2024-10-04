@@ -39,7 +39,7 @@
             },
             "verify": {
 				"rows.SIZE": 2,
-                "rows": [
+                "rows": [ //<-- to make this pass in postgres, set the keys to lowercase
                     { "ID": 1, "NAME": "Jeff Bejo", "START": "2024-09-01", "ACTIVE": true },
                     { "ID": 3, "NAME": null, "START": null, "ACTIVE": true }
                 ]
