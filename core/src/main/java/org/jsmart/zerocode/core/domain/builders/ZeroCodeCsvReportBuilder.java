@@ -82,22 +82,22 @@ public class ZeroCodeCsvReportBuilder {
         return this;
     }
 
-    public ZeroCodeCsvReportBuilder metaAuthors(String metaAuthors) {
+    public ZeroCodeCsvReportBuilder setMetaAuthors(String metaAuthors) {
         this.metaAuthors = metaAuthors;
         return this;
     }
 
-    public ZeroCodeCsvReportBuilder metaTickets(String metaTickets) {
+    public ZeroCodeCsvReportBuilder setMetaTickets(String metaTickets) {
         this.metaTickets = metaTickets;
         return this;
     }
 
-    public ZeroCodeCsvReportBuilder metaCategories(String metaCategories) {
+    public ZeroCodeCsvReportBuilder setMetaCategories(String metaCategories) {
         this.metaCategories = metaCategories;
         return this;
     }
 
-    public ZeroCodeCsvReportBuilder metaOthers(String metaOthers) {
+    public ZeroCodeCsvReportBuilder setMetaOthers(String metaOthers) {
         this.metaOthers = metaOthers;
         return this;
     }

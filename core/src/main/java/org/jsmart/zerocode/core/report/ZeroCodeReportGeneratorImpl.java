@@ -333,10 +333,10 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                         /**This code retrieves the meta data from the test result. If meta data exists,
                          * it joins the list of values for each meta data type into a comma-separated
                          * string and adds it to the CSV row.**/
-                        csvFileBuilder.metaAuthors(String.join(", ", meta.getOrDefault("authors", Collections.emptyList())));
-                        csvFileBuilder.metaTickets(String.join(", ", meta.getOrDefault("tickets", Collections.emptyList())));
-                        csvFileBuilder.metaCategories(String.join(", ", meta.getOrDefault("categories", Collections.emptyList())));
-                        csvFileBuilder.metaOthers(String.join(", ", meta.getOrDefault("others", Collections.emptyList())));
+                        csvFileBuilder.setMetaAuthors(String.join(", ", meta.getOrDefault("authors", Collections.emptyList())));
+                        csvFileBuilder.setMetaTickets(String.join(", ", meta.getOrDefault("tickets", Collections.emptyList())));
+                        csvFileBuilder.setMetaCategories(String.join(", ", meta.getOrDefault("categories", Collections.emptyList())));
+                        csvFileBuilder.setMetaOthers(String.join(", ", meta.getOrDefault("others", Collections.emptyList())));
                     }
 
                     thisResult.getSteps().forEach(thisStep -> {
