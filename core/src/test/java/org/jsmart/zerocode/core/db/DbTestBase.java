@@ -1,31 +1,48 @@
 package org.jsmart.zerocode.core.db;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.dbutils.DbUtils;
-import org.jsmart.zerocode.core.utils.PropertiesProviderUtils;
+import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jukito.TestModule;
 import org.junit.After;
 import org.junit.Before;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * Base class for the unit DB test classes: manages connections,
  * execution of queries and DBMS specific features
  */
-public class DbTestBase {
+public abstract class DbTestBase {
+	// Subclasses must use JukitoRunner
+    public static class JukitoModule extends TestModule {
+        @Override
+        protected void configureTest() {
+            ApplicationMainModule applicationMainModule = new ApplicationMainModule("db_test.properties");
+            install(applicationMainModule);
+        }
+    }
+
+	@Inject
+	@Named("db.driver.url") protected String url;
+
+	@Inject(optional = true)
+	@Named("db.driver.user") protected String user;
 	
-	private static final String DB_PROPERTIES_RESOURCE = "db_test.properties";
+	@Inject(optional = true)
+	@Named("db.driver.password") protected String password;
+
 	protected Connection conn; // managed connection for each test
 	protected boolean isPostgres = false; // set by each connection, to allow portable assertions (postgres is lowercase)
 
 	@Before
-	public void setUp() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException {
+	public void setUp() throws SQLException {
 		conn = connect();
 	}
 
@@ -35,10 +52,8 @@ public class DbTestBase {
 	}
 	
 	protected Connection connect() throws SQLException {
-		Properties prop = PropertiesProviderUtils.getProperties(DB_PROPERTIES_RESOURCE);
-		isPostgres = prop.getProperty("db.driver.url").startsWith("jdbc:postgresql:");
-		return DriverManager.getConnection(
-				prop.getProperty("db.driver.url"), prop.getProperty("db.driver.user"), prop.getProperty("db.driver.password") );
+		isPostgres = url.startsWith("jdbc:postgresql:");
+		return DriverManager.getConnection(url, user, password);
 	}
 
 	protected List<Map<String, Object>> execute(String sql, Object[] params) throws SQLException {

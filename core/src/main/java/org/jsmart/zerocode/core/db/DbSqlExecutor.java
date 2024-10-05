@@ -3,6 +3,7 @@ package org.jsmart.zerocode.core.db;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.univocity.parsers.csv.CsvParser;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import java.util.Map;
 public class DbSqlExecutor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DbSqlExecutor.class);
 	public static final String SQL_RESULTS_KEY = "rows";
+	public static final String CSV_RESULTS_KEY = "size";
 	
 	@Inject
 	@Named("db.driver.url") private String url;
@@ -32,6 +34,35 @@ public class DbSqlExecutor {
 	@Inject(optional = true)
 	@Named("db.driver.password") private String password;
 	
+    @Inject
+    private CsvParser csvParser;
+	
+	/**
+	 * The LOADCSV operation inserts the content of a CSV file into a table,
+	 * and returns the number of records inserted under the key "size"
+	 */
+	public Map<String, Object> LOADCSV(DbCsvRequest request) { // uppercase for consistency with http api operations
+		return loadcsv(request);
+	}
+
+	public Map<String, Object> loadcsv(DbCsvRequest request) {
+		Connection conn = createAndGetConnection();
+		try {
+			LOGGER.info("Load CSV, request -> {} ", request);
+			DbCsvLoader runner = new DbCsvLoader(conn, csvParser);
+			long result = runner.loadCsv(request.getTableName(), request.getCsvSource(), 
+					request.getWithHeaders(), request.getNullString());
+			Map<String, Object> response = new HashMap<>();
+			response.put(CSV_RESULTS_KEY, result);
+			return response;
+		} catch (Exception e) {
+			LOGGER.error("Failed to load CSV", e);
+			throw new RuntimeException(e);
+		} finally {
+			closeConnection(conn);
+		}
+	}
+
 	/**
 	 * The EXECUTE operation returns the records retrieved by the SQL specified in the request 
 	 * under the key "rows" (select) or an empty object (insert, update)

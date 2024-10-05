@@ -4,20 +4,21 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.jukito.JukitoRunner;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JukitoRunner.class)
 public class DbSqlRunnerTest extends DbTestBase {
 
 	@Before
-	public void setUp() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException {
+	public void setUp() throws SQLException {
 		super.setUp();
 		new QueryRunner().update(conn, "DROP TABLE IF EXISTS SQLTABLE; "
 				+ "CREATE TABLE SQLTABLE (ID INTEGER, NAME VARCHAR(20)); "

@@ -10,6 +10,16 @@ import org.junit.runner.RunWith;
 public class DbSqlExecutorScenarioTest {
 
     @Test
+	@Scenario("integration_test_files/db/db_csv_load_with_headers.json")
+	public void testDbCsvLoadWithHeaders() throws Exception {
+	}
+
+    @Test // same scenario and test database
+	@Scenario("integration_test_files/db/db_csv_load_without_headers.json")
+	public void testDbCsvLoadWithoutHeaders() throws Exception {
+	}
+
+    @Test
 	@Scenario("integration_test_files/db/db_sql_execute.json")
 	public void testDbSqlExecute() throws Exception {
 	}
