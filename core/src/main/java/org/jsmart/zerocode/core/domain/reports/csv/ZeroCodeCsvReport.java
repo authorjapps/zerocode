@@ -11,6 +11,11 @@ public class ZeroCodeCsvReport {
     String requestTimeStamp;
     String responseTimeStamp;
     private Double responseDelayMilliSec;
+    // defining meta data fields
+    private String metaAuthors;
+    private String metaTickets;
+    private String metaCategories;
+    private String metaOthers;
 
     public ZeroCodeCsvReport(String scenarioName, Integer scenarioLoop, String stepName, Integer stepLoop,
                              String correlationId, String result, String method, String requestTimeStamp,
@@ -67,6 +72,40 @@ public class ZeroCodeCsvReport {
         return responseTimeStamp;
     }
 
+    // defining meta data field setters and getters
+
+    public String getMetaAuthors() {
+        return metaAuthors;
+    }
+
+    public void setMetaAuthors(String metaAuthors) {
+        this.metaAuthors = metaAuthors;
+    }
+
+    public String getMetaTickets() {
+        return metaTickets;
+    }
+
+    public void setMetaTickets(String metaTickets) {
+        this.metaTickets = metaTickets;
+    }
+
+    public String getMetaCategories() {
+        return metaCategories;
+    }
+
+    public void setMetaCategories(String metaCategories) {
+        this.metaCategories = metaCategories;
+    }
+
+    public String getMetaOthers() {
+        return metaOthers;
+    }
+
+    public void setMetaOthers(String metaOthers) {
+        this.metaOthers = metaOthers;
+    }
+
     @Override
     public String toString() {
         return "ZeroCodeCsvReport{" +
@@ -75,11 +114,15 @@ public class ZeroCodeCsvReport {
                 ", stepName='" + stepName + '\'' +
                 ", stepLoop=" + stepLoop +
                 ", correlationId='" + correlationId + '\'' +
+                ", requestTimeStamp='" + requestTimeStamp + '\'' +
+                ", responseDelayMilliSec=" + responseDelayMilliSec +
+                ", responseTimeStamp='" + responseTimeStamp + '\'' +
                 ", result='" + result + '\'' +
                 ", method='" + method + '\'' +
-                ", requestTimeStamp=" + requestTimeStamp +
-                ", responseTimeStamp=" + responseTimeStamp +
-                ", responseDelayMilliSec=" + responseDelayMilliSec +
+                ", metaAuthors='" + metaAuthors + '\'' +
+                ", metaTickets='" + metaTickets + '\'' +
+                ", metaCategories='" + metaCategories + '\'' +
+                ", metaOthers='" + metaOthers + '\'' +
                 '}';
     }
 }
