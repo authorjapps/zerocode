@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.junit.Test;
 
