@@ -69,7 +69,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private ZerocodeCorrelationshipLogger corrLogger;
     protected boolean testRunCompleted;
     protected boolean passed;
-
+    protected Schema schemaAnno;
     private ZeroCodeMultiStepsScenarioRunner multiStepsRunner;
 
     /**
@@ -123,7 +123,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             jsonTestCaseAnno = evalScenarioToJsonTestCase(method.getMethod().getAnnotation(Scenario.class));
         }
 
-        Schema schema =  method.getMethod().getAnnotation(Schema.class);
+        schemaAnno =  method.getMethod().getAnnotation(Schema.class);
 
         if (isIgnored(method)) {
 
@@ -131,13 +131,11 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
         } else if (jsonTestCaseAnno != null ) {
 
-            if( schema != null )
-            runLeafJsonTest(notifier, description, jsonTestCaseAnno , schema);
-            else
+            if( schemaAnno == null )
             {
                 LOGGER.debug("No Json Schema was added for validation");
-                runLeafJsonTest(notifier, description, jsonTestCaseAnno);
             }
+            runLeafJsonTest(notifier, description, jsonTestCaseAnno);
 
         } else {
             // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -218,8 +216,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
-    //This one is for schemaValidation
-    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno, Schema schemaAnno) {
+
+    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno) {
         if (jsonTestCaseAnno != null) {
             currentTestCase = jsonTestCaseAnno.value();
         }
@@ -235,7 +233,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             LOGGER.debug("### Found currentTestCase : -" + child);
 
             passed = multiStepsRunner.runScenario(child, notifier, description);
-            // TODO Schema validation
+            //Schema validation
             if( schemaAnno == null )
             {
                 LOGGER.warn("### No Json Schema was added for validation");
@@ -285,39 +283,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         notifier.fireTestFinished(description);
     }
 
-    private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno) {
-        if (jsonTestCaseAnno != null) {
-            currentTestCase = jsonTestCaseAnno.value();
-        }
 
-        notifier.fireTestStarted(description);
-
-        LOGGER.debug("### Running currentTestCase : " + currentTestCase);
-
-        ScenarioSpec child = null;
-        try {
-            child = smartUtils.scenarioFileToJava(currentTestCase, ScenarioSpec.class);
-
-            LOGGER.debug("### Found currentTestCase : -" + child);
-            passed = multiStepsRunner.runScenario(child, notifier, description);
-
-        } catch (Exception ioEx) {
-            ioEx.printStackTrace();
-            notifier.fireTestFailure(new Failure(description, ioEx));
-        }
-
-        testRunCompleted = true;
-
-        if (passed) {
-            LOGGER.debug(String.format("\n**FINISHED executing all Steps for [%s] **.\nSteps were:%s",
-                    child.getScenarioName(),
-                    child.getSteps().stream()
-                            .map(step -> step.getName() == null ? step.getId() : step.getName())
-                            .collect(Collectors.toList())));
-        }
-
-        notifier.fireTestFinished(description);
-    }
 
     private List<String> getSmartChildrenList() {
         List<FrameworkMethod> children = getChildren();

@@ -137,7 +137,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             ScenarioSpec parameterizedScenario = parameterizedProcessor.resolveParameterized(scenario, scnCount);
 
-            schemaScenario = new ScenarioSpec(parameterizedScenario.getLoop() , parameterizedScenario.getIgnoreStepFailures() , parameterizedScenario.getScenarioName() , new ArrayList<Step>() , parameterizedScenario.getParameterized());
+            schemaScenario = new ScenarioSpec(parameterizedScenario.getLoop() , parameterizedScenario.getIgnoreStepFailures() , parameterizedScenario.getScenarioName() , new ArrayList<Step>() , parameterizedScenario.getParameterized() , parameterizedScenario.getMeta());
 
             resultReportBuilder = newInstance()
                     .loop(scnCount)
