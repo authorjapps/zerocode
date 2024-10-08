@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import com.univocity.parsers.csv.CsvParser;
 
+/**
+ * Data loading in the database from a CSV external source
+ */
 class DbCsvLoader {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DbCsvLoader.class);
 	private Connection conn;
@@ -26,10 +29,10 @@ class DbCsvLoader {
 	}
 
 	/**
-	 * Loads rows in csv format (csvLines) into a table in the database
-	 * and returns the total number of rows
+	 * Loads rows in CSV format (csvLines) into a table in the database
+	 * and returns the total number of rows.
 	 */
-	int loadCsv(String table, List<String> csvLines, boolean withHeaders, String nullString) throws SQLException {
+	public int loadCsv(String table, List<String> csvLines, boolean withHeaders, String nullString) throws SQLException {
 		if (csvLines == null || csvLines.isEmpty())
 			return 0;
 		
@@ -87,7 +90,7 @@ class DbCsvLoader {
 				LOGGER.info("    row [{}] params: {}", i + 1, Arrays.asList(params).toString());
 			} catch (Exception e) { // Not only SQLException as converter also does parsing
 				String message = String.format("Error matching data type of parameters and table columns at CSV row %d", i + 1);
-				LOGGER.error(message); // do not log the exception because it will be logged by the parent executor (DbCsvLoader)
+				LOGGER.error(message);
 				LOGGER.error("Exception message: {}", e.getMessage());
 				throw new RuntimeException(message, e);
 			}
@@ -123,7 +126,7 @@ class DbCsvLoader {
 			runner.update(conn, sql, params);
 		} catch (SQLException e) {
 			String message = String.format("Error inserting data at CSV row %d", rowId + 1);
-			LOGGER.error(message); // do not log the exception because it will be logged by the parent executor (DbCsvLoader)
+			LOGGER.error(message);
 			LOGGER.error("Exception message: {}", e.getMessage());
 			throw new RuntimeException(message, e);
 		}

@@ -12,7 +12,8 @@ public class DbSqlRequest {
 	private final Object[] sqlParams;
 
 	@JsonCreator
-	public DbSqlRequest(@JsonProperty("sqlStatement") String sql,
+	public DbSqlRequest(
+			@JsonProperty("sql") String sql,
 			@JsonProperty("sqlParams") Object[] sqlParams) {
 		this.sql = sql;
 		this.sqlParams = sqlParams;

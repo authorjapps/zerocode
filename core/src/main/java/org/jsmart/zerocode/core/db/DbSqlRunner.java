@@ -10,6 +10,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Execution of SQL statements against a database
+ */
 class DbSqlRunner {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DbSqlRunner.class);
 	private Connection conn;
@@ -19,14 +22,14 @@ class DbSqlRunner {
 	}
 	
 	/**
-	 * Execute an sql with parameters (optional) and returns a list of maps 
+	 * Executes a SQL statement with parameters (optional) and returns a list of maps 
 	 * with the ResultSet content (select) or null (insert, update)
 	 */
-	List<Map<String, Object>> execute(String sql, Object[] params) throws SQLException {
-		// As there is only one execute operation instead of separate update and query, 
-		// the DbUtils execute method returns a list containing each ResultSet (each is a list of maps):
+	public List<Map<String, Object>> execute(String sql, Object[] params) throws SQLException {
+		// There is only one execute operation instead of separate update and query.
+		// The DbUtils execute method returns a list containing each ResultSet (each is a list of maps):
 		// - Empty (insert and update)
-		// - With one or more ResultSets (select).
+		// - With one or more ResultSets (select): use the first one
 		// - Note that some drivers never return more than one ResultSet (e.g. H2)
 		QueryRunner runner = new QueryRunner();
 		List<List<Map<String, Object>>> result = runner.execute(conn, sql, new MapListHandler(), params);

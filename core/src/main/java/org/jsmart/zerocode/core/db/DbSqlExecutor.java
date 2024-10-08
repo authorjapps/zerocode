@@ -25,7 +25,8 @@ public class DbSqlExecutor {
 	public static final String SQL_RESULTS_KEY = "rows";
 	public static final String CSV_RESULTS_KEY = "size";
 	
-	@Inject
+	// Optional to log the explanatory error message if the env variables are no defined
+	@Inject(optional = true)
 	@Named("db.driver.url") private String url;
 
 	@Inject(optional = true)
@@ -56,8 +57,9 @@ public class DbSqlExecutor {
 			response.put(CSV_RESULTS_KEY, result);
 			return response;
 		} catch (Exception e) {
-			LOGGER.error("Failed to load CSV", e);
-			throw new RuntimeException(e);
+			String message = "Failed to load CSV";
+			LOGGER.error(message, e);
+			throw new RuntimeException(message, e);
 		} finally {
 			closeConnection(conn);
 		}
@@ -65,7 +67,7 @@ public class DbSqlExecutor {
 
 	/**
 	 * The EXECUTE operation returns the records retrieved by the SQL specified in the request 
-	 * under the key "rows" (select) or an empty object (insert, update)
+	 * under the key "rows" (select), or an empty object (insert, update)
 	 */
 	public Map<String, Object> EXECUTE(DbSqlRequest request) {
 		return execute(request);
@@ -85,8 +87,9 @@ public class DbSqlExecutor {
 			}
 			return response;
 		} catch (SQLException e) {
-			LOGGER.error("Failed to execute SQL", e);
-			throw new RuntimeException(e);
+			String message = "Failed to execute SQL";
+			LOGGER.error(message, e);
+			throw new RuntimeException(message, e);
 		} finally {
 			closeConnection(conn);
 		}
@@ -102,8 +105,10 @@ public class DbSqlExecutor {
 		try {
 			return DriverManager.getConnection(url, user, password);
 		} catch (SQLException e) {
-			LOGGER.error("Failed to create connection", e);
-			throw new RuntimeException(e);
+			String message = "Failed to create connection, Please check the target environment properties "
+					+ "to connect the database (db.driver.url, db.driver.user and db.driver.password)";
+			LOGGER.error(message, e);
+			throw new RuntimeException(message, e);
 		}
 	}
 

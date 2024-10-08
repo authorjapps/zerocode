@@ -9,6 +9,9 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class DbSqlExecutorScenarioTest {
 
+	// NOTE: Below tests will fail when run in postgres because this database stores identifiers in lowercase.
+	// to make tests pass, change the keys in the response.rows to lowercase
+	
     @Test
 	@Scenario("integration_test_files/db/db_csv_load_with_headers.json")
 	public void testDbCsvLoadWithHeaders() throws Exception {
@@ -24,4 +27,17 @@ public class DbSqlExecutorScenarioTest {
 	public void testDbSqlExecute() throws Exception {
 	}
 
+    // Manual test: error handling.
+    // To facilitate the location of the source of possible errors (e.g. a wrong SQL statement),
+    // exceptions that occur in the DbSqlExecutor should show:
+    // - A log entry with the error message
+    // - The stacktrace of the exception to facilitate locating the source
+    // - The usual chain of errors and stacktraces produced by zerocode when an step fails
+    //
+    // Recommended situations for manual test:
+    // - Target environment variables are no defined
+    // - A syntactically wrong SQL statement in a step
+    // - A header that does not correspond with any column when loading data from CSV
+    // - A value with the wrong data type (e.g. string in a numeric column) when loading data from CSV
+    
 }

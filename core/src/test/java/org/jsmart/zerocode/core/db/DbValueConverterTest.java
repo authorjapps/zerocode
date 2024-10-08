@@ -57,8 +57,9 @@ public class DbValueConverterTest extends DbTestBase {
 	}
 
 	@Test
-	public void convertWithLowerAndUppercase() throws SQLException {
-		// Test date types to ensure that is the converter who makes the conversion, not the driver
+	public void convertWithMixedCaseColumnName() throws SQLException {
+		// Uses a date type to ensure that is the converter who tries making the conversion, not the driver
+		// (neither H2 nor Postgres drivers do conversion of dates)
 		List<Map<String, Object>> rows = doTestConversion("", "ITable", "VDATE DATE",
 				new String[] { "VDate" }, 
 				new String[] { "2024-09-04" },
@@ -75,6 +76,16 @@ public class DbValueConverterTest extends DbTestBase {
 	}
 
 	@Test
+	public void whenNoColumnsSpecified_AndColumnCountMismatch_ThenConversionFails() throws SQLException {
+		assertThrows(SQLException.class, () -> {
+			doTestConversion("", "FMTABLE", "VINT BIGINT", 
+				null, 
+				new String[] { "101", "999" },
+				"[{VINT=101}]");
+		});
+	}
+
+	@Test
 	public void whenColumnNotFound_ThenConversionFails() throws SQLException {
 		assertThrows(SQLException.class, () -> {
 			doTestConversion("", "FCTABLE", "VINT INTEGER, VCHAR VARCHAR(20)", 
@@ -84,8 +95,20 @@ public class DbValueConverterTest extends DbTestBase {
 		});
 	}
 	
-	// Failures due to problems with metadata:
-	// - These tests will pass because the H2 driver converts numeric values
+	@Test
+	public void whenValueHasWrongFormat_ThenConversionFails() throws SQLException {
+		assertThrows(SQLException.class, () -> {
+			doTestConversion("", "FVTABLE", "VTS TIMESTAMP", 
+					new String[] { "VTS" },
+					new String[] { "notadate" }, 
+					"[{VTS=notadate}]");
+		});
+	}
+	
+	// Failures due to problems with metadata.
+	// Simulates failures getting metadata so that the conversion is left to
+	// be done by the driver.
+	// - Below tests will pass because the H2 driver converts numeric values
 	// - but fail if driver is changed to Postgres (does not convert numeric), skipped
 	
 	@Test

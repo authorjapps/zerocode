@@ -50,7 +50,7 @@ public class DbCsvRequest {
     }
 
     // Code below is duplicated from org.jsmart.zerocode.core.domain.Parametrized.java and not included in tests.
-    // TODO Consider some refactoring later (to SmartUtils?) and review error message when file not found
+    // TODO Consider some refactoring later and review error message when file not found
     
     private List<String> getCsvSourceFrom(JsonNode csvSourceJsonNode) {
         try {

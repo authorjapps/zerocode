@@ -39,7 +39,7 @@ public abstract class DbTestBase {
 	@Named("db.driver.password") protected String password;
 
 	protected Connection conn; // managed connection for each test
-	protected boolean isPostgres = false; // set by each connection, to allow portable assertions (postgres is lowercase)
+	protected boolean isPostgres = false; // set by each connection, to allow portable assertions
 
 	@Before
 	public void setUp() throws SQLException {
@@ -61,6 +61,8 @@ public abstract class DbTestBase {
 		return runner.execute(sql, params);
 	}
 	
+	// Table and columns in all tests are uppercase because H2 stores uppercase by default.
+	// But postgres stores lowercase, so some expected strings need case conversion
 	protected String convertDbCase(String value) {
 		return isPostgres ? value.toLowerCase() : value;
 	}

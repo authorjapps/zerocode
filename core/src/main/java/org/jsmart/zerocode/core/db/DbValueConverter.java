@@ -10,12 +10,13 @@ import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Conversion of string values to be inserted in the database
- * into objects compatible with the java.sql type of the target columns.
+ * into objects compatible with the java sql type of the target columns.
  */
 public class DbValueConverter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DbSqlExecutor.class);
@@ -58,9 +59,9 @@ public class DbValueConverter {
 	}
 
 	private String convertToStoredCase(String identifier) throws SQLException {
-		if (databaseMetaData.storesLowerCaseIdentifiers())
+		if (databaseMetaData.storesLowerCaseIdentifiers()) // e.g. Postgres
 			identifier = identifier.toLowerCase();
-		else if (databaseMetaData.storesUpperCaseIdentifiers())
+		else if (databaseMetaData.storesUpperCaseIdentifiers()) // e.g. H2
 			identifier = identifier.toUpperCase();
 		return identifier;
 	}
@@ -71,12 +72,12 @@ public class DbValueConverter {
 	}
 	
 	/**
-	 * Given an array of column names and their corresponding values (as strings)
+	 * Given an array of column names and other array with their corresponding values (as strings),
 	 * transforms each value to the compatible data type that allow to be inserted in the database.
-	 * If the column names are missing, uses all columns in the current table as fallback.
+	 * If the column names are missing, uses all columns in the current table as the column names.
 	 */
 	Object[] convertColumnValues(String[] columns, String[] values) {
-		if (columns == null || columns.length == 0) // if no specified, use all columns in the table
+		if (ArrayUtils.isEmpty(columns)) // if no specified, use all columns in the table
 			columns = columnTypes.keySet().toArray(new String[0]);
 
 		Object[] converted = new Object[values.length];
@@ -98,8 +99,8 @@ public class DbValueConverter {
 	}
 
 	/**
-	 * Converts the string representation of a data type value into the appropriate simple sql data type.
-	 * If a data type is not handled by this method, returns the input value as fallback.
+	 * Converts the string representation of a data type value into the appropriate simple SQL data type.
+	 * If a data type is not handled by this method (or is string), returns the input string value as fallback.
 	 * 
 	 * See table B-1 in JDBC 4.2 Specification
 	 */
@@ -135,21 +136,26 @@ public class DbValueConverter {
 		case java.sql.Types.TIMESTAMP: return new java.sql.Timestamp(parseDate(value, getTimestampFormats()).getTime());
 		default:
 			return value;
+			// Not including: binary and advanced datatypes (e.g. blob, array...)
 		}
 	}
 	
-	// Currently, supported date time formats are a few common ISO-8601 formats
-	// (other common format strings in org.apache.commons.lang3.time.DateFormatUtils)
+	// Supported date time formats are the common ISO-8601 formats
+	// defined in org.apache.commons.lang3.time.DateFormatUtils,
+	// as well as their variants that specify milliseconds.
 	// This may be made user configurable later, via properties and/or embedded in the payload
 	
 	private String[] getDateFormats() {
-		return new String[] {"yyyy-MM-dd"};
+		return new String[] { "yyyy-MM-dd" };
 	}
+
 	private String[] getTimeFormats() {
-		return new String[] {"HH:mm:ssZ", "HH:mm:ss.SSSZ"};
+		return new String[] { "HH:mm:ssZ", "HH:mm:ss.SSSZ", "HH:mm:ss", "HH:mm:ss.SSS" };
 	}
+
 	private String[] getTimestampFormats() {
-		return new String[] {"yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ss.SSSZ"};
+		return new String[] { "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ss.SSSZ", 
+				"yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss.SSS" };
 	}
 
 }
