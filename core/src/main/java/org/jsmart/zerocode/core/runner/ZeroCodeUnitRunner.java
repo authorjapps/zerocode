@@ -131,10 +131,6 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
         } else if (jsonTestCaseAnno != null ) {
 
-            if( schemaAnno == null )
-            {
-                LOGGER.debug("No Json Schema was added for validation");
-            }
             runLeafJsonTest(notifier, description, jsonTestCaseAnno);
 
         } else {
