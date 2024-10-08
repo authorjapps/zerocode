@@ -84,6 +84,7 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <commons-lang3.version>3.14.0</commons-lang3.version>
         <commons-text.version>1.11.0</commons-text.version>
+        <commons-dbutils.version>1.8.1</commons-dbutils.version>
         <micro-simulator.version>1.1.10</micro-simulator.version>
         <httpclient.version>4.5.13</httpclient.version>
         <httpmime.version>4.5.12</httpmime.version>
@@ -286,6 +287,11 @@
                 <artifactId>micro-simulator</artifactId>
                 <version>${micro-simulator.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-dbutils</groupId>
+                <artifactId>commons-dbutils</artifactId>
+                <version>${commons-dbutils.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
