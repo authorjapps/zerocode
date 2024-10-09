@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "scenarioName": {
+      "type": "string"
+    },
+    "steps": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "method": {
+              "type": "string"
+            },
+            "request": {
+              "type": "object"
+            },
+            "response": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "integer"
+                },
+                "body": {
+                  "type": "object",
+                  "properties": {
+                    "login": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "login",
+                    "id",
+                    "type"
+                  ]
+                }
+              },
+              "required": [
+                "status",
+                "body"
+              ]
+            }
+          },
+          "required": [
+            "response"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "scenarioName",
+    "steps"
+  ]
+}
