@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.jayway.jsonpath.JsonPath.read;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -1008,19 +1010,23 @@ public class ZeroCodeAssertionsProcessorImplTest {
                         + "    }\n"
                         + "}";
 
-        List<FieldAssertionMatcher> failedReports =
-                jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+        Map<String, FieldAssertionMatcher> failedReports =
+                jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse).stream().collect(
+                        Collectors.toMap(FieldAssertionMatcher::getJsonPath, Function.identity()));
 
         assertThat(failedReports.size(), is(2));
+        String startDateTime = "$.body.projectDetails.startDateTime";
+        String endDateTime = "$.body.projectDetails.endDateTime";
+
         assertThat(
-                failedReports.get(0).toString(),
+                failedReports.get(startDateTime).toString(),
                 is(
-                        "Assertion jsonPath '$.body.projectDetails.startDateTime' with actual value '2017-04-14T11:49:56.000Z' "
+                        "Assertion jsonPath '" + startDateTime + "' with actual value '2017-04-14T11:49:56.000Z' "
                                 + "did not match the expected value 'Date Before:2016-09-14T09:49:34'"));
         assertThat(
-                failedReports.get(1).toString(),
+                failedReports.get(endDateTime).toString(),
                 is(
-                        "Assertion jsonPath '$.body.projectDetails.endDateTime' with actual value '2018-11-12T09:39:34.000Z' "
+                        "Assertion jsonPath '" + endDateTime + "' with actual value '2018-11-12T09:39:34.000Z' "
                                 + "did not match the expected value 'Date After:2019-09-14T09:49:34'"));
     }
 
