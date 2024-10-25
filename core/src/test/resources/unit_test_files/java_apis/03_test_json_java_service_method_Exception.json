@@ -1,0 +1,13 @@
+{
+  "scenarioName": "Given_When_Then-Flow name For Java Service",
+  "steps": [
+    {
+      "name": "javaMethodException",
+      "url": "org.jsmart.zerocode.core.AddService",
+      "operation": "squareRoot",
+      "request": "-255.0", //<-- This negative number should throw an exception
+      "assertions": {
+      }
+    }
+  ]
+}

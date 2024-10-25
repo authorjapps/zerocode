@@ -21,6 +21,12 @@ public class AddService {
         return myNumber.getNumber() * myNumber.getNumber();
     }
 
+    public Double squareRoot(Double number) {
+    	if (number < 0.0)
+    		throw new RuntimeException("Can not square root a negative number");
+        return Math.sqrt(number);
+    }
+    
     public Integer anInteger() {
         logger.debug("Returning a number ");
 
