@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_REPORT_DIR;
+import static org.jsmart.zerocode.core.utils.SmartUtils.sanitizeReportFileName;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ZeroCodeIoWriteBuilder {
@@ -60,6 +61,7 @@ public class ZeroCodeIoWriteBuilder {
 
             final ObjectMapper mapper = new ObjectMapperProvider().get();
 
+            fileName = sanitizeReportFileName(fileName);
             File file = new File(TARGET_REPORT_DIR + fileName);
             file.getParentFile().mkdirs();
             mapper.writeValue(file, this.built);

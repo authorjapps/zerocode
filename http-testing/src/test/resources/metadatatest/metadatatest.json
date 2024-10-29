@@ -1,0 +1,27 @@
+{
+  "scenarioName": "Scenario - Get GitHub User Details with Metadata",
+  "steps": [
+    {
+      "name": "get_user_details",
+      "url": "/users/octocat",
+      "method": "GET",
+      "request": {
+      },
+      "assertions": {
+        "status": 200,
+        "body": {
+          "login": "octocat",
+          "id": 583231,
+          "type": "User"
+        }
+      }
+    }
+  ],
+  "meta": {
+    "authors": ["Emma", "Sidd", "Krish"],
+    "tickets": ["ISSUE-519", "GT-312"],
+    "categories": ["api", "regression"],
+    "description": ["This test verifies the GitHub user API"],
+    "last_updated": ["2023-05-15"]
+  }
+}

@@ -9,7 +9,7 @@ import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -49,7 +49,7 @@ public class ConsumerJsonRecordTest {
         // given
         JsonNode key = objectMapper.readTree("123");
         JsonNode value = objectMapper.readTree("\"val\"");
-        Map<String, String> headers = new HashMap<>();
+        Map<String, String> headers = new LinkedHashMap<>();
         headers.put("hKey", "hValue");
         headers.put("hKeyWithNullValue", null);
         ConsumerJsonRecord record = new ConsumerJsonRecord(key, value, headers);
