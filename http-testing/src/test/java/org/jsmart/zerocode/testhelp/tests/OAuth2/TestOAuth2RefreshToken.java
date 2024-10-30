@@ -5,7 +5,6 @@ import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.UseHttpClient;
 import org.jsmart.zerocode.core.httpclient.oauth2.OAuth2HttpClient;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -16,9 +15,9 @@ import org.junit.runner.RunWith;
 @TargetEnv("host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 @UseHttpClient(OAuth2HttpClient.class)
-public class OAuth2Test_refreshToken {
+public class TestOAuth2RefreshToken {
 
-	// First run this Server for OAuth2 accounts_url be available
+	// First run this Server for OAuth2 access_token_url be available
 	// --> RunMeFirstLocalMockRESTServer main()
 	@Test
 	@Scenario("helloworld_OAuth2/OAuth_supported_request_refresh_token.json")

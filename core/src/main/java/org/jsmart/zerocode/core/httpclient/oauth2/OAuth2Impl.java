@@ -45,10 +45,10 @@ public class OAuth2Impl extends TimerTask {
 		this.grant_type = grant_type;
 	}
 
-	public OAuth2Impl(String clientId, String clientSecret, String accountsURL, String grantType) {
+	public OAuth2Impl(String clientId, String clientSecret, String accessToken, String grantType) {
 		this.clienId = clientId;
 		this.clientSecret = clientSecret;
-		this.accessTokenURL = accountsURL;
+		this.accessTokenURL = accessToken;
 		this.grant_type = grantType;
 	}
 

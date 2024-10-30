@@ -3,18 +3,13 @@ package org.jsmart.zerocode.core.httpclient.oauth2;
 import java.util.Map;
 import java.util.Timer;
 
+import org.apache.http.client.methods.RequestBuilder;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.http.client.methods.RequestBuilder;
-
-import java.util.Properties;
 
 /**
  * @author santhoshTpixler
@@ -53,7 +48,7 @@ public class OAuth2HttpClient extends BasicHttpClient {
 	private static final String CLIENT_ID = "client_id";
 	private static final String CLIENT_SECRET = "client_secret";
 	private static final String REFRESH_TOKEN = "refresh_token";
-	private static final String ACCOUNTS_URL = "accounts_url";
+	private static final String ACCESS_TOKEN_URL = "access_token_url";
 	private static final String GRANT_TYPE = "grant_type";
 	/*
 	 * If the Authorization header contains the replacement value as specified by the 
@@ -69,9 +64,9 @@ public class OAuth2HttpClient extends BasicHttpClient {
 
 	@Inject
 	public OAuth2HttpClient(@Named(CLIENT_ID) String clientId, @Named(CLIENT_SECRET) String clientSecret,
-			@Named(REFRESH_TOKEN) String refreshToken, @Named(ACCOUNTS_URL) String accountsURL, @Named(GRANT_TYPE) String grant_type) {
+			@Named(REFRESH_TOKEN) String refreshToken, @Named(ACCESS_TOKEN_URL) String accountsURL, @Named(GRANT_TYPE) String grant_type) {
 		if ("refresh_token".equals(grant_type)) {
-			/**
+			/*
 			 * REFRESH TOKEN WORKFLOW
 			 * generating access token using refresh tokens
 			 */
@@ -91,7 +86,7 @@ public class OAuth2HttpClient extends BasicHttpClient {
 				}
 			}
 		} else if ("client_credentials".equals(grant_type)) {
-			/**
+			/*
 			 * ACCESS TOKEN WORKFLOW
 			 * Fetching access token from host.properties
 			 */
