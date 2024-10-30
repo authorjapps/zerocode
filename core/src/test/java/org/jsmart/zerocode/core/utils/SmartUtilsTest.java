@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -234,6 +235,13 @@ public class SmartUtilsTest {
         assertThat(allScenarios.size(), is(2));
         assertThat(allScenarios.get(0), containsString("unit_test_files/cherry_pick_tests/folder_b/test_case_2.json"));
         assertThat(allScenarios.get(0), containsString("cherry_pick_tests/folder_b/test_case_2.json"));
+    }
+
+    @Test
+    public void testSanitizeReportFile() {
+    	String orig = "file !#$%&'()*+,-./09:;<=>?@AZ[]^_`az{|}~\"\\";
+    	String dest = "file ___________-._09_______AZ_____az______";
+    	assertThat(SmartUtils.sanitizeReportFileName(orig), equalTo(dest));
     }
 
     // Move this to File Util class

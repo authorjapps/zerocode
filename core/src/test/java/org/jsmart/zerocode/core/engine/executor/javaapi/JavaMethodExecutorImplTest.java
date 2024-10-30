@@ -3,6 +3,7 @@ package org.jsmart.zerocode.core.engine.executor.javaapi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
@@ -16,6 +17,9 @@ import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThrows;
 
 public class JavaMethodExecutorImplTest {
 
@@ -122,6 +126,29 @@ public class JavaMethodExecutorImplTest {
         Object result = methodExecutor.executeWithParams(serviceName, methodName, request);
 
         assertThat(result, is(900));
+    }
+
+    @Test
+    public void willPropagateExceptions() throws Exception {
+        String scenariosJsonAsString = SmartUtils.readJsonAsString("unit_test_files/java_apis/03_test_json_java_service_method_Exception.json");
+        final ScenarioSpec scenarioSpec = smartUtils.getMapper().readValue(scenariosJsonAsString, ScenarioSpec.class);
+
+        String serviceName = scenarioSpec.getSteps().get(0).getUrl();
+        String methodName = scenarioSpec.getSteps().get(0).getOperation();
+        String requestJson = scenarioSpec.getSteps().get(0).getRequest().toString();
+        List<Class<?>> argumentTypes = methodExecutor.getParameterTypes(serviceName, methodName);
+
+        Object request = mapper.readValue(requestJson, argumentTypes.get(0));
+        
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        	methodExecutor.executeWithParams(serviceName, methodName, request);
+		});
+        exception.printStackTrace();
+        assertThat(exception.getMessage(), containsString("Invocation failed for method squareRoot"));
+        // The target exception is included in this exception (inside of the InvocationTargetException)
+        assertThat(exception.getCause(), is(notNullValue()));
+        assertThat(((InvocationTargetException)exception.getCause()).getTargetException().getMessage(), 
+        		is("Can not square root a negative number"));
     }
 
     @Test
