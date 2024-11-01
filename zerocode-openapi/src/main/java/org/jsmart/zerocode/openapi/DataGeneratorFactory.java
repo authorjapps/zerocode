@@ -4,6 +4,7 @@ import org.jsmart.zerocode.openapi.types.DataGenerator;
 import org.jsmart.zerocode.openapi.types.ArrayGenerator;
 import org.jsmart.zerocode.openapi.types.BooleanGenerator;
 import org.jsmart.zerocode.openapi.types.IntegerGenerator;
+import org.jsmart.zerocode.openapi.types.NumberGenerator;
 import org.jsmart.zerocode.openapi.types.ObjectGenerator;
 import org.jsmart.zerocode.openapi.types.StringGenerator;
 
@@ -14,6 +15,8 @@ public class DataGeneratorFactory implements IDataGeneratorFactory {
 	public DataGenerator getItem(String name, Schema<?> schema) {
 		if ("integer".equals(schema.getType())) {
 			return new IntegerGenerator(name, schema);
+		} else if ("number".equals(schema.getType())) {
+			return new NumberGenerator(name, schema);
 		} else if ("string".equals(schema.getType())) {
 			return new StringGenerator(name, schema);
 		} else if ("boolean".equals(schema.getType())) {

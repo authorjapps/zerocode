@@ -23,7 +23,14 @@ public class StringGenerator extends PrimitiveGenerator {
 	}
 	
 	private String getRandomToken() {
-		return "${RANDOM.STRING:12}";
+		// TODO core enhancement Add tokens to generate random date and datetime
+		// Here we are always generating the current date/time value, that can lead to repeated values in a step
+		if ("date-time".equals(getFormat()))
+			return "${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ssZ}";
+		else if ("date".equals(getFormat()))
+			return "${LOCAL.DATE.NOW:yyyy-MM-dd}";
+		else // for string and other formats fallback
+			return "${RANDOM.STRING:12}";
 	}
 
 }

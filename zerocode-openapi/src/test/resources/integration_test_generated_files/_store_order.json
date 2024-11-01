@@ -11,7 +11,7 @@
         "id" : "${RANDOM.NUMBER:8}",
         "petId" : "${RANDOM.NUMBER:8}",
         "quantity" : "${RANDOM.NUMBER:8}",
-        "shipDate" : "${RANDOM.STRING:12}",
+        "shipDate" : "${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ssZ}",
         "status" : "placed",
         "complete" : false
       }
