@@ -1,0 +1,15 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testArrayBody - Test scenario",
+  "steps" : [ {
+    "name" : "/testArrayBody - Body is not an object (array)",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/testArrayBody",
+    "request" : {
+      "body" : [ "${RANDOM.STRING:12}", "${RANDOM.STRING:12}" ]
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

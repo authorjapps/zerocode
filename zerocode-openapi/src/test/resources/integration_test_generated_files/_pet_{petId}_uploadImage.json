@@ -1,0 +1,19 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/pet/{petId}/uploadImage - Test scenario",
+  "steps" : [ {
+    "name" : "/pet/{petId}/uploadImage - uploads an image",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/pet/${RANDOM.NUMBER:8}/uploadImage",
+    "request" : {
+      "queryParams" : {
+        "additionalMetadata" : "${RANDOM.STRING:12}"
+      }
+    },
+    "assertions" : {
+      "status" : "$ONE.OF:[200]"
+    },
+    "ignoreStep" : false
+  } ]
+}

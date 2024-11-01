@@ -1,0 +1,13 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/user/logout - Test scenario",
+  "steps" : [ {
+    "name" : "/user/logout - Logs out current logged in user session",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/user/logout",
+    "request" : { },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

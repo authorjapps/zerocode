@@ -1,0 +1,24 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/user - Test scenario",
+  "steps" : [ {
+    "name" : "/user - Create user",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/user",
+    "request" : {
+      "body" : {
+        "id" : "${RANDOM.NUMBER:8}",
+        "username" : "${RANDOM.STRING:12}",
+        "firstName" : "${RANDOM.STRING:12}",
+        "lastName" : "${RANDOM.STRING:12}",
+        "email" : "${RANDOM.STRING:12}",
+        "password" : "${RANDOM.STRING:12}",
+        "phone" : "${RANDOM.STRING:12}",
+        "userStatus" : "${RANDOM.NUMBER:8}"
+      }
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

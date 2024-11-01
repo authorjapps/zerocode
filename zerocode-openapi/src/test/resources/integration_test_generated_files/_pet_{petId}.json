@@ -1,0 +1,36 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/pet/{petId} - Test scenario",
+  "steps" : [ {
+    "name" : "/pet/{petId} - Updates a pet in the store with form data",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/pet/${RANDOM.NUMBER:8}",
+    "request" : {
+      "queryParams" : {
+        "name" : "${RANDOM.STRING:12}",
+        "status" : "${RANDOM.STRING:12}"
+      }
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  }, {
+    "name" : "/pet/{petId} - Find pet by ID",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/pet/${RANDOM.NUMBER:8}",
+    "request" : { },
+    "assertions" : {
+      "status" : "$ONE.OF:[200]"
+    },
+    "ignoreStep" : false
+  }, {
+    "name" : "/pet/{petId} - Deletes a pet",
+    "operation" : "DELETE",
+    "method" : "DELETE",
+    "url" : "/pet/${RANDOM.NUMBER:8}",
+    "request" : { },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}
