@@ -78,7 +78,7 @@ public class ScenarioGenerator {
 	private void writeScenario(ScenarioSpec scenario, String outFolder, String name) {
 		try {
 			String scenarioStr = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(scenario);
-			String fileName = name.replaceAll("[^A-Za-z0-9\\{\\}\\-]", "_") + ".json";
+			String fileName = name.replaceAll("[^A-Za-z0-9 \\{\\}\\-]", "_") + ".json";
 			LOGGER.info("Writing scenario to file: {}", fileName);
 			FileUtils.writeStringToFile(new File(FilenameUtils.concat(outFolder, fileName)), scenarioStr, "UTF-8");
 		} catch (IOException e) {

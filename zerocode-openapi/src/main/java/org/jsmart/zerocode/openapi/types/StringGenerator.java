@@ -12,14 +12,8 @@ public class StringGenerator extends PrimitiveGenerator {
 
 	@Override
 	public JsonNode generateJsonValue() {
-		return new ObjectMapper().createObjectNode()
-				.textNode(hasEnum() ? getEnumItem().toString() : getRandomToken());
-	}
-
-	@Override
-	public JsonNode generateUrlEncodedJsonValue() {
 		return new ObjectMapper().createObjectNode() // only urlencode the enum values
-				.textNode(hasEnum() ? urlEncode(getEnumItem().toString()) : getRandomToken());
+				.textNode(hasEnum() ? encodeIfRequired(getEnumItem().toString()) : getRandomToken());
 	}
 	
 	private String getRandomToken() {

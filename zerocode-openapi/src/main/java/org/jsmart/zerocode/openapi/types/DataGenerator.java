@@ -12,7 +12,8 @@ import io.swagger.v3.oas.models.media.Schema;
  * AbstractDataGenerator
  *   AbstractPrimitiveGenerator
  *     IntegerGenerator
- *     StringGenerator
+ *     NumberGenerator
+ *     StringGenerator (including date and date-time formats)
  *     BooleanGenerator
  *   Object Generator
  *   ArrayGenerator
@@ -20,10 +21,14 @@ import io.swagger.v3.oas.models.media.Schema;
 public abstract class DataGenerator {
 	protected String name;
 	protected Schema<?> schema;
+	// Indicates if values need url encoding, used for query and path parameters.
+	// If true, the method encodeIfRequired will return the appropriate encoding
+	protected boolean requireUrlEncode;
 
 	public DataGenerator(String name, Schema<?> schema) {
 		this.name = name;
 		this.schema = schema;
+		this.requireUrlEncode = false;
 	}
 
 	/**
@@ -32,17 +37,16 @@ public abstract class DataGenerator {
 	public abstract JsonNode generateJsonValue();
 
 	/**
-	 * Generates an url encoded value to include in a path for the appropriate schema data type.
-	 * The data generator has the responsibility to override this method and perform the encoding
-	 * when the value is to be placed in the url (typically for enums).
+	 * Sets the generator to require (or not) url encoded values when encodeIfRequired is called
 	 */
-	public JsonNode generateUrlEncodedJsonValue() {
-		return generateJsonValue();
+	public DataGenerator setRequireUrlEncode(boolean value) {
+		this.requireUrlEncode = value;
+		return this;
 	}
 	
-	protected String urlEncode(String value) {
+	public String encodeIfRequired(String value) {
 		try {
-			return URLEncoder.encode(value, "UTF-8");
+			return requireUrlEncode ? URLEncoder.encode(value, "UTF-8") : value;
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}

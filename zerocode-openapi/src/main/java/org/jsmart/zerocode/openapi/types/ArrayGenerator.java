@@ -23,8 +23,8 @@ public class ArrayGenerator extends DataGenerator {
 	@Override
 	public JsonNode generateJsonValue() {
 		ArrayNode allObjects = new ObjectMapper().createArrayNode();
-		for (int i = 0; i < ARRAY_NUM_ITEMS_GENERATED; i++) {
-			DataGenerator item = factory.getItem(name, items);
+		for (int i = 0; i < ARRAY_NUM_ITEMS_GENERATED; i++) { //propagates required encoding to the array values
+			DataGenerator item = factory.getItem(name, items).setRequireUrlEncode(this.requireUrlEncode);
 			allObjects.add(item.generateJsonValue());
 		}
 		return allObjects;

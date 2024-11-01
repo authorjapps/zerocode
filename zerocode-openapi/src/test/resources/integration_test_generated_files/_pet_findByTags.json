@@ -5,12 +5,8 @@
     "name" : "/pet/findByTags - Finds Pets by tags",
     "operation" : "GET",
     "method" : "GET",
-    "url" : "/pet/findByTags",
-    "request" : {
-      "queryParams" : {
-        "tags" : [ "${RANDOM.STRING:12}", "${RANDOM.STRING:12}" ]
-      }
-    },
+    "url" : "/pet/findByTags?tags=${RANDOM.STRING:12}&tags=${RANDOM.STRING:12}",
+    "request" : { },
     "assertions" : {
       "status" : "$ONE.OF:[200]"
     },

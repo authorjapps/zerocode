@@ -31,9 +31,13 @@ public class StepGenerator {
 	public Step parseOperation(String path, String method, Operation oaOperation) {
 		LOGGER.info("Generating step: {} {}", method, path);
 
-		// Params that must be serialized in the path
+		// Path params must be serialized in the path
 		ParameterSerializer serializer = new ParameterSerializer();
 		String url = serializer.serializePathParams(path, oaOperation.getParameters());
+		
+		// Non primitive query params must be serialized in the path
+		url = serializer.serializeQueryParams(url, oaOperation.getParameters());
+
 		LOGGER.info("  Generated url: {}", url);
 
 		ObjectNode request = new ObjectMapper().createObjectNode();
