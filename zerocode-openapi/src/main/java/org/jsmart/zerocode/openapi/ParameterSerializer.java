@@ -17,13 +17,14 @@ import io.swagger.v3.oas.models.parameters.Parameter;
 /**
  * OpenAPI supports parameters at several places
  *   https://swagger.io/docs/specification/v3_0/describing-parameters/
- * Currently: only query string and path parameters are supported
+ * Currently: query string, path and header parameters are supported (no cookie params)
  * 
  * There are multiple formats for manage non primitive values:
  * https://swagger.io/docs/specification/v3_0/serialization/
  * Currently: the supported parameters are
  * - path: primitive
  * - query string: primitive, array (Styles delimited by comma, space and pipe, others ignored)
+ * - headers: primitive
  * 
  * Error handling: Warn and ignore if a data type or style is not supported
  */
@@ -108,6 +109,18 @@ public class ParameterSerializer {
 			return "|";
 		else
 			return null;
+	}
+
+	public JsonNode getHeaderParams(List<Parameter> oaParams) {
+		ObjectNode params = new ObjectMapper().createObjectNode();
+		for (Parameter oaParam : filterParams(oaParams, "header")) {
+			// Specification has only the "simple" style, no considering explode
+			// If considering explode eventually, refactor with getArrayQueryParams
+			DataGeneratorFactory factory = new DataGeneratorFactory();
+			JsonNode value = factory.getItem(oaParam.getName(), oaParam.getSchema()).generateJsonValue();
+			params.set(oaParam.getName(), value);
+		}
+		return params;
 	}
 
 	private List<Parameter> filterParams(List<Parameter> oaParams, String in) {

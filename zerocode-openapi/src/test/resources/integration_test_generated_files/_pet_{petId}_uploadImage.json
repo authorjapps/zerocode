@@ -9,7 +9,11 @@
     "request" : {
       "queryParams" : {
         "additionalMetadata" : "${RANDOM.STRING:12}"
-      }
+      },
+      "headers" : {
+        "Content-Type" : "application/octet-stream"
+      },
+      "body" : "${RANDOM.STRING:12}"
     },
     "assertions" : {
       "status" : "$ONE.OF:[200]"

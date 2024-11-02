@@ -46,8 +46,14 @@ public class StepGenerator {
 		JsonNode queryParams = serializer.getQueryParams(oaOperation.getParameters());
 		if (!queryParams.isEmpty())
 			request.set("queryParams", queryParams);
-
-		JsonNode body = generateRequestBody(oaOperation.getRequestBody());
+		
+		// Header params are also added to the request, but not added immediatly
+		// because after reading the requests, some additional media type headers may be added
+		JsonNode headerParams = serializer.getHeaderParams(oaOperation.getParameters());
+		
+		JsonNode body = generateRequestBody(oaOperation.getRequestBody(), headerParams);
+		if (!headerParams.isEmpty()) // 
+			request.set("headers", headerParams);
 		// empty object does not generates body, but does for primitive types (e.g. string)
 		if (!(body.isEmpty() && body.isObject()))
 			request.set("body", body);
@@ -68,16 +74,29 @@ public class StepGenerator {
 		return step;
 	}
 
-	private JsonNode generateRequestBody(RequestBody oaBody) {
+	private JsonNode generateRequestBody(RequestBody oaBody, JsonNode currentHeaders) {
 		if (oaBody == null)
 			return new ObjectMapper().createObjectNode();
+		// By default, application/json is used (not required to set in headers), and it is the 
+		// request body returned (this will exclude other that appear before, eg. application/xml)
+		// But if none is found, returns the first one that finds and adds the media type to the headers
+		Entry<String, MediaType> fallbackMediaType = null;
 		for (Entry<String, MediaType> oaItem : oaBody.getContent().entrySet()) {
+			if (fallbackMediaType == null)
+				fallbackMediaType = oaItem; //keep the first.
 			if ("application/json".equals(oaItem.getKey())) { // ignore other media types
 				Schema<?> oaSchema = oaItem.getValue().getSchema();
 				return generateJsonBody(oaSchema);
 			}
 		}
-		return new ObjectMapper().createObjectNode(); // no mediatype found
+		// at this point, no json body was found
+		if (fallbackMediaType == null) { // no mediatype found
+			return new ObjectMapper().createObjectNode();
+		} else { // there is a fallaback, add header and return the body
+			((ObjectNode) currentHeaders).put("Content-Type", fallbackMediaType.getKey().toString());
+			Schema<?> oaSchema = fallbackMediaType.getValue().getSchema();
+			return generateJsonBody(oaSchema);
+		}
 	}
 
 	private JsonNode generateJsonBody(Schema<?> oaSchema) {

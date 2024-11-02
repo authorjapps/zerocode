@@ -30,4 +30,24 @@ public class ParametersTest extends BaseTest {
 		assertScenario("_testPathParam_{par Enum}_array_{parArray}_object{parObject}");
 	}
 
+	@Test
+	public void testHeaderParams() throws IOException {
+		ScenarioGenerator parser = new ScenarioGenerator();
+		parser.generateAll(ymlFolder + "/oa-header-param.yml", outFolder);
+		assertScenario("_testHeaderParam");
+	}
+
+	@Test
+	public void testHeaderFromMediatype() throws IOException {
+		ScenarioGenerator parser = new ScenarioGenerator();
+		parser.generateAll(ymlFolder + "/oa-header-mediatype.yml", outFolder);
+		assertScenario("_testHeaderMediatype");
+	}
+
+	@Test
+	public void testHeaderParamsAndMediatype() throws IOException {
+		ScenarioGenerator parser = new ScenarioGenerator();
+		parser.generateAll(ymlFolder + "/oa-header-param-mediatype.yml", outFolder);
+		assertScenario("_testHeaderParamMediatype");
+	}
 }

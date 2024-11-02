@@ -29,7 +29,11 @@
     "operation" : "DELETE",
     "method" : "DELETE",
     "url" : "/pet/${RANDOM.NUMBER:8}",
-    "request" : { },
+    "request" : {
+      "headers" : {
+        "api_key" : "${RANDOM.STRING:12}"
+      }
+    },
     "assertions" : { },
     "ignoreStep" : false
   } ]
