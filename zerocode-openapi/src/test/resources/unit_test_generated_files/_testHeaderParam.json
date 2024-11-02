@@ -8,7 +8,7 @@
     "url" : "/testHeaderParam",
     "request" : {
       "headers" : {
-        "headerParam" : "${RANDOM.STRING:12}"
+        "headerParam" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
       }
     },
     "assertions" : { },

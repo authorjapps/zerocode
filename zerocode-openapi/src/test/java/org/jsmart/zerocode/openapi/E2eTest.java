@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
  * End to End test to run the generated scenarios against the real swagger petstore api.
  * The tests are for manual execution only. See the setup and the test script below.
  */
-//@Ignore
+@Ignore
 @TargetEnv("e2e_test_files/petstore.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class E2eTest {

@@ -8,15 +8,15 @@
     "url" : "/pet/${RANDOM.NUMBER:8}/uploadImage",
     "request" : {
       "queryParams" : {
-        "additionalMetadata" : "${RANDOM.STRING:12}"
+        "additionalMetadata" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
       },
       "headers" : {
         "Content-Type" : "application/octet-stream"
       },
-      "body" : "${RANDOM.STRING:12}"
+      "body" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
     },
     "assertions" : {
-      "status" : "$ONE.OF:[200]"
+      "status" : 200
     },
     "ignoreStep" : false
   } ]

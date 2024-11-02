@@ -5,7 +5,7 @@
     "name" : "/testQueryParamOther - Query parameters, other formats and not supported features",
     "operation" : "GET",
     "method" : "GET",
-    "url" : "/testQueryParamOther?parSpace=${RANDOM.STRING:12}%20${RANDOM.STRING:12}&parPipe=${RANDOM.NUMBER:8}|${RANDOM.NUMBER:8}",
+    "url" : "/testQueryParamOther?parSpace=${RANDOM.STRING:12}${RANDOM.NUMBER:4}%20${RANDOM.STRING:12}${RANDOM.NUMBER:4}&parPipe=${RANDOM.NUMBER:8}|${RANDOM.NUMBER:8}",
     "request" : { },
     "assertions" : { },
     "ignoreStep" : false

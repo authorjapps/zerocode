@@ -17,7 +17,7 @@
       }
     },
     "assertions" : {
-      "status" : "$ONE.OF:[200]"
+      "status" : 200
     },
     "ignoreStep" : false
   } ]

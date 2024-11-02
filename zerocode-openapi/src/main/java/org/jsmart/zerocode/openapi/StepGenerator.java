@@ -64,8 +64,10 @@ public class StepGenerator {
 		ObjectNode assertions = new ObjectMapper().createObjectNode();
 		List<String> responseCodes = generateResponses(oaOperation.getResponses());
 		LOGGER.info("  Generated response: {}", responseCodes);
+		// Although not frequent, a response could contain more than one 2xx,
+		// but $ONE.OF can't be use to assert the response. Takes the first (if any)
 		if (!responseCodes.isEmpty())
-			assertions.put("status", "$ONE.OF:[" + Strings.join(responseCodes, ", ") + "]");
+			assertions.put("status", Integer.valueOf(responseCodes.get(0)));
 
 		// Zerocode Step with the minimum of attributes
 		Step step = new Step(null, null, path + " - " + oaOperation.getSummary(), 

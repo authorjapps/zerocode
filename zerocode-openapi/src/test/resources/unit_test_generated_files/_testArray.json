@@ -9,11 +9,11 @@
     "request" : {
       "body" : {
         "arrPrimInt" : [ "${RANDOM.NUMBER:8}", "${RANDOM.NUMBER:8}" ],
-        "arrPrimString" : [ "${RANDOM.STRING:12}", "${RANDOM.STRING:12}" ],
+        "arrPrimString" : [ "${RANDOM.STRING:12}${RANDOM.NUMBER:4}", "${RANDOM.STRING:12}${RANDOM.NUMBER:4}" ],
         "arrObj" : [ {
-          "value" : "${RANDOM.STRING:12}"
+          "value" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
         }, {
-          "value" : "${RANDOM.STRING:12}"
+          "value" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
         } ]
       }
     },

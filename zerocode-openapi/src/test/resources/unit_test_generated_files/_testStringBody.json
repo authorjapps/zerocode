@@ -7,7 +7,7 @@
     "method" : "GET",
     "url" : "/testStringBody",
     "request" : {
-      "body" : "${RANDOM.STRING:12}"
+      "body" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
     },
     "assertions" : { },
     "ignoreStep" : false

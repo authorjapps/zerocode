@@ -8,8 +8,8 @@
     "url" : "/pet/${RANDOM.NUMBER:8}",
     "request" : {
       "queryParams" : {
-        "name" : "${RANDOM.STRING:12}",
-        "status" : "${RANDOM.STRING:12}"
+        "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "status" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
       }
     },
     "assertions" : { },
@@ -21,7 +21,7 @@
     "url" : "/pet/${RANDOM.NUMBER:8}",
     "request" : { },
     "assertions" : {
-      "status" : "$ONE.OF:[200]"
+      "status" : 200
     },
     "ignoreStep" : false
   }, {
@@ -31,7 +31,7 @@
     "url" : "/pet/${RANDOM.NUMBER:8}",
     "request" : {
       "headers" : {
-        "api_key" : "${RANDOM.STRING:12}"
+        "api_key" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
       }
     },
     "assertions" : { },

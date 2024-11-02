@@ -24,7 +24,9 @@ public class StringGenerator extends PrimitiveGenerator {
 		else if ("date".equals(getFormat()))
 			return "${LOCAL.DATE.NOW:yyyy-MM-dd}";
 		else // for string and other formats fallback
-			return "${RANDOM.STRING:12}";
+			// RANDOM.STRING always returns the same value inside an step.
+			// Workaround: add a number to make values different
+			return "${RANDOM.STRING:12}${RANDOM.NUMBER:4}";
 	}
 
 }

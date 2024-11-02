@@ -9,24 +9,24 @@
     "request" : {
       "body" : {
         "id" : "${RANDOM.NUMBER:8}",
-        "name" : "${RANDOM.STRING:12}",
+        "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
         "category" : {
           "id" : "${RANDOM.NUMBER:8}",
-          "name" : "${RANDOM.STRING:12}"
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
         },
-        "photoUrls" : [ "${RANDOM.STRING:12}", "${RANDOM.STRING:12}" ],
+        "photoUrls" : [ "${RANDOM.STRING:12}${RANDOM.NUMBER:4}", "${RANDOM.STRING:12}${RANDOM.NUMBER:4}" ],
         "tags" : [ {
           "id" : "${RANDOM.NUMBER:8}",
-          "name" : "${RANDOM.STRING:12}"
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
         }, {
           "id" : "${RANDOM.NUMBER:8}",
-          "name" : "${RANDOM.STRING:12}"
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
         } ],
         "status" : "sold"
       }
     },
     "assertions" : {
-      "status" : "$ONE.OF:[200]"
+      "status" : 200
     },
     "ignoreStep" : false
   }, {
@@ -37,24 +37,24 @@
     "request" : {
       "body" : {
         "id" : "${RANDOM.NUMBER:8}",
-        "name" : "${RANDOM.STRING:12}",
+        "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
         "category" : {
           "id" : "${RANDOM.NUMBER:8}",
-          "name" : "${RANDOM.STRING:12}"
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
         },
-        "photoUrls" : [ "${RANDOM.STRING:12}", "${RANDOM.STRING:12}" ],
+        "photoUrls" : [ "${RANDOM.STRING:12}${RANDOM.NUMBER:4}", "${RANDOM.STRING:12}${RANDOM.NUMBER:4}" ],
         "tags" : [ {
           "id" : "${RANDOM.NUMBER:8}",
-          "name" : "${RANDOM.STRING:12}"
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
         }, {
           "id" : "${RANDOM.NUMBER:8}",
-          "name" : "${RANDOM.STRING:12}"
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
         } ],
         "status" : "sold"
       }
     },
     "assertions" : {
-      "status" : "$ONE.OF:[200]"
+      "status" : 200
     },
     "ignoreStep" : false
   } ]

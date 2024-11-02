@@ -8,7 +8,7 @@
     "url" : "/testFailedStep",
     "request" : {
       "body" : {
-        "okField" : "${RANDOM.STRING:12}"
+        "okField" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
       }
     },
     "assertions" : { },
