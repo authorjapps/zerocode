@@ -70,9 +70,14 @@ public class ScenarioGenerator {
 	private void generateStep(String path, String method, Operation oaOperation, List<Step> outSteps) {
 		if (oaOperation == null)
 			return;
-		StepGenerator generator=new StepGenerator();
-		Step step = generator.parseOperation(path, method, oaOperation);
-		outSteps.add(step);
+		try {
+			StepGenerator generator=new StepGenerator();
+			Step step = generator.parseOperation(path, method, oaOperation);
+			outSteps.add(step);
+		} catch (RuntimeException e) {
+			LOGGER.error("Failed step generation for {} {}", method, path, e);
+		}
+
 	}
 
 	private void writeScenario(ScenarioSpec scenario, String outFolder, String name) {

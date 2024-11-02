@@ -21,6 +21,13 @@ public class StepGenerationTest extends BaseTest {
 	}
 	
 	@Test
+	public void testFailedStep_DoesNotBlockGeneration() throws IOException {
+		ScenarioGenerator parser = new ScenarioGenerator();
+		parser.generateAll(ymlFolder + "/oa-failed-step.yml", outFolder);
+		assertScenario("_testFailedStep");
+	}
+
+	@Test
 	public void testStringBody() throws IOException {
 		ScenarioGenerator parser = new ScenarioGenerator();
 		parser.generateAll(ymlFolder + "/oa-string-body.yml", outFolder);
