@@ -4,8 +4,12 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.RequestBuilder;
@@ -24,6 +28,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 
 public class BasicHttpClientTest {
@@ -44,27 +49,30 @@ public class BasicHttpClientTest {
     public void createRequestBuilder() throws IOException {
         header.put("Content-Type", "application/x-www-form-urlencoded");
         String reqBodyAsString = "{\"Company\":\"Amazon\",\"age\":30,\"worthInBillion\":999.999}";
+        Set<String> expected = new HashSet<>(Arrays.asList("Company=Amazon", "worthInBillion=999.999", "age=30"));
         RequestBuilder requestBuilder = basicHttpClient.createRequestBuilder("/api/v1/founder", "POST", header, reqBodyAsString);
-        String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
+        Set<String> actualNameValuePairSet = getActualSetOfNameValuePairsFromString(EntityUtils.toString(requestBuilder.getEntity(), "UTF-8"));
         assertThat(requestBuilder.getMethod(), is("POST"));
-        assertThat(nameValuePairString, is("Company=Amazon&worthInBillion=999.999&age=30"));
+        assertThat(actualNameValuePairSet, equalTo(expected));
     }
 
     @Test
     public void createRequestBuilder_spaceInKeyValue() throws IOException {
         header.put("Content-Type", "application/x-www-form-urlencoded");
         String reqBodyAsString = "{\"Name\":\"Larry Pg\",\"Company\":\"Amazon\",\"Title\":\"CEO\"}";
+        Set<String> expected = new HashSet<>(Arrays.asList("Company=Amazon", "Title=CEO", "Name=Larry+Pg"));
         RequestBuilder requestBuilder = basicHttpClient.createRequestBuilder("/api/v1/founder", "POST", header, reqBodyAsString);
-        String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
-        assertThat(nameValuePairString, is("Company=Amazon&Title=CEO&Name=Larry+Pg"));
+        Set<String> actualNameValuePairSet = getActualSetOfNameValuePairsFromString(EntityUtils.toString(requestBuilder.getEntity(), "UTF-8"));
+        assertThat(actualNameValuePairSet, equalTo(expected));
     }
 
     @Test
     public void createRequestBuilder_frontSlash() throws IOException {
+        Set<String> expected = new HashSet<>(Arrays.asList("Company=Amazon", "Title=CEO", "state%2Fregion=singapore+north"));
         String reqBodyAsString = "{\"state/region\":\"singapore north\",\"Company\":\"Amazon\",\"Title\":\"CEO\"}";
         RequestBuilder requestBuilder = basicHttpClient.createRequestBuilder("/api/v1/founder", "POST", header, reqBodyAsString);
-        String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
-        assertThat(nameValuePairString, is("Company=Amazon&Title=CEO&state%2Fregion=singapore+north"));
+        Set<String> actualNameValuePairSet = getActualSetOfNameValuePairsFromString(EntityUtils.toString(requestBuilder.getEntity(), "UTF-8"));
+        assertThat(actualNameValuePairSet, equalTo(expected));
     }
 
     @Test
@@ -88,11 +96,12 @@ public class BasicHttpClientTest {
                 "    \"type\": \"HeadOffice\"\n" +
                 "  }\n" +
                 "}";
+        Set<String> expected = new HashSet<>(Arrays.asList("Company=Amazon", "addresses=%7Bcity%3DNewYork%2C+type%3DHeadOffice%7D"));
         RequestBuilder requestBuilder = basicHttpClient.createRequestBuilder("/api/v1/founder", "POST", header, reqBodyAsString);
-        String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
+        Set<String> actualNameValuePairSet = getActualSetOfNameValuePairsFromString(EntityUtils.toString(requestBuilder.getEntity(), "UTF-8"));
         assertThat(requestBuilder.getMethod(), is("POST"));
         //On the server side: address={city=NewYork, type=HeadOffice}
-        assertThat(nameValuePairString, is("Company=Amazon&addresses=%7Bcity%3DNewYork%2C+type%3DHeadOffice%7D"));
+        assertThat(actualNameValuePairSet, equalTo(expected));
     }
 
     @Test
@@ -190,5 +199,9 @@ public class BasicHttpClientTest {
         BasicHttpClient basicHttpClient = new BasicHttpClient();
         final String responseBodyActual = (String) basicHttpClient.handleResponse(closeableHttpResponse).getEntity();
         assertThat(responseBodyActual, CoreMatchers.is(response));
+    }
+
+    private Set<String> getActualSetOfNameValuePairsFromString(String actual) {
+        return new HashSet<>(Arrays.asList(actual.split("&")));
     }
 }
