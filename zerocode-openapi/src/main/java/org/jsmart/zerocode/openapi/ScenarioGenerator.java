@@ -29,7 +29,7 @@ public class ScenarioGenerator {
     /**
      * Generates Zerocode scenarios from an OpenAPI specification.
      * The name of the resulting scenarios is the name of the path
-     * (other characters different from alphanumeric, braces, dots and dashes are replaced by _).
+     * (other characters different from alphanumeric, brackets, dots and dashes are replaced by _).
      * Each scenario contains a step for each operation defined in the specification.
      * 
      * @param oaSpecLocation Yaml or Json file or url with the OpenAPI specification.
@@ -75,9 +75,9 @@ public class ScenarioGenerator {
 			Step step = generator.parseOperation(path, method, oaOperation);
 			outSteps.add(step);
 		} catch (RuntimeException e) {
+			// Prevents the whole scenario failure if some step fails (error, not supported feature, etc.)
 			LOGGER.error("Failed step generation for {} {}", method, path, e);
 		}
-
 	}
 
 	private void writeScenario(ScenarioSpec scenario, String outFolder, String name) {

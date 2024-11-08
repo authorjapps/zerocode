@@ -26,4 +26,7 @@ public class IntegrationTest extends BaseTest {
 		assertAllScenarios("petstore_all.html");
 	}
 
+	// To check performance, use the GitHub Api specification: https://github.com/github/rest-api-description
+	// https://raw.githubusercontent.com/github/rest-api-description/refs/heads/main/descriptions/ghes-3.14/ghes-3.14.json
+	// Time to generate: between 7 and 11 seconds, 631 scenarios
 }

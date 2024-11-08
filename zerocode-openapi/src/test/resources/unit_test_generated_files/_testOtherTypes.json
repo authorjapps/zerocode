@@ -13,7 +13,7 @@
         "booleanField2" : false,
         "booleanField3" : true,
         "dateField" : "${LOCAL.DATE.NOW:yyyy-MM-dd}",
-        "dateTimeField" : "${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ssZ}"
+        "dateTimeField" : "${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ss}"
       }
     },
     "assertions" : { },

@@ -9,8 +9,8 @@ import io.swagger.v3.oas.models.media.Schema;
 
 /**
  * Base class for all data type generators given their OpenAPI Schema
- * AbstractDataGenerator
- *   AbstractPrimitiveGenerator
+ * DataGenerator
+ *   PrimitiveGenerator
  *     IntegerGenerator
  *     NumberGenerator
  *     StringGenerator (including date and date-time formats)
