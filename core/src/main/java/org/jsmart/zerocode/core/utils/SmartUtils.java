@@ -87,6 +87,10 @@ public class SmartUtils {
         return map;
     }
 
+    public static String sanitizeReportFileName(String fileName) {
+    	return fileName.replaceAll("[^A-Za-z0-9 \\-_.]", "_");
+    }
+
     public static List<String> getAllEndPointFiles(String packageName) {
         if(isValidAbsolutePath(packageName)){
             return retrieveScenariosByAbsPath(packageName);
