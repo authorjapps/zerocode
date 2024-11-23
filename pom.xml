@@ -89,6 +89,7 @@
         <httpclient.version>4.5.13</httpclient.version>
         <httpmime.version>4.5.12</httpmime.version>
         <h2.db.version>2.2.220</h2.db.version>
+        <postgres.db.version>42.7.4</postgres.db.version>
         <extentreports.version>5.0.9</extentreports.version>
         <version.kafka-clients>3.7.0</version.kafka-clients>
         <version.gson>2.10.1</version.gson>
@@ -297,6 +298,12 @@
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.db.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency> 
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgres.db.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

@@ -9,9 +9,6 @@ import org.junit.runner.RunWith;
 @RunWith(ZeroCodeUnitRunner.class)
 public class DbSqlExecutorScenarioTest {
 
-	// NOTE: Below tests will fail when run in postgres because this database stores identifiers in lowercase.
-	// to make tests pass, change the keys in the response.rows to lowercase
-	
     @Test
 	@Scenario("integration_test_files/db/db_csv_load_with_headers.json")
 	public void testDbCsvLoadWithHeaders() throws Exception {

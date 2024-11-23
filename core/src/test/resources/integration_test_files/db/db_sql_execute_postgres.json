@@ -1,0 +1,49 @@
+{
+    "scenarioName": "DbSqlExecutor: Read and write data using SQL - PostgreSQL",
+    "steps": [
+        {
+            "name": "Test database setup",
+            "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+            "operation": "EXECUTE",
+            "request": {
+                "sql": "DROP TABLE IF EXISTS PEOPLE; CREATE TABLE PEOPLE (ID INTEGER, NAME VARCHAR(20), START DATE, ACTIVE BOOLEAN);"
+            },
+            "verify": { }
+        },
+        {
+            "name": "Insert rows using SQL",
+            "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+            "operation": "EXECUTE",
+            "request": {
+                "sql": "INSERT INTO PEOPLE VALUES (1, 'Jeff Bejo', '2024-09-01', true); INSERT INTO PEOPLE VALUES (2, 'John Bajo', '2024-09-02', false);"
+            },
+            "verify": { }
+        },
+        {
+            "name": "Insert with parameters and nulls",
+            "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+            "operation": "execute", //<-- Uppercase for consistency, but also allows lowercase
+            "request": {
+                "sql": "INSERT INTO PEOPLE (ID, NAME, START, ACTIVE) VALUES (?, ?, ?, ?);",
+                "sqlParams": [3, null, null, true]
+            },
+            "verify": { }
+        },
+        {
+            "name": "Retrieve rows using SQL",
+            "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+            "operation": "EXECUTE",
+            "request": {
+                "sql": "SELECT ID, NAME, to_char(START,'yyyy-MM-dd') AS START, ACTIVE FROM PEOPLE WHERE ACTIVE=?",
+                "sqlParams": [true]
+            },
+            "verify": {
+				"rows.SIZE": 2,
+                "rows": [ //<-- same than db_sql_execute.json, but keys in lowercase (postgres converts to lower)
+                    { "id": 1, "name": "Jeff Bejo", "start": "2024-09-01", "active": true },
+                    { "id": 3, "name": null, "start": null, "active": true }
+                ]
+            }
+        }
+    ]
+}
