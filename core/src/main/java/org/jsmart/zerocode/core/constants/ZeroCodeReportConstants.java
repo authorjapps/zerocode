@@ -25,5 +25,5 @@ public interface ZeroCodeReportConstants {
     String EXTENT_ADDITIONAL_JS = "document.querySelector('.vheader').insertAdjacentHTML('afterbegin'," +
             "'<div id=\"theme-selector\"class=\"nav-right\"onClick=$(\"body\").toggleClass(\"dark\")>" +
             "<span class=\"badge badge-primary\"><i class=\"fa fa-desktop\"></i></span></div>')";
-    String EXTENT_ADDITIONAL_CSS = "#theme-selector{margin-right:15px}";
+    String EXTENT_ADDITIONAL_CSS = "#theme-selector{padding-right:12px;padding-left:12px;margin-right:10px}";
 }
