@@ -22,6 +22,8 @@ public interface ZeroCodeReportConstants {
     String CHARTS_AND_CSV = "gen-smart-charts-csv-reports";
 
     // Custom js and css for extent report
-    String EXTENT_ADDITIONAL_JS = "document.write('<div id=\"theme-selector\"onClick=$(\"body\").toggleClass(\"dark\")><span><i class=\"fa fa-desktop\"></i></span></div>')";
-    String EXTENT_ADDITIONAL_CSS = "#theme-selector{cursor:pointer;position:fixed;bottom:10px;left:25px;z-index:9999;}";
+    String EXTENT_ADDITIONAL_JS = "document.querySelector('.vheader').insertAdjacentHTML('afterbegin'," +
+            "'<div id=\"theme-selector\"class=\"nav-right\"onClick=$(\"body\").toggleClass(\"dark\")>" +
+            "<span class=\"badge badge-primary\"><i class=\"fa fa-desktop\"></i></span></div>')";
+    String EXTENT_ADDITIONAL_CSS = "#theme-selector{margin-right:15px}";
 }
