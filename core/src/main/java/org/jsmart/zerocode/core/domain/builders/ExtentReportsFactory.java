@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.EXTENT_ADDITIONAL_CSS;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.EXTENT_ADDITIONAL_JS;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.REPORT_DISPLAY_NAME_DEFAULT;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.REPORT_TITLE_DEFAULT;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -56,7 +58,8 @@ public class ExtentReportsFactory {
     public static ExtentSparkReporter createExtentHtmlReporter(String reportFileName) {
         extentSparkReporter = new ExtentSparkReporter(reportFileName);
 
-
+        extentSparkReporter.config().setJs(EXTENT_ADDITIONAL_JS);
+        extentSparkReporter.config().setCss(EXTENT_ADDITIONAL_CSS);
         extentSparkReporter.config().setDocumentTitle(REPORT_TITLE_DEFAULT);
         extentSparkReporter.config().setReportName(REPORT_DISPLAY_NAME_DEFAULT);
 
