@@ -187,7 +187,7 @@
 		<dependency> 
 		    <groupId>org.postgresql</groupId>
 		    <artifactId>postgresql</artifactId>
-		    <scope>test</scope>
+            <!--<scope>test</scope>--> <!-- Make it available to dependant projects. Hence commented -->
 		</dependency>
         <dependency>
             <groupId>com.aventstack</groupId>

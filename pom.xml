@@ -304,7 +304,6 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgres.db.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.aventstack</groupId>
