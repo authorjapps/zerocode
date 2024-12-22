@@ -176,10 +176,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>commons-dbutils</groupId>
+            <artifactId>commons-dbutils</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+		<dependency> 
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+            <!--<scope>test</scope>--> <!-- Make it available to dependant projects. Hence commented -->
+		</dependency>
         <dependency>
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>

@@ -84,10 +84,12 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <commons-lang3.version>3.14.0</commons-lang3.version>
         <commons-text.version>1.11.0</commons-text.version>
+        <commons-dbutils.version>1.8.1</commons-dbutils.version>
         <micro-simulator.version>1.1.10</micro-simulator.version>
         <httpclient.version>4.5.13</httpclient.version>
         <httpmime.version>4.5.12</httpmime.version>
         <h2.db.version>2.2.220</h2.db.version>
+        <postgres.db.version>42.7.4</postgres.db.version>
         <extentreports.version>5.0.9</extentreports.version>
         <version.kafka-clients>3.7.0</version.kafka-clients>
         <version.gson>2.10.1</version.gson>
@@ -288,10 +290,20 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>commons-dbutils</groupId>
+                <artifactId>commons-dbutils</artifactId>
+                <version>${commons-dbutils.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.db.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency> 
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgres.db.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.aventstack</groupId>
