@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>zerocode-tdd-parent</artifactId>
+        <groupId>org.jsmart</groupId>
+        <version>1.3.45-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>zerocode-openapi</artifactId>
+
+    <packaging>jar</packaging>
+    <name>POC - Zerocode test generation from OpenAPI specifications</name>
+    <description>Proof of concept - Generation of Zerocde scenarios and steps from the paths and operations of an OpenAPI specification</description>
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <artifactId>zerocode-tdd</artifactId>
+            <groupId>org.jsmart</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- TODO move version/scopes to the parent pom -->
+		<dependency>
+			<groupId>io.swagger.parser.v3</groupId>
+			<artifactId>swagger-parser</artifactId>
+            <version>2.1.23</version>
+		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>io.github.javiertuya</groupId>
+			<artifactId>visual-assert</artifactId>
+			<version>2.5.1</version>
+			<scope>test</scope>
+		</dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+           <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

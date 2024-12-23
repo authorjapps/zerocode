@@ -1,0 +1,23 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/store/order/{orderId} - Test scenario",
+  "steps" : [ {
+    "name" : "/store/order/{orderId} - Find purchase order by ID",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/store/order/${RANDOM.NUMBER:8}",
+    "request" : { },
+    "assertions" : {
+      "status" : 200
+    },
+    "ignoreStep" : false
+  }, {
+    "name" : "/store/order/{orderId} - Delete purchase order by ID",
+    "operation" : "DELETE",
+    "method" : "DELETE",
+    "url" : "/store/order/${RANDOM.NUMBER:8}",
+    "request" : { },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}
