@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -146,7 +147,7 @@ public class KafkaConsumerHelperTest {
         Mockito.when(consumerRecord.key()).thenReturn("\"key\"");
         Mockito.when(consumerRecord.value()).thenReturn("\"value\"");
         Mockito.when(consumerRecord.headers())
-                .thenReturn(new RecordHeaders().add("headerKey", "headerValue".getBytes()));
+               .thenReturn(new RecordHeaders().add("headerKey", "headerValue".getBytes()));
 
         // when
         List<ConsumerJsonRecord> consumerJsonRecords = new ArrayList<>();
@@ -158,6 +159,30 @@ public class KafkaConsumerHelperTest {
         Assert.assertTrue(consumerJsonRecord.getKey() instanceof JsonNode);
         Assert.assertTrue(consumerJsonRecord.getValue() instanceof JsonNode);
         Assert.assertEquals("\"key\"", consumerJsonRecord.getKey().toString());
+        Assert.assertEquals("\"value\"", consumerJsonRecord.getValue().toString());
+        Assert.assertEquals(Collections.singletonMap("headerKey", "headerValue"), consumerJsonRecord.getHeaders());
+    }
+
+    @Test
+    public void should_read_json_with_headers_in_record_with_key_of_object_type() throws IOException {
+        // given
+        Object key = UUID.randomUUID();
+        ConsumerRecord consumerRecord = Mockito.mock(ConsumerRecord.class);
+        Mockito.when(consumerRecord.key()).thenReturn(key);
+        Mockito.when(consumerRecord.value()).thenReturn("\"value\"");
+        Mockito.when(consumerRecord.headers())
+               .thenReturn(new RecordHeaders().add("headerKey", "headerValue".getBytes()));
+
+        // when
+        List<ConsumerJsonRecord> consumerJsonRecords = new ArrayList<>();
+        KafkaConsumerHelper.readJson(consumerJsonRecords, Iterators.forArray(consumerRecord),null);
+
+        // then
+        Assert.assertEquals(1, consumerJsonRecords.size());
+        ConsumerJsonRecord consumerJsonRecord = consumerJsonRecords.get(0);
+        Assert.assertTrue(consumerJsonRecord.getKey() instanceof JsonNode);
+        Assert.assertTrue(consumerJsonRecord.getValue() instanceof JsonNode);
+        Assert.assertEquals("\"" +key+"\"", consumerJsonRecord.getKey().toString());
         Assert.assertEquals("\"value\"", consumerJsonRecord.getValue().toString());
         Assert.assertEquals(Collections.singletonMap("headerKey", "headerValue"), consumerJsonRecord.getHeaders());
     }
