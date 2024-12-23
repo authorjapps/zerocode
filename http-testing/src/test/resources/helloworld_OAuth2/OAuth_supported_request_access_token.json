@@ -1,0 +1,23 @@
+{
+  "scenarioName": "OAuth2 Client Credentials Flow Test",
+  "steps": [
+    {
+      "name": "get_user_details_with_authorization",
+      "url": "/api/v1/employee/id",
+      "method": "GET",
+      "request": {
+        "headers": {
+          "Authorization": "DIY"
+        }
+      },
+      "verify": {
+        "status": 200,
+        "body": {
+          "empId": "UK-LON-1002",
+          "city": "UK-London",
+          "dob": "1989-07-09"
+        }
+      }
+    }
+  ]
+}
