@@ -1,4 +1,4 @@
-package org.jsmart.zerocode.core.db;
+package org.jsmart.zerocode.integrationtests.db;
 import org.jsmart.zerocode.core.domain.Scenario;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.runner.ZeroCodeUnitRunner;
