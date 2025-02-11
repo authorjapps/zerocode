@@ -4,6 +4,7 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
+import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -97,6 +98,17 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
             thisReport.getResults().forEach(thisScenario -> {
                 ExtentTest test = extentReports.createTest(thisScenario.getScenarioName());
+
+                 /**This code checks if the scenario has meta data.
+                 If it does, it iterates through each meta data entry and adds it to
+                 the Extent report as an info label.**/
+                if (thisScenario.getMeta() != null) {
+                    for (Map.Entry<String, List<String>> entry : thisScenario.getMeta().entrySet()) {
+                        String key = entry.getKey();
+                        List<String> values = entry.getValue();
+                        test.info(MarkupHelper.createLabel(key + ": " + String.join(", ", values), ExtentColor.BLUE));
+                    }
+                }
 
                 // Assign Category
                 test.assignCategory(DEFAULT_REGRESSION_CATEGORY); //Super set
@@ -276,6 +288,11 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                 .addColumn("responseTimeStamp")
                 .addColumn("result")
                 .addColumn("method")
+                // This adds new columns to the CSV schema for each type of meta data.
+                .addColumn("metaAuthors")
+                .addColumn("metaTickets")
+                .addColumn("metaCategories")
+                .addColumn("metaOthers")
                 .build();
 
         CsvMapper csvMapper = new CsvMapper();
@@ -309,6 +326,18 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
                     csvFileBuilder.scenarioLoop(thisResult.getLoop());
                     csvFileBuilder.scenarioName(thisResult.getScenarioName());
+
+                    // Add meta information
+                    Map<String, List<String>> meta = thisResult.getMeta();
+                    if (meta != null) {
+                        /**This code retrieves the meta data from the test result. If meta data exists,
+                         * it joins the list of values for each meta data type into a comma-separated
+                         * string and adds it to the CSV row.**/
+                        csvFileBuilder.setMetaAuthors(String.join(", ", meta.getOrDefault("authors", Collections.emptyList())));
+                        csvFileBuilder.setMetaTickets(String.join(", ", meta.getOrDefault("tickets", Collections.emptyList())));
+                        csvFileBuilder.setMetaCategories(String.join(", ", meta.getOrDefault("categories", Collections.emptyList())));
+                        csvFileBuilder.setMetaOthers(String.join(", ", meta.getOrDefault("others", Collections.emptyList())));
+                    }
 
                     thisResult.getSteps().forEach(thisStep -> {
                         csvFileBuilder.stepLoop(thisStep.getLoop());

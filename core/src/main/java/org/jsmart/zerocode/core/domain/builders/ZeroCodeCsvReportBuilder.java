@@ -13,6 +13,10 @@ public class ZeroCodeCsvReportBuilder {
     String requestTimeStamp;
     String responseTimeStamp;
     private Double responseDelayMilliSec;
+    private String metaAuthors;
+    private String metaTickets;
+    private String metaCategories;
+    private String metaOthers;
 
     public static ZeroCodeCsvReportBuilder newInstance() {
         return new ZeroCodeCsvReportBuilder();
@@ -21,6 +25,10 @@ public class ZeroCodeCsvReportBuilder {
     public ZeroCodeCsvReport build() {
         ZeroCodeCsvReport built = new ZeroCodeCsvReport(scenarioName,scenarioLoop,stepName, stepLoop,
                 correlationId, result, method, requestTimeStamp, responseTimeStamp, responseDelayMilliSec);
+        built.setMetaAuthors(metaAuthors);
+        built.setMetaTickets(metaTickets);
+        built.setMetaCategories(metaCategories);
+        built.setMetaOthers(metaOthers);
         return built;
     }
 
@@ -71,6 +79,26 @@ public class ZeroCodeCsvReportBuilder {
 
     public ZeroCodeCsvReportBuilder responseDelayMilliSec(Double responseDelayMilliSec) {
         this.responseDelayMilliSec = responseDelayMilliSec;
+        return this;
+    }
+
+    public ZeroCodeCsvReportBuilder setMetaAuthors(String metaAuthors) {
+        this.metaAuthors = metaAuthors;
+        return this;
+    }
+
+    public ZeroCodeCsvReportBuilder setMetaTickets(String metaTickets) {
+        this.metaTickets = metaTickets;
+        return this;
+    }
+
+    public ZeroCodeCsvReportBuilder setMetaCategories(String metaCategories) {
+        this.metaCategories = metaCategories;
+        return this;
+    }
+
+    public ZeroCodeCsvReportBuilder setMetaOthers(String metaOthers) {
+        this.metaOthers = metaOthers;
         return this;
     }
 }

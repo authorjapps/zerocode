@@ -28,5 +28,8 @@ jobs:
       - name: Running Kafka
         run: docker-compose -f docker/compose/kafka-schema-registry.yml up -d && sleep 10
 
+      - name: Running PostgreSQL (to test DB SQL Executor)
+        run: docker-compose -f docker/compose/pg_compose.yml up -d
+
       - name: Building and testing the changes
         run: mvn clean test
