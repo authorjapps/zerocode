@@ -13,9 +13,9 @@ public class ConsumerJsonRecord {
 
     @JsonCreator
     public ConsumerJsonRecord(
-        @JsonProperty("key") JsonNode key,
-        @JsonProperty("value") JsonNode value,
-        @JsonProperty("headers") Map<String, String> headers) {
+            @JsonProperty("key") JsonNode key,
+            @JsonProperty("value") JsonNode value,
+            @JsonProperty("headers") Map<String, String> headers) {
         this.key = key;
         this.value = value;
         this.headers = headers;
@@ -36,8 +36,8 @@ public class ConsumerJsonRecord {
     @Override
     public String toString() {
         return "Record{" +
-            "key='" + key + '\'' +
-            ", value=" + value +
-            '}';
+                "key='" + key + '\'' +
+                ", value=" + value +
+                '}';
     }
 }

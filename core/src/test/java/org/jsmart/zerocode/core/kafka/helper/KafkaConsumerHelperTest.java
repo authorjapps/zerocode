@@ -147,7 +147,7 @@ public class KafkaConsumerHelperTest {
         Mockito.when(consumerRecord.key()).thenReturn("\"key\"");
         Mockito.when(consumerRecord.value()).thenReturn("\"value\"");
         Mockito.when(consumerRecord.headers())
-               .thenReturn(new RecordHeaders().add("headerKey", "headerValue".getBytes()));
+                .thenReturn(new RecordHeaders().add("headerKey", "headerValue".getBytes()));
 
         // when
         List<ConsumerJsonRecord> consumerJsonRecords = new ArrayList<>();

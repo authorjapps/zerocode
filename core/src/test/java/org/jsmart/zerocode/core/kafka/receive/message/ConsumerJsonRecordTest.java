@@ -44,7 +44,7 @@ public class ConsumerJsonRecordTest {
         json = objectMapper.writeValueAsString(record);
         System.out.println("2 json >> " + json);
 
-//      UUID/Object as a Key
+//      UUID/Object Key
         JsonNode key4 = objectMapper.readTree(objectMapper.writeValueAsString(UUID.randomUUID().toString()));
 
         record = new ConsumerJsonRecord(key4, value, null);
@@ -72,10 +72,10 @@ public class ConsumerJsonRecordTest {
     @Test
     public void testDeser_singleJsonRecord() throws IOException {
         String json = "{\n" +
-            "                        \"value\": {\n" +
-            "                            \"name\": \"Nicola\"\n" +
-            "                        }\n" +
-            "                    }";
+                "                        \"value\": {\n" +
+                "                            \"name\": \"Nicola\"\n" +
+                "                        }\n" +
+                "                    }";
 
         ConsumerJsonRecord jsonRecord = objectMapper.readValue(json, ConsumerJsonRecord.class);
         assertThat(jsonRecord.getValue().toString(), is("{\"name\":\"Nicola\"}"));
