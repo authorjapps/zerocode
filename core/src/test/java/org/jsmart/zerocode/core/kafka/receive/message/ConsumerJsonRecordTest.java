@@ -9,7 +9,7 @@ import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,47 +23,41 @@ public class ConsumerJsonRecordTest {
     @Test
     public void testSer() throws IOException {
         // TODO: Use assert iso sysout
-        JsonNode key = objectMapper.readTree("\"key1\"");
+        JsonNode key1 = objectMapper.readTree("\"key1\"");
         JsonNode value = objectMapper.readTree("\"val1\"");
 
-        ConsumerJsonRecord record = new ConsumerJsonRecord(key, value, null);
+        ConsumerJsonRecord record = new ConsumerJsonRecord(key1, value, null);
         String json = objectMapper.writeValueAsString(record);
         System.out.println("1 json >> " + json);
 
 
-        JsonNode key1 = objectMapper.readTree("123");
+        JsonNode key2 = objectMapper.readTree("123");
 
-        record = new ConsumerJsonRecord(key1, value, null);
+        record = new ConsumerJsonRecord(key2, value, null);
         json = objectMapper.writeValueAsString(record);
         System.out.println("2 json >> " + json);
 
 
-        JsonNode key2 = objectMapper.readTree("23.45");
-
-        record = new ConsumerJsonRecord(key2, value, null);
-        json = objectMapper.writeValueAsString(record);
-        System.out.println("3 json >> " + json);
-
-//        UUID as String type
-        JsonNode key3 = objectMapper.readTree(objectMapper.writeValueAsString(UUID.randomUUID().toString()));
+        JsonNode key3 = objectMapper.readTree("23.45");
 
         record = new ConsumerJsonRecord(key3, value, null);
         json = objectMapper.writeValueAsString(record);
-        System.out.println("4 json >> " + json);
+        System.out.println("2 json >> " + json);
 
-//        UUID as Object Type
-        Object key4 = UUID.randomUUID();
+//      UUID/Object as a Key
+        JsonNode key4 = objectMapper.readTree(objectMapper.writeValueAsString(UUID.randomUUID().toString()));
+
         record = new ConsumerJsonRecord(key4, value, null);
         json = objectMapper.writeValueAsString(record);
-        System.out.println("5 json >> " + json);
-}
+        System.out.println("4 json >> " + json);
+    }
 
     @Test
     public void should_serialize_a_record_with_headers() throws JsonProcessingException {
         // given
         JsonNode key = objectMapper.readTree("123");
         JsonNode value = objectMapper.readTree("\"val\"");
-        Map<String, String> headers = new HashMap<>();
+        Map<String, String> headers = new LinkedHashMap<>();
         headers.put("hKey", "hValue");
         headers.put("hKeyWithNullValue", null);
         ConsumerJsonRecord record = new ConsumerJsonRecord(key, value, headers);
@@ -78,10 +72,10 @@ public class ConsumerJsonRecordTest {
     @Test
     public void testDeser_singleJsonRecord() throws IOException {
         String json = "{\n" +
-                "                        \"value\": {\n" +
-                "                            \"name\": \"Nicola\"\n" +
-                "                        }\n" +
-                "                    }";
+            "                        \"value\": {\n" +
+            "                            \"name\": \"Nicola\"\n" +
+            "                        }\n" +
+            "                    }";
 
         ConsumerJsonRecord jsonRecord = objectMapper.readValue(json, ConsumerJsonRecord.class);
         assertThat(jsonRecord.getValue().toString(), is("{\"name\":\"Nicola\"}"));
