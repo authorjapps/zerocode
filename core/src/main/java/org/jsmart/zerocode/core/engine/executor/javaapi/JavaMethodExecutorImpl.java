@@ -111,7 +111,7 @@ public class JavaMethodExecutorImpl implements JavaMethodExecutor {
         } catch (Exception e) {
             String errMsg = format("Java exec(): Invocation failed for method %s in class %s", methodName, qualifiedClassName);
             LOGGER.error(errMsg + ". Exception - " + e);
-            throw new RuntimeException(errMsg);
+            throw new RuntimeException(errMsg, e);
         }
     }
 
