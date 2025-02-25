@@ -39,12 +39,14 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.slf4j.Logger;
 import static org.slf4j.LoggerFactory.getLogger;
-
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
@@ -167,18 +169,52 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         ScenarioSpec scenario = parameterizedScenario;
 
         for (Step thisStep : parameterizedScenario.getSteps()) {
+            correlLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
             if (thisStep.getIgnoreStep()) {
                 LOGGER.info("Step \"" + thisStep.getName() + "\" is ignored because of ignoreStep property.");
                 continue;
             }
+            else
+            {
+                // Get current environment
+                String currentEnv = getCurrentEnvironment();
+                System.out.println("Current Environment!: "+ currentEnv);
 
-            correlLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
-
+                String environmentToExclude = thisStep.getExcludeEnvironment();
+                System.out.println("Excluding Environment: "+ environmentToExclude);
+                if (environmentToExclude != null && environmentToExclude.equalsIgnoreCase(currentEnv)) {
+                    System.out.println("Skipping step '" + thisStep.getName() + "' because environment is " + currentEnv);
+                    continue;
+                }
+            }
+            
             Boolean wasExecSuccess = executeRetryWithSteps(notifier, description, scenarioExecutionState, scenario, thisStep);
             if (wasExecSuccess != null) return wasExecSuccess;
         }
 
         return false;
+    }
+
+     private String getCurrentEnvironment(){
+
+        //Check system properties first (This checks if user or process passes in -Devn)
+        String env = System.getProperty("env");
+        if (env != null) {
+            return env;
+        }
+
+        //Load environment from app_config.properties that is with this project.
+        Properties properties = new Properties();
+        try (InputStream input = StepExecutionState.class.getClassLoader().getResourceAsStream("app_config.properties")) {
+            if (input != null) {
+                properties.load(input);
+                return properties.getProperty("env", "NotFound");
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading app_config.properties");
+        }
+
+        return "NotFound";
     }
 
     private Boolean executeRetryWithSteps(RunNotifier notifier,
