@@ -184,6 +184,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 System.out.println("Excluding Environment: "+ environmentToExclude);
                 if (environmentToExclude != null && environmentToExclude.equalsIgnoreCase(currentEnv)) {
                     System.out.println("Skipping step '" + thisStep.getName() + "' because environment is " + currentEnv);
+                    LOGGER.warn("Skipping step '" + thisStep.getName() + "' because environment is " + currentEnv);
                     continue;
                 }
             }

@@ -1,0 +1,21 @@
+{
+    "scenarioName": "GIVEN- this 'get_user_details' step is to be executed successfully, WHEN- I invoke GET, THEN- the test step WILL execute when the user passes 'Denv=Development' via command line",
+    "steps": [
+        {
+            "name": "get_user_details",
+            "url": "/users/octocat",
+            "method": "GET",
+            "request": {
+            },
+            "verify": {
+                "status": 200,
+                "body": {
+                    "login" : "octocat",
+                    "id" : 583231,
+                    "type" : "User"
+                }
+            },
+            "excludeEnvironment": "Production"
+        }
+    ]
+}
