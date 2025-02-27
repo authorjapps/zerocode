@@ -1,0 +1,43 @@
+{
+    "scenarioName": "DbSqlExecutor: Load a CSV file with headers - PostgreSQL",
+    "steps": [
+        {
+            "name": "Test database setup",
+            "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+            "operation": "EXECUTE",
+            "request": {
+                "sql": "DROP TABLE IF EXISTS PLAYERS; CREATE TABLE PLAYERS (ID INTEGER, NAME VARCHAR(20), AGE INTEGER);"
+            },
+            "verify": { }
+        },
+        {
+            "name": "Insert rows from a CSV file with headers",
+            "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+            "operation": "LOADCSV",
+            "request": {
+                "tableName": "players",
+                "csvSource": "integration_test_files/db/players_with_headers.csv",
+                "withHeaders" : true
+            },
+            "verify": { 
+                "size" : 3
+            }
+        },
+        {
+            "name": "Check the content of inserted rows",
+            "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+            "operation": "EXECUTE",
+            "request": {
+                "sql": "SELECT ID, NAME, AGE FROM PLAYERS ORDER BY ID"
+            },
+            "verify": {
+                "rows.SIZE": 3,
+                "rows": [ //<-- same than db_csv_load_with_headers.json, but keys in lowercase (postgres converts to lower)
+                    { "id": 1001, "name": "Ronaldo", "age": 23 },
+                    { "id": 1002, "name": "Devaldo", "age": null },
+                    { "id": 1003, "name": "Trevaldo", "age": 35 }
+                ]
+            }
+        }
+    ]
+}
