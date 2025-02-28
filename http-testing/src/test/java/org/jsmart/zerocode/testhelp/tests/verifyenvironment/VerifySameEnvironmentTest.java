@@ -12,14 +12,12 @@ import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.example.utils.PropertiesReader;
+
 
 @TargetEnv("github_host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class VerifySameEnvironmentTest {
-
-    //TODO: Get Log Relative Path
-    private static final String LOG_FILE_PATH = "C:\\WSU\\CPTS_581_Project\\SkipEnvironment_3\\zerocode\\http-testing\\target\\logs\\your_app_tests_logs.log"; // ZeroCode log file
-
 
     @Test
     @Scenario("verify_environment/verify_same_environment.json")
@@ -32,13 +30,13 @@ public class VerifySameEnvironmentTest {
     public static void afterTests() {
 
         try {
-            File logFile = new File(LOG_FILE_PATH);
+            String logFileLocation = PropertiesReader.getProperty("logfile.location");
+
+            System.out.println("Log File Location In Property File: " + logFileLocation);
+            File logFile = new File(logFileLocation);
 
             if (logFile.exists()) {
-                String logs = new String(Files.readAllBytes(Paths.get(LOG_FILE_PATH)));
-
-                // Print logs for debugging
-                //System.out.println("Captured Logs from Report:\n" + logs);
+                String logs = new String(Files.readAllBytes(Paths.get(logFileLocation)));
 
                 // Check if the step was skipped
                 if (logs.contains("Skipping step 'verify_same_environment'"))

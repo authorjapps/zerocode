@@ -12,13 +12,13 @@ import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.example.utils.PropertiesReader;
+
 
 @TargetEnv("github_host.properties")
 @RunWith(ZeroCodeUnitRunner.class)
 public class VerifyDifferentEnvironmentTest {
 
-    //TODO: Get Log Relative Path
-    private static final String LOG_FILE_PATH = "C:\\WSU\\CPTS_581_Project\\SkipEnvironment_3\\zerocode\\http-testing\\target\\logs\\your_app_tests_logs.log"; // ZeroCode log file
 
 
     @Test
@@ -32,10 +32,13 @@ public class VerifyDifferentEnvironmentTest {
     public static void afterTests() {
 
         try {
-            File logFile = new File(LOG_FILE_PATH);
+            String logFileLocation = PropertiesReader.getProperty("logfile.location");
+
+            System.out.println("Log File Location In Property File: " + logFileLocation);
+            File logFile = new File(logFileLocation);
 
             if (logFile.exists()) {
-                String logs = new String(Files.readAllBytes(Paths.get(LOG_FILE_PATH)));
+                String logs = new String(Files.readAllBytes(Paths.get(logFileLocation)));
 
                 // Check if the step was skipped
                 if (logs.contains("Skipping step 'get_user_details'"))
