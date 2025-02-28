@@ -339,6 +339,14 @@
      - Option-1 : Run a maven "dry run" <- Results in error e.g. javadoc error due to JAVA_HOME not set - Option-2 : Run a maven "prepare" run <- Results in error e.g. javadoc error due to JAVA_HOME not set - - Note: or remove the specific plugins from the build section and try dry-run and prepare stages, if full "commenting out" has issues -->
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>

@@ -27,6 +27,7 @@ public class Step {
     private final JsonNode assertions;
     private final String verifyMode;
     private final JsonNode verify;
+    private final String excludeEnvironment;
     private final boolean ignoreStep;
     private String id;
     private JsonNode stepFile;
@@ -122,16 +123,20 @@ public class Step {
         return parameterizedCsv;
     }
 
+    
     public void setParameterizedCsv(List<String> parameterizedCsv) {
         this.parameterizedCsv = parameterizedCsv;
     }
-
     public String getCustomLog(){ return customLog; }
 
     public void setCustomLog(String customLog) { this.customLog = customLog; }
 
     public boolean getIgnoreStep() {
         return this.ignoreStep;
+    }
+
+    public String getExcludeEnvironment() {
+        return this.excludeEnvironment;
     }
 
     @JsonCreator
@@ -148,7 +153,8 @@ public class Step {
             @JsonProperty("assertions") JsonNode assertions,
             @JsonProperty("verify") JsonNode verify,
             @JsonProperty("verifyMode") String verifyMode,
-            @JsonProperty("ignoreStep") boolean ignoreStep) {
+            @JsonProperty("ignoreStep") boolean ignoreStep,
+            @JsonProperty("excludeEnvironment") String excludeEnvironment) {
         this.loop = loop;
         this.retry = retry;
         this.name = name;
@@ -162,6 +168,7 @@ public class Step {
         this.assertions = assertions == null || assertions.isNull() ? verify : assertions;
         this.verify = verify;
         this.ignoreStep = ignoreStep;
+        this.excludeEnvironment = excludeEnvironment;
     }
 
     @Override
