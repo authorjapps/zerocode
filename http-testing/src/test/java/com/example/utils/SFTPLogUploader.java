@@ -6,6 +6,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 
@@ -16,7 +17,7 @@ public class SFTPLogUploader {
     private static final String SFTP_USER = PropertiesReader.getProperty("sftp.user");
     private static final String SFTP_PASS = PropertiesReader.getProperty("sftp.password");
     private static final String SFTP_REMOTE_DIR = PropertiesReader.getProperty("sftp.remoteDir");
-    private static final String LOCAL_LOG_FILE = PropertiesReader.getProperty("sftp.localFile");
+    private static final String LOCAL_LOG_FILE = PropertiesReader.getProperty("logfile.location");
 
 
     public static void uploadLogFile() {
@@ -43,6 +44,7 @@ public class SFTPLogUploader {
             sftpChannel = (ChannelSftp) channel;
 
             System.out.println("Connected to SFTP. Uploading file..."); //Notify User
+            String remoteLogFileName = Paths.get(LOCAL_LOG_FILE).getFileName().toString();
 
             File logFile = new File(LOCAL_LOG_FILE);
             if (!logFile.exists()) {
@@ -52,7 +54,7 @@ public class SFTPLogUploader {
             }
 
             inputStream = new FileInputStream(logFile);
-            String remoteFilePath = SFTP_REMOTE_DIR + "zerocode_execution.log";
+            String remoteFilePath = SFTP_REMOTE_DIR + remoteLogFileName;
             sftpChannel.put(inputStream, remoteFilePath);
 
             //Success!
