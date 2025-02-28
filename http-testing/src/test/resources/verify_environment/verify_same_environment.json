@@ -1,8 +1,8 @@
 {
-    "scenarioName": "GIVEN- the GitHub REST end point, WHEN- I invoke GET, THEN- I will receive the 200 status with body",
+    "scenarioName": "GIVEN- this 'verify_same_environment' step is to be excluded, WHEN- I invoke GET, THEN- the test step will not execute when the user passes 'Denv=ProductionTestCase' via command line",
     "steps": [
         {
-            "name": "get_user_details",
+            "name": "verify_same_environment",
             "url": "/users/octocat",
             "method": "GET",
             "request": {
@@ -16,7 +16,6 @@
                 }
             },
             "excludeEnvironment": "Production"
-
         }
     ]
 }

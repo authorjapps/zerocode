@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+        <!-- Load properties from an external file -->
+    <contextListener class="ch.qos.logback.classic.joran.ReconfigureOnChangeListener" />
+    <property file="src/main/resources/logback.properties" />
+    
     <appender name="fileAppender" class="ch.qos.logback.core.FileAppender">
-        <file>target/logs/your_app_tests_logs.log</file>
+        <file>${logfile.location}</file>
         <append>true</append>
         <encoder>
             <pattern>%d [%thread] %-5level %logger{100} - %msg%n</pattern>

@@ -14,9 +14,7 @@
                     "id" : 583231,
                     "type" : "User"
                 }
-            },
-            "excludeEnvironment": "Production"
-
+            }
         }
     ]
 }

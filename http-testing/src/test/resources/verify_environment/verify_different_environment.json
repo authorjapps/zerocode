@@ -1,5 +1,5 @@
 {
-    "scenarioName": "GIVEN- the GitHub REST end point, WHEN- I invoke GET, THEN- I will receive the 200 status with body",
+    "scenarioName": "GIVEN- this 'get_user_details' step is to be executed successfully, WHEN- I invoke GET, THEN- the test step WILL execute when the user passes 'Denv=Development' via command line",
     "steps": [
         {
             "name": "get_user_details",
@@ -16,7 +16,6 @@
                 }
             },
             "excludeEnvironment": "Production"
-
         }
     ]
 }
