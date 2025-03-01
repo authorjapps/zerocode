@@ -28,6 +28,7 @@ public class Step {
     private final String verifyMode;
     private final JsonNode verify;
     private final boolean ignoreStep;
+    private final Integer timeout;
     private String id;
     private JsonNode stepFile;
 
@@ -134,6 +135,10 @@ public class Step {
         return this.ignoreStep;
     }
 
+    public Integer getTimeout() {
+        return timeout;
+    }
+
     @JsonCreator
     public Step(
             @JsonProperty("stepLoop") Integer loop,
@@ -148,7 +153,8 @@ public class Step {
             @JsonProperty("assertions") JsonNode assertions,
             @JsonProperty("verify") JsonNode verify,
             @JsonProperty("verifyMode") String verifyMode,
-            @JsonProperty("ignoreStep") boolean ignoreStep) {
+            @JsonProperty("ignoreStep") boolean ignoreStep,
+            @JsonProperty("timeout") Integer timeout) {
         this.loop = loop;
         this.retry = retry;
         this.name = name;
@@ -162,6 +168,7 @@ public class Step {
         this.assertions = assertions == null || assertions.isNull() ? verify : assertions;
         this.verify = verify;
         this.ignoreStep = ignoreStep;
+        this.timeout = timeout;
     }
 
     @Override

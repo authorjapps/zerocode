@@ -13,6 +13,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -97,6 +98,41 @@ public class BasicHttpClient {
     }
 
     /**
+     * Override this method to create your own http or https client or a customized client if needed
+     * for your project. Framework uses the below client which is the default implementation.
+     * - org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient#createHttpClient(int, int)
+     * {@code
+     * See examples:
+     * - org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient#createHttpClient(int, int)
+     * - org.jsmart.zerocode.core.httpclient.ssl.SslTrustCorporateProxyHttpClient#createHttpClient(int, int)
+     * - org.jsmart.zerocode.core.httpclient.ssl.CorporateProxyNoSslContextHttpClient#createHttpClient(int, int)
+     * }
+     * @param connectionTimeout
+     * @param socketTimeout
+     * @return CloseableHttpClient
+     * @throws Exception
+     */
+    public CloseableHttpClient createHttpClient(Integer socketTimeout) throws Exception {
+        LOGGER.debug("###Creating SSL Enabled Http Client for both http/https/TLS connections");
+
+        SSLContext sslContext = new SSLContextBuilder()
+                .loadTrustMaterial(null, (certificate, authType) -> true).build();
+
+        CookieStore cookieStore = new BasicCookieStore();
+
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(socketTimeout)
+                .build();
+
+        return HttpClients.custom()
+                .setSSLContext(sslContext)
+                .setSSLHostnameVerifier(new NoopHostnameVerifier())
+                .setDefaultCookieStore(cookieStore)
+                .setDefaultRequestConfig(requestConfig)
+                .build();
+    }
+
+    /**
      * Override this method in case you want to execute the http call differently via your http client.
      * Otherwise the framework falls back to this implementation by default.
      *
@@ -115,6 +151,45 @@ public class BasicHttpClient {
                             Object body) throws Exception {
 
         httpclient = createHttpClient();
+
+        // ---------------------------
+        // Handle request body content
+        // ---------------------------
+        String reqBodyAsString = handleRequestBody(body);
+
+        // -----------------------------------
+        // Handle the url and query parameters
+        // -----------------------------------
+        httpUrl = handleUrlAndQueryParams(httpUrl, queryParams);
+
+        RequestBuilder requestBuilder = createRequestBuilder(httpUrl, methodName, headers, reqBodyAsString);
+
+        // ------------------
+        // Handle the headers
+        // ------------------
+        handleHeaders(headers, requestBuilder);
+
+        // ------------------
+        // Handle cookies
+        // ------------------
+        addCookieToHeader(requestBuilder);
+
+        CloseableHttpResponse httpResponse = httpclient.execute(requestBuilder.build());
+
+        // --------------------
+        // Handle the response
+        // --------------------
+        return handleResponse(httpResponse);
+    }
+
+    public Response execute(String httpUrl,
+                            String methodName,
+                            Map<String, Object> headers,
+                            Map<String, Object> queryParams,
+                            Object body,
+                            Integer socketTimeout) throws Exception {
+
+        httpclient = createHttpClient(socketTimeout);
 
         // ---------------------------
         // Handle request body content

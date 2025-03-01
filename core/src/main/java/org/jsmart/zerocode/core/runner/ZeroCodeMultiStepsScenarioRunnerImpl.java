@@ -425,6 +425,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         String operationName = thisStep.getOperation();
         String stepId = thisStep.getId();
         String thisStepName = thisStep.getName();
+        Integer timeout = thisStep.getTimeout();
 
         // --------------------------------
         // Resolve the URL patterns if any
@@ -454,7 +455,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .id(stepId)
                         .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
 
-                executionResult = apiExecutor.executeHttpApi(url, operationName, resolvedRequestJsonMaskRemoved);
+                executionResult = apiExecutor.executeHttpApi(url, operationName, resolvedRequestJsonMaskRemoved, timeout);
                 break;
 
             case JAVA_CALL:

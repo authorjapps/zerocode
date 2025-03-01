@@ -43,7 +43,7 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
     private int mockPort;
 
     @Override
-    public String execute(String httpUrl, String methodName, String requestJson) throws Exception {
+    public String execute(String httpUrl, String methodName, String requestJson, Integer timeout) throws Exception {
 
         HashMap queryParams = (HashMap) readJsonPathOrElseNull(requestJson, "$.queryParams");
         HashMap headers = (HashMap) readJsonPathOrElseNull(requestJson, "$.headers");
@@ -59,7 +59,7 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
             return "{\"status\": 200}";
         }
 
-        final javax.ws.rs.core.Response serverResponse = httpClient.execute(httpUrl, methodName, headers, queryParams, bodyContent);
+        final javax.ws.rs.core.Response serverResponse = httpClient.execute(httpUrl, methodName, headers, queryParams, bodyContent, timeout);
 
         /*
          * now read the response for :

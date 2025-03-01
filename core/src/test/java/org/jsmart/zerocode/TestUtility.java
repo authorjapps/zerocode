@@ -11,6 +11,6 @@ public class TestUtility {
     }
 
     public static Step createDummyStep(String stepName) {
-        return new Step(1, null, stepName, "dummy", "dummy", "dummy", null, Collections.emptyList(), NullNode.getInstance(), NullNode.getInstance(), NullNode.getInstance(), "dummy", false);
+        return new Step(1, null, stepName, "dummy", "dummy", "dummy", null, Collections.emptyList(), NullNode.getInstance(), NullNode.getInstance(), NullNode.getInstance(), "dummy", false, null);
     }
 }

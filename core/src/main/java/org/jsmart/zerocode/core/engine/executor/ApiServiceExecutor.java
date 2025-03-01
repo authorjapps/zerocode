@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.engine.executor;
 
+import java.util.Optional;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 
 public interface ApiServiceExecutor {
@@ -10,7 +11,7 @@ public interface ApiServiceExecutor {
      * @param requestJson A body payload with http headers needed to executeWithParams the HTTP api
      * @return String The response with http headers and body payload in JSON
      */
-    String executeHttpApi(String url, String methodName, String requestJson);
+    String executeHttpApi(String url, String methodName, String requestJson, Integer timeout);
 
     /**
      *
