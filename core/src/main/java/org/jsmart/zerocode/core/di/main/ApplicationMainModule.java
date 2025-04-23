@@ -27,6 +27,8 @@ import org.jsmart.zerocode.core.engine.validators.ZeroCodeValidator;
 import org.jsmart.zerocode.core.engine.validators.ZeroCodeValidatorImpl;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGeneratorImpl;
+import org.jsmart.zerocode.core.reportsupload.ReportUploader;
+import org.jsmart.zerocode.core.reportsupload.ReportUploaderImpl;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunner;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunnerImpl;
 
@@ -68,6 +70,7 @@ public class ApplicationMainModule extends AbstractModule {
         bind(ZeroCodeExternalFileProcessor.class).to(ZeroCodeExternalFileProcessorImpl.class);
         bind(ZeroCodeParameterizedProcessor.class).to(ZeroCodeParameterizedProcessorImpl.class);
         bind(ZeroCodeSorter.class).to(ZeroCodeSorterImpl.class);
+        bind(ReportUploader.class).to(ReportUploaderImpl.class);
 
         // ------------------------------------------------
         // Bind properties for localhost, CI, DIT, SIT etc
