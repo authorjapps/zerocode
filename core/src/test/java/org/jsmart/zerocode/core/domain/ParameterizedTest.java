@@ -2,8 +2,9 @@ package org.jsmart.zerocode.core.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
-import com.univocity.parsers.csv.CsvParser;
+
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
 import org.jukito.TestModule;
@@ -34,7 +35,7 @@ public class ParameterizedTest {
     private ObjectMapper mapper;
 
     @Inject
-    private CsvParser csvParser;
+    private CsvParserProvider csvParser;
 
     @Test
     public void testSerDe_valueSource() throws Exception {
