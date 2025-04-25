@@ -30,8 +30,8 @@ PR Branch
 * [ ] Relevant DOcumentation page added or updated with clear instructions and examples for the end user
   * [ ] Not applicable. This was only a code refactor change, no functional or behaviourial changes were introduced
 
-* [ ] Http test added to `http-testing` module(if applicable) ?
+* [ ] Http test added to `http-testing-examples` module(if applicable) ?
   * [ ] Not applicable. The changes did not affect HTTP automation flow
 
-* [ ] Kafka test added to `kafka-testing` module(if applicable) ?
+* [ ] Kafka test added to `kafka-testing-examples` module(if applicable) ?
   * [ ] Not applicable. The changes did not affect Kafka automation flow

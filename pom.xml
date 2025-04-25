@@ -31,9 +31,9 @@
 
     <modules>
         <module>core</module>
-        <module>http-testing</module>
-        <module>kafka-testing</module>
-        <module>junit5-testing</module>
+        <module>http-testing-examples</module>
+        <module>kafka-testing-examples</module>
+        <module>junit5-testing-examples</module>
         <module>zerocode-maven-archetype</module>
     </modules>
 
