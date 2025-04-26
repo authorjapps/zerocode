@@ -4,22 +4,25 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 
+import com.google.inject.AbstractModule;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
-import org.jukito.JukitoRunner;
-import org.jukito.TestModule;
+import org.jsmart.zerocode.core.domain.StepTest;
+import org.jsmart.zerocode.core.guice.ZeroCodeGuiceTestRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import com.google.inject.Inject;
 
 
-@RunWith(JukitoRunner.class)
-public class CsvParserTest {
 
-    public static class JukitoModule extends TestModule {
+public class CsvParserTest {
+    @Rule
+    public ZeroCodeGuiceTestRule guiceRule = new ZeroCodeGuiceTestRule(this, CsvParserTest.ZeroCodeTestModule.class);
+
+    public static class ZeroCodeTestModule extends AbstractModule {
         @Override
-        protected void configureTest() {
+        protected void configure() {
             ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test.properties");
             install(applicationMainModule);
         }
