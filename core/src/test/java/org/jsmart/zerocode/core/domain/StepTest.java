@@ -108,7 +108,6 @@ public class StepTest {
         assertThat(stepDeserialized.getParameterized().get(2), is(true));
     }
 
-
     @Test
     public void testParameterized_csv() throws Exception {
 
