@@ -2,6 +2,7 @@ package org.jsmart.zerocode.core.di.provider;
 
 
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -20,7 +21,12 @@ public class CsvParserProvider implements Provider<JacksonCsvParserAdapter> {
 
     static {
         final CsvSchema schema = createCsvSchema();
-        final ObjectReader mapper =  new CsvMapper()
+        final CsvMapper csvMapper = new CsvMapper();
+        csvMapper.enable(CsvParser.Feature.TRIM_SPACES);
+        csvMapper.enable(CsvParser.Feature.ALLOW_TRAILING_COMMA);
+        csvMapper.registerModule(new SimpleModule()
+                .addDeserializer(String.class, new CsvParserConfig.CustomStringDeserializer()));
+        final ObjectReader mapper =  csvMapper
                 .enable(CsvParser.Feature.TRIM_SPACES)
                 .readerFor(String[].class)
                 .with(schema);
@@ -45,14 +51,13 @@ public class CsvParserProvider implements Provider<JacksonCsvParserAdapter> {
         if (StringUtils.isNotBlank(line) && !line.contains(CARRIAGE_RETURN)) {
             return line;
         }
-        return line.replace(CARRIAGE_RETURN, StringUtils.EMPTY);
+        return line.replace(CARRIAGE_RETURN, StringUtils.SPACE);
     }
 
     private static CsvSchema createCsvSchema() {
         return CsvSchema.builder()
                 .setColumnSeparator(',')
                 .setQuoteChar('\'')
-                .setEscapeChar('\'')
                 .setNullValue("")
                 .setLineSeparator(LINE_SEPARATOR)
                 .build();

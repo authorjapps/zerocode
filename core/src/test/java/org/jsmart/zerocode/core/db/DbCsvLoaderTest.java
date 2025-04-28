@@ -16,7 +16,6 @@ import org.junit.runner.RunWith;
 
 import com.google.inject.Inject;
 
-
 @RunWith(JukitoRunner.class)
 public class DbCsvLoaderTest extends DbTestBase{
 	
