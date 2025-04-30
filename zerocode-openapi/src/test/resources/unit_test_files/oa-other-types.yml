@@ -1,0 +1,28 @@
+openapi: "3.0.0"
+paths:
+  /testOtherTypes:
+    post:
+      summary: Other types in body, different from integer, string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OtherTypes"
+components:
+  schemas:
+    OtherTypes:
+      properties:
+        numberField:
+          type: number
+        booleanField1:
+          type: boolean
+        booleanField2:
+          type: boolean
+        booleanField3:
+          type: boolean
+        dateField:
+          type: string
+          format: date
+        dateTimeField:
+          type: string
+          format: date-time
