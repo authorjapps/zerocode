@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
-import com.univocity.parsers.csv.CsvParser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.jukito.JukitoRunner;
@@ -50,7 +50,7 @@ public class StepTest {
     private ObjectMapper mapper;
 
     @Inject
-    private CsvParser csvParser;
+    private CsvParserProvider csvParser;
 
     @Test
     public void shouldDeserializeSingleStep() throws Exception {

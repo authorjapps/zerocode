@@ -3,9 +3,9 @@ package org.jsmart.zerocode.core.db;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.univocity.parsers.csv.CsvParser;
 
 import org.apache.commons.dbutils.DbUtils;
+import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.Connection;
@@ -36,7 +36,7 @@ public class DbSqlExecutor {
 	@Named("db.driver.password") private String password;
 	
     @Inject
-    private CsvParser csvParser;
+    private CsvParserProvider csvParser;
 	
 	/**
 	 * The LOADCSV operation inserts the content of a CSV file into a table,

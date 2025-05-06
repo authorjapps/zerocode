@@ -93,7 +93,6 @@
         <extentreports.version>5.0.9</extentreports.version>
         <version.kafka-clients>3.7.0</version.kafka-clients>
         <version.gson>2.10.1</version.gson>
-        <version.univocity-parsers>2.8.2</version.univocity-parsers>
 
         <!-- Maven plugins, build properties  -->
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
@@ -309,11 +308,6 @@
                 <groupId>com.aventstack</groupId>
                 <artifactId>extentreports</artifactId>
                 <version>${extentreports.version}</version> <!-- extent community version -->
-            </dependency>
-            <dependency>
-                <groupId>com.univocity</groupId>
-                <artifactId>univocity-parsers</artifactId>
-                <version>${version.univocity-parsers}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
 			<dependency>

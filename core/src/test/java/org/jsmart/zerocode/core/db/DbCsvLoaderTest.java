@@ -9,12 +9,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.jukito.JukitoRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.google.inject.Inject;
-import com.univocity.parsers.csv.CsvParser;
 
 @RunWith(JukitoRunner.class)
 public class DbCsvLoaderTest extends DbTestBase{
@@ -22,7 +22,7 @@ public class DbCsvLoaderTest extends DbTestBase{
 	private DbCsvLoader loader;
 	
 	@Inject
-	CsvParser csvParser;
+	CsvParserProvider csvParser;
 	
 	@Override
 	public void setUp() throws SQLException {
