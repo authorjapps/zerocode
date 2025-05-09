@@ -2,24 +2,25 @@ package org.jsmart.zerocode.core.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
+import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
+import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
+import org.jsmart.zerocode.core.guice.ZeroCodeGuiceTestRule;
+import org.jsmart.zerocode.core.utils.SmartUtils;
+import org.junit.Rule;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
-import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
-import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
-import org.jsmart.zerocode.core.utils.SmartUtils;
-import org.jukito.JukitoRunner;
-import org.jukito.TestModule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -29,13 +30,13 @@ import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARA
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
 
-@RunWith(JukitoRunner.class)
-// Or use - @UseModules(ApplicationMainModule.class)
-public class StepTest {
 
-    public static class JukitoModule extends TestModule {
+public class StepTest {
+    @Rule
+    public ZeroCodeGuiceTestRule guiceRule = new ZeroCodeGuiceTestRule(this, StepTest.ZeroCodeTestModule.class);
+    public static class ZeroCodeTestModule extends AbstractModule {
         @Override
-        protected void configureTest() {
+        protected void configure() {
             ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test.properties");
 
             /* Finally install the main module */

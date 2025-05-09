@@ -66,6 +66,7 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.$VALUE;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.JSON_CONTENT;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.deepTypeCast;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.fieldTypes;
+import static org.jsmart.zerocode.core.utils.HelperJsonUtils.readJsonPath;
 import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsoluteProperties;
 import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
 import static org.jsmart.zerocode.core.utils.SmartUtils.getJsonFilePhToken;
@@ -138,7 +139,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
                      * Use escapeJava, do not use escapeJavaScript, as escapeJavaScript also escapes single quotes
                      * which in turn throws Jackson Exception
                      */
-                    String escapedString = escapeJava(JsonPath.read(scenarioState, thisPath));
+                    String escapedString = escapeJava(readJsonPath(scenarioState, thisPath, String.class));
                     paramMap.put(thisPath, escapedString);
 
                 } else if (thisPath.matches(LEAF_VAL_REGEX) || thisPath.endsWith($VALUE)) {
@@ -154,7 +155,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
 
                     } else {
 
-                        paramMap.put(thisPath, JsonPath.read(scenarioState, thisPath));
+                        paramMap.put(thisPath, readJsonPath(scenarioState, thisPath, String.class));
 
                     }
                 }
@@ -448,7 +449,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
         String actualPath = thisPath.substring(0, thisPath.indexOf($VALUE));
         int index = findArrayIndex(thisPath, actualPath);
 
-        List<String> leafValuesAsArray = JsonPath.read(scenarioState, actualPath);
+        List<String> leafValuesAsArray = readJsonPath(scenarioState, actualPath, List.class);
         paramMap.put(thisPath, leafValuesAsArray.get(index));
     }
 

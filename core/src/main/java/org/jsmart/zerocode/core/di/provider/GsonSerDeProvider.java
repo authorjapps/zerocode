@@ -11,10 +11,12 @@ import com.google.gson.stream.JsonWriter;
 import jakarta.inject.Provider;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.header.internals.RecordHeaders;
+import org.jsmart.zerocode.core.di.module.OptionalTypeAdapterFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class GsonSerDeProvider implements Provider<Gson> {
 
@@ -22,6 +24,7 @@ public class GsonSerDeProvider implements Provider<Gson> {
     public Gson get() {
         return new GsonBuilder()
                 .registerTypeAdapterFactory(KafkaHeadersAdapter.FACTORY)
+                .registerTypeAdapterFactory(new OptionalTypeAdapterFactory())
                 .create();
     }
 
