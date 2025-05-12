@@ -1,6 +1,6 @@
 <img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
 ===
-Kafka Data streams and Micro-services API automated regression testing via JSON or YAML
+A no-code automated testing framework for Data streams(Kafka), microservices APIs, and databases using JSON.
 
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)

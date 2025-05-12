@@ -6,11 +6,12 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import com.univocity.parsers.csv.CsvParser;
+
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
 
+import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.jsmart.zerocode.core.domain.Parameterized;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
@@ -72,8 +73,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
     private ApiServiceExecutor apiExecutor;
 
     @Inject
-    private CsvParser csvParser;
-
+    private CsvParserProvider csvParser;
     @Inject
     private ApiTypeUtils apiTypeUtils;
 

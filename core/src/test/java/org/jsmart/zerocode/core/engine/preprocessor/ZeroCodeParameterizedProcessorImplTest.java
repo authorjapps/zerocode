@@ -2,9 +2,9 @@ package org.jsmart.zerocode.core.engine.preprocessor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.univocity.parsers.csv.CsvParser;
 import jakarta.inject.Inject;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.utils.SmartUtils;
@@ -40,7 +40,7 @@ public class ZeroCodeParameterizedProcessorImplTest {
     private ObjectMapper mapper;
 
     @Inject
-    private CsvParser csvParser;
+    private CsvParserProvider csvParser;
 
 
     private ZeroCodeParameterizedProcessorImpl parameterizedProcessor;

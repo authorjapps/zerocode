@@ -4,7 +4,7 @@
     <parent>
         <artifactId>zerocode-tdd-parent</artifactId>
         <groupId>org.jsmart</groupId>
-        <version>1.3.45-SNAPSHOT</version>
+        <version>1.3.46-SNAPSHOT</version>
     </parent>
 
     <artifactId>zerocode-tdd</artifactId>
@@ -61,10 +61,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.univocity</groupId>
-            <artifactId>univocity-parsers</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -176,10 +172,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>commons-dbutils</groupId>
+            <artifactId>commons-dbutils</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+		<dependency> 
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+            <!--<scope>test</scope>--> <!-- Make it available to dependant projects. Hence commented -->
+		</dependency>
         <dependency>
             <groupId>com.aventstack</groupId>
             <artifactId>extentreports</artifactId>
