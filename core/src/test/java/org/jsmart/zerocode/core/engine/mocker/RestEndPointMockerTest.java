@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.google.inject.AbstractModule;
 import jakarta.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -15,29 +16,35 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.MockStep;
 import org.jsmart.zerocode.core.domain.MockSteps;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.guice.ZeroCodeGuiceTestRule;
 import org.jsmart.zerocode.core.utils.SmartUtils;
-import org.jukito.JukitoRunner;
-import org.jukito.TestModule;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 import java.util.Map;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToXml;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
+import static com.github.tomakehurst.wiremock.client.WireMock.patch;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -46,12 +53,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithWireMock;
 import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.getWireMockServer;
 
-@RunWith(JukitoRunner.class)
 public class RestEndPointMockerTest {
+    @Rule
+    public ZeroCodeGuiceTestRule guiceRule = new ZeroCodeGuiceTestRule(this, RestEndPointMockerTest.ZeroCodeTestModule.class);
 
-    public static class JukitoModule extends TestModule {
+    public static class ZeroCodeTestModule extends AbstractModule {
         @Override
-        protected void configureTest() {
+        protected void configure() {
             ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test.properties");
 
             /* Finally install the main module */

@@ -1,28 +1,32 @@
 package org.jsmart.zerocode.core.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.guice.ZeroCodeGuiceTestRule;
 import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.jsmart.zerocode.core.utils.SmartUtils;
-import org.jukito.JukitoRunner;
-import org.jukito.TestModule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.everyItem;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-@RunWith(JukitoRunner.class)
+
 public class ParameterizedTest {
 
-    public static class JukitoModule extends TestModule {
+    @Rule
+    public ZeroCodeGuiceTestRule guiceRule = new ZeroCodeGuiceTestRule(this, ParameterizedTest.ZeroCodeTestModule.class);
+    public static class ZeroCodeTestModule extends AbstractModule {
         @Override
-        protected void configureTest() {
+        protected void configure() {
             ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test.properties");
             install(applicationMainModule);
         }
