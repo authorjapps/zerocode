@@ -61,15 +61,16 @@
 
     <properties>
         <!-- This project properties -->
-        <junit5.version>5.4.2</junit5.version>
-        <junit.vintage.version>5.4.2</junit.vintage.version>
+        <junit5.version>5.11.3</junit5.version>
+        <junit.vintage.version>5.7.0</junit.vintage.version>
         <junit-platform-runner.version>1.4.2</junit-platform-runner.version>
         <junit.version>4.13.2</junit.version>
+        <mockito.version>4.11.0</mockito.version>
         <jackson.version>2.15.4</jackson.version>
         <guava.version>33.0.0-jre</guava.version>
         <jsonassert.version>1.5.1</jsonassert.version>
         <classpath-explorer.version>1.0</classpath-explorer.version>
-        <jukito.version>1.5</jukito.version>
+
         <guice.version>7.0.0</guice.version>
         <jayway-version>2.9.0</jayway-version>
         <json-smart.version>2.5.0</json-smart.version>
@@ -122,8 +123,19 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junit5.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
-            <dependency>
+            <!-- The junit 4 test engine implementation. -->
+           <dependency>
                 <groupId>org.junit.vintage</groupId>
                 <artifactId>junit-vintage-engine</artifactId>
                 <version>${junit.vintage.version}</version>
@@ -132,6 +144,12 @@
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-runner</artifactId>
                 <version>${junit-platform-runner.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version> <!-- Use 5.14.2 if on Java 11+ compiler -->
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
@@ -210,11 +228,6 @@
                 <groupId>com.google.classpath-explorer</groupId>
                 <artifactId>classpath-explorer</artifactId>
                 <version>${classpath-explorer.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jukito</groupId>
-                <artifactId>jukito</artifactId>
-                <version>${jukito.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.inject</groupId>
@@ -407,4 +420,31 @@
          </plugins>
          -->
     </build>
+    <profiles>
+        <profile>
+            <id>jdk-17plus</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <properties>
+                <java.version>17</java.version>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                        <configuration>
+                            <argLine>
+                                --add-opens java.base/java.lang=ALL-UNNAMED
+                                --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                            </argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
 </project>

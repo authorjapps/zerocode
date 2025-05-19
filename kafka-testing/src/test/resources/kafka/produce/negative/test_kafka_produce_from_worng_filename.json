@@ -12,7 +12,7 @@
             },
             "assertions": {
                 "status" : "Failed",
-                "message" : "Error accessing file: `kafka/pfiles/test_data_rawXX.json' - java.lang.NullPointerException"
+                "message" : "$CONTAINS.STRING:Error accessing file: `kafka/pfiles/test_data_rawXX.json' - java.lang.NullPointerException"
             }
         }
     ]

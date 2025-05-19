@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.QueryRunner;
-import org.jukito.JukitoRunner;
+
+
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(JukitoRunner.class)
+
 public class DbSqlRunnerTest extends DbTestBase {
 
 	@Before
