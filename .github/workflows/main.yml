@@ -10,14 +10,18 @@ on:
       - master
 jobs:
   build:
+    strategy:
+      matrix:
+        version: [8, 11, 17, 21, 23]
+      fail-fast: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setting up JDK8
+      - name: Setting up JDK ${{ matrix.version }}
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: "${{ matrix.version }}"
           distribution: 'adopt'
 
       - name: Install Docker Compose
@@ -33,3 +37,18 @@ jobs:
 
       - name: Building and testing the changes
         run: mvn clean test
+
+      - if: always()
+        name: Junit html report
+        uses: javiertuya/junit-report-action@v1.3.0
+        with:
+          surefire-files: "**/target/surefire-reports/TEST-*.xml"
+          report-dir: target/site/junit
+
+      - if: always()
+        name: Publish test report files
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: "test-report-java${{ matrix.version }}"
+          path: |
+            target/site/junit
