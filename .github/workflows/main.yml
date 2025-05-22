@@ -39,7 +39,11 @@ jobs:
         uses: javiertuya/junit-report-action@v1.3.0
         with:
           surefire-files: "**/target/surefire-reports/TEST-*.xml"
-          report-dir: target/site/junit
+          report-dir: target/reports
+
+      - if: always()
+        name: Interactive and granular reports
+        run: cp core/target/*.html target/reports/ && cp core/target/*.csv target/reports/
 
       - if: always()
         name: Publish test report files
@@ -47,4 +51,5 @@ jobs:
         with:
           name: "test-report-java${{ matrix.version }}"
           path: |
-            target/site/junit
+            target/reports
+            !target/reports/someFileName.html
