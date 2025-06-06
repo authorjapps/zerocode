@@ -1,13 +1,10 @@
 package org.jsmart.zerocode.core.runner;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Modules;
-import java.lang.annotation.Annotation;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.module.RuntimeHttpClientModule;
 import org.jsmart.zerocode.core.di.module.RuntimeKafkaClientModule;
@@ -18,9 +15,11 @@ import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.domain.UseHttpClient;
 import org.jsmart.zerocode.core.domain.UseKafkaClient;
+import org.jsmart.zerocode.core.domain.Schema;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.listener.TestUtilityListener;
+import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeJsonSchemaMatcherImpl;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.httpclient.ssl.SslTrustHttpClient;
 import org.jsmart.zerocode.core.kafka.client.BasicKafkaClient;
@@ -40,6 +39,12 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.annotation.Annotation;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.System.getProperty;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.CHARTS_AND_CSV;
@@ -64,7 +69,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     private ZerocodeCorrelationshipLogger corrLogger;
     protected boolean testRunCompleted;
     protected boolean passed;
-
+    protected Schema schemaAnno;
     private ZeroCodeMultiStepsScenarioRunner multiStepsRunner;
 
     /**
@@ -118,11 +123,13 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             jsonTestCaseAnno = evalScenarioToJsonTestCase(method.getMethod().getAnnotation(Scenario.class));
         }
 
+        schemaAnno =  method.getMethod().getAnnotation(Schema.class);
+
         if (isIgnored(method)) {
 
             notifier.fireTestIgnored(description);
 
-        } else if (jsonTestCaseAnno != null) {
+        } else if (jsonTestCaseAnno != null ) {
 
             runLeafJsonTest(notifier, description, jsonTestCaseAnno);
 
@@ -205,6 +212,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         return getMainModuleInjector().getInstance(ZeroCodeReportGenerator.class);
     }
 
+
     private void runLeafJsonTest(RunNotifier notifier, Description description, JsonTestCase jsonTestCaseAnno) {
         if (jsonTestCaseAnno != null) {
             currentTestCase = jsonTestCaseAnno.value();
@@ -221,7 +229,38 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             LOGGER.debug("### Found currentTestCase : -" + child);
 
             passed = multiStepsRunner.runScenario(child, notifier, description);
+            //Schema validation
+            if( schemaAnno == null )
+            {
+                LOGGER.warn("### No Json Schema was added for validation");
+            }
+            else
+            {
+                LOGGER.debug("### Found Json Schema : - \n" + smartUtils.prettyPrintJson(smartUtils.readJsonAsString(schemaAnno.value())));
 
+                // Schema Validation is performed here...
+
+                ObjectMapper mapper = new ObjectMapper();
+
+                ZeroCodeJsonSchemaMatcherImpl zeroCodeJsonSchemaMatcher = new ZeroCodeJsonSchemaMatcherImpl();
+
+                JsonNode jsonFile = mapper.valueToTree(((ZeroCodeMultiStepsScenarioRunnerImpl)multiStepsRunner).getSchemaScenario());
+
+                String jsonScenarioFile = SmartUtils.readJsonAsString( schemaAnno.value() );
+
+                JsonNode schemaFile = mapper.readTree(jsonScenarioFile);
+
+                if( zeroCodeJsonSchemaMatcher.ismatching(jsonFile , schemaFile) )
+                {
+                    LOGGER.debug("### Json Schema matches with the Json test file." );
+
+                }
+                else
+                {
+                    LOGGER.error("### Json Schema does not matches with the Json test file.");
+                    throw new Exception("Json Schema does not matches with the Json test file.");
+                }
+            }
         } catch (Exception ioEx) {
             ioEx.printStackTrace();
             notifier.fireTestFailure(new Failure(description, ioEx));
@@ -239,6 +278,8 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
         notifier.fireTestFinished(description);
     }
+
+
 
     private List<String> getSmartChildrenList() {
         List<FrameworkMethod> children = getChildren();
@@ -368,6 +409,4 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
         return jsonTestCase.value() == null ? null : jsonTestCase;
     }
-
-
 }
