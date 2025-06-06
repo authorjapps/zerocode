@@ -22,11 +22,11 @@ public class RunMeFirstLocalMockRESTServer extends JsonBasedSimulator {
     }
 
     public static void main(String[] args) {
-        logger.debug("\n### REST Helper web-service starting...");
+        logger.info("\n### REST Helper web-service starting...");
 
         new RunMeFirstLocalMockRESTServer(PORT).start();
 
-        logger.debug("\n### REST Helper web-service started.");
+        logger.info("\n### REST Helper web-service started.");
 
         System.out.println("\n------ Done? To stop this REST server, simply press Ctrl+c or Stop button on your IDE -------");
 
