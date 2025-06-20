@@ -10,10 +10,10 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.lang3.StringUtils;
+import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.univocity.parsers.csv.CsvParser;
 
 /**
  * Data loading in the database from a CSV external source
@@ -21,9 +21,9 @@ import com.univocity.parsers.csv.CsvParser;
 class DbCsvLoader {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DbCsvLoader.class);
 	private Connection conn;
-	private CsvParser csvParser;
+	private CsvParserProvider csvParser;
 
-	public DbCsvLoader(Connection conn, CsvParser csvParser) {
+	public DbCsvLoader(Connection conn, CsvParserProvider csvParser) {
 		this.conn = conn;
 		this.csvParser = csvParser;
 	}

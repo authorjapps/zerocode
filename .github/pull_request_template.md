@@ -1,7 +1,7 @@
 # <Feature Title>
 
-## Fixes Issue
-- [ ] Which issue or ticket was(will be) fixed by this PR? (capture the issue number)
+## Fixed Which Issue?
+- [ ] Which issue or ticket was(will be) fixed by this PR? (capture the issue link here)
 
 PR Branch
 **_#ADD LINK TO THE PR BRANCH_**
@@ -22,6 +22,15 @@ PR Branch
 
 * [ ] PR doesn't break any of the earlier features for end users
   * [ ] WARNING! This might break one or more earlier earlier features, hence left a comment tagging all reviewrs
+
+* [ ] PR doesn't break the HTML report features directly
+  * [ ] Yes! I've manually run it locally and seen the HTML reports are generated perfectly fine
+  * [ ] Yes! I've opened the generated HTML reports from the `/target` folder and they look fine
+
+* [ ] PR doesn't break any HTML report features indirectly
+  * [ ] I have not added or amended any dependencies in this PR
+  * [ ] I have double checked, the new dependency added or removed has not affected the report generation indirectly
+  * [ ] Yes! I've seen the Sample report screenshots [here](https://github.com/authorjapps/zerocode/issues/694#issuecomment-2505958433), and HTML report of the current PR looks simillar.
 
 * [ ] Branch build passed in CI
 
