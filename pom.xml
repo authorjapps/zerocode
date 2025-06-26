@@ -92,7 +92,7 @@
         <h2.db.version>2.2.220</h2.db.version>
         <postgres.db.version>42.7.4</postgres.db.version>
         <extentreports.version>5.0.9</extentreports.version>
-        <version.kafka-clients>3.7.0</version.kafka-clients>
+        <version.kafka-clients>3.7.1</version.kafka-clients>
         <version.gson>2.10.1</version.gson>
 
         <!-- Maven plugins, build properties  -->
