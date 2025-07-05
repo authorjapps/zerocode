@@ -1,0 +1,5 @@
+openapi: "3.0.0"
+paths:
+  /testEmpty:
+    get:
+      summary: Neither params nor body
