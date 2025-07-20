@@ -4,9 +4,13 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jukito.JukitoRunner;
+import org.jukito.TestModule;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +19,10 @@ import java.nio.file.Path;
 
 import static org.junit.Assert.*;
 
+@RunWith(JukitoRunner.class)
 public class ReportUploaderImplTest {
-
+    private ReportUploaderImpl reportUploader;
+    private Path tempDir;
 
     @Inject(optional = true)
     @Named("reports.repo")
@@ -34,44 +40,54 @@ public class ReportUploaderImplTest {
     @Named("reports.repo.max.upload.limit.mb")
     private Integer reportsRepoMaxUploadLimitMb;
 
-    private ReportUploaderImpl reportUploader;
-
-    private Path tempDir;
+    public static class JukitoModule extends TestModule {
+        @Override
+        protected void configureTest() {
+            ApplicationMainModule applicationMainModule = new ApplicationMainModule("report_uploader.properties");
+            install(applicationMainModule);
+        }
+    }
 
     @Before
     public void setUp() throws IOException {
         reportUploader = new ReportUploaderImpl();
         reportUploader.setDefaultUploadLimit();
+        reportUploader.setReportsRepo(reportsRepo);
+        reportUploader.setReportsRepoUsername(reportsRepoUsername);
+        reportUploader.setReportsRepoToken(reportsRepoToken);
+        reportUploader.setReportsRepoMaxUploadLimitMb(reportsRepoMaxUploadLimitMb);
         tempDir = Files.createTempDirectory("testRepo");
     }
 
-    @After
-    public void tearDown() throws IOException {
-        if (tempDir != null) {
-            Files.walk(tempDir)
-                    .map(Path::toFile)
-                    .forEach(File::delete);
+    @Test
+    public void testInitializeOrOpenGitRepository_cloneRepo() throws Exception {
+        if(reportUploader.isAllRequiredVariablesSet()){
+            File targetDir = new File(tempDir.toFile(),"clonerepo");
+            Git git = reportUploader.initializeOrOpenGitRepository(targetDir.getAbsolutePath());
+            assertTrue(new File(targetDir, ".git").exists());
+            git.close();
         }
     }
 
- /*
     @Test
-    public void initializeOrOpenGitRepository_existingRepository_pullsLatestChanges() throws IOException, GitAPIException {
-        File gitDir = new File(tempDir.toFile(), ".git");
-        Git.init().setDirectory(tempDir.toFile()).call();
+    public void testAddAndCommitChanges() throws Exception {
+        if(reportUploader.isAllRequiredVariablesSet()){
+            File targetDir = new File(tempDir.toFile(),"commitrepo");
+            Git git = Git.init().setDirectory(targetDir).call();
 
-        Git git = reportUploader.initializeOrOpenGitRepository(tempDir.toString());
+            // Create a dummy file to commit
+            File file = new File(targetDir, "dummy.txt");
+            Files.write(file.toPath(), "data".getBytes());
 
-        assertNotNull(git);
-        assertTrue(gitDir.exists());
+            reportUploader.addAndCommitChanges(git);
+            assertTrue(git.log().call().iterator().hasNext());
+            git.close();
+        }
     }
-
-  */
 
     @Test
     public void copyFile_fileExistsAndWithinSizeLimit_copiesFile() throws IOException {
-        System.out.println(reportsRepoUsername);
-
+        System.out.println(reportsRepo);
         File sourceFile = new File(tempDir.toFile(), "source.txt");
         Files.write(sourceFile.toPath(), "test content".getBytes());
         File targetDir = new File(tempDir.toFile(), "target");
@@ -93,6 +109,15 @@ public class ReportUploaderImplTest {
 
         File copiedFile = new File(targetDir, sourceFile.getName());
         assertFalse(copiedFile.exists());
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        if (tempDir != null) {
+            Files.walk(tempDir)
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+        }
     }
 
 }

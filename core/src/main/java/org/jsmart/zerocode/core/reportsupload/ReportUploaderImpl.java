@@ -36,6 +36,7 @@ public class ReportUploaderImpl implements ReportUploader {
     @Named("reports.repo.max.upload.limit.mb")
     private Integer reportsRepoMaxUploadLimitMb;
 
+
     public void uploadReport() {
         if (!isAllRequiredVariablesSet()) {
             LOGGER.warn("One or more required variables are not set. Skipping report upload.");
@@ -49,7 +50,7 @@ public class ReportUploaderImpl implements ReportUploader {
             addRemoteRepositoryIfMissing(git);
 
             //Copy files to the repository
-            copyFile(ZeroCodeReportConstants.TARGET_FILE_NAME,ZeroCodeReportConstants.REPORT_UPLOAD_DIR);
+            copyFile(ZeroCodeReportConstants.TARGET_FILE_NAME, ZeroCodeReportConstants.REPORT_UPLOAD_DIR);
             copyFile(
                     ZeroCodeReportConstants.TARGET_FULL_REPORT_DIR + ZeroCodeReportConstants.TARGET_FULL_REPORT_CSV_FILE_NAME,
                     ZeroCodeReportConstants.REPORT_UPLOAD_DIR);
@@ -73,7 +74,7 @@ public class ReportUploaderImpl implements ReportUploader {
         }
     }
 
-     void addRemoteRepositoryIfMissing(Git git) throws URISyntaxException, GitAPIException {
+    protected void addRemoteRepositoryIfMissing(Git git) throws URISyntaxException, GitAPIException {
         if (git.remoteList().call().isEmpty()) {
             LOGGER.debug("Adding remote repository: {}", reportsRepo);
             git.remoteAdd().setName("origin").setUri(new URIish(reportsRepo)).call();
@@ -82,7 +83,7 @@ public class ReportUploaderImpl implements ReportUploader {
         }
     }
 
-     void addAndCommitChanges(Git git) throws GitAPIException {
+    protected void addAndCommitChanges(Git git) throws GitAPIException {
         git.add().addFilepattern(".").call();
         LOGGER.debug("Added all files to the Git index.");
 
@@ -93,27 +94,27 @@ public class ReportUploaderImpl implements ReportUploader {
         LOGGER.debug("Committed changes.");
     }
 
-     void pushToRemoteRepository(Git git) throws GitAPIException {
+    protected void pushToRemoteRepository(Git git) throws GitAPIException {
         git.push()
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(reportsRepoUsername, reportsRepoToken))
                 .call();
         LOGGER.debug("Pushed changes to remote repository!");
     }
 
-     boolean isAllRequiredVariablesSet() {
+    protected boolean isAllRequiredVariablesSet() {
         return reportsRepo != null && !reportsRepo.isEmpty() &&
                 reportsRepoUsername != null && !reportsRepoUsername.isEmpty() &&
                 reportsRepoToken != null && !reportsRepoToken.isEmpty();
     }
 
-    void setDefaultUploadLimit() {
+    protected void setDefaultUploadLimit() {
         if (reportsRepoMaxUploadLimitMb == null) {
             reportsRepoMaxUploadLimitMb = 2;
             LOGGER.debug("reportsRepoMaxUploadLimitMb is not set. Defaulting to 2 MB.");
         }
     }
 
-    void createParentDirectoryIfNotExists(File repoDir) {
+    protected void createParentDirectoryIfNotExists(File repoDir) {
         File parentDir = repoDir.getParentFile();
         if (!parentDir.exists() && parentDir.mkdirs()) {
             LOGGER.debug("Directory created: {}", parentDir.getAbsolutePath());
@@ -122,7 +123,7 @@ public class ReportUploaderImpl implements ReportUploader {
         }
     }
 
-    Git initializeOrOpenGitRepository(String repoUploadDir) throws IOException, GitAPIException {
+    protected Git initializeOrOpenGitRepository(String repoUploadDir) throws IOException, GitAPIException {
         if (new File(repoUploadDir, ".git").exists()) {
             LOGGER.debug("Existing Git repository found.");
             Git git = Git.open(new File(repoUploadDir));
@@ -141,7 +142,7 @@ public class ReportUploaderImpl implements ReportUploader {
         }
     }
 
-    void copyFile(String sourcePath, String targetDirPath) throws IOException {
+    protected void copyFile(String sourcePath, String targetDirPath) throws IOException {
         File sourceFile = new File(sourcePath);
         if (!sourceFile.exists()) {
             LOGGER.warn("File not found: {}", sourcePath);
@@ -151,7 +152,7 @@ public class ReportUploaderImpl implements ReportUploader {
             Files.copy(sourceFile.toPath(), Paths.get(targetDirPath, sourceFile.getName()), StandardCopyOption.REPLACE_EXISTING);
             LOGGER.debug("File copied: {}", sourceFile.getName());
         } else {
-            LOGGER.warn("File size exceeds {} MB. Skipping copy: {}", reportsRepoMaxUploadLimitMb,sourceFile.getName());
+            LOGGER.warn("File size exceeds {} MB. Skipping copy: {}", reportsRepoMaxUploadLimitMb, sourceFile.getName());
         }
     }
 
@@ -173,4 +174,24 @@ public class ReportUploaderImpl implements ReportUploader {
     }
 
 
+    public void setReportsRepo(String reportsRepo) {
+        this.reportsRepo = reportsRepo;
+    }
+
+    public void setReportsRepoUsername(String reportsRepoUsername) {
+        this.reportsRepoUsername = reportsRepoUsername;
+    }
+
+    public void setReportsRepoToken(String reportsRepoToken) {
+        this.reportsRepoToken = reportsRepoToken;
+    }
+
+    public void setReportsRepoMaxUploadLimitMb(Integer reportsRepoMaxUploadLimitMb) {
+        if (reportsRepoMaxUploadLimitMb == null) {
+            this.reportsRepoMaxUploadLimitMb = 2;
+        }else {
+            this.reportsRepoMaxUploadLimitMb = reportsRepoMaxUploadLimitMb;
+        }
+
+    }
 }
