@@ -55,13 +55,11 @@ public class ReportUploaderImpl implements ReportUploader {
                     ZeroCodeReportConstants.TARGET_FULL_REPORT_DIR + ZeroCodeReportConstants.TARGET_FULL_REPORT_CSV_FILE_NAME,
                     ZeroCodeReportConstants.REPORT_UPLOAD_DIR);
 
-            /*
             copyFirstFileUnder2MBMatchingPattern(
                     ZeroCodeReportConstants.SUREFIRE_REPORT_DIR,
                     "*.xml",
                     ZeroCodeReportConstants.REPORT_UPLOAD_DIR
             );
-            */
             copyFirstFileUnder2MBMatchingPattern(
                     ZeroCodeReportConstants.TARGET_FULL_REPORT_DIR + "/logs",
                     "*.log",
@@ -158,6 +156,11 @@ public class ReportUploaderImpl implements ReportUploader {
 
     protected void copyFirstFileUnder2MBMatchingPattern(String dirPath, String globPattern, String targetDirPath) throws IOException {
         Path dir = Paths.get(dirPath);
+
+        if (!Files.exists(dir) || !Files.isDirectory(dir)) {
+            LOGGER.warn("Directory does not exist or is not a valid directory: {}", dirPath);
+            return;
+        }
         final long maxSizeInBytes = reportsRepoMaxUploadLimitMb * 1024 * 1024;
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, globPattern)) {
