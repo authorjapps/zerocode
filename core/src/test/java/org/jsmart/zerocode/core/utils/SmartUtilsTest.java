@@ -1,23 +1,22 @@
 package org.jsmart.zerocode.core.utils;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
-import org.jukito.JukitoRunner;
-import org.jukito.TestModule;
+import org.jsmart.zerocode.core.guice.ZeroCodeGuiceTestRule;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,15 +29,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 
-@RunWith(JukitoRunner.class)
+
 //@UseModules(ApplicationMainModule.class) //<--- Only if you dont pass any value to it's constructor
 public class SmartUtilsTest {
-
-    public static class JukitoModule extends TestModule {
+    @Rule
+    public ZeroCodeGuiceTestRule guiceRule = new ZeroCodeGuiceTestRule(this, SmartUtilsTest.ZeroCodeTestModule.class);
+    public static class ZeroCodeTestModule extends AbstractModule {
         @Override
-        protected void configureTest() {
+        protected void configure() {
             ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test.properties");
-
             /* Finally install the main module */
             install(applicationMainModule);
         }

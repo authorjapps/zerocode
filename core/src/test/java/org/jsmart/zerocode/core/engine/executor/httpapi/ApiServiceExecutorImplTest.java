@@ -16,6 +16,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.jsmart.zerocode.core.utils.HelperJsonUtils.readJsonPath;
 import static org.junit.Assert.assertThat;
 
 public class ApiServiceExecutorImplTest {
@@ -49,16 +50,16 @@ public class ApiServiceExecutorImplTest {
     @Test
     public void willResolvePlaceHolder() throws Exception {
         String jsonString = smartUtils.getJsonDocumentAsString("engine/request_respone_actual.json");
-        Object aPathValue = JsonPath.read(jsonString, "$.createPerson.request.id");
-        assertThat(aPathValue, is("10101"));
+        String aPathValue = readJsonPath(jsonString, "$.createPerson.request.id", String.class);
+        assertThat(aPathValue.toString(), is("10101"));
 
-        aPathValue = JsonPath.read(jsonString, "$.createPerson.response.addresses.length()");
-        assertThat(aPathValue, is(2));
+        Integer aPathValueInt = readJsonPath(jsonString, "$.createPerson.response.addresses.length()", Integer.class);
+        assertThat(aPathValueInt, is(2));
 
-        aPathValue = JsonPath.read(jsonString, "$.createPerson.response.names.length()");
-        assertThat(aPathValue, is(3));
+        aPathValueInt = readJsonPath(jsonString, "$.createPerson.response.names.length()", Integer.class);
+        assertThat(aPathValueInt, is(3));
 
-        aPathValue = JsonPath.read(jsonString, "$.createPerson.response.addresses[0].houseNo.length()");
+        aPathValue = readJsonPath(jsonString, "$.createPerson.response.addresses[0].houseNo.length()", String.class);
         assertThat(aPathValue, nullValue());
     }
 
