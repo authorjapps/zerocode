@@ -41,7 +41,6 @@ public class TestUtilityListener extends RunListener {
          */
         printTestCompleted();
         generateChartsAndReports();
-        uploadReports();
         runPostFinished();
     }
 
@@ -55,9 +54,7 @@ public class TestUtilityListener extends RunListener {
      * Override this to handle post-finished tasks
      */
     public void runPostFinished() {
-        /*
-         * Do nothing for now
-         */
+        uploadReports();
     }
 
     private void generateChartsAndReports() {

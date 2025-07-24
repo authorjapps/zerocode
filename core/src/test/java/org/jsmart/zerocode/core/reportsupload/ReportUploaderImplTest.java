@@ -1,25 +1,24 @@
 package org.jsmart.zerocode.core.reportsupload;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
-import org.jukito.JukitoRunner;
-import org.jukito.TestModule;
+import org.jsmart.zerocode.core.guice.ZeroCodeGuiceTestRule;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-@RunWith(JukitoRunner.class)
 public class ReportUploaderImplTest {
     private ReportUploaderImpl reportUploader;
     private Path tempDir;
@@ -40,13 +39,17 @@ public class ReportUploaderImplTest {
     @Named("reports.repo.max.upload.limit.mb")
     private Integer reportsRepoMaxUploadLimitMb;
 
-    public static class JukitoModule extends TestModule {
+    @Rule
+    public ZeroCodeGuiceTestRule guiceRule = new ZeroCodeGuiceTestRule(this, ReportUploaderImplTest.ZeroCodeTestModule.class);
+
+    public static class ZeroCodeTestModule extends AbstractModule {
         @Override
-        protected void configureTest() {
+        protected void configure() {
             ApplicationMainModule applicationMainModule = new ApplicationMainModule("report_uploader.properties");
             install(applicationMainModule);
         }
     }
+
 
     @Before
     public void setUp() throws IOException {

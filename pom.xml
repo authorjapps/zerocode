@@ -110,7 +110,7 @@
         <!-- Release Build will not fail if error occurs during javadoc generation -->
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
         <google.protobuf.version>3.24.4</google.protobuf.version>
-        <eclipse.jgit.version>6.8.0.202311291450-r</eclipse.jgit.version>
+        <eclipse.jgit.version>5.13.0.202109080827-r</eclipse.jgit.version>
     </properties>
 
     <dependencyManagement>
