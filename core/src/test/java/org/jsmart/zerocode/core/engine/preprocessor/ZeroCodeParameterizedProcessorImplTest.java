@@ -2,32 +2,32 @@ package org.jsmart.zerocode.core.engine.preprocessor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.AbstractModule;
 import jakarta.inject.Inject;
 import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
 import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
+import org.jsmart.zerocode.core.guice.ZeroCodeGuiceTestRule;
 import org.jsmart.zerocode.core.utils.SmartUtils;
-import org.jukito.JukitoRunner;
-import org.jukito.TestModule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@RunWith(JukitoRunner.class)
 public class ZeroCodeParameterizedProcessorImplTest {
+    @Rule
+    public ZeroCodeGuiceTestRule guiceRule = new ZeroCodeGuiceTestRule(this, ZeroCodeParameterizedProcessorImplTest.ZeroCodeTestModule.class);
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    public static class JukitoModule extends TestModule {
+    public static class ZeroCodeTestModule extends AbstractModule {
         @Override
-        protected void configureTest() {
+        protected void configure() {
             ApplicationMainModule applicationMainModule = new ApplicationMainModule("config_hosts_test.properties");
             install(applicationMainModule);
         }

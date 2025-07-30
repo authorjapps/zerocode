@@ -1,8 +1,7 @@
 package org.jsmart.zerocode.core.db;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
+import com.google.inject.Inject;
+import org.junit.Test;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -10,13 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
-import org.jukito.JukitoRunner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 
-import com.google.inject.Inject;
-
-@RunWith(JukitoRunner.class)
 public class DbCsvLoaderTest extends DbTestBase{
 	
 	private DbCsvLoader loader;
