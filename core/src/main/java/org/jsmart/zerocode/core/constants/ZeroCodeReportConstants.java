@@ -8,7 +8,9 @@ public interface ZeroCodeReportConstants {
     String TARGET_REPORT_DIR = "target/zerocode-test-reports/";
     String TARGET_FULL_REPORT_CSV_FILE_NAME = "zerocode-junit-granular-report.csv";
     String TARGET_FILE_NAME = "target/zerocode-junit-interactive-fuzzy-search.html";
+    String SUREFIRE_REPORT_DIR = "target/surefire-reports/";
     String HIGH_CHART_HTML_FILE_NAME = "zerocode_results_chart";
+    String REPORT_UPLOAD_DIR = "target/upload-reports/";
     String AUTHOR_MARKER_OLD = "@@"; //Deprecated
     String AUTHOR_MARKER_NEW = "@";
     String CATEGORY_MARKER = "#";
