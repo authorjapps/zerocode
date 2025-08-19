@@ -1,0 +1,32 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Enum generation
+paths:
+  /testEnumUrlencode/{pathEnum}:
+    post:
+      summary: Enum generation urlencoded only in path params
+      parameters:
+      - in: path
+        name: pathEnum
+        schema:
+          type: string
+          enum: ["p1 []@!$&'()*+,;=-_.", "p2 []@!$&'()*+,;=-_."]
+      - in: query
+        name: queryEnum
+        schema:
+          type: string
+          enum: ["q1 []@!$&'()*+,;=-_.", "q2 []@!$&'()*+,;=-_."]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestEnum"
+components:
+  schemas:
+    TestEnum:
+      properties:
+        strEnum:
+          type: string
+          enum: ["b1 []@!$&'()*+,;=-_.", "b2 []@!$&'()*+,;=-_."]
+       
