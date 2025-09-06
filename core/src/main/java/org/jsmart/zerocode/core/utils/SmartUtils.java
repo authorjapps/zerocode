@@ -63,6 +63,11 @@ public class SmartUtils {
 
     public static String readJsonAsString(String scenarioFile) {
         try {
+            String pwd = System.getProperty("user.dir");
+            if (scenarioFile.startsWith("./") || scenarioFile.startsWith("../")) {
+                // Relative path: Resolve from PWD
+                scenarioFile = Paths.get(pwd, scenarioFile.substring(2)).normalize().toString(); // Adjust for ../
+            }
             scenarioFile = replaceHome(scenarioFile);
             if (isValidAbsolutePath(scenarioFile)) {
                 return readFile(scenarioFile, UTF_8);
