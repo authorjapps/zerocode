@@ -226,6 +226,24 @@ public class SmartUtilsTest {
         // mvn clean
     }
 
+    @Test
+    public void testScenarioFile_relativePath() throws Exception {
+
+        // Test Relative Path.
+        String testPath = "./target/temp/unit_test_files/cherry_pick_tests/folder_a/relative_path_test_case.json";
+
+        String resolvedPath = SmartUtils.resolveRelativePath(testPath);
+        String pwd = System.getProperty("user.dir");
+        String expectedResolvedPath = pwd + "/" + testPath.substring(2);
+        boolean resolvedBool = resolvedPath.equals(expectedResolvedPath);
+        
+        System.out.println("Test File Input Before Relative Path Resolution: " + testPath);
+        System.out.println("Test File Input After Relative Path Resolution: " + resolvedPath);
+        System.out.println("Expected Test File After Relative Path Resolution: " + expectedResolvedPath);
+        System.out.println("Is resolved path equal to the expected path (pwd + relative path): " + resolvedBool);
+
+    }
+
     @Ignore("Tested in local laptop. Ignored for Ci build. Follow testSuiteFolder_absolutePath() like flow ")
     @Test
     public void testSuiteFolder_symAbsolutePath() {
