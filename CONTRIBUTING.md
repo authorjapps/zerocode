@@ -1,3 +1,4 @@
+
 # How to contribute #
 
 Thank you for your interest in contributing to this project.
@@ -38,13 +39,22 @@ ISSUE-14 # SSL enabled http client
 
   1. Please join our [mailing-lists][] and [gitter chat room][] for seeking community help.
 
+## Write Unit tests
+- For any feature you develop or include in a pull request (PR), ensure it is covered by unit tests.
+- All unit tests should be placed in their respective package folders.
+- Follow existing tests and mimic the pattern
+
+## Write Integration tests
+- For any feature you develop or include in a pull request (PR), ensure it is also covered by integration tests as well.
+- All integration tests should be placed under the [integrationtests](https://github.com/authorjapps/zerocode/tree/master/core/src/test/java/org/jsmart/zerocode/integrationtests) parent folder.
+- Follow existing tests and mimic the pattern
+
 ## Note
 Any contribution submitted by an author for inclusion in this repository shall be licensed under this [LICENSE](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
 
 [forking]: https://help.github.com/articles/fork-a-repo
 [pull request]: https://help.github.com/articles/creating-a-pull-request
 [mailing-lists]: https://groups.google.com/forum/#!forum/zerocode-automation
-[gitter chat room]: https://gitter.im/zerocode-testing/help-and-usage
 
 
 
