@@ -40,12 +40,12 @@ ISSUE-14 # SSL enabled http client
   1. Please join our [mailing-lists][] and [gitter chat room][] for seeking community help.
 
 ## Write Unit tests
-- For any feature you develop or raise a PR, please cover it by unit tests.
-- All integration tests should go here under their respective package folder.
+- For any feature you develop or include in a pull request (PR), ensure it is covered by unit tests.
+- All unit tests should be placed in their respective package folders.
 
 ## Write Integration tests
-- For any feature you develop or raise a PR, please cover it by Integration tests. 
-- All integration tests should go here under this parent folder [integrationtests](https://github.com/authorjapps/zerocode/tree/master/core/src/test/java/org/jsmart/zerocode/integrationtests).
+- For any feature you develop or include in a pull request (PR), ensure it is also covered by integration tests as well.
+- All integration tests should be placed under the [integrationtests](https://github.com/authorjapps/zerocode/tree/master/core/src/test/java/org/jsmart/zerocode/integrationtests) parent folder.
 
 ## Note
 Any contribution submitted by an author for inclusion in this repository shall be licensed under this [LICENSE](https://github.com/authorjapps/zerocode/blob/master/LICENSE) 
