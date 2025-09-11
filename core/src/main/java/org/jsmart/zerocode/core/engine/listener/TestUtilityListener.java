@@ -3,6 +3,7 @@ package org.jsmart.zerocode.core.engine.listener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
+import org.jsmart.zerocode.core.reportsupload.ReportUploader;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
@@ -16,10 +17,13 @@ public class TestUtilityListener extends RunListener {
 
     private final ZeroCodeReportGenerator reportGenerator;
 
+    private final ReportUploader reportUploader;
+
     @Inject
-    public TestUtilityListener(ObjectMapper mapper, ZeroCodeReportGenerator injectedReportGenerator) {
+    public TestUtilityListener(ObjectMapper mapper, ZeroCodeReportGenerator injectedReportGenerator, ReportUploader injectedReportUploader) {
         this.mapper = mapper;
         this.reportGenerator = injectedReportGenerator;
+        this.reportUploader = injectedReportUploader;
     }
 
     @Override
@@ -50,9 +54,7 @@ public class TestUtilityListener extends RunListener {
      * Override this to handle post-finished tasks
      */
     public void runPostFinished() {
-        /*
-         * Do nothing for now
-         */
+        uploadReports();
     }
 
     private void generateChartsAndReports() {
@@ -71,4 +73,9 @@ public class TestUtilityListener extends RunListener {
 
         reportGenerator.generateExtentReport();
     }
+
+    private void uploadReports(){
+        reportUploader.uploadReport();
+    }
+
 }
