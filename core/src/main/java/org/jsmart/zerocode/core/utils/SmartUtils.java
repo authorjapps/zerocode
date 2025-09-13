@@ -63,7 +63,6 @@ public class SmartUtils {
 
     public static String readJsonAsString(String scenarioFile) {
         try {
-            scenarioFile = resolveRelativePath(scenarioFile);
             scenarioFile = replaceHome(scenarioFile);
             if (isValidAbsolutePath(scenarioFile)) {
                 return readFile(scenarioFile, UTF_8);
@@ -142,14 +141,6 @@ public class SmartUtils {
 
     public static String replaceHome(String path) {
         path = path.replaceFirst("^~", System.getProperty("user.home"));
-        return path;
-    }
-
-    public static String resolveRelativePath(String path){ 
-        String pwd = System.getProperty("user.dir");
-        if (path.startsWith("./")) {
-            path = Paths.get(pwd, path.substring(2)).normalize().toString();
-        }
         return path;
     }
 

@@ -228,19 +228,18 @@ public class SmartUtilsTest {
 
     @Test
     public void testScenarioFile_relativePath() throws Exception {
+        // Function to test that the readJsonAsString function reads scenarios with relative paths as well.
 
         // Test Relative Path.
-        String testPath = "./target/temp/unit_test_files/cherry_pick_tests/folder_a/relative_path_test_case.json";
+        String classPath = "unit_test_files/cherry_pick_tests/folder_a/test_case_1.json";
+        String relativeTestPath = "./src/test/resources/unit_test_files/cherry_pick_tests/folder_a/test_case_1.json";
 
-        String resolvedPath = SmartUtils.resolveRelativePath(testPath);
-        String pwd = System.getProperty("user.dir");
-        String expectedResolvedPath = pwd + "/" + testPath.substring(2);
-        boolean resolvedBool = resolvedPath.equals(expectedResolvedPath);
-        
-        System.out.println("Test File Input Before Relative Path Resolution: " + testPath);
-        System.out.println("Test File Input After Relative Path Resolution: " + resolvedPath);
-        System.out.println("Expected Test File After Relative Path Resolution: " + expectedResolvedPath);
-        System.out.println("Is resolved path equal to the expected path (pwd + relative path): " + resolvedBool);
+        String jsonStringFromClassPath = SmartUtils.readJsonAsString(classPath);
+        String jsonStringFromRelativePath = SmartUtils.readJsonAsString(relativeTestPath);
+        boolean classPathRelativePathCheckBool = jsonStringFromRelativePath.equals(jsonStringFromClassPath);
+        assert(classPathRelativePathCheckBool);
+
+        System.out.println("Does readJsonAsString load the same file from relative and classpth: " + classPathRelativePathCheckBool);
 
     }
 
