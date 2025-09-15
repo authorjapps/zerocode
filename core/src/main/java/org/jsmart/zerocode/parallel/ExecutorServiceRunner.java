@@ -77,15 +77,59 @@ public class ExecutorServiceRunner {
 
     public void runRunnables() {
         executeWithAbortTimeout(() -> {
-        if (runnables == null || runnables.size() == 0) {
-            throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
-        }
+            if (runnables == null || runnables.size() == 0) {
+                throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
+            }
 
-        ExecutorService executorService = newFixedThreadPool(numberOfThreads);
+            ExecutorService executorService = newFixedThreadPool(numberOfThreads);
 
-        try {
-            for (int i = 0; i < loopCount; i++) {
-                runnables.stream().forEach(thisFunction -> {
+            try {
+                for (int i = 0; i < loopCount; i++) {
+                    runnables.stream().forEach(thisFunction -> {
+                        for (int j = 0; j < numberOfThreads; j++) {
+                            try {
+                                LOGGER.debug("Waiting for the next test flight to adjust the overall ramp up time, " +
+                                        "waiting time in the transit now = " + delayBetweenTwoThreadsInMilliSecs);
+                                sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+
+                            LOGGER.debug(Thread.currentThread().getName() + " Executor - *Start... Time = " + now());
+
+                            executorService.execute(thisFunction);
+
+                            LOGGER.debug(Thread.currentThread().getName() + " Executor - *Finished Time = " + now());
+                        }
+                    });
+                }
+            } catch (Exception interruptEx) {
+                throw new RuntimeException(interruptEx);
+            } finally {
+                executorService.shutdown();
+                while (!executorService.isTerminated()) {
+                    // --------------------------------------
+                    // wait for all tasks to finish execution
+                    // --------------------------------------
+                    //LOGGER.info("Still waiting for all threads to complete execution...");
+                }
+                LOGGER.debug("**Finished executing all threads**");
+            }
+        });
+    }
+
+    public void runRunnablesMulti() {
+        executeWithAbortTimeout(() -> {
+            if (runnables == null || runnables.size() == 0) {
+                throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
+            }
+
+            ExecutorService executorService = newFixedThreadPool(numberOfThreads);
+
+            try {
+                final AtomicInteger functionIndex = new AtomicInteger();
+
+                for (int i = 0; i < loopCount; i++) {
                     for (int j = 0; j < numberOfThreads; j++) {
                         try {
                             LOGGER.debug("Waiting for the next test flight to adjust the overall ramp up time, " +
@@ -97,72 +141,28 @@ public class ExecutorServiceRunner {
 
                         LOGGER.debug(Thread.currentThread().getName() + " Executor - *Start... Time = " + now());
 
-                        executorService.execute(thisFunction);
+                        executorService.execute(runnables.get(functionIndex.getAndIncrement()));
 
                         LOGGER.debug(Thread.currentThread().getName() + " Executor - *Finished Time = " + now());
-                    }
-                });
-            }
-        } catch (Exception interruptEx) {
-            throw new RuntimeException(interruptEx);
-        } finally {
-            executorService.shutdown();
-            while (!executorService.isTerminated()) {
-                // --------------------------------------
-                // wait for all tasks to finish execution
-                // --------------------------------------
-                //LOGGER.info("Still waiting for all threads to complete execution...");
-            }
-            LOGGER.debug("**Finished executing all threads**");
-        }
-        });
-    }
 
-    public void runRunnablesMulti() {
-        executeWithAbortTimeout(() -> {
-        if (runnables == null || runnables.size() == 0) {
-            throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
-        }
-
-        ExecutorService executorService = newFixedThreadPool(numberOfThreads);
-
-        try {
-            final AtomicInteger functionIndex = new AtomicInteger();
-
-            for (int i = 0; i < loopCount; i++) {
-                for (int j = 0; j < numberOfThreads; j++) {
-                    try {
-                        LOGGER.debug("Waiting for the next test flight to adjust the overall ramp up time, " +
-                                "waiting time in the transit now = " + delayBetweenTwoThreadsInMilliSecs);
-                        sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        if (functionIndex.get() == runnables.size()) {
+                            functionIndex.set(0);
+                        }
                     }
 
-                    LOGGER.debug(Thread.currentThread().getName() + " Executor - *Start... Time = " + now());
-
-                    executorService.execute(runnables.get(functionIndex.getAndIncrement()));
-
-                    LOGGER.debug(Thread.currentThread().getName() + " Executor - *Finished Time = " + now());
-
-                    if(functionIndex.get() == runnables.size()){
-                        functionIndex.set(0);
-                    }
                 }
-
+            } catch (Exception interruptEx) {
+                throw new RuntimeException(interruptEx);
+            } finally {
+                executorService.shutdown();
+                while (!executorService.isTerminated()) {
+                    // --------------------------------------
+                    // wait for all tasks to finish execution
+                    // --------------------------------------
+                    //LOGGER.info("Still waiting for all threads to complete execution...");
+                }
+                LOGGER.warn("** Completed executing all virtual-user scenarios! **");
             }
-        } catch (Exception interruptEx) {
-            throw new RuntimeException(interruptEx);
-        } finally {
-            executorService.shutdown();
-            while (!executorService.isTerminated()) {
-                // --------------------------------------
-                // wait for all tasks to finish execution
-                // --------------------------------------
-                //LOGGER.info("Still waiting for all threads to complete execution...");
-            }
-            LOGGER.warn("** Completed executing all virtual-user scenarios! **");
-        }
         });
     }
 
@@ -173,41 +173,39 @@ public class ExecutorServiceRunner {
     public void runCallableFutures() {
         executeWithAbortTimeout(() -> {
 
-        if (callables == null || callables.size() == 0) {
-            throw new RuntimeException("No callable(s) was found to run. You can add one or more callables using 'addCallable(Callable callable)'");
-        }
-
-        ExecutorService executorService = newFixedThreadPool(numberOfThreads);
-
-        try {
-            executorService.invokeAll(callables).stream().forEach(future -> {
-                for (int j = 0; j < numberOfThreads; j++) {
-                    try {
-                        LOGGER.debug("Waiting in the transit for next test flight to adjust overall ramp up time, wait time now = " + delayBetweenTwoThreadsInMilliSecs);
-                        sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    LOGGER.debug(Thread.currentThread().getName() + " Future execution- Start.... Time = " + now());
-
-                    execute(future);
-
-                    LOGGER.debug(Thread.currentThread().getName() + " Future execution- *Finished Time = " + now());
-                }
-            });
-        } catch (InterruptedException interruptEx) {
-            throw new RuntimeException(interruptEx);
-        } finally {
-            executorService.shutdown();
-            while (!executorService.isTerminated()) {
-                // wait for all tasks to finish executing
-                // LOGGER.info("Still waiting for all threads to complete execution...");
+            if (callables == null || callables.size() == 0) {
+                throw new RuntimeException("No callable(s) was found to run. You can add one or more callables using 'addCallable(Callable callable)'");
             }
-            LOGGER.warn("* Completed executing all virtual-user scenarios! *");
-        }
 
+            ExecutorService executorService = newFixedThreadPool(numberOfThreads);
 
+            try {
+                executorService.invokeAll(callables).stream().forEach(future -> {
+                    for (int j = 0; j < numberOfThreads; j++) {
+                        try {
+                            LOGGER.debug("Waiting in the transit for next test flight to adjust overall ramp up time, wait time now = " + delayBetweenTwoThreadsInMilliSecs);
+                            sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        LOGGER.debug(Thread.currentThread().getName() + " Future execution- Start.... Time = " + now());
+
+                        execute(future);
+
+                        LOGGER.debug(Thread.currentThread().getName() + " Future execution- *Finished Time = " + now());
+                    }
+                });
+            } catch (InterruptedException interruptEx) {
+                throw new RuntimeException(interruptEx);
+            } finally {
+                executorService.shutdown();
+                while (!executorService.isTerminated()) {
+                    // wait for all tasks to finish executing
+                    // LOGGER.info("Still waiting for all threads to complete execution...");
+                }
+                LOGGER.warn("* Completed executing all virtual-user scenarios! *");
+            }
         });
     }
 
