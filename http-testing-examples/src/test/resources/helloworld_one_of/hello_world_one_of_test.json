@@ -1,0 +1,31 @@
+{
+    "scenarioName": "Assert that value is one of the items in the array",
+    "steps": [
+        {
+            "name": "match_user_location",
+            "url": "/users/octocat",
+            "method": "GET",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "location" : "$ONE.OF:[San Francisco, New York, Seattle]"
+                }
+            }
+        },
+		{
+            	"name": "match_user_gravatar_id_empty_string",
+	            "url": "/users/octocat",
+	            "method": "GET",
+	            "request": {
+	            },
+	            "assertions": {
+	                "status": 200,
+	                "body": {
+	                    "gravatar_id" : "$ONE.OF:[-1,, 0]"
+                }
+            }
+        }
+    ]
+}

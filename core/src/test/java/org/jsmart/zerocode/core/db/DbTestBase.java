@@ -1,29 +1,33 @@
 package org.jsmart.zerocode.core.db;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.apache.commons.dbutils.DbUtils;
+import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
+import org.jsmart.zerocode.core.guice.ZeroCodeGuiceTestRule;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.dbutils.DbUtils;
-import org.jsmart.zerocode.core.di.main.ApplicationMainModule;
-import org.jukito.TestModule;
-import org.junit.After;
-import org.junit.Before;
-
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 /**
  * Base class for the unit DB test classes: manages connections,
  * execution of queries and DBMS specific features
  */
 public abstract class DbTestBase {
+	@Rule
+	public ZeroCodeGuiceTestRule guiceRule = new ZeroCodeGuiceTestRule(this, DbTestBase.ZeroCodeTestModule.class);
+
 	// Subclasses must use JukitoRunner
-    public static class JukitoModule extends TestModule {
+    public static class ZeroCodeTestModule extends AbstractModule {
         @Override
-        protected void configureTest() {
+        protected void configure() {
             ApplicationMainModule applicationMainModule = new ApplicationMainModule("db_test.properties");
             install(applicationMainModule);
         }
