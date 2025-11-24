@@ -128,11 +128,13 @@ verifyMode: LENIENT
 > use a flat JSON path to skip the hassles of the entire object hierarchies._
 
 
-Looks simple & easy? Why not give it a try? Visit the [quick-start guide](https://github.com/authorjapps/zerocode/wiki/Getting-Started) or [user's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide) for more insight.
+Looks simple & easy? Why not give it a try? Visit the [quick-start guide](https://zerocode-tdd.tddfy.com/microservices/start) 
+or 
+[user's guide](https://github.com/authorjapps/zerocode/wiki#developer-guide) to check out more scenarios.
 
 Zerocode-TDD is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their micro-services, data-pipelines etc. 
 
-Also, learn more about [Validators Vs Matchers](https://github.com/authorjapps/zerocode/wiki/Validators-and-Matchers) here.
+Also, learn more about [Validators Vs Matchers](https://zerocode-tdd.tddfy.com/assertions/Validators-and-Matchers) here.
 
 Happy Testing! <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>
 
