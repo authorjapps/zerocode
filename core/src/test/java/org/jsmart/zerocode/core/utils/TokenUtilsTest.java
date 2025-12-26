@@ -213,6 +213,13 @@ public class TokenUtilsTest {
         assertEquals("abc@123 and !@#$%^", getMasksRemoved("${MASKED:abc@123} and ${MASKED:!@#$%^}"));
     }
 
+    @Test
+    public void shouldResolveSqlFileToken_simple() {
+        // simple SQL content with no special chars to be escaped
+        String input = "Query: ${SQL.FILE:unit_test_files/sql/simple.sql}";
+        String result = TokenUtils.resolveKnownTokens(input);
+        assertEquals("Query: SELECT 1 FROM employee;", result);
+    }
 
 
 }
