@@ -4,6 +4,7 @@ import com.google.inject.Injector;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.TargetEnv;
+import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodeUnitRunner;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.After;
 import org.junit.Test;
@@ -24,8 +25,6 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodeUnitRunner;
-import org.junit.runners.model.InitializationError;
 
 /**
  * Unit tests for behaviors added around system property overrides in ZeroCodeUnitRunner.
