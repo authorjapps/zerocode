@@ -37,6 +37,7 @@ public class ZeroCodePackageRunnerSystemPropertyTest {
     public void tearDown() {
         // Clear the property so other tests are not affected
         System.clearProperty("zerocode.env");
+        System.clearProperty("zerocode.folder");
     }
 
     @Test
