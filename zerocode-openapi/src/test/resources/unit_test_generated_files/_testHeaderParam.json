@@ -1,0 +1,17 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testHeaderParam - Test scenario",
+  "steps" : [ {
+    "name" : "/testHeaderParam - Header parameters",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/testHeaderParam",
+    "request" : {
+      "headers" : {
+        "headerParam" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+      }
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

@@ -1,0 +1,15 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/pet/findByTags - Test scenario",
+  "steps" : [ {
+    "name" : "/pet/findByTags - Finds Pets by tags",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/pet/findByTags?tags=${RANDOM.STRING:12}${RANDOM.NUMBER:4}&tags=${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+    "request" : { },
+    "assertions" : {
+      "status" : 200
+    },
+    "ignoreStep" : false
+  } ]
+}

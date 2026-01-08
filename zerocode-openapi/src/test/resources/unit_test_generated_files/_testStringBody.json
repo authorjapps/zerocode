@@ -1,0 +1,15 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testStringBody - Test scenario",
+  "steps" : [ {
+    "name" : "/testStringBody - Body is not an object (string)",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/testStringBody",
+    "request" : {
+      "body" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

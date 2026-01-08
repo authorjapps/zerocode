@@ -1,0 +1,13 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testQueryParamForm - Test scenario",
+  "steps" : [ {
+    "name" : "/testQueryParamForm - Query parameters, form style",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/testQueryParamForm?parExpl=${RANDOM.STRING:12}${RANDOM.NUMBER:4}&parExpl=${RANDOM.STRING:12}${RANDOM.NUMBER:4}&parNoExpl=${RANDOM.NUMBER:8},${RANDOM.NUMBER:8}&param+Enum=item%24two&param+Enum=item%24five",
+    "request" : { },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

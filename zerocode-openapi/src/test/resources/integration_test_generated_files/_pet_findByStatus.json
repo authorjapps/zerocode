@@ -1,0 +1,19 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/pet/findByStatus - Test scenario",
+  "steps" : [ {
+    "name" : "/pet/findByStatus - Finds Pets by status",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/pet/findByStatus",
+    "request" : {
+      "queryParams" : {
+        "status" : "sold"
+      }
+    },
+    "assertions" : {
+      "status" : 200
+    },
+    "ignoreStep" : false
+  } ]
+}

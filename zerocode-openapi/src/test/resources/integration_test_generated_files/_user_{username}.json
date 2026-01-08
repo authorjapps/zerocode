@@ -1,0 +1,42 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/user/{username} - Test scenario",
+  "steps" : [ {
+    "name" : "/user/{username} - Get user by user name",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/user/${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+    "request" : { },
+    "assertions" : {
+      "status" : 200
+    },
+    "ignoreStep" : false
+  }, {
+    "name" : "/user/{username} - Update user",
+    "operation" : "PUT",
+    "method" : "PUT",
+    "url" : "/user/${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+    "request" : {
+      "body" : {
+        "id" : "${RANDOM.NUMBER:8}",
+        "username" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "firstName" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "lastName" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "email" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "password" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "phone" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "userStatus" : "${RANDOM.NUMBER:8}"
+      }
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  }, {
+    "name" : "/user/{username} - Delete user",
+    "operation" : "DELETE",
+    "method" : "DELETE",
+    "url" : "/user/${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+    "request" : { },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

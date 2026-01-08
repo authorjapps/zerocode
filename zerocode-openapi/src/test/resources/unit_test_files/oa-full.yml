@@ -1,0 +1,65 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Basic types, params and body
+paths:
+  /testFull/{pparam1}/more/{pparam2}:
+    post:
+      summary: Basic types, in params and body
+      parameters:
+      - in: path
+        name: pparam1
+        schema:
+          type: string
+      - in: path
+        name: pparam2
+        schema:
+          type: integer
+      - in: query
+        name: qparam1
+        schema:
+          type: integer
+      - in: query
+        name: qparam2
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestBasic"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/TestBasicXml"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestBasic"
+        "201":
+          description: Successful operation (other)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestBasic"
+        "400":
+          description: Unsuccessful operation
+components:
+  schemas:
+    TestBasic:
+      properties:
+        stringField:
+          type: string
+        intField:
+          type: integer
+        objField:
+          type: object
+          properties:
+            value:
+              type: string
+    TestBasicXml:
+      properties:
+        xmlField:
+          type: string

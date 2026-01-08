@@ -1,0 +1,15 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/store/inventory - Test scenario",
+  "steps" : [ {
+    "name" : "/store/inventory - Returns pet inventories by status",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/store/inventory",
+    "request" : { },
+    "assertions" : {
+      "status" : 200
+    },
+    "ignoreStep" : false
+  } ]
+}
