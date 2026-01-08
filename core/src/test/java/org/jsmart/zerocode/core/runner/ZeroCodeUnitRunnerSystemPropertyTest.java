@@ -2,15 +2,25 @@ package org.jsmart.zerocode.core.runner;
 
 import com.google.inject.Injector;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
+import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FrameworkMethod;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for behaviors added around system property overrides in ZeroCodeUnitRunner.
@@ -70,4 +80,59 @@ public class ZeroCodeUnitRunnerSystemPropertyTest {
         assertEquals("OVERRIDE_SCENARIO_FILE.json", jsonScenarios.get(0));
     }
 
+    @Test
+    public void runChild_usesScenarioOverrideJsonFile_and_invokesMultiStepsRunner() throws Exception {
+        // Set the file in System properties
+        String overrideScenarioFileJson = "OVERRIDE_SCENARIO";
+        System.setProperty("zerocode.scenario", overrideScenarioFileJson);
+
+        // Mock SmartUtils to return a ScenarioSpec for the override scenario
+        SmartUtils mockSmartUtils = mock(SmartUtils.class);
+        ScenarioSpec mockScenarioSpec = mock(ScenarioSpec.class);
+        when(mockSmartUtils.scenarioFileToJava(eq(overrideScenarioFileJson), eq(ScenarioSpec.class))).thenReturn(mockScenarioSpec);
+
+        // Mock the multi-steps runner and injector so createZeroCodeMultiStepRunner() ends up wiring our mock
+        ZeroCodeMultiStepsScenarioRunner mockMultiStepsRunner = mock(ZeroCodeMultiStepsScenarioRunner.class);
+        when(mockMultiStepsRunner.runScenario(eq(mockScenarioSpec), any(RunNotifier.class), any(Description.class)))
+                .thenReturn(true);
+
+        Injector mockInjector = mock(Injector.class);
+        // When the runner asks the injector for ZeroCodeMultiStepsScenarioRunner, give it our mock
+        when(mockInjector.getInstance(ZeroCodeMultiStepsScenarioRunner.class)).thenReturn(mockMultiStepsRunner);
+
+        // Create the runner overriding only the parts that would otherwise create real dependencies
+        ZeroCodeUnitRunner runner = new ZeroCodeUnitRunner(DummyTestClass.class) {
+            @Override
+            protected SmartUtils getInjectedSmartUtilsClass() {
+                return mockSmartUtils;
+            }
+
+            @Override
+            public Injector getMainModuleInjector() {
+                return mockInjector;
+            }
+        };
+
+        // Prepare a FrameworkMethod for DummyTestClass#dummyTestMethod
+        Method dummyMethod = DummyTestClass.class.getMethod("dummyTestMethod");
+        FrameworkMethod frameworkMethod = new FrameworkMethod(dummyMethod);
+
+        // RunNotifier mock to verify that test start/finish are invoked
+        RunNotifier mockNotifier = mock(RunNotifier.class);
+
+        // Run the test
+        runner.runChild(frameworkMethod, mockNotifier);
+
+        // Assert
+        // SmartUtils should have been called to load the scenario with the override name
+        verify(mockSmartUtils).scenarioFileToJava(eq(overrideScenarioFileJson), eq(ScenarioSpec.class));
+
+        // The multi-steps runner should be invoked with the ScenarioSpec returned by SmartUtils
+        verify(mockMultiStepsRunner).runScenario(eq(mockScenarioSpec), any(RunNotifier.class), any(Description.class));
+
+        // The notifier should have been asked to start and finish the test
+        // (At least verify fireTestStarted and fireTestFinished were called at some point)
+        verify(mockNotifier, atLeastOnce()).fireTestStarted(any(Description.class));
+        verify(mockNotifier, atLeastOnce()).fireTestFinished(any(Description.class));
+    }
 }
