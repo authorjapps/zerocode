@@ -3,6 +3,7 @@ package org.jsmart.zerocode.core.runner;
 import com.google.inject.Injector;
 import org.jsmart.zerocode.core.domain.JsonTestCase;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
+import org.jsmart.zerocode.core.domain.TargetEnv;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.junit.After;
 import org.junit.Test;
@@ -10,8 +11,10 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -21,6 +24,8 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.jsmart.zerocode.core.tests.customrunner.TestOnlyZeroCodeUnitRunner;
+import org.junit.runners.model.InitializationError;
 
 /**
  * Unit tests for behaviors added around system property overrides in ZeroCodeUnitRunner.
@@ -134,5 +139,45 @@ public class ZeroCodeUnitRunnerSystemPropertyTest {
         // (At least verify fireTestStarted and fireTestFinished were called at some point)
         verify(mockNotifier, atLeastOnce()).fireTestStarted(any(Description.class));
         verify(mockNotifier, atLeastOnce()).fireTestFinished(any(Description.class));
+    }
+
+    //====================== NOW TEST THE "zerocode.env" OVERRIDE BEHAVIOR ======================//
+
+    // Dummy test class annotated with @TargetEnv to test fallback behavior
+    @TargetEnv("config_hosts.properties")
+    public static class AnnotatedDummyTest {
+        @JsonTestCase("/abcd/path")
+        @Test
+        public void dummyTestMethod() {
+            // no-op
+        }
+    }
+
+    @Test
+    public void shouldUseSystemPropertyOverTargetEnvIfProvided_andIfFileExists() throws Exception {
+        // set system property to a test-specific properties file that should exist in test resources
+        System.setProperty("zerocode.env", "config_hosts_test_ci.properties");
+
+        // Create injector
+        TestOnlyZeroCodeUnitRunner runner = new TestOnlyZeroCodeUnitRunner(AnnotatedDummyTest.class);
+        Injector injector = runner.getMainModuleInjector();
+
+        // Assert basic injector creation
+        // Note if "zerocode.env" is set with a wrong/non-existing file, injector creation will fail.
+        // Hence this assert will fail(even it won't reach this line here. It will fail at  new TestOnlyZeroCodeUnitRunner(...) line above
+        assertNotNull("Injector should not be null when zerocode.env overrides TargetEnv", injector);
+
+        //============The following assertions are not required. Only kept for clarity.==============//
+        // Also verify the overridden properties file exists on the test classpath (sanity check for the test resource)
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("config_hosts_test_ci.properties");
+        assertNotNull("config_hosts_test_ci.properties must be present in test resources for this test", in);
+
+        // Optionally verify a known property in the test resource (if that resource contains the property)
+        Properties props = new Properties();
+        props.load(in);
+
+        // If your test resource has a different host value, update the expected value accordingly.
+        assertEquals("http://localhost-test", props.getProperty("web.application.endpoint.host"));
+        assertEquals("88200", props.getProperty("web.application.endpoint.port"));
     }
 }
