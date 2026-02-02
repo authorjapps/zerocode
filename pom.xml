@@ -96,9 +96,9 @@
         <version.gson>2.10.1</version.gson>
 
         <!-- Maven plugins, build properties  -->
-        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-        <java-compiler-source.version>1.8</java-compiler-source.version>
-        <java-compiler-target.version>1.8</java-compiler-target.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <java-compiler-source.version>17</java-compiler-source.version>
+        <java-compiler-target.version>17</java-compiler-target.version>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
@@ -114,6 +114,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.32</version>
+                <scope>provided</scope>
+            </dependency>
+
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-params</artifactId>
