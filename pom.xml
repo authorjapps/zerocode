@@ -43,17 +43,6 @@
         </developer>
     </developers>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
     <properties>
         <!-- This project properties -->
         <junit5.version>5.11.3</junit5.version>
@@ -399,31 +388,15 @@
                 <artifactId>central-publishing-maven-plugin</artifactId>
                 <version>0.4.0</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                    <waitUntil>published</waitUntil>
+                </configuration>
             </plugin>
         </plugins>
-
-
-        <!-- Uncomment this for uber jar -->
-        <!--
-        <plugins>
-                 <plugin>
-                         <groupId>org.apache.maven.plugins</groupId>
-                         <artifactId>maven-shade-plugin</artifactId>
-                         <configuration>
-                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                         </configuration>
-                         <executions>
-                             <execution>
-                                 <phase>package</phase>
-                                 <goals>
-                                     <goal>shade</goal>
-                                 </goals>
-                             </execution>
-                         </executions>
-                     </plugin>
-         </plugins>
-         -->
     </build>
+
     <profiles>
         <profile>
             <id>release</id>
@@ -469,6 +442,12 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
