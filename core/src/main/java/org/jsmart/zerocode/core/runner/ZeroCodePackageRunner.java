@@ -81,10 +81,23 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
      */
     @Override
     protected List<ScenarioSpec> getChildren() {
+        // 1. folder via System property
+        String folderOverride = System.getProperty("zerocode.folder");
+
         TestPackageRoot rootPackageAnnotation = testClass.getAnnotation(TestPackageRoot.class);
         JsonTestCases jsonTestCasesAnnotation = testClass.getAnnotation(JsonTestCases.class);
         Scenarios scenariosAnnotation = testClass.getAnnotation(Scenarios.class);
-        validateSuiteAnnotationPresent(rootPackageAnnotation, jsonTestCasesAnnotation, scenariosAnnotation);
+
+        // If folder is NOT supplied, validate annotations as before.
+        if (folderOverride == null || folderOverride.trim().isEmpty()) {
+            validateSuiteAnnotationPresent(rootPackageAnnotation, jsonTestCasesAnnotation, scenariosAnnotation);
+        }
+
+        if (folderOverride != null && !folderOverride.trim().isEmpty()) {
+            // Use the folder system property in place of @TestPackageRoot
+            smartUtils.checkDuplicateScenarios(folderOverride);
+            return smartUtils.getScenarioSpecListByPackage(folderOverride);
+        }
 
         if (rootPackageAnnotation != null) {
             /*
@@ -188,12 +201,20 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
     }
 
+
     // This is exact duplicate of ZeroCodeUnitRunner.getMainModuleInjector
     // Refactor and maintain a single method in RunnerUtils
     public Injector getMainModuleInjector() {
         //TODO: Synchronise this with e.g. synchronized (ZeroCodePackageRunner.class) {}
-        final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
-        String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
+
+        // 1. Read system property
+        String serverEnv = System.getProperty("zerocode.env");
+
+        // 2. Fallback to annotation if system property not supplied
+        if (serverEnv == null || serverEnv.trim().isEmpty()) {
+            final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
+            serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
+        }
 
         serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 

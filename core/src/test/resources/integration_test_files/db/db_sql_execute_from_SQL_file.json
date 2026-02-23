@@ -1,0 +1,49 @@
+{
+    "scenarioName": "DbSqlExecutor: Read and write data using External SQL File",
+    "steps": [
+        {
+            "name": "Test database setup",
+            "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+            "operation": "EXECUTE",
+            "request": {
+                "sql": "${SQL.FILE:FILES/ddl.sql}"
+            },
+            "verify": { }
+        },
+        {
+            "name": "Insert rows using SQL",
+            "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+            "operation": "EXECUTE",
+            "request": {
+                "sql": "${SQL.FILE:FILES/insert.sql}"
+            },
+            "verify": { }
+        },
+        {
+            "name": "Insert with parameters and nulls",
+            "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+            "operation": "EXECUTE",
+            "request": {
+                "sql": "${SQL.FILE:FILES/insert_template.sql}",
+                "sqlParams": [3, null, null, true]
+            },
+            "verify": { }
+        },
+        {
+            "name": "Retrieve rows using SQL",
+            "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+            "operation": "EXECUTE",
+            "request": {
+                "sql": "${SQL.FILE:FILES/select_param.sql}",
+                "sqlParams": [true]
+            },
+            "verify": {
+				"rows.SIZE": 2,
+                "rows": [ //<-- to make this pass in postgres, set the keys to lowercase
+                    { "ID": 1, "NAME": "Jeff Bejo", "START": "2024-09-01", "ACTIVE": true },
+                    { "ID": 3, "NAME": null, "START": null, "ACTIVE": true }
+                ]
+            }
+        }
+    ]
+}

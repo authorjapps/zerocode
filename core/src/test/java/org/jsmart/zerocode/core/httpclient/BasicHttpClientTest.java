@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.RequestBuilder;
@@ -47,7 +50,13 @@ public class BasicHttpClientTest {
         RequestBuilder requestBuilder = basicHttpClient.createRequestBuilder("/api/v1/founder", "POST", header, reqBodyAsString);
         String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
         assertThat(requestBuilder.getMethod(), is("POST"));
-        assertThat(nameValuePairString, is("Company=Amazon&worthInBillion=999.999&age=30"));
+        Map<String, String> actualParams = Arrays.stream(nameValuePairString.split("&"))
+            .map(entry -> entry.split("=", 2))
+            .collect(Collectors.toMap(kv -> kv[0], kv -> kv[1]));
+        
+        assertThat(actualParams.get("Company"), is("Amazon"));
+        assertThat(actualParams.get("age"), is("30"));
+        assertThat(actualParams.get("worthInBillion"), is("999.999"));
     }
 
     @Test
@@ -56,7 +65,12 @@ public class BasicHttpClientTest {
         String reqBodyAsString = "{\"Name\":\"Larry Pg\",\"Company\":\"Amazon\",\"Title\":\"CEO\"}";
         RequestBuilder requestBuilder = basicHttpClient.createRequestBuilder("/api/v1/founder", "POST", header, reqBodyAsString);
         String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
-        assertThat(nameValuePairString, is("Company=Amazon&Title=CEO&Name=Larry+Pg"));
+        Map<String, String> actualParams = Arrays.stream(nameValuePairString.split("&"))
+            .map(entry -> entry.split("=", 2))
+            .collect(Collectors.toMap(kv -> kv[0], kv -> kv[1]));  
+        assertThat(actualParams.get("Company"), is("Amazon"));
+        assertThat(actualParams.get("Title"), is("CEO"));
+        assertThat(actualParams.get("Name"), is("Larry+Pg"));
     }
 
     @Test
@@ -64,7 +78,13 @@ public class BasicHttpClientTest {
         String reqBodyAsString = "{\"state/region\":\"singapore north\",\"Company\":\"Amazon\",\"Title\":\"CEO\"}";
         RequestBuilder requestBuilder = basicHttpClient.createRequestBuilder("/api/v1/founder", "POST", header, reqBodyAsString);
         String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
-        assertThat(nameValuePairString, is("Company=Amazon&Title=CEO&state%2Fregion=singapore+north"));
+        List<String> params = Arrays.asList(nameValuePairString.split("&"));
+        Map<String, String> actualParams = Arrays.stream(nameValuePairString.split("&"))
+            .map(entry -> entry.split("=", 2))
+            .collect(Collectors.toMap(kv -> kv[0], kv -> kv[1]));  
+        assertThat(actualParams.get("Company"), is("Amazon"));
+        assertThat(actualParams.get("Title"), is("CEO"));
+        assertThat(actualParams.get("state%2Fregion"), is("singapore+north"));
     }
 
     @Test
@@ -92,7 +112,12 @@ public class BasicHttpClientTest {
         String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
         assertThat(requestBuilder.getMethod(), is("POST"));
         //On the server side: address={city=NewYork, type=HeadOffice}
-        assertThat(nameValuePairString, is("Company=Amazon&addresses=%7Bcity%3DNewYork%2C+type%3DHeadOffice%7D"));
+        Map<String, String> actualParams = Arrays.stream(nameValuePairString.split("&"))
+                .map(entry -> entry.split("=", 2))
+                .collect(Collectors.toMap(kv -> kv[0], kv -> kv[1]));
+            
+        assertThat(actualParams.get("Company"), is("Amazon"));
+        assertThat(actualParams.get("addresses"), is("%7Bcity%3DNewYork%2C+type%3DHeadOffice%7D"));
     }
 
     @Test

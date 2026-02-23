@@ -1,0 +1,5 @@
+INSERT INTO PEOPLE
+ VALUES (1, 'Jeff Bejo', '2024-09-01', true);
+
+INSERT INTO PEOPLE
+ VALUES (2, 'John Bajo', '2024-09-02', false);
