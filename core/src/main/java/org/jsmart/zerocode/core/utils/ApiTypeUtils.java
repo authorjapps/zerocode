@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA;
+import static org.jsmart.zerocode.core.constants.ZerocodeConstants.S3_BUCKET;
 
 public class ApiTypeUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiTypeUtils.class);
@@ -35,6 +36,9 @@ public class ApiTypeUtils {
 
         } else if (serviceName.contains("://") && !serviceName.startsWith("http")) {
             apiType = ApiType.JAVA_CALL;
+
+        } else if (serviceName != null && serviceName.startsWith(S3_BUCKET)) {
+            apiType = ApiType.S3_CALL;
 
         } else if (serviceName != null && serviceName.contains("/")) {
             apiType = ApiType.REST_CALL;

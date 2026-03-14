@@ -8,6 +8,8 @@ public interface ZerocodeConstants {
 
     String KAFKA = "kafka";
     String KAFKA_TOPIC = "kafka-topic:";
+    String S3 = "s3";
+    String S3_BUCKET = "s3-bucket:";
     String OK = "Ok";
     String FAILED = "Failed";
 
