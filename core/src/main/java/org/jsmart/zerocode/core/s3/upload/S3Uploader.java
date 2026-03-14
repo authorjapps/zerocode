@@ -10,6 +10,9 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.OK;
@@ -49,7 +52,7 @@ public class S3Uploader {
                 throw new IllegalArgumentException("S3 upload requires 'file' in the request");
             }
 
-            String localFilePath = resolveFilePath(request.getFile());
+            Path localFilePath = resolveFilePath(request.getFile());
 
             LOGGER.debug("Uploading file '{}' to s3://{}/{}", localFilePath, bucketName, request.getKey());
 
@@ -58,7 +61,7 @@ public class S3Uploader {
                     .key(request.getKey())
                     .build();
 
-            s3Client.putObject(putRequest, RequestBody.fromFile(Paths.get(localFilePath)));
+            s3Client.putObject(putRequest, RequestBody.fromFile(localFilePath));
 
             S3Response response = new S3Response(OK);
             response.setS3Url("s3://" + bucketName + "/" + request.getKey());
@@ -73,12 +76,43 @@ public class S3Uploader {
         }
     }
 
-    private String resolveFilePath(String file) {
+    private Path resolveFilePath(String file) {
         // Try classpath first, then treat as file system path
         java.net.URL resource = getClass().getClassLoader().getResource(file);
         if (resource != null) {
-            return resource.getFile();
+            // If the resource is a real file on disk, resolve via URI to avoid encoding issues
+            if ("file".equalsIgnoreCase(resource.getProtocol())) {
+                try {
+                    return Paths.get(resource.toURI());
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to resolve classpath resource to file path: " + file, e);
+                }
+            }
+
+            // Resource is not a plain file (e.g. inside a JAR) – extract to a temporary file
+            try (InputStream in = getClass().getClassLoader().getResourceAsStream(file)) {
+                if (in == null) {
+                    throw new IllegalStateException("Classpath resource not found: " + file);
+                }
+                String suffix = "";
+                Path original = Paths.get(file);
+                if (original.getFileName() != null) {
+                    String name = original.getFileName().toString();
+                    int dot = name.lastIndexOf('.');
+                    if (dot != -1 && dot < name.length() - 1) {
+                        suffix = name.substring(dot);
+                    }
+                }
+                Path tempFile = Files.createTempFile("zerocode-s3-upload-", suffix);
+                Files.copy(in, tempFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                tempFile.toFile().deleteOnExit();
+                return tempFile;
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to extract classpath resource to temporary file: " + file, e);
+            }
         }
-        return file;
+
+        // Fallback: treat as a filesystem path (absolute or relative)
+        return Paths.get(file);
     }
 }
