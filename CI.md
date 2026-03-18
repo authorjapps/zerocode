@@ -105,3 +105,98 @@ fails at runtime on JDK 8" issue, the fix is to switch to:
 
 The `--release` flag enforces both the language level **and** the
 available API surface in a single, safer setting.
+
+### Is `<release>8</release>` configured in this project?
+
+No. It is not currently in the POM. The mention of `<release>8</release>`
+in this document is a **recommended improvement**, not something already
+present. What the project uses today is:
+```xml
+<source>1.8</source>
+<target>1.8</target>
+```
+// TODO-- Raise a new Issue for this to get implemented. 
+
+---
+
+### What is the difference between `source`/`target` and `release`, and should we switch?
+
+Both approaches produce Java 8 bytecode, but `--release` is stricter:
+
+| Setting              | Bytecode = Java 8 | Blocks Java 9+ API usage |
+|----------------------|:-----------------:|:------------------------:|
+| `source`/`target`    | ✅                | ❌                       |
+| `release`            | ✅                | ✅                       |
+
+With `source/target=1.8`, a JDK 17 compiler can silently compile code
+that calls APIs introduced after Java 8 — the build succeeds, but the
+library will fail at runtime on a real JDK 8 environment. The `--release`
+flag closes that gap by also enforcing the available API surface.
+
+If you want to add this protection, either approach below works:
+
+As a property (simpler):
+```xml
+<properties>
+  <maven.compiler.release>8</maven.compiler.release>
+</properties>
+```
+
+Or directly in the compiler plugin:
+```xml
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-compiler-plugin</artifactId>
+  <configuration>
+    <release>8</release>
+  </configuration>
+</plugin>
+```
+
+Note: `--release` requires JDK 9 or higher to compile with. Since the
+CI matrix includes JDK 8, you would need to guard this with a profile
+activated on JDK 9+ (similar to the existing `jdk-17plus` profile),
+or drop the JDK 8 build job if Java 8 as a **compiler** is no longer
+a requirement.
+
+### Does the Java 8 bytecode target apply to JDK 17+ builds too?
+
+Yes. The `jdk-17plus` profile does **not** change the compiler source or
+target. It only sets the `java.version` property and adds Surefire
+`--add-opens` flags for tests. Compilation is still governed by the
+parent POM properties on every matrix entry:
+
+| JDK in matrix | Bytecode target |
+|---------------|-----------------|
+| 8             | Java 8          |
+| 11            | Java 8          |
+| 17            | Java 8          |
+| 21            | Java 8          |
+| 23            | Java 8          |
+
+To verify in a CI log, add this to a Java 17+ matrix job and look for
+`-source 1.8 -target 1.8` in the compiler output:
+```sh
+mvn -ntp -X -DskipTests compile
+```
+
+---
+
+### If the bytecode is Java 8, does the library work for users on Java 17+?
+
+Yes — and this is by design. A library compiled to Java 8 bytecode can
+run on any JDK from 8 through 21, 23, and beyond, as long as it avoids
+APIs that were removed or restricted in newer runtimes. Keeping the
+bytecode target at Java 8 maximises compatibility for the widest
+possible audience of downstream users.
+
+This compatibility is **verified, not just assumed** — the CI matrix
+runs the full test suite on JDK 17, 21, and 23, and the `jdk-17plus`
+profile adds `--add-opens` flags to handle Java module-system
+restrictions during testing.
+
+The one area to watch: if the library (or any of its dependencies) uses
+JDK-internal APIs via reflection, Java's module system may block that
+access on JDK 17+, regardless of bytecode level. That is exactly what
+the `--add-opens` flags in the `jdk-17plus` profile are there to
+address.
