@@ -70,6 +70,116 @@ As explained above, in the root/parent folder, please issue the below command(th
 mvn clean install   <---- To build and install all the modules
 ```
 
+## CI matrix and Java compatibility
+
+### CI workflow overview
+
+The CI workflow (`.github/workflows/main.yml`) runs a build matrix across five JDK versions:
+
+| Matrix JDK | `jdk-17plus` profile active? | Bytecode target |
+|:----------:|:----------------------------:|:---------------:|
+| 8          | No                           | Java 8          |
+| 11         | No                           | Java 8          |
+| 17         | **Yes**                      | Java 8          |
+| 21         | **Yes**                      | Java 8          |
+| 23         | **Yes**                      | Java 8          |
+
+Each job uses `actions/setup-java@v4` (Temurin distribution) to install the requested JDK, then runs:
+
+```
+mvn clean test -ntp
+```
+
+### Compiler settings — always targeting Java 8 bytecode
+
+The parent `pom.xml` pins two properties:
+
+```xml
+<java-compiler-source.version>1.8</java-compiler-source.version>
+<java-compiler-target.version>1.8</java-compiler-target.version>
+```
+
+These are passed to `maven-compiler-plugin` via `<source>` and `<target>`, so **all CI jobs produce Java 8–compatible bytecode** regardless of which JDK is running the build.
+
+> **Note — `-source`/`-target` vs `--release`**  
+> The current configuration uses `<source>` and `<target>` flags. When building on JDK 9+, using `<release>8</release>` instead provides stronger API compatibility guarantees by preventing accidental use of APIs that did not exist in Java 8. This is a nuance to be aware of but not necessarily a required change for the current setup.
+
+### The `jdk-17plus` Maven profile
+
+The parent `pom.xml` declares the following profile:
+
+```xml
+<profile>
+    <id>jdk-17plus</id>
+    <activation>
+        <jdk>[17,)</jdk>
+    </activation>
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                    </argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</profile>
+```
+
+**When running on JDK 17, 21, or 23**, Maven auto-activates `jdk-17plus`, which:
+- Sets the `java.version` property to `17`.
+- Passes `--add-opens` JVM arguments to `maven-surefire-plugin` so that tests that rely on reflective access (which is restricted by default in newer JDKs) continue to work.
+
+**When running on JDK 8 or 11**, this profile is *not* activated and the `--add-opens` flags are not needed.
+
+### Running locally with different JDKs
+
+Switch your `JAVA_HOME` to the desired JDK and run the standard build commands. The correct `jdk-17plus` behavior is automatic:
+
+```bash
+# JDK 8 or 11 — profile NOT activated, no --add-opens flags applied
+export JAVA_HOME=/path/to/jdk8    # or jdk11
+mvn clean test
+
+# JDK 17, 21, or 23 — profile IS activated automatically
+export JAVA_HOME=/path/to/jdk17   # or jdk21, jdk23
+mvn clean test
+```
+
+### Troubleshooting and verification
+
+**Check which profiles are active for the current JDK:**
+
+```bash
+mvn help:active-profiles
+```
+
+You should see `jdk-17plus` listed when running under JDK 17+, and not listed for JDK 8/11.
+
+**Check the value of the `java.version` property resolved by Maven:**
+
+```bash
+mvn -q -DforceStdout help:evaluate -Dexpression=java.version
+```
+
+- Returns `17` (or whatever the profile sets) when `jdk-17plus` is active.
+- Property is not defined by the parent POM when `jdk-17plus` is inactive (JDK 8/11), so it may fall back to a value set elsewhere or be undefined.
+
+**Verify the compiler source/target used:**
+
+```bash
+mvn help:effective-pom | grep -A2 "maven-compiler-plugin" | grep -E "source|target|release"
+```
+
+This should always show `1.8` for both source and target.
+
 ## Compiling in ARM Processors
 You might get the following error when you do a "mvn clean install -DskipTests"
 
