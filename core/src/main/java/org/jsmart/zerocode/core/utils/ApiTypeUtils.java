@@ -34,11 +34,11 @@ public class ApiTypeUtils {
         if (StringUtils.isEmpty(serviceName) || isEmpty(methodName)) {
             apiType = ApiType.NONE;
 
-        } else if (serviceName.contains("://") && !serviceName.startsWith("http")) {
-            apiType = ApiType.JAVA_CALL;
-
         } else if (serviceName != null && serviceName.startsWith(S3_BUCKET)) {
             apiType = ApiType.S3_CALL;
+
+        } else if (serviceName.contains("://") && !serviceName.startsWith("http")) {
+            apiType = ApiType.JAVA_CALL;
 
         } else if (serviceName != null && serviceName.contains("/")) {
             apiType = ApiType.REST_CALL;
