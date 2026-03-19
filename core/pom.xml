@@ -186,7 +186,6 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
-            <optional>true</optional>
         </dependency>
         </dependencies>
 
