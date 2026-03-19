@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.s3.domain;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -45,12 +46,15 @@ public class S3Request {
     private String key;
 
     @JsonProperty("file")
+    @JsonAlias("filePath")
     private String file;
 
     @JsonProperty("localPath")
+    @JsonAlias("saveAs")
     private String localPath;
 
     @JsonProperty("prefix")
+    @JsonAlias("folder")
     private String prefix;
 
     /**
