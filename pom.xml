@@ -457,12 +457,26 @@
         </profile>
 
         <profile>
+            <!--
+                Compiler strategy for Java 8 bytecode target:
+                - JDK 8 / 11 : uses "-source 1.8 -target 1.8" (set in pluginManagement above).
+                                "- - release" is not supported on JDK 8, and JDK 11 is non-LTS / low
+                                adoption, so the legacy flags are acceptable there.
+                - JDK 17+    : adds "maven.compiler.release=8", which is strictly safer — it enforces
+                                both the language level AND the Java 8 API surface, preventing code
+                                that compiles on JDK 17 but would fail at runtime on JDK 8.
+                                JDK 17, 21, and 23 are the LTS versions most users actually run, so
+                                this is where the stricter check matters most.
+                No separate jdk-9plus profile is needed: JDK 9/10 are non-LTS, end-of-life, and
+                absent from the CI matrix, so there is nothing to guard there.
+            -->
             <id>jdk-17plus</id>
             <activation>
                 <jdk>[17,)</jdk>
             </activation>
             <properties>
                 <java.version>17</java.version>
+                <maven.compiler.release>8</maven.compiler.release>
             </properties>
             <build>
                 <plugins>
