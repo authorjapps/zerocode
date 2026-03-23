@@ -44,12 +44,6 @@ public class SmartJUnitRunnerTestCases {
     }
 
     @Test
-    @JsonTestCase("integration_test_files/json_paths_jayway/06_will_mock_using_wiremock_and_run_other_steps.json")
-    public void willMockAndRunNextStep() throws Exception {
-
-    }
-
-    @Test
     @JsonTestCase("integration_test_files/json_paths_jayway/07_REST_with_loop_test.json")
     public void restViaLoop() throws Exception {
 
