@@ -49,7 +49,7 @@
         <junit.vintage.version>5.7.0</junit.vintage.version>
         <junit-platform-runner.version>1.4.2</junit-platform-runner.version>
         <junit.version>4.13.2</junit.version>
-        <mockito.version>4.11.0</mockito.version>
+        <mockito.version>5.14.2</mockito.version>
         <jackson.version>2.15.4</jackson.version>
         <guava.version>33.0.0-jre</guava.version>
         <jsonassert.version>1.5.1</jsonassert.version>
@@ -58,11 +58,11 @@
         <guice.version>7.0.0</guice.version>
         <jayway-version>2.9.0</jayway-version>
         <json-smart.version>2.5.0</json-smart.version>
-        <!-- resteasy 4.7.0.Final needs JDK11 -->
+        <!-- resteasy-jaxrs artifact was discontinued after 3.x; 4.x split into resteasy-core etc.
+             Staying on 3.15.6.Final (last stable). - - add-opens above covers Java 17 compatibility. -->
         <resteasy-jaxrs.version>3.15.6.Final</resteasy-jaxrs.version>
-        <!-- logback 1.4.x and 1.5.x need JDK11 -->
-        <logback.version>1.3.14</logback.version>
-        <slf4j.version>2.0.12</slf4j.version>
+        <logback.version>1.5.8</logback.version>
+        <slf4j.version>2.0.13</slf4j.version>
         <commons-io.version>2.15.0</commons-io.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <commons-lang3.version>3.14.0</commons-lang3.version>
@@ -78,9 +78,9 @@
         <version.gson>2.10.1</version.gson>
 
         <!-- Maven plugins, build properties  -->
-        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-        <java-compiler-source.version>1.8</java-compiler-source.version>
-        <java-compiler-target.version>1.8</java-compiler-target.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <java.version>17</java.version>
+        <maven.compiler.release>17</maven.compiler.release>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
@@ -130,7 +130,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>${mockito.version}</version> <!-- Use 5.14.2 if on Java 11+ compiler -->
+                <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -330,8 +330,7 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
-                        <source>${java-compiler-source.version}</source>
-                        <target>${java-compiler-target.version}</target>
+                        <release>${maven.compiler.release}</release>
                         <compilerArgs>
                             <arg>-proc:none</arg>
                         </compilerArgs>
@@ -366,6 +365,14 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <!-- Required on Java 17+: zerocode tests mutate annotations at runtime
+                             via deep reflection into java.lang and java.lang.reflect internals -->
+                        <argLine>
+                            --add-opens java.base/java.lang=ALL-UNNAMED
+                            --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                        </argLine>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -445,45 +452,6 @@
                         </executions>
                     </plugin>
 
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <!--
-                Compiler strategy for Java 8 bytecode target:
-                - JDK 8 / 11 : uses "-source 1.8 -target 1.8" (set in pluginManagement above).
-                                "- - release" is not supported on JDK 8, and JDK 11 is non-LTS / low
-                                adoption, so the legacy flags are acceptable there.
-                - JDK 17+    : adds "maven.compiler.release=8", which is strictly safer — it enforces
-                                both the language level AND the Java 8 API surface, preventing code
-                                that compiles on JDK 17 but would fail at runtime on JDK 8.
-                                JDK 17, 21, and 23 are the LTS versions most users actually run, so
-                                this is where the stricter check matters most.
-                No separate jdk-9plus profile is needed: JDK 9/10 are non-LTS, end-of-life, and
-                absent from the CI matrix, so there is nothing to guard there.
-            -->
-            <id>jdk-17plus</id>
-            <activation>
-                <jdk>[17,)</jdk>
-            </activation>
-            <properties>
-                <java.version>17</java.version>
-                <maven.compiler.release>8</maven.compiler.release>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven-surefire-plugin.version}</version>
-                        <configuration>
-                            <argLine>
-                                --add-opens java.base/java.lang=ALL-UNNAMED
-                                --add-opens java.base/java.lang.reflect=ALL-UNNAMED
-                            </argLine>
-                        </configuration>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
