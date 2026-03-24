@@ -58,9 +58,6 @@
         <guice.version>7.0.0</guice.version>
         <jayway-version>2.9.0</jayway-version>
         <json-smart.version>2.5.0</json-smart.version>
-        <!-- resteasy-jaxrs artifact was discontinued after 3.x; 4.x split into resteasy-core etc.
-             Staying on 3.15.6.Final (last stable). - - add-opens above covers Java 17 compatibility. -->
-        <resteasy-jaxrs.version>3.15.6.Final</resteasy-jaxrs.version>
         <logback.version>1.5.8</logback.version>
         <slf4j.version>2.0.13</slf4j.version>
         <commons-io.version>2.15.0</commons-io.version>
@@ -182,17 +179,6 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-jaxrs</artifactId>
-                <version>${resteasy-jaxrs.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-client</artifactId>
-                <version>${resteasy-jaxrs.version}</version>
             </dependency>
 
             <dependency>

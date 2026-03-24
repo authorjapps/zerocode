@@ -7,8 +7,9 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import java.util.Map;
 import org.jsmart.zerocode.core.domain.Response;
+import org.jsmart.zerocode.core.httpclient.HttpResponse;
 import org.jsmart.zerocode.core.httpclient.BasicHttpClient;
 import org.jsmart.zerocode.core.utils.SmartUtils;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
             return "{\"status\": 200}";
         }
 
-        final javax.ws.rs.core.Response serverResponse = httpClient.execute(httpUrl, methodName, headers, queryParams, bodyContent);
+        final HttpResponse serverResponse = httpClient.execute(httpUrl, methodName, headers, queryParams, bodyContent);
 
         /*
          * now read the response for :
@@ -62,9 +63,9 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
          */
         final int responseStatus = serverResponse.getStatus();
 
-        final MultivaluedMap responseHeaders = serverResponse.getMetadata();
+        final Map responseHeaders = serverResponse.getHeaders();
 
-        final String responseBodyAsString = (String) serverResponse.getEntity();
+        final String responseBodyAsString = serverResponse.getBody();
 
         Response zeroCodeResponse = deriveZeroCodeResponseFrom(responseStatus, responseHeaders, responseBodyAsString);
 
@@ -74,7 +75,7 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
     }
 
     private Response deriveZeroCodeResponseFrom(int responseStatus,
-                                                MultivaluedMap responseHeaders,
+                                                Map responseHeaders,
                                                 String responseBodyAsString)
             throws IOException {
 
