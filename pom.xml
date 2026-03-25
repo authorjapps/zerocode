@@ -351,14 +351,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
-                    <configuration>
-                        <!-- Required on Java 17+: zerocode tests mutate annotations at runtime
-                             via deep reflection into java.lang and java.lang.reflect internals -->
-                        <argLine>
-                            --add-opens java.base/java.lang=ALL-UNNAMED
-                            --add-opens java.base/java.lang.reflect=ALL-UNNAMED
-                        </argLine>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
