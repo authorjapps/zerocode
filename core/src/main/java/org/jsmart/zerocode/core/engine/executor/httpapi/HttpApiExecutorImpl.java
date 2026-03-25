@@ -16,8 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithLocalMock;
-import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.createWithVirtuosoMock;
 import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 
 public class HttpApiExecutorImpl implements HttpApiExecutor {
@@ -42,16 +40,6 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
         HashMap queryParams = (HashMap) readJsonPathOrElseNull(requestJson, "$.queryParams");
         HashMap headers = (HashMap) readJsonPathOrElseNull(requestJson, "$.headers");
         Object bodyContent = readJsonPathOrElseNull(requestJson, "$.body");
-
-        /*
-         * $MOCK: Create mock endpoints supplied for this scenario
-         */
-        if (completedMockingEndPoints(httpUrl, requestJson, methodName, bodyContent)) {
-            /*
-             * All mocks done? Then return a success message
-             */
-            return "{\"status\": 200}";
-        }
 
         final HttpResponse serverResponse = httpClient.execute(httpUrl, methodName, headers, queryParams, bodyContent);
 
@@ -97,28 +85,6 @@ public class HttpApiExecutorImpl implements HttpApiExecutor {
         }
 
         return new Response(responseStatus, responseHeaders, jsonBody, rawBody, null);
-    }
-
-    private boolean completedMockingEndPoints(String httpUrl, String requestJson, String methodName, Object bodyContent) throws java.io.IOException {
-        if (httpUrl.contains("/$MOCK") && methodName.equals("$USE.VIRTUOSO")) {
-            LOGGER.debug("\n#body:\n" + bodyContent);
-
-            //read the content of the "request". This contains the complete rest API.
-            createWithVirtuosoMock(bodyContent != null ? bodyContent.toString() : null);
-
-            LOGGER.debug("#SUCCESS: End point simulated via virtuoso.");
-            return true;
-        } else if (httpUrl.contains("/$MOCK") && methodName.equals("$USE.SIMULATOR")) {
-            LOGGER.debug("\n#body:\n" + bodyContent);
-
-            //read the content of the "request". This contains the complete rest API.
-            createWithLocalMock(bodyContent != null ? bodyContent.toString() : null);
-
-            LOGGER.debug("#SUCCESS: End point simulated via local simulator.");
-
-            return true;
-        }
-        return false;
     }
 
     private Object readJsonPathOrElseNull(String requestJson, String jsonPath) {
