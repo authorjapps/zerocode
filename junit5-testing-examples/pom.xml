@@ -63,10 +63,7 @@
                     <groupId>com.google.code.gson</groupId>
                     <artifactId>gson</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>com.google.classpath-explorer</groupId>
-                    <artifactId>classpath-explorer</artifactId>
-                </exclusion>
+
                 <exclusion>
                     <groupId>org.jukito</groupId>
                     <artifactId>jukito</artifactId>
@@ -125,6 +122,10 @@
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -136,8 +137,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <dependencies>
+                    <!-- Forces Surefire to use JUnitPlatformProvider over JUnit4Provider
+                         when both junit-vintage-engine and junit-jupiter-engine are present -->
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-launcher</artifactId>
+                        <version>${junit-platform-runner.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
-                    <!--<junitPlatformArtifactName>com.github.junit-team.junit5:junit-platform-engine</junitPlatformArtifactName>-->
                     <!--<properties>-->
                     <!--<configurationParameters>-->
                     <!--junit.jupiter.execution.parallel.enabled=true-->
@@ -149,6 +158,13 @@
                         <include>org.jsmart.zerocode.jupiter.extension.ParallelLoadExtensionTest</include>
                         <include>org.jsmart.zerocode.tests.loadjupiter.JUnit5LoadTest</include>
                     </includes>
+
+                    <!--
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    -->
+
                 </configuration>
             </plugin>
         </plugins>
