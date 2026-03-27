@@ -9,4 +9,5 @@ import java.lang.annotation.RetentionPolicy;
 @Repeatable( value = JsonTestCases.class )
 public @interface JsonTestCase {
     String value();
+    String llmGeneratedDescription() default "";
 }
