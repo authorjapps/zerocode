@@ -1,0 +1,10 @@
+openapi: "3.0.0"
+paths:
+  /testStringBody:
+    get:
+      summary: Body is not an object (string)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
