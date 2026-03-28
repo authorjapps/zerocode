@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 public class LoadTest {
 
@@ -76,5 +78,37 @@ public class LoadTest {
         assertThat(passedCounter.get(), is(0));
     }
 
+    @Test
+    public void testLoad_Timeout() {
+        ExecutorServiceRunner executorServiceRunner = new ExecutorServiceRunner(3, 3, 6, 3);
+
+        final AtomicInteger passedCounter = new AtomicInteger();
+        final AtomicInteger failedCounter = new AtomicInteger();
+
+        Runnable taskSampleTest = () -> {
+            System.out.println(Thread.currentThread().getName() + " JunitTestSample test- Start. Time = " + LocalDateTime.now());
+
+            Result result = (new JUnitCore()).run(Request.method(JunitTestSample.class, "testFirstName"));
+
+            System.out.println(Thread.currentThread().getName() + " JunitTestSample test- *Finished Time, result = " + LocalDateTime.now() + " -" + result.wasSuccessful());
+
+            if(result.wasSuccessful()){
+                passedCounter.incrementAndGet();
+            } else {
+                failedCounter.incrementAndGet();
+            }
+        };
+
+        executorServiceRunner.addRunnable(taskSampleTest);
+
+        RuntimeException e = assertThrows(RuntimeException.class, executorServiceRunner::runRunnables);
+        assertThat(e.getMessage(), equalTo("java.util.concurrent.TimeoutException"));
+
+        System.out.println(">>> passed count:" + passedCounter.get());
+        System.out.println(">>> failed count:" + failedCounter.get());
+        System.out.println(">>> Total test count:" + (failedCounter.get() + passedCounter.get()));
+
+        assertThat(failedCounter.get(), is(0));
+    }
 }
 
