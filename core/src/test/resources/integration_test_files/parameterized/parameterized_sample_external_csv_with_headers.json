@@ -1,12 +1,12 @@
 {
-    "scenarioName": "Parameterized test scenario demo",
+    "scenarioName": "Parameterized test scenario demo for external csv",
     "steps": [
         {
             "name": "get_user",
             "url": "",
             "operation": "",
             "request": {
-                "status": "${2}",
+                "status": "${PARAM.status}",
                 "body": {
                     "login": "octocat-${PARAM.id}-${PARAM.AddressId}"
                 }
@@ -21,10 +21,6 @@
     ],
     "parameterized": {
         "withHeaders" : true,
-        "csvSource":[
-            "|id|,              |AddressId|,        |status|",
-            "${RANDOM.NUMBER},  ${RANDOM.NUMBER},   200",
-            "11,                22,                 400"
-        ]
+        "csvSource": "integration_test_files/parameterized/params_with_headers.csv"
     }
 }

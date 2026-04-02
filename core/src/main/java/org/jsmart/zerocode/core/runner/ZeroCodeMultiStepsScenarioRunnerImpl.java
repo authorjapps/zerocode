@@ -565,8 +565,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         int csvSourceSize = 0;
 
         if (csvSource != null && !csvSource.isEmpty()){
-            String[] parsedHeaderLine = csvParser.parseLine(csvSource.get(0) + LINE_SEPARATOR);
-            boolean hasHeader = parsedHeaderLine.length > 0 && Arrays.stream(parsedHeaderLine).allMatch(s -> s.matches("^\\|.*\\|$"));
+            Boolean hasHeader = parameterized.isWithHeaders();
             csvSourceSize = hasHeader ? csvSource.size() -1 : csvSource.size();
         }
 

@@ -21,6 +21,7 @@
         }
     ],
     "parameterized": {
+        "withHeaders": true,
         "csvSource":[
             "|USERID|,     |USERNAME|,  |ADDRESS|,     |USERNO|,        |ISADMIN|",
             "octocat,      The Octocat, San Francisco, 583231,          false",

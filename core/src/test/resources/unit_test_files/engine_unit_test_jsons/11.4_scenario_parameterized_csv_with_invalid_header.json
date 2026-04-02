@@ -1,0 +1,21 @@
+{
+    "scenarioName": "Test Exception on missing header",
+    "steps": [
+        {
+            "name": "get_user",
+            "url": "/users/${PARAM.typoHere}",
+            "request": {
+                "body": {
+                    "name": "octocat"
+                }
+            }
+        }
+    ],
+    "parameterized": {
+        "withHeaders": true,
+        "csvSource": [
+            "id, name",
+            "1, octocat"
+        ]
+    }
+}
