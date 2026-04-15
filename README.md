@@ -8,6 +8,19 @@ Next, install the [Steply](https://github.com/QABEES/steply?tab=readme-ov-file#s
 [![Performance Testing](https://img.shields.io/badge/performance-testing-8A2BE2)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 [![Kafka Testing](https://img.shields.io/badge/kafka-testing-blue)](https://zerocode-tdd.tddfy.com/kafka/Kafka-Testing-Introduction)
 
+---
+
+> [!WARNING]
+> **v1.4.0 — `ignoreHeader` is deprecated, replaced by `withHeaders`. Removed in v1.4.1.**
+>
+> | Remove | Replace with |
+> |---|---|
+> | `"ignoreHeader": false` | `"withHeaders": true` |
+> | `"ignoreHeader": true` | `"withHeaders": false` |
+>
+> 📖 See the [Migration Guide](https://github.com/authorjapps/zerocode/wiki/Migration%E2%80%90Guide%E2%80%90ignoreHeader%E2%80%90to%E2%80%90withHeaders%E2%80%90notice) for full steps and named parameter usage.
+
+---
 
 **Latest release:🏹** [![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) <br/>
 **CI Testing:** ![example workflow](https://github.com/authorjapps/zerocode/actions/workflows/main.yml/badge.svg)
