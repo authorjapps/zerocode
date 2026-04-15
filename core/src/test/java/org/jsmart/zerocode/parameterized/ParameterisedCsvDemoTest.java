@@ -19,4 +19,9 @@ public class ParameterisedCsvDemoTest {
     @JsonTestCase("integration_test_files/parameterized/parameterized_sample_csv_with_headers_test.json")
     public void testParameterizedCsvWithHeaders() throws Exception {
     }
+
+    @Test 
+    @JsonTestCase("integration_test_files/parameterized/parameterized_sample_external_csv_with_headers.json")
+    public void testPrameterizedExternalCsvWithHeadersNoPipes() throws Exception {
+    }
 }

@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
 public class Parameterized {
     private final List<Object> valueSource;
     private final List<String> csvSource;
-    private final Boolean ignoreHeader;
+    private final Boolean withHeaders;
 
     public Parameterized(
             @JsonProperty("valueSource") List<Object> valueSource,
             @JsonProperty("csvSource") JsonNode csvSourceJsonNode,
-            @JsonProperty("ignoreHeader") Boolean ignoreHeader) {
+            @JsonProperty("withHeaders") Boolean withHeaders) {
         this.valueSource = valueSource;
-        this.ignoreHeader = Optional.ofNullable(ignoreHeader).orElse(false);
+        this.withHeaders = Optional.ofNullable(withHeaders).orElse(false);
         this.csvSource = Optional.ofNullable(csvSourceJsonNode).map(this::getCsvSourceFrom).orElse(Collections.emptyList());
     }
 
@@ -65,14 +65,14 @@ public class Parameterized {
             List<String> csvSourceFileLines = Files.lines(path)
                     .filter(StringUtils::isNotBlank)
                     .collect(Collectors.toList());
-            if (this.ignoreHeader) {
-                return csvSourceFileLines.stream()
-                        .skip(1)
-                        .collect(Collectors.toList());
-            }
+            
             return csvSourceFileLines;
         }
         return Collections.emptyList();
+    }
+
+    public Boolean isWithHeaders() {
+        return withHeaders;
     }
 
     @Override

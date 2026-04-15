@@ -108,4 +108,38 @@ public class ZeroCodeParameterizedProcessorImplTest {
         assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/anUrl/11/22"));
         assertThat(scenarioSpecResolved.getSteps().get(0).getAssertions().get("status").asInt(), is(400));
     }
+
+    @Test
+    public void testProcessParameterized_csv_with_headers() throws Exception {
+        String jsonDocumentAsString = smartUtils
+                .getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/11.3_scenario_parameterized_csv_with_headers.json");
+        ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+
+        ScenarioSpec scenarioSpecResolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 0);
+        
+        
+        assertThat(scenarioSpecResolved.getSteps().get(0).getUrl(), is("/users/1"));
+        assertThat(scenarioSpecResolved.getSteps().get(0).getRequest().get("body").get("name").asText(), is("octocat"));
+    }
+
+   @Test
+    public void testProcessParameterized_csv_with_invalid_header_throws_exception() throws Exception {
+        String jsonDocumentAsString = smartUtils
+                .getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/11.4_scenario_parameterized_csv_with_invalid_header.json");
+        ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
+
+        
+        try {
+            parameterizedProcessor.resolveParameterized(scenarioSpec, 0);
+
+            org.junit.Assert.fail("Expected RuntimeException was not thrown for missing CSV header");
+            
+        } catch (RuntimeException ex) {
+            org.junit.Assert.assertTrue("Exception message should contain the missing column name", 
+                    ex.getMessage().contains("The column 'typoHere' does not exist"));
+
+            org.junit.Assert.assertTrue("Message should contain the available headers", 
+                    ex.getMessage().contains("Available headers are: [id, name]."));
+        }
+    }
 }

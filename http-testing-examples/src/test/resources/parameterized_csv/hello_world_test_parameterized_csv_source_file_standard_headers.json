@@ -20,7 +20,7 @@
         }
     ],
     "parameterized": {
-        "ignoreHeader": true,
+        "withHeaders": true,
         "csvSource":"parameterized_csv/params_with_header.csv"
     }
 }
