@@ -11,12 +11,13 @@ Next, install the [Steply](https://github.com/QABEES/steply?tab=readme-ov-file#s
 ---
 
 > [!WARNING]
-> **v1.4.0 — `ignoreHeader` is deprecated, replaced by `withHeaders`. Removed in v1.4.1.**
+> **v1.4.0 — `ignoreHeader` is removed and replaced by `withHeaders`. Pipe Syntax | | for headers is deprecated and will be removed in v1.4.1.**
 >
-> | Remove | Replace with |
-> |---|---|
-> | `"ignoreHeader": false` | `"withHeaders": true` |
-> | `"ignoreHeader": true` | `"withHeaders": false` |
+>| Remove | Replace with | If |
+>|---|---|---|
+>| `"ignoreHeader": false` | `"withHeaders": false` | First CSV row is data |
+>| `"ignoreHeader": false` | `"withHeaders": true` | First CSV row is a header **with** piped syntax **\| \|** |
+>| `"ignoreHeader": true` | `"withHeaders": true` | First CSV row is header **without** piped syntax **\| \|** |
 >
 > 📖 See the [Migration Guide](https://github.com/authorjapps/zerocode/wiki/Migration%E2%80%90Guide%E2%80%90ignoreHeader%E2%80%90to%E2%80%90withHeaders%E2%80%90notice) for full steps and named parameter usage.
 
