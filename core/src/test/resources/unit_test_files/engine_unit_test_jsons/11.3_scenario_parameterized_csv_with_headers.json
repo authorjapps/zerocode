@@ -1,0 +1,27 @@
+{
+    "scenarioName": "Csv with Headers",
+    "ignoreStepFailures": true,
+    "steps": [
+        {
+            "name": "get_user_details",
+      "url": "/users/${PARAM.userId}",
+      "method": "GET",
+      "request": {
+        "body": {
+          "name": "${PARAM.userName}"
+        }
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+    ],
+    "parameterized": {
+        "withHeaders": true,
+        "csvSource": [
+        "userId, userName",
+        "1,      octocat",
+        "2,      googlebot"
+        ]
+    }
+}

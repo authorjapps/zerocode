@@ -20,6 +20,7 @@
         }
     ],
     "parameterized": {
+        "withHeaders": true,
         "csvSource": [
             "|id|,                  |AddressId|,              |status|",
             "${RANDOM.NUMBER},      ${RANDOM.NUMBER},           200",
