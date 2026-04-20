@@ -226,6 +226,23 @@ public class SmartUtilsTest {
         // mvn clean
     }
 
+    @Test
+    public void testScenarioFile_relativePath() throws Exception {
+        // Function to test that the readJsonAsString function reads scenarios with relative paths as well.
+
+        // Test Relative Path.
+        String classPath = "unit_test_files/cherry_pick_tests/folder_a/test_case_1.json";
+        String relativeTestPath = "./src/test/resources/unit_test_files/cherry_pick_tests/folder_a/test_case_1.json";
+
+        String jsonStringFromClassPath = SmartUtils.readJsonAsString(classPath);
+        String jsonStringFromRelativePath = SmartUtils.readJsonAsString(relativeTestPath);
+        boolean classPathRelativePathCheckBool = jsonStringFromRelativePath.equals(jsonStringFromClassPath);
+        assert(classPathRelativePathCheckBool);
+
+        System.out.println("Does readJsonAsString load the same file from relative and classpth: " + classPathRelativePathCheckBool);
+
+    }
+
     @Ignore("Tested in local laptop. Ignored for Ci build. Follow testSuiteFolder_absolutePath() like flow ")
     @Test
     public void testSuiteFolder_symAbsolutePath() {
