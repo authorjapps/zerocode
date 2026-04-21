@@ -97,21 +97,9 @@ public class ApiServiceExecutorImplTest {
         JSONAssert.assertEquals("{\n" +
                 "    \"status\": 200,\n" +
                 "    \"headers\": {\n" +
-                "        \"Transfer-Encoding\":" +
-                "            [\n" +
-                "                \"chunked\"\n" +
-                "            ]\n" +
-                "        ,\n" +
-                "        \"Content-Type\":" +
-                "            [\n" +
-                "                \"application/json\"\n" +
-                "            ]\n" +
-                "        ,\n" +
-                "        \"Connection\":" +
-                "            [\n" +
-                "                \"keep-alive\"\n" +
-                "            ]\n" +
-                "        \n" +
+                "        \"Transfer-Encoding\": \"chunked\",\n" +
+                "        \"Content-Type\": \"application/json\",\n" +
+                "        \"Connection\": \"keep-alive\"\n" +
                 "    },\n" +
                 "    \"body\": {\n" +
                 "        \"id\": 1,\n" +

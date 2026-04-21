@@ -22,9 +22,7 @@
             "assertions": {
                 "status": 422,
                 "headers": {
-                    "Content-Type": [
-                        "application/vnd.kafka.v1+json"
-                    ]
+                    "Content-Type" : "application/vnd.kafka.v1+json"
                 },
                 "body": {
                     "error_code": 42203,
