@@ -1,0 +1,2 @@
+# Zerocode Scenario JSON Schema
+# Schema: schema/zerocode-scenario-schema.json

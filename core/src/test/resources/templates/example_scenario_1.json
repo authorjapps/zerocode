@@ -1,0 +1,51 @@
+{
+    "$schema": "../../../../../schema/zerocode-scenario-schema.json",
+    "scenarioName": "Create then fetch a record (typical REST API test)",
+    "ignoreStepFailures": false,
+    "steps": [
+        {
+            "name": "create_record",
+            "url": "/api/records",
+            "operation": "POST",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "name": "first record",
+                    "value": 42
+                }
+            },
+            "retry": {
+                "max": 3,
+                "delay": 500
+            },
+            "verify": {
+                "status": 201,
+                "body": {
+                    "id": "$NOT.NULL",
+                    "name": "first record"
+                }
+            }
+        },
+        {
+            "name": "fetch_record",
+            "url": "/api/records/${$.create_record.response.body.id}",
+            "operation": "GET",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {}
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": "${$.create_record.response.body.id}",
+                    "name": "first record",
+                    "value": 42
+                }
+            }
+        }
+    ]
+}
