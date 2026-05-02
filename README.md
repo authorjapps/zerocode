@@ -158,27 +158,20 @@ Zerocode-TDD is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) a
 
 Also, learn more about [Validators Vs Matchers](https://zerocode-tdd.tddfy.com/assertions/Validators-and-Matchers) here.
 
-## Configuration
+## JSON Schema for Test Scenario
 
 A JSON Schema (Draft-07) for scenario files is published at [`schema/zerocode-scenario-schema.json`](schema/zerocode-scenario-schema.json) and pointed to from `robots.txt` at the project root. Use it to:
 
 - **Validate scenarios from the CLI**, e.g. with `ajv-cli`:
 
   ```bash
+  # Note: This is optional step, only do this if you have npx and ajv-cli already installed
+  # npx: Runs npm package without global install
   npx ajv-cli validate -s schema/zerocode-scenario-schema.json -d core/src/test/resources/templates/example_scenario_1.json
   ```
 
-- **Get IDE autocomplete and inline validation** by pointing your scenario JSON at the schema:
-
-  ```json
-  {
-      "$schema": "https://raw.githubusercontent.com/authorjapps/zerocode/main/schema/zerocode-scenario-schema.json",
-      "scenarioName": "..."
-  }
-  ```
-
-- **Generate scenarios with AI tools.** Sample prompt for Claude Code or similar:
-  > Write a Zerocode scenario that conforms to `schema/zerocode-scenario-schema.json` for `<your test idea>`. Use the `assertions` block (not `verify`) and include retry of 3 attempts with 500ms delay.
+## AI Prompt :  Generated Scenarios for `Claude Code` or similar:
+  > Write a Zerocode scenario that conforms to `schema/zerocode-scenario-schema.json` for `<your API or Kafka or Database test idea>`. Use the `assertions` block (not `verify`) and include retry of 3 attempts with 500ms delay.
 
 Two starter templates live under [`core/src/test/resources/templates/`](core/src/test/resources/templates/): `example_scenario_1.json` (typical REST flow with two steps), and `example_scenario_2.json` (parameterized scenario with both `valueSource` and `csvSource`).
 
