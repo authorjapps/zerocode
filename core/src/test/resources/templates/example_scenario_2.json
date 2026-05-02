@@ -1,0 +1,34 @@
+{
+    "$schema": "../../../../../schema/zerocode-scenario-schema.json",
+    "scenarioName": "Parameterized scenario - value source and CSV source",
+    "ignoreStepFailures": false,
+    "steps": [
+        {
+            "name": "lookup",
+            "url": "/api/items/${0}",
+            "operation": "GET",
+            "request": {
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {}
+            },
+            "assertions": {
+                "status": 200
+            }
+        }
+    ],
+    "parameterized": {
+        "valueSource": [
+            "alpha",
+            "beta",
+            42
+        ],
+        "csvSource": [
+            "alpha, 1",
+            "beta,  2",
+            "gamma, 3"
+        ],
+        "withHeaders": false
+    }
+}
