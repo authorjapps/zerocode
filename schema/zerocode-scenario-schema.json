@@ -7,10 +7,6 @@
     "required": ["scenarioName", "steps"],
     "additionalProperties": false,
     "properties": {
-        "$schema": {
-            "type": "string",
-            "description": "Pointer to this schema (lets IDEs and validators discover it from the scenario file itself)."
-        },
         "scenarioName": {
             "type": "string",
             "description": "Human-readable name for the scenario (ScenarioSpec.scenarioName)."
