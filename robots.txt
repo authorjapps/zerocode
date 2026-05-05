@@ -1,2 +1,78 @@
 # Zerocode Scenario JSON Schema
 # Schema: schema/zerocode-scenario-schema.json
+
+# === AI AGENT INSTRUCTIONS ===
+# The following rules apply when generating or modifying Zerocode test scenarios:
+#
+# RULE 1 — Endpoint host property:
+#   Use "web.application.endpoint.host" (not "restful.application.endpoint.host").
+#   Correct:   "web.application.endpoint.host": "https://example.com"
+#   Incorrect: "restful.application.endpoint.host": "https://example.com"
+#
+# RULE 2 — Multiple hosts in a scenario:
+#   When a test scenario targets more than one host, define each host as a
+#   named property (e.g. "host=https://example.com") and reference it via
+#   placeholder syntax in the scenario JSON.
+#   Definition example (properties / config):
+#     host=https://example.com
+#   Usage example (scenario JSON):
+#     "url": "${host}/users/1"
+#
+# RULE 3 — OAuth2 Bearer Token secured APIs:
+#   When an API is secured by OAuth2, the scenario MUST have two steps:
+#     Step 1: Fetch the bearer token from the token server.
+#     Step 2: Use the token in the request header to call the secured API.
+#   Reference the token from Step 1 using: ${$.get_token.response.body.access_token}
+#
+#   Environment .properties file example:
+#     host=https://example.com
+#     auth.token.url=https://auth2.token.server/token
+#     client_id=my_client_id
+#     client_secret=my_password
+#
+#   Example scenario:
+#   {
+#     "scenarioName": "VALIDATE API RESPONSE SECURED BY OAUTH2 SECURITY BEARER TOKEN",
+#     "steps": [
+#       {
+#         "name": "get_token",
+#         "url": "${auth.token.url}",
+#         "method": "POST",
+#         "request": {
+#           "headers": {
+#             "Content-Type": "application/x-www-form-urlencoded"
+#           },
+#           "body": {
+#             "grant_type": "client_credentials",
+#             "client_id": "${client_id}",
+#             "client_secret": "${client_secret}"
+#           }
+#         },
+#         "retry": {
+#           "max": 1,
+#           "delay": 1000
+#         },
+#         "verify": {
+#           "status": 200,
+#           "body": {
+#             "access_token": "$NOT.NULL",
+#             "expires_in": "$NOT.NULL"
+#           }
+#         }
+#       },
+#       {
+#         "name": "validate_secured_api",
+#         "url": "${api.host}/users/1",
+#         "method": "GET",
+#         "request": {
+#           "headers": {
+#             "Content-Type": "application/json",
+#             "api-key": "${$.get_token.response.body.access_token}"
+#           }
+#         },
+#         "verify": {
+#           "status": 200
+#         }
+#       }
+#     ]
+#   }
