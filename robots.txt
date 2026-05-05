@@ -9,6 +9,11 @@
 #   Correct:   "web.application.endpoint.host": "https://example.com"
 #   Incorrect: "restful.application.endpoint.host": "https://example.com"
 #
+#   When "web.application.endpoint.host" is set, the "url" field in scenario steps
+#   MUST be just the path — do NOT include the host or a placeholder for it.
+#   Correct:   "url": "/users/1"
+#   Incorrect: "url": "${web.application.endpoint.host}/users/1"
+#
 # RULE 2 — Multiple hosts in a scenario:
 #   When a test scenario targets more than one host, define each host as a
 #   named property (e.g. "host=https://example.com") and reference it via
