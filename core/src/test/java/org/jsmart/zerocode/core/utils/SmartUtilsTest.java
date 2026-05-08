@@ -100,7 +100,7 @@ public class SmartUtilsTest {
     @Test
     public void willReadAllfiles_find_DuplicateScenarioNames() {
         expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Oops! Can not run with multiple Scenarios with same name.");
+        expectedException.expectMessage("Oops! Duplicate scenario found, either rename or remove extra ones");
         smartUtils.checkDuplicateScenarios("unit_test_files/test_scenario_cases");
     }
 

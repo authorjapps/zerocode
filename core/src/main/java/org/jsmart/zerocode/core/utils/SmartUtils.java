@@ -257,7 +257,7 @@ public class SmartUtils {
         getScenarioSpecListByPackage(testPackageName).stream()
                 .forEach(scenarioSpec -> {
                     if (!oops.add(scenarioSpec.getScenarioName())) {
-                        throw new RuntimeException("Oops! Can not run with multiple Scenarios with same name. Found duplicate: " + scenarioSpec.getScenarioName());
+                        throw new RuntimeException("Oops! Duplicate scenario found, either rename or remove extra ones -> " + scenarioSpec.getScenarioName());
                     }
 
                     /**
