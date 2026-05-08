@@ -14,6 +14,7 @@ import org.junit.rules.ExpectedException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,12 +24,13 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
-
+import java.net.URLClassLoader;
 
 //@UseModules(ApplicationMainModule.class) //<--- Only if you dont pass any value to it's constructor
 public class SmartUtilsTest {
@@ -98,7 +100,7 @@ public class SmartUtilsTest {
     @Test
     public void willReadAllfiles_find_DuplicateScenarioNames() {
         expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Oops! Can not run with multiple Scenarios with same name.");
+        expectedException.expectMessage("Oops! Duplicate scenario found, either rename or remove extra ones");
         smartUtils.checkDuplicateScenarios("unit_test_files/test_scenario_cases");
     }
 
@@ -242,6 +244,124 @@ public class SmartUtilsTest {
     	String dest = "file ___________-._09_______AZ_____az______";
     	assertThat(SmartUtils.sanitizeReportFileName(orig), equalTo(dest));
     }
+
+    @Test
+    public void collectJsonFilesFromDir_returnsAllJsonFiles() {
+        File dir = new File(getClass().getClassLoader().getResource("unit_test_files/engine_unit_test_jsons").getFile());
+        List<String> files = SmartUtils.collectJsonFilesFromDir(dir, "unit_test_files/engine_unit_test_jsons");
+        assertThat(files.size(), is(25));
+        assertThat(files, hasItem("unit_test_files/engine_unit_test_jsons/00_test_json_single_step_verifications.json"));
+    }
+
+    @Test
+    public void collectJsonFilesFromDir_returnsEmpty_whenDirNotExist() {
+        File dir = new File("non/existent/path");
+        List<String> files = SmartUtils.collectJsonFilesFromDir(dir, "non/existent/path");
+        assertThat(files.size(), is(0));
+    }
+
+    @Test
+    public void collectJsonFilesFromDir_returnsEmpty_whenNoJsonFiles() throws Exception {
+        File dir = Files.createTempDirectory("zerocode_test_no_json").toFile();
+        dir.deleteOnExit();
+        new File(dir, "readme.txt").createNewFile();
+        List<String> files = SmartUtils.collectJsonFilesFromDir(dir, "some/package");
+        assertThat(files.size(), is(0));
+    }
+
+    @Test
+    public void getAllEndPointFiles_readsJsonFilesFromJar() throws Exception {
+
+        Path tempDir = Files.createTempDirectory("jar-test");
+        File jarFile = new File(tempDir.toFile(), "test-scenarios.jar");
+
+        try (java.util.jar.JarOutputStream jarOut =
+                     new java.util.jar.JarOutputStream(Files.newOutputStream(jarFile.toPath()))) {
+
+            jarOut.putNextEntry(new java.util.jar.JarEntry("unit_test_files/"));
+            jarOut.closeEntry();
+
+            jarOut.putNextEntry(new java.util.jar.JarEntry("unit_test_files/jar_tests/"));
+            jarOut.closeEntry();
+
+            jarOut.putNextEntry(
+                    new java.util.jar.JarEntry(
+                            "unit_test_files/jar_tests/test1.json"));
+            jarOut.write("{\"hello\":\"world\"}".getBytes());
+            jarOut.closeEntry();
+
+            jarOut.putNextEntry(
+                    new java.util.jar.JarEntry(
+                            "unit_test_files/jar_tests/test2.json"));
+            jarOut.write("{\"hello\":\"again\"}".getBytes());
+            jarOut.closeEntry();
+        }
+
+        URL jarUrl = jarFile.toURI().toURL();
+
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
+
+        URLClassLoader urlClassLoader =
+                new URLClassLoader(new URL[]{jarUrl}, original);
+
+        Thread.currentThread().setContextClassLoader(urlClassLoader);
+
+        try {
+            List<String> files =
+                    SmartUtils.getAllEndPointFiles("unit_test_files/jar_tests");
+
+            assertThat(files.size(), is(2));
+
+            assertThat(files,
+                    hasItem("unit_test_files/jar_tests/test1.json"));
+
+            assertThat(files,
+                    hasItem("unit_test_files/jar_tests/test2.json"));
+
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void getAllEndPointFiles_throwsException_whenNoResourcesFound() {
+
+        SmartUtils.getAllEndPointFiles("non_existing_package_xyz");
+    }
+
+    @Test
+    public void getAllEndPointFiles_skipsCorruptJar() throws Exception {
+
+        Path tempDir = Files.createTempDirectory("corrupt-jar-test");
+
+        File corruptJar = new File(tempDir.toFile(), "corrupt.jar");
+
+        Files.write(
+                corruptJar.toPath(),
+                "this-is-not-a-valid-jar".getBytes()
+        );
+
+        URL jarUrl = corruptJar.toURI().toURL();
+
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
+
+        URLClassLoader urlClassLoader =
+                new URLClassLoader(new URL[]{jarUrl}, original);
+
+        Thread.currentThread().setContextClassLoader(urlClassLoader);
+
+        try {
+
+            expectedException.expect(RuntimeException.class);
+            expectedException.expectMessage("NothingFoundHereException");
+
+            SmartUtils.getAllEndPointFiles("unit_test_files/jar_tests");
+
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
 
     // Move this to File Util class
     private static File createCascadeIfNotExisting(String fileName) {

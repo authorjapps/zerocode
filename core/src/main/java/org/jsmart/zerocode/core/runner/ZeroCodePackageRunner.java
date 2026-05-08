@@ -81,36 +81,13 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
      */
     @Override
     protected List<ScenarioSpec> getChildren() {
-        // 1. folder via System property
-        String folderOverride = System.getProperty("zerocode.folder");
-
         TestPackageRoot rootPackageAnnotation = testClass.getAnnotation(TestPackageRoot.class);
         JsonTestCases jsonTestCasesAnnotation = testClass.getAnnotation(JsonTestCases.class);
         Scenarios scenariosAnnotation = testClass.getAnnotation(Scenarios.class);
 
-        // If folder is NOT supplied, validate annotations as before.
-        if (folderOverride == null || folderOverride.trim().isEmpty()) {
-            validateSuiteAnnotationPresent(rootPackageAnnotation, jsonTestCasesAnnotation, scenariosAnnotation);
-        }
-
-        if (folderOverride != null && !folderOverride.trim().isEmpty()) {
-            // Use the folder system property in place of @TestPackageRoot
-            smartUtils.checkDuplicateScenarios(folderOverride);
-            return smartUtils.getScenarioSpecListByPackage(folderOverride);
-        }
-
-        if (rootPackageAnnotation != null) {
-            /*
-             * Different scenarios with same name -or- Same scenarios with same name more than once is prevented
-             */
-            smartUtils.checkDuplicateScenarios(rootPackageAnnotation.value());
-
-            return smartUtils.getScenarioSpecListByPackage(rootPackageAnnotation.value());
-
-        } else {
-            List<String> allEndPointFiles = readTestScenarioFiles();
-
-            return allEndPointFiles.stream()
+        // Explicit file list (@Scenarios / @JsonTestCases) — not a folder concern, ignore "zerocode.folder" value
+        if (scenariosAnnotation != null || jsonTestCasesAnnotation != null) {
+            return readTestScenarioFiles().stream()
                     .map(testResource -> {
                         try {
                             return smartUtils.scenarioFileToJava(testResource, ScenarioSpec.class);
@@ -120,6 +97,21 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
                     })
                     .collect(Collectors.toList());
         }
+
+        // Folder-based: zerocode.folder system property overrides @TestPackageRoot
+        String folderOverride = System.getProperty("zerocode.folder");
+
+        if (folderOverride == null || folderOverride.trim().isEmpty()) {
+            validateSuiteAnnotationPresent(rootPackageAnnotation, null, null);
+        }
+
+        if (folderOverride != null && !folderOverride.trim().isEmpty()) {
+            smartUtils.checkDuplicateScenarios(folderOverride);
+            return smartUtils.getScenarioSpecListByPackage(folderOverride);
+        }
+
+        smartUtils.checkDuplicateScenarios(rootPackageAnnotation.value());
+        return smartUtils.getScenarioSpecListByPackage(rootPackageAnnotation.value());
     }
 
     /**
