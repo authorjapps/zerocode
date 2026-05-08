@@ -4,9 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.classpath.ClassPath;
-import com.google.classpath.ClassPathFactory;
-import com.google.classpath.RegExpResourceFilter;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipException;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -17,7 +21,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -92,18 +95,60 @@ public class SmartUtils {
     }
 
     public static List<String> getAllEndPointFiles(String packageName) {
-        if(isValidAbsolutePath(packageName)){
+        if (isValidAbsolutePath(packageName)) {
             return retrieveScenariosByAbsPath(packageName);
         }
-        ClassPathFactory factory = new ClassPathFactory();
-        ClassPath jvmClassPath = factory.createFromJVM();
-        String[] allSimulationFiles = jvmClassPath.findResources(packageName, new RegExpResourceFilter(".*", ".*\\.json$"));
-        if (null == allSimulationFiles || allSimulationFiles.length == 0) {
+
+        List<String> result = new ArrayList<>();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+        try {
+            Enumeration<URL> urls = classLoader.getResources(packageName);
+            while (urls.hasMoreElements()) {
+                URL url = urls.nextElement();
+                if ("file".equals(url.getProtocol())) {
+                    collectJsonFilesFromDir(new File(url.toURI()), packageName, result);
+                } else if ("jar".equals(url.getProtocol())) {
+                    // url.getPath() = "file:/path/to/file.jar!/some/package"
+                    String jarPath = url.getPath();
+                    String jarFilePath = jarPath.substring(5, jarPath.indexOf("!"));
+                    String entryPrefix = packageName + "/";
+                    try (JarFile jar = new JarFile(jarFilePath)) {
+                        Enumeration<JarEntry> entries = jar.entries();
+                        while (entries.hasMoreElements()) {
+                            JarEntry entry = entries.nextElement();
+                            String name = entry.getName();
+                            if (name.startsWith(entryPrefix) && name.endsWith(".json") && !entry.isDirectory()) {
+                                result.add(name);
+                            }
+                        }
+                    } catch (ZipException e) {
+                        LOGGER.warn("Found corrupt jar, skipping corrupt JAR while scanning test resources: {} - {}", jarFilePath, e.getMessage());
+                    }
+                }
+            }
+        } catch (IOException | URISyntaxException e) {
+            LOGGER.error("Exception scanning test package: " + packageName + " - " + e);
+            throw new RuntimeException("Exception scanning test package: " + packageName, e);
+        }
+
+        if (result.isEmpty()) {
             LOGGER.error("Test folder is empty or not correctly setup.");
             throw new RuntimeException("NothingFoundHereException: Check the (" + packageName + ") integration test repo folder(empty?). ");
         }
+        result.sort(null);
+        return result;
+    }
 
-        return Arrays.asList(allSimulationFiles);
+    private static void collectJsonFilesFromDir(File dir, String packageName, List<String> result) {
+        if (!dir.exists() || !dir.isDirectory()) return;
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                collectJsonFilesFromDir(file, packageName + "/" + file.getName(), result);
+            } else if (file.getName().endsWith(".json")) {
+                result.add(packageName + "/" + file.getName());
+            }
+        }
     }
 
     public static List<String> retrieveScenariosByAbsPath(String packageName) {
