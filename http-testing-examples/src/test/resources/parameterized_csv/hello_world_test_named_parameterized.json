@@ -23,7 +23,7 @@
     "parameterized": {
         "withHeaders": true,
         "csvSource":[
-            "|USERID|,     |USERNAME|,  |ADDRESS|,     |USERNO|,        |ISADMIN|",
+            "USERID,     USERNAME,  ADDRESS,     USERNO,        ISADMIN",
             "octocat,      The Octocat, San Francisco, 583231,          false",
             "siddhagalaxy, Sidd,        UK,            33847730,        false"
         ]

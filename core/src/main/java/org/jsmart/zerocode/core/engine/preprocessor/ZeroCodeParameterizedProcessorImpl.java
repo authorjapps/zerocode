@@ -140,13 +140,6 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
     private String[] retrieveCsvHeaders(String csvHeaderLine, Boolean isWithHeaders) {
         String[] parsedHeaderLine = csvParser.parseLine(csvHeaderLine + LINE_SEPARATOR);
         if (isWithHeaders && parsedHeaderLine.length > 0) {
-            boolean hasPipes = Arrays.stream(parsedHeaderLine).allMatch(s -> s.matches("^\\|.*\\|$"));
-            if (hasPipes) {
-                LOGGER.warn("DEPRECATION WARNING: The '||' (piped) syntax in CSV headers is deprecated. " +
-                "Please stop using it and start using standard header syntax with 'withHeaders: true' field instead. " +
-                "Visit the documentation for more details.");
-                return Arrays.stream(parsedHeaderLine).map(s -> s.substring(1,s.length()-1)).toArray(String[]::new);
-            }
             return parsedHeaderLine;
         } else {
             return null;
