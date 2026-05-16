@@ -21,6 +21,10 @@ public interface ZeroCodeReportConstants {
     String ZEROCODE_JUNIT = "zerocode.junit";
     String CHARTS_AND_CSV = "gen-smart-charts-csv-reports";
 
+    String ZEROCODE_PROPERTIES_FILE = "zerocode.properties";
+    String REPORT_HTML_FILE_NAME_KEY = "zerocode.report.html.name";
+    String REPORT_CSV_FILE_NAME_KEY = "zerocode.report.csv.name";
+
     // Custom js and css for extent report
     String EXTENT_ADDITIONAL_JS = "document.querySelector('.vheader').insertAdjacentHTML('afterbegin'," +
             "'<div id=\"theme-selector\"class=\"nav-right\"onClick=$(\"body\").toggleClass(\"dark\")>" +

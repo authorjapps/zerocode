@@ -12,10 +12,14 @@ import org.junit.rules.ExpectedException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Properties;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_FAIL;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_PASS;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FILE_NAME;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.TARGET_FULL_REPORT_CSV_FILE_NAME;
 import static org.junit.Assert.assertEquals;
 
 public class ZeroCodeReportGeneratorImplTest {
@@ -171,6 +175,28 @@ public class ZeroCodeReportGeneratorImplTest {
         assertThat(uniqueSteps.get(1).getCorrelationId(),is("testCorrelationId2"));
         assertThat(uniqueSteps.get(2).getCorrelationId(),is("testCorrelationId3"));
 
+    }
+
+    @Test
+    public void resolveHtmlReportName_returnsCustomName_whenKeyPresentInZerocodeProperties() {
+        assertThat(zeroCodeReportGenerator.resolveHtmlReportName(), is("target/my-custom-report.html"));
+    }
+
+    @Test
+    public void resolveCsvReportName_returnsCustomName_whenKeyPresentInZerocodeProperties() {
+        assertThat(zeroCodeReportGenerator.resolveCsvReportName(), is("my-custom-granular.csv"));
+    }
+
+    @Test
+    public void resolveHtmlReportName_returnsDefault_whenZerocodePropertiesIsEmpty() {
+        zeroCodeReportGenerator.zerocodeProperties = new Properties(); //setting to empty
+        assertThat(zeroCodeReportGenerator.resolveHtmlReportName(), is(TARGET_FILE_NAME));
+    }
+
+    @Test
+    public void resolveCsvReportName_returnsDefault_whenZerocodePropertiesIsEmpty() {
+        zeroCodeReportGenerator.zerocodeProperties = new Properties();
+        assertThat(zeroCodeReportGenerator.resolveCsvReportName(), is(TARGET_FULL_REPORT_CSV_FILE_NAME));
     }
 
 }
