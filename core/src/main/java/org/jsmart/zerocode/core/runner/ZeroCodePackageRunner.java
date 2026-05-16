@@ -144,15 +144,26 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     @Override
     public void run(RunNotifier notifier) {
         RunListener reportListener = createTestUtilityListener();
-        notifier.addListener(reportListener);
+        // ------------------------------------------------------------------------
+        // Commented this to prevent duplicate JSON report generation : 16/05/2026
+        // Uncomment if it breaks anything for Gradle. Maven should be fine.
+        // ------------------------------------------------------------------------
+        // notifier.addListener(reportListener);
 
         LOGGER.debug("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
+        // Gradle doesn't fire JUnit RunListener events (known Gradle bug).
+        // When the flag is set, skip normal listener registration — Gradle would ignore it anyway.
+        // Maven/IDE: flag absent, so listener registers normally via JUnit lifecycle.
         if (!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
+            // This is for usual Maven flow
             notifier.addListener(reportListener);
         }
 
         super.run(notifier);
 
+        // Gradle Flow starts here: manually fire testRunFinished() to generate reports,
+        // since Gradle never triggers the JUnit RunListener that would do it.
+        // See inside, it checks the Gradle flags(if supplied by user)
         handleNoRunListenerReport(reportListener);
     }
 
