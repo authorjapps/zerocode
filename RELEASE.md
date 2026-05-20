@@ -103,3 +103,16 @@ git push origin master
 
 > You can keep `1.4.0` (without `-SNAPSHOT`) on master if you prefer not to bump yet. 
 > The snapshot bump is a best practice that signals active development is continuing toward the next release.
+
+## Release Notes
+Use this button and see what it generates. This generation should fill the content with delta changes since last release.
+
+<img width="1043" height="811" alt="image" src="https://github.com/user-attachments/assets/61f30ced-7e33-4bbc-b718-3e422dc631d7" />
+
+Otherwise, use this prompt with Co-Pilot(make sure to selent the project) -> select `Claude Haiku 4.5`:
+```
+Create a Draft Release Note, with Delta from earlier release.
+Mimic this release note "https://github.com/authorjapps/zerocode/releases/tag/1.4.1".
+Give me the md(markdown) content here without rendring(to copay paste).
+```
+
