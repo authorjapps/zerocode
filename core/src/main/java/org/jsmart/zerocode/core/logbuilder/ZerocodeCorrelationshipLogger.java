@@ -1,8 +1,5 @@
 package org.jsmart.zerocode.core.logbuilder;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportStepBuilder;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 import org.slf4j.Logger;
@@ -25,18 +22,9 @@ public class ZerocodeCorrelationshipLogger {
     private String correlationId;
     private RequestLogBuilder requestLogBuilder = new RequestLogBuilder();
     private ResponseLogBuilder responseLogBuilder = new ResponseLogBuilder();
-    private ScenarioLogBuilder scenarioLogBuilder = new ScenarioLogBuilder();
     private Integer stepLoop;
     private Boolean result;
     private Double responseDelay;
-
-    private List<ZeroCodeReportStep> steps = Collections.synchronizedList(new ArrayList());
-
-    public ZerocodeCorrelationshipLogger step(ZeroCodeReportStep step) {
-        this.steps.add(step);
-        return this;
-    }
-
 
     public ZerocodeCorrelationshipLogger(Logger logger) {
         this.logger = logger;
@@ -80,7 +68,7 @@ public class ZerocodeCorrelationshipLogger {
                 .loop(stepLoop)
                 .name(requestLogBuilder.getStepName())
                 .correlationId(getCorrelationId())
-                .result(result == true? RESULT_PASS : RESULT_FAIL)
+                .result(result ? RESULT_PASS : RESULT_FAIL)
                 .url(requestLogBuilder.getUrl())
                 .operation(requestLogBuilder.getMethod())
                 .assertions(responseLogBuilder.getAssertion())
@@ -88,12 +76,10 @@ public class ZerocodeCorrelationshipLogger {
                 .responseTimeStamp(responseLogBuilder.responseTimeStamp)
                 .responseDelay(responseDelay)
                 .id(requestLogBuilder.getId());
-        if (this.result) {
-        	zeroCodeReportStep.result(RESULT_PASS);
-		}else{
-			zeroCodeReportStep.response(responseLogBuilder.getResponse());
-			zeroCodeReportStep.request(requestLogBuilder.getRequest());
-		}
+        if (!result) {
+            zeroCodeReportStep.response(responseLogBuilder.getResponse());
+            zeroCodeReportStep.request(requestLogBuilder.getRequest());
+        }
         if(null != responseLogBuilder.customLog){
             zeroCodeReportStep.customLog(responseLogBuilder.customLog);
         }
@@ -103,10 +89,6 @@ public class ZerocodeCorrelationshipLogger {
 
     public ResponseLogBuilder aResponseBuilder() {
         return responseLogBuilder;
-    }
-
-    public ScenarioLogBuilder aScenarioBuilder() {
-        return scenarioLogBuilder;
     }
 
     public void buildResponseDelay() {

@@ -33,11 +33,31 @@ import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.*;
 import static org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory.getReportName;
+import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadCustomZerocodeProperties;
 
 public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZeroCodeReportGeneratorImpl.class);
 
     private static String spikeChartFileName;
+
+    java.util.Properties zerocodeProperties = null;
+
+    java.util.Properties getZerocodeProperties() {
+        if (zerocodeProperties == null) {
+            zerocodeProperties = loadCustomZerocodeProperties();
+        }
+        return zerocodeProperties;
+    }
+
+    String resolveHtmlReportName() {
+        String customFileName = getZerocodeProperties().getProperty(REPORT_HTML_FILE_NAME_KEY);
+        return (customFileName != null && !customFileName.trim().isEmpty()) ? customFileName : TARGET_FILE_NAME;
+    }
+
+    String resolveCsvReportName() {
+        String customFileName = getZerocodeProperties().getProperty(REPORT_CSV_FILE_NAME_KEY);
+        return (customFileName != null && !customFileName.trim().isEmpty()) ? customFileName : TARGET_FULL_REPORT_CSV_FILE_NAME;
+    }
 
     /**
      * Spike chat is disabled by default
@@ -90,7 +110,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
             return;
         }
 
-        ExtentReports extentReports = ExtentReportsFactory.createReportTheme(TARGET_FILE_NAME);
+        ExtentReports extentReports = ExtentReportsFactory.createReportTheme(resolveHtmlReportName());
 
         linkToSpikeChartIfEnabled();
 
@@ -301,12 +321,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         ObjectWriter writer = csvMapper.writer(schema.withLineSeparator("\n"));
         try {
             writer.writeValue(
-                    new File(TARGET_FULL_REPORT_DIR +
-                            TARGET_FULL_REPORT_CSV_FILE_NAME
-                            //"_" +
-                            //LocalDateTime.now().toString().replace(":", "-") +
-                            //".csv"
-                    ),
+                    new File(TARGET_FULL_REPORT_DIR + resolveCsvReportName()),
                     zeroCodeCsvReportRows);
 
         } catch (IOException e) {

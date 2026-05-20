@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 public class DbSqlExecutorScenarioPostgresTest {
 
 	// Note: Spin up the DB container before running this test: docker/compose/pg_compose.yml
+	// or, you can ignore these two tests failures locally(laptop) if you're running only unit tests.
+	// Note: in CI, these must pass as PG docker is auto spun up(do not ignore failures in CI)
 	
     @Test
 	@Scenario("integration_test_files/db/db_csv_load_with_headers_postgres.json")

@@ -100,12 +100,17 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         RunListener reportListener = createTestUtilityListener();
 
         LOGGER.debug("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
+        // Gradle doesn't fire JUnit RunListener events (known Gradle bug).
+        // When the flag is set, skip normal listener registration — Gradle would ignore it anyway.
+        // Maven/IDE: flag absent, so listener registers normally via JUnit lifecycle.
         if (!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
             notifier.addListener(reportListener);
         }
 
         super.run(notifier);
 
+        // Gradle bypass: manually fire testRunFinished() to generate reports,
+        // since Gradle never triggers the JUnit RunListener that would do it.
         handleNoRunListenerReport(reportListener);
     }
 

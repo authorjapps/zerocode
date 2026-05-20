@@ -48,7 +48,6 @@ public class ResponseLogBuilder {
         return relationshipId +
                 "\nResponse:\n" + response +
                 "\n*responseTimeStamp:" + responseTimeStamp;
-                //"\n\n---------> Assertion: <----------\n" + assertion;
     }
 
     public ResponseLogBuilder assertionSection(String assertionJson) {
