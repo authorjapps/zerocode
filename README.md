@@ -157,8 +157,8 @@ A JSON Schema (Draft-07) for scenario files is published at [`schema/zerocode-sc
   npx ajv-cli validate -s schema/zerocode-scenario-schema.json -d core/src/test/resources/templates/example_scenario_1.json
   ```
 
-## AI Prompt :  Generated Scenarios for `Claude Code` or similar:
-  > Write a Zerocode scenario that conforms to `schema/zerocode-scenario-schema.json` for `<your API or Kafka or Database test idea>`. Use the `assertions` block (not `verify`) and include retry of 3 attempts with 500ms delay.
+## AI Prompt :  Generate a Scenarios using `Claude Code` or `CoPilot` or others:
+> Write a Zerocode scenario that conforms to `schema/zerocode-scenario-schema.json` for `<your API or Kafka or Database test idea>`. Use the `assertions` block (not `verify`) and include retry of 3 attempts with 500ms delay.
 
 Two starter templates live under [`core/src/test/resources/templates/`](core/src/test/resources/templates/): `example_scenario_1.json` (typical REST flow with two steps), and `example_scenario_2.json` (parameterized scenario with both `valueSource` and `csvSource`).
 
