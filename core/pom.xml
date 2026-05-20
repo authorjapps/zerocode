@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jsmart</groupId>
         <artifactId>zerocode-tdd-parent</artifactId>
-        <version>1.4.1</version>
+        <version>1.4.2</version>
     </parent>
 
     <artifactId>zerocode-tdd</artifactId>
