@@ -363,6 +363,135 @@ public class SmartUtilsTest {
     }
 
 
+    @Test
+    public void getAllEndPointFiles_deduplicates_sameFilePath_fromMultipleClasspathEntries() throws Exception {
+        // Reproduce the bug: same package exists in two classpath roots (e.g. file: + jar:),
+        // causing the same relative file path to be collected twice before the distinct() fix.
+        String packagePath = "unit_test_files/engine_unit_test_jsons";
+
+        Path tempDir = Files.createTempDirectory("dedup-test");
+        File jarFile = new File(tempDir.toFile(), "duplicate-scenarios.jar");
+
+        // Mirror the real test-resources files into a JAR so the same paths appear twice
+        File resourceDir = new File(getClass().getClassLoader().getResource(packagePath).getFile());
+        try (java.util.jar.JarOutputStream jarOut =
+                     new java.util.jar.JarOutputStream(Files.newOutputStream(jarFile.toPath()))) {
+            jarOut.putNextEntry(new java.util.jar.JarEntry(packagePath + "/"));
+            jarOut.closeEntry();
+            for (File f : resourceDir.listFiles((d, n) -> n.endsWith(".json"))) {
+                jarOut.putNextEntry(new java.util.jar.JarEntry(packagePath + "/" + f.getName()));
+                jarOut.write(Files.readAllBytes(f.toPath()));
+                jarOut.closeEntry();
+            }
+        }
+
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
+        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{jarFile.toURI().toURL()}, original);
+        Thread.currentThread().setContextClassLoader(urlClassLoader);
+
+        try {
+            List<String> files = SmartUtils.getAllEndPointFiles(packagePath);
+
+            // Must be 25, not 50 — distinct() collapses duplicate paths from two classpath roots
+            assertThat(files.size(), is(25));
+
+            // No duplicate entries
+            assertThat(new java.util.HashSet<>(files).size(), is(files.size()));
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
+    @Test
+    public void getAllEndPointFiles_returnsSortedList() {
+        List<String> files = SmartUtils.getAllEndPointFiles("unit_test_files/engine_unit_test_jsons");
+
+        for (int i = 0; i < files.size() - 1; i++) {
+            assertThat(files.get(i).compareTo(files.get(i + 1)) <= 0, is(true));
+        }
+    }
+
+    @Test
+    public void checkDuplicateScenarios_stillThrows_whenTwoDifferentFiles_shareSameName_afterFileDedup() throws Exception {
+        // Two distinct file paths each declare scenarioName "Given_When_Then_1".
+        // File-path dedup must NOT collapse them — they are different files.
+        // checkDuplicateScenarios must still detect the duplicate scenario name.
+        String packagePath = "unit_test_files/test_scenario_cases";
+
+        Path tempDir = Files.createTempDirectory("scenario-dedup-test");
+        File jarFile = new File(tempDir.toFile(), "scenario-cases.jar");
+
+        File resourceDir = new File(getClass().getClassLoader().getResource(packagePath).getFile());
+        try (java.util.jar.JarOutputStream jarOut =
+                     new java.util.jar.JarOutputStream(Files.newOutputStream(jarFile.toPath()))) {
+            jarOut.putNextEntry(new java.util.jar.JarEntry(packagePath + "/"));
+            jarOut.closeEntry();
+            for (File f : resourceDir.listFiles((d, n) -> n.endsWith(".json"))) {
+                jarOut.putNextEntry(new java.util.jar.JarEntry(packagePath + "/" + f.getName()));
+                jarOut.write(Files.readAllBytes(f.toPath()));
+                jarOut.closeEntry();
+            }
+        }
+
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
+        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{jarFile.toURI().toURL()}, original);
+        Thread.currentThread().setContextClassLoader(urlClassLoader);
+
+        try {
+            // File-path dedup collapses the jar duplicates back to 3 distinct paths.
+            // The two files with the same scenarioName are still two distinct paths — must still throw.
+            expectedException.expect(RuntimeException.class);
+            expectedException.expectMessage("Oops! Duplicate scenario found, either rename or remove extra ones");
+            smartUtils.checkDuplicateScenarios(packagePath);
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
+    @Test
+    public void checkDuplicateScenarios_doesNotThrow_whenSameFileAppearsInTwoClasspathRoots() throws Exception {
+        // Before the distinct() fix, the same file appearing twice from two classpath roots caused
+        // a false-positive duplicate scenario name error. After the fix it must not throw.
+        String packagePath = "unit_test_files/no_dup_scenario_cases";
+
+        String scenario1 = "{\"scenarioName\":\"UniqueScenario_A\",\"steps\":[]}";
+        String scenario2 = "{\"scenarioName\":\"UniqueScenario_B\",\"steps\":[]}";
+
+        // Build a real file: classpath root (temp dir with package structure)
+        Path fsRoot = Files.createTempDirectory("no-false-positive-fs");
+        Path packageDir = fsRoot.resolve(packagePath);
+        Files.createDirectories(packageDir);
+        Files.write(packageDir.resolve("scenario_a.json"), scenario1.getBytes());
+        Files.write(packageDir.resolve("scenario_b.json"), scenario2.getBytes());
+
+        // Build a JAR with the identical files — same relative paths will appear twice
+        File jarFile = new File(fsRoot.toFile(), "mirrored-scenarios.jar");
+        try (java.util.jar.JarOutputStream jarOut =
+                     new java.util.jar.JarOutputStream(Files.newOutputStream(jarFile.toPath()))) {
+            jarOut.putNextEntry(new java.util.jar.JarEntry(packagePath + "/"));
+            jarOut.closeEntry();
+            jarOut.putNextEntry(new java.util.jar.JarEntry(packagePath + "/scenario_a.json"));
+            jarOut.write(scenario1.getBytes());
+            jarOut.closeEntry();
+            jarOut.putNextEntry(new java.util.jar.JarEntry(packagePath + "/scenario_b.json"));
+            jarOut.write(scenario2.getBytes());
+            jarOut.closeEntry();
+        }
+
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
+        // Both classpath roots contain the same two files — paths appear twice before dedup
+        URLClassLoader urlClassLoader = new URLClassLoader(
+                new URL[]{fsRoot.toUri().toURL(), jarFile.toURI().toURL()}, original);
+        Thread.currentThread().setContextClassLoader(urlClassLoader);
+
+        try {
+            // Should not throw — distinct() deduplicates the paths; no true duplicate scenario names
+            smartUtils.checkDuplicateScenarios(packagePath);
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
     // Move this to File Util class
     private static File createCascadeIfNotExisting(String fileName) {
         try {
