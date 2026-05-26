@@ -133,8 +133,15 @@ public class SmartUtils {
             );
         }
 
-        endpointFiles.sort(null);
-        return endpointFiles;
+//        endpointFiles.sort(null);
+//        return endpointFiles;
+
+        List<String> deduplicatedFiles = endpointFiles.stream()
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+        return deduplicatedFiles;
+
     }
 
     private static List<String> collectJsonFilesFromDirectory(URL resourceUrl,
