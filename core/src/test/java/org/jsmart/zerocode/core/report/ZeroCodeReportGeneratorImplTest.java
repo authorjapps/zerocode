@@ -3,6 +3,7 @@ package org.jsmart.zerocode.core.report;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsmart.zerocode.core.di.provider.ObjectMapperProvider;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
+import org.jsmart.zerocode.core.domain.reports.csv.ZeroCodeCsvReport;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -10,11 +11,13 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import java.util.Properties;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_FAIL;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.RESULT_PASS;
@@ -197,6 +200,102 @@ public class ZeroCodeReportGeneratorImplTest {
     public void resolveCsvReportName_returnsDefault_whenZerocodePropertiesIsEmpty() {
         zeroCodeReportGenerator.zerocodeProperties = new Properties();
         assertThat(zeroCodeReportGenerator.resolveCsvReportName(), is(TARGET_FULL_REPORT_CSV_FILE_NAME));
+    }
+
+    // -------------------------------------------------------------------------
+    // buildTableReportContent() unit tests
+    // -------------------------------------------------------------------------
+
+    private static ZeroCodeCsvReport csvRow(String scenario, String step, String method,
+                                            String result, double delay) {
+        return new ZeroCodeCsvReport(scenario, 0, step, 0, "corr-id",
+                result, method, "2026-01-01T00:00:00", "2026-01-01T00:00:01", delay);
+    }
+
+    @Test
+    public void buildTableReport_allRowsHaveSameLineLength() {
+        List<ZeroCodeCsvReport> rows = Arrays.asList(
+                csvRow("Scenario One", "step_one", "GET", RESULT_PASS, 100.0),
+                csvRow("Scenario Two", "step_two", "POST", RESULT_FAIL, 200.0)
+        );
+
+        String table = zeroCodeReportGenerator.buildTableReportContent(rows);
+        String[] lines = table.split("\n");
+
+        // Every line must be the same display-string length
+        // (emoji rows are 1 string-char shorter but emoji is 2-display-wide — check string length)
+        int separatorLen = lines[0].length();
+        for (String line : lines) {
+            assertThat("Line not same width as separator: [" + line + "]",
+                    line.length() == separatorLen || line.length() == separatorLen - 1, is(true));
+        }
+    }
+
+    @Test
+    public void buildTableReport_truncatesLongScenarioAt48Chars() {
+        String longScenario = "GIVEN the very long scenario name that exceeds the column width limit set for the table";
+        List<ZeroCodeCsvReport> rows = Arrays.asList(
+                csvRow(longScenario, "step", "GET", RESULT_PASS, 50.0)
+        );
+
+        String table = zeroCodeReportGenerator.buildTableReportContent(rows);
+        // truncated text ends with ".." and is exactly 48 chars (46 base + "..")
+        assertThat(table, containsString("GIVEN the very long scenario name that exceeds.."));
+    }
+
+    @Test
+    public void buildTableReport_passedRowContainsCheckEmoji() {
+        List<ZeroCodeCsvReport> rows = Arrays.asList(
+                csvRow("My Scenario", "my_step", "GET", RESULT_PASS, 75.0)
+        );
+        assertThat(zeroCodeReportGenerator.buildTableReportContent(rows), containsString("PASSED ✅"));
+    }
+
+    @Test
+    public void buildTableReport_failedRowContainsCrossEmoji() {
+        List<ZeroCodeCsvReport> rows = Arrays.asList(
+                csvRow("My Scenario", "my_step", "POST", RESULT_FAIL, 0.0)
+        );
+        assertThat(zeroCodeReportGenerator.buildTableReportContent(rows), containsString("FAILED ❌"));
+    }
+
+    @Test
+    public void buildTableReport_footerContainsCorrectCounts() {
+        List<ZeroCodeCsvReport> rows = Arrays.asList(
+                csvRow("S1", "step1", "GET",  RESULT_PASS, 10.0),
+                csvRow("S2", "step2", "POST", RESULT_PASS, 20.0),
+                csvRow("S3", "step3", "PUT",  RESULT_FAIL, 5.0)
+        );
+
+        String table = zeroCodeReportGenerator.buildTableReportContent(rows);
+        assertThat(table, containsString("Total: 3"));
+        assertThat(table, containsString("PASSED: 2"));
+        assertThat(table, containsString("FAILED: 1"));
+    }
+
+    @Test
+    public void buildTableReport_footerContainsMinMaxDelayWithPipeSeparator() {
+        List<ZeroCodeCsvReport> rows = Arrays.asList(
+                csvRow("S1", "step1", "GET",  RESULT_PASS, 410.0),
+                csvRow("S2", "step2", "POST", RESULT_PASS, 1.0),
+                csvRow("S3", "step3", "DELETE", RESULT_FAIL, 0.0)
+        );
+
+        String table = zeroCodeReportGenerator.buildTableReportContent(rows);
+        assertThat(table, containsString("Min delay: 0.0 ms  |  Max delay: 410.0 ms"));
+    }
+
+    @Test
+    public void buildTableReport_delayValuesAreRightAligned() {
+        List<ZeroCodeCsvReport> rows = Arrays.asList(
+                csvRow("S1", "step1", "GET", RESULT_PASS, 1000.0),
+                csvRow("S2", "step2", "GET", RESULT_PASS, 1.0)
+        );
+
+        String table = zeroCodeReportGenerator.buildTableReportContent(rows);
+        // Both delay values right-padded to same field width: "    1000.0" and "       1.0"
+        assertThat(table, containsString("    1000.0 |"));
+        assertThat(table, containsString("       1.0 |"));
     }
 
 }

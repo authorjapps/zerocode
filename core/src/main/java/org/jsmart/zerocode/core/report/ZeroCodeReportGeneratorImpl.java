@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -119,9 +120,11 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
             thisReport.getResults().forEach(thisScenario -> {
                 ExtentTest test = extentReports.createTest(thisScenario.getScenarioName());
 
-                 /**This code checks if the scenario has meta data.
-                 If it does, it iterates through each meta data entry and adds it to
-                 the Extent report as an info label.**/
+                /**
+                 * This code checks if the scenario has meta data.
+                 * If it does, it iterates through each meta data entry and adds it to
+                 * the Extent report as an info label.
+                 */
                 if (thisScenario.getMeta() != null) {
                     for (Map.Entry<String, List<String>> entry : thisScenario.getMeta().entrySet()) {
                         String key = entry.getKey();
@@ -133,14 +136,14 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                 // Assign Category
                 test.assignCategory(DEFAULT_REGRESSION_CATEGORY); //Super set
                 String[] hashTagsArray = optionalCategories(thisScenario.getScenarioName()).toArray(new String[0]);
-                if(hashTagsArray.length > 0) {
+                if (hashTagsArray.length > 0) {
                     test.assignCategory(hashTagsArray); //Sub categories
                 }
 
                 // Assign Authors
                 test.assignAuthor(DEFAULT_REGRESSION_AUTHOR); //Super set
                 String[] authorsArray = optionalAuthors(thisScenario.getScenarioName()).toArray(new String[0]);
-                if(authorsArray.length > 0) {
+                if (authorsArray.length > 0) {
                     test.assignAuthor(authorsArray); //Sub authors
                 }
 
@@ -207,12 +210,12 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
     private List<String> deriveNames(String scenarioName, String marker) {
         List<String> nameList = new ArrayList<>();
-        for(String thisName : scenarioName.trim().split(" ")){
-            if(thisName.startsWith(marker) && !thisName.startsWith(AUTHOR_MARKER_OLD)){
+        for (String thisName : scenarioName.trim().split(" ")) {
+            if (thisName.startsWith(marker) && !thisName.startsWith(AUTHOR_MARKER_OLD)) {
                 nameList.add(thisName);
             }
             // Depreciated, but still supports. Remove this via a new ticket
-            if(thisName.startsWith(AUTHOR_MARKER_OLD)){
+            if (thisName.startsWith(AUTHOR_MARKER_OLD)) {
                 nameList.add(thisName);
             }
         }
@@ -446,6 +449,129 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
             throw new RuntimeException(message + e);
         }
 
+    }
+
+    @Override
+    public void generateTableReport() {
+        if (zeroCodeCsvFlattenedRows == null || zeroCodeCsvFlattenedRows.isEmpty()) {
+            LOGGER.warn("No CSV rows available — skipping table report generation.");
+            return;
+        }
+
+        String table = buildTableReportContent(zeroCodeCsvFlattenedRows);
+
+        // --------------------------------------------------------------------------------------
+        // This is intentionally commented out here.
+        // Let the end-users control/print/log via runPostFinished() lifecycle method [OPTIONAL].
+        // Also, at this point, end-users can download or view the .txt report file in "target/"
+        // --------------------------------------------------------------------------------------
+        // LOGGER.info("\n{}", table);
+
+        String txtFileName = resolveCsvReportName().replace(".csv", ".txt");
+        File txtFile = new File(TARGET_FULL_REPORT_DIR + txtFileName);
+        try (PrintWriter pw = new PrintWriter(txtFile)) {
+            pw.print(table);
+        } catch (IOException e) {
+            LOGGER.error("Failed to write table report to {}: {}", txtFile.getPath(), e.getMessage());
+        }
+
+        LOGGER.info("Tabular .txt report written to: {}", txtFile.getPath());
+    }
+
+    String buildTableReportContent(List<ZeroCodeCsvReport> rows) {
+        final int FIELDS_COUNT = 5;
+        final int PADDING = 2;
+        final int SCEN_WIDTH = 48,
+                STEP_WIDTH = 25,
+                METH_WIDTH = 22,
+                RES_WIDTH = 8,
+                DELAY_WIDTH = 10;
+
+        String colSepr = "+" + repeat('-', SCEN_WIDTH + PADDING)
+                + "+" + repeat('-', STEP_WIDTH + PADDING)
+                + "+" + repeat('-', METH_WIDTH + PADDING)
+                + "+" + repeat('-', RES_WIDTH + PADDING)
+                + "+" + repeat('-', DELAY_WIDTH + PADDING)
+                + "+";
+
+        int allFieldWidth = SCEN_WIDTH + STEP_WIDTH + METH_WIDTH + RES_WIDTH + DELAY_WIDTH;
+        int innerPlusCount = FIELDS_COUNT - 1;
+        int footRepeat = (FIELDS_COUNT * PADDING) + allFieldWidth + innerPlusCount;
+
+        String footSep = "+" + repeat('-', footRepeat) + "+";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(colSepr).append('\n');
+        sb.append("| ").append(pad("SCENARIO", SCEN_WIDTH)).append(" | ")
+                .append(pad("STEP", STEP_WIDTH)).append(" | ")
+                .append(pad("METHOD", METH_WIDTH)).append(" | ")
+                .append(pad("RESULT  ", RES_WIDTH)).append(" | ")
+                .append(pad("DELAY (ms)", DELAY_WIDTH)).append(" |\n");
+        sb.append(colSepr).append('\n');
+
+        int passed = 0, failed = 0;
+        double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
+
+        for (ZeroCodeCsvReport row : rows) {
+            String scen = trunc(row.getScenarioName(), SCEN_WIDTH);
+            String step = pad(row.getStepName(), STEP_WIDTH);
+            String method = pad(row.getMethod(), METH_WIDTH);
+            boolean isPass = RESULT_PASS.equals(row.getResult());
+            String resCell = isPass ? "PASSED ✅" : "FAILED ❌";
+            double delay = row.getResponseDelayMilliSec() != null ? row.getResponseDelayMilliSec() : 0.0;
+
+            if (isPass) passed++;
+            else failed++;
+            if (delay < min) min = delay;
+            if (delay > max) max = delay;
+
+            sb.append("| ").append(scen).append(" | ")
+                    .append(step).append(" | ")
+                    .append(method).append(" | ")
+                    .append(resCell).append("| ")
+                    .append(rpad(delay, DELAY_WIDTH)).append(" |\n");
+        }
+
+        String summary = String.format(
+                "Total: %d  |  PASSED: %d  |  FAILED: %d  |  Min delay: %s ms  |  Max delay: %s ms",
+                rows.size(), passed, failed, fmt(min), fmt(max));
+
+        sb.append(footSep).append('\n');
+        sb.append("| ").append(pad(summary, footRepeat - PADDING)).append(" |\n");
+        sb.append(footSep).append('\n');
+
+        return sb.toString();
+    }
+
+    private static String repeat(char fillChar, int count) {
+        char[] arr = new char[count];
+        Arrays.fill(arr, fillChar);
+        return new String(arr);
+    }
+
+    private static String pad(String text, int width) {
+        if (text == null) text = "";
+        if (text.length() >= width) return text.substring(0, width);
+        return text + repeat(' ', width - text.length());
+    }
+
+    private static String trunc(String text, int width) {
+        if (text == null) text = "";
+        text = text.trim();
+        if (text.length() <= width) return pad(text, width);
+        return text.substring(0, width - 2) + "..";
+    }
+
+    private static String rpad(double value, int width) {
+        String text = fmt(value);
+        if (text.length() >= width) return text;
+        return repeat(' ', width - text.length()) + text;
+    }
+
+    private static String fmt(double value) {
+        return (value == Math.floor(value) && !Double.isInfinite(value))
+                ? String.valueOf((long) value) + ".0"
+                : String.valueOf(value);
     }
 
     private static Date utilDateOf(LocalDateTime localDateTime) {
