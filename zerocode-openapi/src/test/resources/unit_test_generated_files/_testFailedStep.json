@@ -1,0 +1,17 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testFailedStep - Test scenario",
+  "steps" : [ {
+    "name" : "/testFailedStep - Second step des not fail",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/testFailedStep",
+    "request" : {
+      "body" : {
+        "okField" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+      }
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

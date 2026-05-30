@@ -1,0 +1,61 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/pet - Test scenario",
+  "steps" : [ {
+    "name" : "/pet - Add a new pet to the store",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/pet",
+    "request" : {
+      "body" : {
+        "id" : "${RANDOM.NUMBER:8}",
+        "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "category" : {
+          "id" : "${RANDOM.NUMBER:8}",
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+        },
+        "photoUrls" : [ "${RANDOM.STRING:12}${RANDOM.NUMBER:4}", "${RANDOM.STRING:12}${RANDOM.NUMBER:4}" ],
+        "tags" : [ {
+          "id" : "${RANDOM.NUMBER:8}",
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+        }, {
+          "id" : "${RANDOM.NUMBER:8}",
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+        } ],
+        "status" : "sold"
+      }
+    },
+    "assertions" : {
+      "status" : 200
+    },
+    "ignoreStep" : false
+  }, {
+    "name" : "/pet - Update an existing pet",
+    "operation" : "PUT",
+    "method" : "PUT",
+    "url" : "/pet",
+    "request" : {
+      "body" : {
+        "id" : "${RANDOM.NUMBER:8}",
+        "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "category" : {
+          "id" : "${RANDOM.NUMBER:8}",
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+        },
+        "photoUrls" : [ "${RANDOM.STRING:12}${RANDOM.NUMBER:4}", "${RANDOM.STRING:12}${RANDOM.NUMBER:4}" ],
+        "tags" : [ {
+          "id" : "${RANDOM.NUMBER:8}",
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+        }, {
+          "id" : "${RANDOM.NUMBER:8}",
+          "name" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+        } ],
+        "status" : "sold"
+      }
+    },
+    "assertions" : {
+      "status" : 200
+    },
+    "ignoreStep" : false
+  } ]
+}

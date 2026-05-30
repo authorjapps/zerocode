@@ -1,0 +1,19 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testHeaderParamMediatype - Test scenario",
+  "steps" : [ {
+    "name" : "/testHeaderParamMediatype - Header parameters and mediatype header",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/testHeaderParamMediatype",
+    "request" : {
+      "headers" : {
+        "headerParam" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "Content-Type" : "application/octet-stream"
+      },
+      "body" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}
