@@ -94,6 +94,7 @@
         <!-- Release Build will not fail if error occurs during javadoc generation -->
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
         <google.protobuf.version>3.24.4</google.protobuf.version>
+        <aws.sdk.version>2.25.0</aws.sdk.version>
     </properties>
 
     <dependencyManagement>
@@ -316,6 +317,11 @@
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java-util</artifactId>
                 <version>${google.protobuf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>s3</artifactId>
+                <version>${aws.sdk.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

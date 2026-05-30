@@ -32,4 +32,13 @@ public interface ApiServiceExecutor {
      */
     String executeKafkaService(String kafkaServers, String kafkaTopic, String methodName, String requestJson, ScenarioExecutionState scenarioExecutionState);
 
+    /**
+     *
+     * @param bucketName The S3 bucket name extracted from the step URL (e.g. "s3-bucket:my-bucket" → "my-bucket")
+     * @param operation  An S3 operation: upload, download, or list
+     * @param requestJson A JSON payload with fields matching the operation (key, file, localPath, prefix)
+     * @return String The S3 operation result in JSON
+     */
+    String executeS3Service(String bucketName, String operation, String requestJson);
+
 }

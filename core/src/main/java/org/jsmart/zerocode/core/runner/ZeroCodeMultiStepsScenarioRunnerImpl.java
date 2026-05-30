@@ -10,6 +10,7 @@ import com.google.inject.name.Named;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
+import static org.jsmart.zerocode.core.constants.ZerocodeConstants.S3_BUCKET;
 
 import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.jsmart.zerocode.core.domain.Parameterized;
@@ -487,6 +488,24 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
                 String topicName = url.substring(KAFKA_TOPIC.length());
                 executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJsonMaskRemoved, scenarioExecutionState);
+                break;
+
+            case S3_CALL:
+                correlLogger.aRequestBuilder()
+                        .relationshipId(logPrefixRelationshipId)
+                        .requestTimeStamp(requestTimeStamp)
+                        .step(thisStepName)
+                        .url(url)
+                        .method(operationName.toUpperCase())
+                        .id(stepId)
+                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
+
+                String bucketName = url.substring(S3_BUCKET.length());
+                String s3Operation = operationName;
+                if (s3Operation.toUpperCase().startsWith("S3.")) {
+                    s3Operation = s3Operation.substring(3);
+                }
+                executionResult = apiExecutor.executeS3Service(bucketName, s3Operation, resolvedRequestJsonMaskRemoved);
                 break;
 
             case NONE:
