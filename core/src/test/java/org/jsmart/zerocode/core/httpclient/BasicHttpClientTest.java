@@ -2,6 +2,7 @@ package org.jsmart.zerocode.core.httpclient;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -9,6 +10,9 @@ import java.util.Map;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.RequestBuilder;
@@ -28,6 +32,8 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class BasicHttpClientTest {
     private BasicHttpClient basicHttpClient;
@@ -215,5 +221,24 @@ public class BasicHttpClientTest {
         BasicHttpClient basicHttpClient = new BasicHttpClient();
         final String responseBodyActual = (String) basicHttpClient.handleResponse(closeableHttpResponse).getEntity();
         assertThat(responseBodyActual, CoreMatchers.is(response));
+    }
+
+    @Test
+    public void willHandleUnknownLengthEmptyResponse() throws Exception {
+        CloseableHttpResponse closeableHttpResponse = mock(CloseableHttpResponse.class);
+        StatusLine statusLine = mock(StatusLine.class);
+        HttpEntity entity = mock(HttpEntity.class);
+
+        when(closeableHttpResponse.getStatusLine()).thenReturn(statusLine);
+        when(closeableHttpResponse.getEntity()).thenReturn(entity);
+        when(closeableHttpResponse.getAllHeaders()).thenReturn(new Header[0]);
+        when(statusLine.getStatusCode()).thenReturn(401);
+        when(entity.getContentLength()).thenReturn(-1L);
+        when(entity.getContent()).thenThrow(new EOFException());
+
+        javax.ws.rs.core.Response handledResponse = basicHttpClient.handleResponse(closeableHttpResponse);
+
+        assertThat(handledResponse.getStatus(), is(401));
+        assertThat(handledResponse.getEntity(), is((Object) null));
     }
 }
