@@ -84,20 +84,10 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
         TestPackageRoot rootPackageAnnotation = testClass.getAnnotation(TestPackageRoot.class);
         JsonTestCases jsonTestCasesAnnotation = testClass.getAnnotation(JsonTestCases.class);
         Scenarios scenariosAnnotation = testClass.getAnnotation(Scenarios.class);
-        validateSuiteAnnotationPresent(rootPackageAnnotation, jsonTestCasesAnnotation, scenariosAnnotation);
 
-        if (rootPackageAnnotation != null) {
-            /*
-             * Different scenarios with same name -or- Same scenarios with same name more than once is prevented
-             */
-            smartUtils.checkDuplicateScenarios(rootPackageAnnotation.value());
-
-            return smartUtils.getScenarioSpecListByPackage(rootPackageAnnotation.value());
-
-        } else {
-            List<String> allEndPointFiles = readTestScenarioFiles();
-
-            return allEndPointFiles.stream()
+        // Explicit file list (@Scenarios / @JsonTestCases) — not a folder concern, ignore "zerocode.folder" value
+        if (scenariosAnnotation != null || jsonTestCasesAnnotation != null) {
+            return readTestScenarioFiles().stream()
                     .map(testResource -> {
                         try {
                             return smartUtils.scenarioFileToJava(testResource, ScenarioSpec.class);
@@ -107,6 +97,21 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
                     })
                     .collect(Collectors.toList());
         }
+
+        // Folder-based: zerocode.folder system property overrides @TestPackageRoot
+        String folderOverride = System.getProperty("zerocode.folder");
+
+        if (folderOverride == null || folderOverride.trim().isEmpty()) {
+            validateSuiteAnnotationPresent(rootPackageAnnotation, null, null);
+        }
+
+        if (folderOverride != null && !folderOverride.trim().isEmpty()) {
+            smartUtils.checkDuplicateScenarios(folderOverride);
+            return smartUtils.getScenarioSpecListByPackage(folderOverride);
+        }
+
+        smartUtils.checkDuplicateScenarios(rootPackageAnnotation.value());
+        return smartUtils.getScenarioSpecListByPackage(rootPackageAnnotation.value());
     }
 
     /**
@@ -139,15 +144,26 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
     @Override
     public void run(RunNotifier notifier) {
         RunListener reportListener = createTestUtilityListener();
-        notifier.addListener(reportListener);
+        // ------------------------------------------------------------------------
+        // Commented this to prevent duplicate JSON report generation : 16/05/2026
+        // Uncomment if it breaks anything for Gradle. Maven should be fine.
+        // ------------------------------------------------------------------------
+        // notifier.addListener(reportListener);
 
         LOGGER.debug("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
+        // Gradle doesn't fire JUnit RunListener events (known Gradle bug).
+        // When the flag is set, skip normal listener registration — Gradle would ignore it anyway.
+        // Maven/IDE: flag absent, so listener registers normally via JUnit lifecycle.
         if (!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
+            // This is for usual Maven flow
             notifier.addListener(reportListener);
         }
 
         super.run(notifier);
 
+        // Gradle Flow starts here: manually fire testRunFinished() to generate reports,
+        // since Gradle never triggers the JUnit RunListener that would do it.
+        // See inside, it checks the Gradle flags(if supplied by user)
         handleNoRunListenerReport(reportListener);
     }
 
@@ -188,12 +204,20 @@ public class ZeroCodePackageRunner extends ParentRunner<ScenarioSpec> {
 
     }
 
+
     // This is exact duplicate of ZeroCodeUnitRunner.getMainModuleInjector
     // Refactor and maintain a single method in RunnerUtils
     public Injector getMainModuleInjector() {
         //TODO: Synchronise this with e.g. synchronized (ZeroCodePackageRunner.class) {}
-        final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
-        String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
+
+        // 1. Read system property
+        String serverEnv = System.getProperty("zerocode.env");
+
+        // 2. Fallback to annotation if system property not supplied
+        if (serverEnv == null || serverEnv.trim().isEmpty()) {
+            final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
+            serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
+        }
 
         serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 

@@ -2,11 +2,13 @@
 ===
 A no-code automated testing framework for Data streams(Kafka), microservices APIs, and databases using JSON.
 
+Next, install the [Steply](https://github.com/QABEES/steply?tab=readme-ov-file#steply) CLI to run tests in language-independent mode.
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-8A2BE2)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
 [![Kafka Testing](https://img.shields.io/badge/kafka-testing-blue)](https://zerocode-tdd.tddfy.com/kafka/Kafka-Testing-Introduction)
 
+---
 
 **Latest release:🏹** [![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) <br/>
 **CI Testing:** ![example workflow](https://github.com/authorjapps/zerocode/actions/workflows/main.yml/badge.svg)
@@ -18,6 +20,13 @@ A no-code automated testing framework for Data streams(Kafka), microservices API
 
 Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka Real Time Data Streams](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) and much more. 
 It has the best of best ideas and practices from the community to keep it super simple, and the adoption is rapidly growing among the developers & testers community.
+
+# Quick Start
+Install Steply CLI from [here](https://github.com/QABEES/steply?tab=readme-ov-file#steply) 
+and run an automated validation test:
+```
+steply --scenario tests/validate_github_user.json --target-env env/sit.properties
+```
 
 Documentation
 ===
@@ -135,6 +144,23 @@ or
 Zerocode-TDD is used by many companies such as Vocalink, HSBC, HomeOffice(Gov) and [many others](https://github.com/authorjapps/zerocode/wiki#smart-projects-using-zerocode) to achieve accurate production drop of their micro-services, data-pipelines etc. 
 
 Also, learn more about [Validators Vs Matchers](https://zerocode-tdd.tddfy.com/assertions/Validators-and-Matchers) here.
+
+## JSON Schema for Test Scenario
+
+A JSON Schema (Draft-07) for scenario files is published at [`schema/zerocode-scenario-schema.json`](schema/zerocode-scenario-schema.json) and pointed to from `robots.txt` at the project root. Use it to:
+
+- **Validate scenarios from the CLI**, e.g. with `ajv-cli`:
+
+  ```bash
+  # Note: This is optional step, only do this if you have npx and ajv-cli already installed
+  # npx: Runs npm package without global install
+  npx ajv-cli validate -s schema/zerocode-scenario-schema.json -d core/src/test/resources/templates/example_scenario_1.json
+  ```
+
+## AI Prompt :  Generate a Scenarios using `Claude Code` or `CoPilot` or others:
+> Write a Zerocode scenario that conforms to `schema/zerocode-scenario-schema.json` for `<your API or Kafka or Database test idea>`. Use the `assertions` block (not `verify`) and include retry of 3 attempts with 500ms delay.
+
+Two starter templates live under [`core/src/test/resources/templates/`](core/src/test/resources/templates/): `example_scenario_1.json` (typical REST flow with two steps), and `example_scenario_2.json` (parameterized scenario with both `valueSource` and `csvSource`).
 
 Happy Testing! <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>
 

@@ -1,0 +1,3 @@
+SELECT ID, NAME, to_char(START, 'yyyy-MM-dd') AS START, ACTIVE
+ FROM PEOPLE
+  WHERE ACTIVE = ?

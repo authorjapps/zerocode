@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.DSL_FORMAT;
 import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
@@ -116,7 +118,7 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
                 return scenario;
             }
 
-            String[] headers = retrieveCsvHeaders(parameterizedCsvList.get(0));
+            String[] headers = retrieveCsvHeaders(parameterizedCsvList.get(0),scenario.getParameterized().isWithHeaders());
 
             paramIndex = headers == null ? paramIndex : paramIndex+1;
 
@@ -126,6 +128,8 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
 
             String resultantStepJson = replaceWithValues(stepJson, valuesMap);
 
+            ensureAllParamsResolved(resultantStepJson, headers);
+
             return objectMapper.readValue(resultantStepJson, ScenarioSpec.class);
 
         } catch (Exception exx) {
@@ -133,10 +137,13 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
         }
     }
 
-    private String[] retrieveCsvHeaders(String csvHeaderLine) {
+    private String[] retrieveCsvHeaders(String csvHeaderLine, Boolean isWithHeaders) {
         String[] parsedHeaderLine = csvParser.parseLine(csvHeaderLine + LINE_SEPARATOR);
-        boolean hasHeader = parsedHeaderLine.length > 0 && Arrays.stream(parsedHeaderLine).allMatch(s -> s.matches("^\\|.*\\|$"));
-        return !hasHeader ? null : Arrays.stream(parsedHeaderLine).map(s -> s.substring(1,s.length()-1)).toArray(String[]::new);
+        if (isWithHeaders && parsedHeaderLine.length > 0) {
+            return parsedHeaderLine;
+        } else {
+            return null;
+        }
     }
 
     private Map<String, Object> resolveCsvLine(String csvLine, String[] headers) {
@@ -159,4 +166,19 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
         return sub.replace(stepJson);
     }
 
+    private void ensureAllParamsResolved(String resultantStepJson, String[] availableHeaders) {
+        Pattern pattern = Pattern.compile("\\$\\{PARAM\\.([^}]+)\\}");
+        Matcher matcher = pattern.matcher(resultantStepJson);
+        
+        if (matcher.find()) {
+            String msg;
+            if (availableHeaders == null || availableHeaders.length == 0) {
+                msg = "No available headers found. Ensure your CSV file is not empty and that '\"withHeaders\": true' is defined in the scenario.";
+            } else {
+                msg = "Available headers are: [" + String.join(", ", availableHeaders) + "].";
+            }
+            throw new RuntimeException("Invalid CSV header referenced in scenario. The column '" + matcher.group(1) + "' does not exist. " + msg);
+            
+        }
+    }
 }

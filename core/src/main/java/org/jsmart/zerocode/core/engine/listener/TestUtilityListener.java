@@ -58,6 +58,7 @@ public class TestUtilityListener extends RunListener {
     private void generateChartsAndReports() {
 
         reportGenerator.generateCsvReport();
+        reportGenerator.generateTableReport();
 
         /**
          * Not compatible with open source license i.e. why not activated. But if it has to be used inside intranet,

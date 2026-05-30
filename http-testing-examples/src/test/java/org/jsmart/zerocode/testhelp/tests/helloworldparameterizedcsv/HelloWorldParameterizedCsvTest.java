@@ -21,8 +21,8 @@ public class HelloWorldParameterizedCsvTest {
     }
 
     @Test
-    @Scenario("parameterized_csv/hello_world_test_parameterized_csv_source_file_ignore_header.json")
-    public void testGetByUserNames_csvSourceFiles_ignoringHeader() throws Exception {
+    @Scenario("parameterized_csv/hello_world_test_parameterized_csv_source_file_standard_headers.json")
+    public void testGetByUserNames_csvSourceFiles_standard_headers() throws Exception {
     }
 
 }

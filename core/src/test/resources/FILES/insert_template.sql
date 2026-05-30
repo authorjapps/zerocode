@@ -1,0 +1,3 @@
+INSERT INTO
+    PEOPLE (ID, NAME, START, ACTIVE)
+ VALUES (?, ?, ?, ?);

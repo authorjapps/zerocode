@@ -7,6 +7,7 @@ public interface ZeroCodeReportConstants {
     String TARGET_FULL_REPORT_DIR = "target/";
     String TARGET_REPORT_DIR = "target/zerocode-test-reports/";
     String TARGET_FULL_REPORT_CSV_FILE_NAME = "zerocode-junit-granular-report.csv";
+    String TARGET_FULL_REPORT_TXT_FILE_NAME = "zerocode-junit-granular-report.txt";
     String TARGET_FILE_NAME = "target/zerocode-junit-interactive-fuzzy-search.html";
     String HIGH_CHART_HTML_FILE_NAME = "zerocode_results_chart";
     String AUTHOR_MARKER_OLD = "@@"; //Deprecated
@@ -20,6 +21,10 @@ public interface ZeroCodeReportConstants {
     String LINK_LABEL_NAME = "Spike Chart(Click here)";
     String ZEROCODE_JUNIT = "zerocode.junit";
     String CHARTS_AND_CSV = "gen-smart-charts-csv-reports";
+
+    String ZEROCODE_PROPERTIES_FILE = "zerocode.properties";
+    String REPORT_HTML_FILE_NAME_KEY = "zerocode.report.html.name";
+    String REPORT_CSV_FILE_NAME_KEY = "zerocode.report.csv.name";
 
     // Custom js and css for extent report
     String EXTENT_ADDITIONAL_JS = "document.querySelector('.vheader').insertAdjacentHTML('afterbegin'," +

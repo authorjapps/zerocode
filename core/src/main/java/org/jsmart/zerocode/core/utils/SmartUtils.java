@@ -4,9 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.classpath.ClassPath;
-import com.google.classpath.ClassPathFactory;
-import com.google.classpath.RegExpResourceFilter;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipException;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -17,7 +21,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -91,19 +94,115 @@ public class SmartUtils {
     	return fileName.replaceAll("[^A-Za-z0-9 \\-_.]", "_");
     }
 
-    public static List<String> getAllEndPointFiles(String packageName) {
-        if(isValidAbsolutePath(packageName)){
-            return retrieveScenariosByAbsPath(packageName);
-        }
-        ClassPathFactory factory = new ClassPathFactory();
-        ClassPath jvmClassPath = factory.createFromJVM();
-        String[] allSimulationFiles = jvmClassPath.findResources(packageName, new RegExpResourceFilter(".*", ".*\\.json$"));
-        if (null == allSimulationFiles || allSimulationFiles.length == 0) {
-            LOGGER.error("Test folder is empty or not correctly setup.");
-            throw new RuntimeException("NothingFoundHereException: Check the (" + packageName + ") integration test repo folder(empty?). ");
+    public static List<String> getAllEndPointFiles(String packagePath) {
+        if (isValidAbsolutePath(packagePath)) {
+            return retrieveScenariosByAbsPath(packagePath);
         }
 
-        return Arrays.asList(allSimulationFiles);
+        List<String> endpointFiles = new ArrayList<>();
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+
+        try {
+            Enumeration<URL> resourceUrls = contextClassLoader.getResources(packagePath);
+
+            while (resourceUrls.hasMoreElements()) {
+                URL resourceUrl = resourceUrls.nextElement();
+                String protocol = resourceUrl.getProtocol();
+
+                if ("file".equals(protocol)) {
+                    endpointFiles.addAll(
+                            collectJsonFilesFromDirectory(resourceUrl, packagePath)
+                    );
+
+                } else if ("jar".equals(protocol)) {
+                    endpointFiles.addAll(
+                            collectJsonFilesFromJar(resourceUrl, packagePath)
+                    );
+                }
+            }
+
+        } catch (IOException | URISyntaxException ex) {
+            LOGGER.error("Exception scanning test package: {} - {}", packagePath, ex.getMessage(), ex);
+            throw new RuntimeException("Exception scanning test package: " + packagePath, ex);
+        }
+
+        if (endpointFiles.isEmpty()) {
+            LOGGER.error("Test folder is empty or not correctly setup.");
+            throw new RuntimeException(
+                    "NothingFoundHereException: Check the (" + packagePath + ") integration test repo folder(empty?). "
+            );
+        }
+
+//        endpointFiles.sort(null);
+//        return endpointFiles;
+
+        List<String> deduplicatedFiles = endpointFiles.stream()
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+        return deduplicatedFiles;
+
+    }
+
+    private static List<String> collectJsonFilesFromDirectory(URL resourceUrl,
+                                                              String packagePath)
+            throws URISyntaxException {
+
+        File directory = new File(resourceUrl.toURI());
+        return collectJsonFilesFromDir(directory, packagePath);
+    }
+
+    private static List<String> collectJsonFilesFromJar(URL resourceUrl,
+                                                        String packagePath)
+            throws IOException {
+
+        List<String> jsonFiles = new ArrayList<>();
+
+        String jarUrlPath = resourceUrl.getPath();
+        String jarFilePath = jarUrlPath.substring(5, jarUrlPath.indexOf("!"));
+        String packageEntryPrefix = packagePath + "/";
+
+        try (JarFile jarFile = new JarFile(jarFilePath)) {
+
+            Enumeration<JarEntry> jarEntries = jarFile.entries();
+
+            while (jarEntries.hasMoreElements()) {
+                JarEntry jarEntry = jarEntries.nextElement();
+
+                String entryName = jarEntry.getName();
+
+                boolean isJsonFile =
+                        entryName.startsWith(packageEntryPrefix)
+                                && entryName.endsWith(".json")
+                                && !jarEntry.isDirectory();
+
+                if (isJsonFile) {
+                    jsonFiles.add(entryName);
+                }
+            }
+
+        } catch (ZipException ex) {
+            LOGGER.warn(
+                    "Found corrupt jar(this is very unusual, clean the .m2 repo), skipping corrupt JAR while scanning test resources: {} - {}",
+                    jarFilePath,
+                    ex.getMessage()
+            );
+        }
+
+        return jsonFiles;
+    }
+
+    static List<String> collectJsonFilesFromDir(File dir, String packageName) {
+        List<String> result = new ArrayList<>();
+        if (!dir.exists() || !dir.isDirectory()) return result;
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                result.addAll(collectJsonFilesFromDir(file, packageName + "/" + file.getName()));
+            } else if (file.getName().endsWith(".json")) {
+                result.add(packageName + "/" + file.getName());
+            }
+        }
+        return result;
     }
 
     public static List<String> retrieveScenariosByAbsPath(String packageName) {
@@ -165,7 +264,7 @@ public class SmartUtils {
         getScenarioSpecListByPackage(testPackageName).stream()
                 .forEach(scenarioSpec -> {
                     if (!oops.add(scenarioSpec.getScenarioName())) {
-                        throw new RuntimeException("Oops! Can not run with multiple Scenarios with same name. Found duplicate: " + scenarioSpec.getScenarioName());
+                        throw new RuntimeException("Oops! Duplicate scenario found, either rename or remove extra ones -> " + scenarioSpec.getScenarioName());
                     }
 
                     /**

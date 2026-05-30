@@ -58,11 +58,11 @@ public class RunnerUtils {
 
             final String propertyKey = allTokens.get(0);
 
-            LOGGER.warn("Could not find env value for env property '{}', So using '{}'", propertyKey, serverEnv);
+            LOGGER.info("Could not find env value for env property '{}', So using '{}'", propertyKey, serverEnv);
 
         } else {
 
-            LOGGER.warn("Could not find env specific property, So using '{}'", serverEnv);
+            LOGGER.info("Could not find env specific property, So using '{}'", serverEnv);
 
         }
 

@@ -100,23 +100,49 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
         RunListener reportListener = createTestUtilityListener();
 
         LOGGER.debug("System property " + ZEROCODE_JUNIT + "=" + getProperty(ZEROCODE_JUNIT));
+        // Gradle doesn't fire JUnit RunListener events (known Gradle bug).
+        // When the flag is set, skip normal listener registration — Gradle would ignore it anyway.
+        // Maven/IDE: flag absent, so listener registers normally via JUnit lifecycle.
         if (!CHARTS_AND_CSV.equals(getProperty(ZEROCODE_JUNIT))) {
             notifier.addListener(reportListener);
         }
 
         super.run(notifier);
 
+        // Gradle bypass: manually fire testRunFinished() to generate reports,
+        // since Gradle never triggers the JUnit RunListener that would do it.
         handleNoRunListenerReport(reportListener);
     }
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 
-        final Description description = describeChild(method);
-        JsonTestCase jsonTestCaseAnno = method.getMethod().getAnnotation(JsonTestCase.class);
-        if(jsonTestCaseAnno == null){
-            jsonTestCaseAnno = evalScenarioToJsonTestCase(method.getMethod().getAnnotation(Scenario.class));
+        JsonTestCase jsonTestCaseAnno;
+
+        // 1. System property override
+        String scenarioOverride = System.getProperty("zerocode.scenario");
+
+        if (scenarioOverride != null && !scenarioOverride.trim().isEmpty()) {
+            jsonTestCaseAnno = new JsonTestCase() {
+
+                @Override
+                public Class<? extends Annotation> annotationType() {
+                    return JsonTestCase.class;
+                }
+
+                @Override
+                public String value() {
+                    return scenarioOverride;
+                }
+            };
+        } else {
+            jsonTestCaseAnno = method.getMethod().getAnnotation(JsonTestCase.class);
+            if (jsonTestCaseAnno == null) {
+                jsonTestCaseAnno = evalScenarioToJsonTestCase(method.getMethod().getAnnotation(Scenario.class));
+            }
         }
+
+        final Description description = describeChild(method);
 
         if (isIgnored(method)) {
 
@@ -149,11 +175,20 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     public Injector getMainModuleInjector() {
-        // Synchronise this with an object lock e.g. synchronized (ZeroCodeUnitRunner.class) {}
         synchronized (this) {
-            final TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
-            String serverEnv = envAnnotation != null ? envAnnotation.value() : "config_hosts.properties";
 
+            // 1. Read system property override
+            String serverEnv = System.getProperty("zerocode.env");
+
+            // 2. Fallback to annotation
+            if (serverEnv == null || serverEnv.trim().isEmpty()) {
+                TargetEnv envAnnotation = testClass.getAnnotation(TargetEnv.class);
+                serverEnv = envAnnotation != null
+                        ? envAnnotation.value()
+                        : "config_hosts.properties";
+            }
+
+            // 3. Existing resolution logic
             serverEnv = getEnvSpecificConfigFile(serverEnv, testClass);
 
             Class<? extends BasicHttpClient> runtimeHttpClient = createCustomHttpClientOrDefault();
@@ -241,13 +276,30 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
     }
 
     private List<String> getSmartChildrenList() {
+        String scenarioOverride = System.getProperty("zerocode.scenario");
         List<FrameworkMethod> children = getChildren();
         children.forEach(
                 frameworkMethod -> {
-                    JsonTestCase jsonTestCaseAnno = frameworkMethod.getAnnotation(JsonTestCase.class);
+                    JsonTestCase jsonTestCaseAnno;
+                    if (scenarioOverride != null && !scenarioOverride.trim().isEmpty()) {
+                        jsonTestCaseAnno = new JsonTestCase() {
+                            @Override
+                            public Class<? extends Annotation> annotationType() {
+                                return JsonTestCase.class;
+                            }
 
-                    if(jsonTestCaseAnno == null){
-                        jsonTestCaseAnno = evalScenarioToJsonTestCase(frameworkMethod.getAnnotation(Scenario.class));
+                            @Override
+                            public String value() {
+                                return scenarioOverride;
+                            }
+                        };
+
+                    } else {
+                        jsonTestCaseAnno = frameworkMethod.getAnnotation(JsonTestCase.class);
+                        if (jsonTestCaseAnno == null) {
+                            jsonTestCaseAnno =
+                                    evalScenarioToJsonTestCase(frameworkMethod.getAnnotation(Scenario.class));
+                        }
                     }
 
                     if (jsonTestCaseAnno != null) {

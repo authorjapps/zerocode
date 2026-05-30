@@ -52,7 +52,7 @@ public class ParameterizedTest {
         assertThat(parameterized.getValueSource(), hasItem(true));
 
         String actualJson = mapper.writeValueAsString(parameterized);
-        assertThat(actualJson, is("{\"valueSource\":[\"hello\",123,true],\"csvSource\":[\"1,        2,        200\",\"11,      22,        400\"]}"));
+        assertThat(actualJson, is("{\"valueSource\":[\"hello\",123,true],\"csvSource\":[\"1,        2,        200\",\"11,      22,        400\"],\"withHeaders\":false}"));
     }
 
     @Test
@@ -77,21 +77,6 @@ public class ParameterizedTest {
         //then
         assertThat(parameterized.getCsvSource(), hasItem("octocat,The Octocat,San Francisco,583231"));
         assertThat(parameterized.getCsvSource(), hasItem("siddhagalaxy,Sidd,UK,33847730"));
-    }
-
-    @Test
-    public void shouldReadCsvSourceFromCsvFileIgnoringHeader() throws IOException {
-        //given
-        String jsonDocumentAsString =
-                smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/08.2_parameterized_csv_source_from_file_containing_header.json");
-
-        //when
-        Parameterized parameterized = mapper.readValue(jsonDocumentAsString, Parameterized.class);
-
-        //then
-        assertThat(parameterized.getCsvSource(), hasItem("octocat,The Octocat,San Francisco,583231"));
-        assertThat(parameterized.getCsvSource(), hasItem("siddhagalaxy,Sidd,UK,33847730"));
-        assertThat(parameterized.getCsvSource(), everyItem(not(is("user,name,city,userid"))));//assert header is ignored
     }
 
 }

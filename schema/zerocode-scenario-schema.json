@@ -1,0 +1,167 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://github.com/authorjapps/zerocode/blob/main/schema/zerocode-scenario-schema.json",
+    "title": "Zerocode Scenario",
+    "description": "JSON Schema for a Zerocode-TDD scenario file. Mirrors org.jsmart.zerocode.core.domain.ScenarioSpec, Step, Retry, Validator, and Parameterized.",
+    "type": "object",
+    "required": ["scenarioName", "steps"],
+    "additionalProperties": false,
+    "properties": {
+        "scenarioName": {
+            "type": "string",
+            "description": "Human-readable name for the scenario (ScenarioSpec.scenarioName)."
+        },
+        "stepLoop": {
+            "type": "integer",
+            "description": "Number of times the scenario's steps should be executed (ScenarioSpec.loop, mapped from JSON property 'stepLoop').",
+            "minimum": 0
+        },
+        "ignoreStepFailures": {
+            "type": "boolean",
+            "description": "When true, a failing step does not abort the scenario (ScenarioSpec.ignoreStepFailures)."
+        },
+        "steps": {
+            "type": "array",
+            "description": "Ordered list of HTTP / Kafka / DB / lib steps to execute (ScenarioSpec.steps).",
+            "items": { "$ref": "#/definitions/step" }
+        },
+        "parameterized": {
+            "$ref": "#/definitions/parameterized",
+            "description": "Optional value-based or CSV-based parameterization for the scenario (ScenarioSpec.parameterized)."
+        },
+        "meta": {
+            "type": "object",
+            "description": "Free-form metadata (ScenarioSpec.meta). Each key maps to a list of strings.",
+            "additionalProperties": {
+                "type": "array",
+                "items": { "type": "string" }
+            }
+        }
+    },
+    "definitions": {
+        "step": {
+            "type": "object",
+            "description": "A single step in a scenario (org.jsmart.zerocode.core.domain.Step).",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Step identifier; referenced from later steps via JSON-path expressions like $.<name>.response.body.id."
+                },
+                "stepLoop": {
+                    "type": "integer",
+                    "description": "Number of times to execute this step.",
+                    "minimum": 0
+                },
+                "retry": { "$ref": "#/definitions/retry" },
+                "method": {
+                    "type": "string",
+                    "description": "Java method to invoke for non-HTTP steps; pairs with 'operation' for HTTP."
+                },
+                "operation": {
+                    "type": "string",
+                    "description": "HTTP operation (GET, POST, PUT, PATCH, DELETE) for HTTP steps; for non-HTTP steps this names the operation under 'method'."
+                },
+                "url": {
+                    "type": "string",
+                    "description": "Target URL or library/method address. Supports $.path expressions for inter-step value resolution."
+                },
+                "request": {
+                    "description": "Request body / payload for the step. Free-form JSON (Step.request is JsonNode).",
+                    "type": ["object", "array", "string", "number", "boolean", "null"]
+                },
+                "validators": {
+                    "type": "array",
+                    "description": "Optional path/value assertions (org.jsmart.zerocode.core.domain.Validator).",
+                    "items": { "$ref": "#/definitions/validator" }
+                },
+                "sort": {
+                    "description": "Optional sort directives applied to the response before assertions (Step.sort, JsonNode).",
+                    "type": ["object", "array", "string", "number", "boolean", "null"]
+                },
+                "assertions": {
+                    "description": "Path/value pairs to assert against the response (Step.assertions, JsonNode).",
+                    "type": ["object", "array", "string", "number", "boolean", "null"]
+                },
+                "verify": {
+                    "description": "Alternative assertions block (Step.verify, JsonNode).",
+                    "type": ["object", "array", "string", "number", "boolean", "null"]
+                },
+                "verifyMode": {
+                    "type": "string",
+                    "description": "Verification mode for the verify block (e.g. 'STRICT', 'LENIENT', 'IGNORE_EXTRA_FIELDS')."
+                },
+                "ignoreStep": {
+                    "type": "boolean",
+                    "description": "When true, the step is skipped at runtime (Step.ignoreStep)."
+                }
+            }
+        },
+        "retry": {
+            "type": "object",
+            "description": "Retry configuration for a step (org.jsmart.zerocode.core.domain.Retry).",
+            "additionalProperties": false,
+            "properties": {
+                "max": {
+                    "type": "integer",
+                    "description": "Maximum number of retry attempts.",
+                    "minimum": 0
+                },
+                "delay": {
+                    "type": "integer",
+                    "description": "Delay between retries, in milliseconds.",
+                    "minimum": 0
+                },
+                "withSteps": {
+                    "type": "array",
+                    "description": "Names of steps participating in the retry block.",
+                    "items": { "type": "string" }
+                }
+            }
+        },
+        "validator": {
+            "type": "object",
+            "description": "Path/value assertion (org.jsmart.zerocode.core.domain.Validator).",
+            "required": ["field", "value"],
+            "additionalProperties": false,
+            "properties": {
+                "field": {
+                    "type": "string",
+                    "description": "Path or expression identifying the value to assert against."
+                },
+                "value": {
+                    "description": "Expected value for the path. Free-form JSON (Validator.value is JsonNode).",
+                    "type": ["object", "array", "string", "number", "boolean", "null"]
+                }
+            }
+        },
+        "parameterized": {
+            "type": "object",
+            "description": "Value-based or CSV-based parameterization (org.jsmart.zerocode.core.domain.Parameterized). Exactly one of valueSource/csvSource is typically set per scenario.",
+            "additionalProperties": false,
+            "properties": {
+                "valueSource": {
+                    "type": "array",
+                    "description": "List of literal values (any JSON type) substituted into ${0}, ${1}, ... placeholders across iterations.",
+                    "items": {
+                        "type": ["object", "array", "string", "number", "boolean", "null"]
+                    }
+                },
+                "csvSource": {
+                    "description": "Either an inline array of CSV row strings, OR a relative path under src/test/resources/ to an external CSV file (Parameterized.csvSource is a JsonNode that may be either form).",
+                    "oneOf": [
+                        {
+                            "type": "array",
+                            "items": { "type": "string" }
+                        },
+                        { "type": "string" }
+                    ]
+                },
+                "withHeaders": {
+                    "type": "boolean",
+                    "description": "When true, the first CSV row is treated as headers and excluded from the iteration set."
+                }
+            }
+        }
+    }
+}

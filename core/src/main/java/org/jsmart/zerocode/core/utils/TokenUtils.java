@@ -110,6 +110,13 @@ public class TokenUtils {
                             // with GT LT etc ie what exactly you don't want
                             paramaMap.put(runTimeToken, escapeJava(gqlString));
 
+                        } else if (runTimeToken.startsWith(SQL_FILE)) {
+                            String sqlFileResource = runTimeToken.substring(SQL_FILE.length());
+                            final String sqlString = getXmlContent(sqlFileResource);
+                            // Used escapeJava, do not use escapeXml as it replaces
+                            // with GT LT etc ie what exactly you don't want
+                            paramaMap.put(runTimeToken, escapeJava(sqlString));
+
                         } else if (runTimeToken.startsWith(RANDOM_UU_ID)) {
                             if(runTimeToken.equals(RANDOM_UU_ID_FIXED)){
                                 paramaMap.put(runTimeToken, UUID.randomUUID().toString());

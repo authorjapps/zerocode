@@ -213,6 +213,28 @@ public class TokenUtilsTest {
         assertEquals("abc@123 and !@#$%^", getMasksRemoved("${MASKED:abc@123} and ${MASKED:!@#$%^}"));
     }
 
+    @Test
+    public void shouldResolveSqlFileToken_simple_only_sql() {
+        // simple SQL content with no special chars to be escaped
+        String input = "${SQL.FILE:unit_test_files/sql/simple.sql}";
+        String result = TokenUtils.resolveKnownTokens(input);
+        assertEquals("SELECT 1 FROM employee;", result);
+    }
 
+    @Test
+    public void shouldResolveSqlFileToken_simple() {
+        // simple SQL content with no special chars to be escaped
+        String input = "Query: ${SQL.FILE:unit_test_files/sql/simple.sql}";
+        String result = TokenUtils.resolveKnownTokens(input);
+        assertEquals("Query: SELECT 1 FROM employee;", result);
+    }
+
+    @Test
+    public void shouldResolveSqlFileToken_andEscapeSpecialChars() {
+        String input = "Query: ${SQL.FILE:unit_test_files/sql/with_newline.sql}";
+        String result = TokenUtils.resolveKnownTokens(input);
+
+        assertEquals("Query: SELECT name, salary\\n FROM employee\\n    WHERE id > 1 and id < 10\\n    and name = 'John';\\n", result);
+    }
 
 }
