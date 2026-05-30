@@ -1,124 +1,100 @@
 package org.jsmart.zerocode.core.httpclient.ssl;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import java.net.SocketTimeoutException;
-import java.util.HashMap;
-import javax.ws.rs.core.Response;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import com.sun.net.httpserver.HttpServer;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import java.net.InetSocketAddress;
+import java.net.SocketTimeoutException;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+/**
+ * Tests for SslTrustHttpClient's implicit wait / timeout configuration.
+ *
+ * Uses a lightweight JDK HttpServer (no extra dependencies) that introduces
+ * a fixed 2000ms delay before responding, so we can verify that:
+ *  - a wait configured higher than the delay succeeds
+ *  - a wait configured lower than the delay times out
+ *  - no wait configured means no timeout (default behaviour)
+ */
 public class SslTrustHttpClientTest {
 
-    @Mock
-    CloseableHttpClient httpClient;
+    static final int PORT = 9191;
+    static final int SERVER_DELAY_MS = 2000;
+    static final int WAIT_HIGHER_THAN_DELAY = 3000;
+    static final int WAIT_LOWER_THAN_DELAY = 1000;
 
-    @InjectMocks
-    SslTrustHttpClient sslTrustHttpClient;
-
-    static String basePath;
-    static String fullPath;
-    static int port = 8383;
-
-    static WireMockServer mockServer = new WireMockServer(port);
-
-    public static final int SERVER_DELAY = 2000;
-    public static final int MAX_IMPLICIT_WAIT_HIGH = 3000;
-    public static final int MAX_IMPLICIT_WAIT_LOW = 1500;
+    static HttpServer slowServer;
+    static String targetUrl;
 
     @BeforeClass
-    public static void setUpWireMock() throws Exception {
-        basePath = "http://localhost:" + port;
-        String path = "/delay/ids/1";
-        fullPath = basePath + path;
-
-        mockServer.start();
-
-        mockServer.stubFor(
-                get(urlEqualTo(path))
-                        .willReturn(aResponse()
-                                .withStatus(200)
-                                .withFixedDelay(SERVER_DELAY)
-                        ));
-
+    public static void startSlowServer() throws Exception {
+        slowServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+        slowServer.createContext("/delay/test", exchange -> {
+            try {
+                Thread.sleep(SERVER_DELAY_MS);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Sleep failed in Unit Testing:" + e);
+            }
+            byte[] response = "OK".getBytes();
+            exchange.sendResponseHeaders(200, response.length);
+            exchange.getResponseBody().write(response);
+            exchange.getResponseBody().close();
+        });
+        slowServer.start();
+        targetUrl = "http://localhost:" + PORT + "/delay/test";
     }
 
     @AfterClass
-    public static void tearDown() {
-        mockServer.shutdown();
+    public static void stopSlowServer() {
+        if (slowServer != null) {
+            slowServer.stop(0);
+        }
     }
 
-    @Ignore("TODO-- unit test. Already Covered in the integration tests")
+    /**
+     * implicitWait (3000ms) > server delay (2000ms) → request completes successfully.
+     */
     @Test
-    public void testNulPointerNotThrown_emptyBody() throws Exception {
-        CloseableHttpResponse mockResponse = mock(CloseableHttpResponse.class);
-        HttpUriRequest mockHttpUriRequest = mock(HttpUriRequest.class);
-        when(httpClient.execute(any())).thenReturn(mockResponse);
-        //when(requestBuilder.build()).thenReturn(mockHttpUriRequest);
+    public void testImplicitDelay_waitHigherThanDelay() throws Exception {
+        SslTrustHttpClient client = new SslTrustHttpClient();
+        client.setImplicitWait(WAIT_HIGHER_THAN_DELAY);
 
-        //        when(httpClient.execute(anyString(), anyString(), anyMap(), anyMap(), anyObject()))
-        //                .thenReturn(mockResponse);
-        Response actualResponse = sslTrustHttpClient.execute("url",
-                "GET",
-                new HashMap<String, Object>(),
-                new HashMap<String, Object>(),
-                "aBody");
-        System.out.println("" + actualResponse);
-    }
-
-    @Test
-    public void testImplicitDelay() throws Exception {
-        SslTrustHttpClient sslTrustHttpClient = new SslTrustHttpClient();
-        sslTrustHttpClient.setImplicitWait(MAX_IMPLICIT_WAIT_HIGH); //Ok - More than the implicit
-
-        CloseableHttpClient httpClient = sslTrustHttpClient.createHttpClient();
-
-        HttpGet request = new HttpGet(fullPath);
-        HttpResponse response = httpClient.execute(request);
+        CloseableHttpClient httpClient = client.createHttpClient();
+        org.apache.http.HttpResponse response = httpClient.execute(new HttpGet(targetUrl));
 
         assertThat(response.getStatusLine().getStatusCode(), is(200));
     }
 
+    /**
+     * implicitWait (1000ms) < server delay (2000ms) → SocketTimeoutException.
+     */
     @Test(expected = SocketTimeoutException.class)
-    public void testImplicitDelay_timeout() throws Exception {
-        SslTrustHttpClient sslTrustHttpClient = new SslTrustHttpClient();
-        sslTrustHttpClient.setImplicitWait(MAX_IMPLICIT_WAIT_LOW); //Timeout - Less than the implicit
+    public void testImplicitDelay_timeoutWhenWaitLowerThanDelay() throws Exception {
+        SslTrustHttpClient client = new SslTrustHttpClient();
+        client.setImplicitWait(WAIT_LOWER_THAN_DELAY);
 
-        CloseableHttpClient httpClient = sslTrustHttpClient.createHttpClient();
-
-        HttpGet request = new HttpGet(fullPath);
-        HttpResponse response = httpClient.execute(request);
+        CloseableHttpClient httpClient = client.createHttpClient();
+        httpClient.execute(new HttpGet(targetUrl));
     }
 
+    /**
+     * No implicitWait configured → RequestConfig.DEFAULT → no timeout,
+     * request waits as long as needed and completes successfully.
+     */
     @Test
-    public void testImplicitDelay_noConfig() throws Exception {
-        SslTrustHttpClient sslTrustHttpClient = new SslTrustHttpClient();
-        //sslTrustHttpClient.setImplicitWait(none); //not configured
+    public void testImplicitDelay_noConfigMeansNoTimeout() throws Exception {
+        SslTrustHttpClient client = new SslTrustHttpClient();
+        // intentionally no setImplicitWait call
 
-        CloseableHttpClient httpClient = sslTrustHttpClient.createHttpClient();
+        CloseableHttpClient httpClient = client.createHttpClient();
+        org.apache.http.HttpResponse response = httpClient.execute(new HttpGet(targetUrl));
 
-        HttpGet request = new HttpGet(fullPath);
-        HttpResponse response = httpClient.execute(request);
         assertThat(response.getStatusLine().getStatusCode(), is(200));
     }
 }
