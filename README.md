@@ -147,20 +147,10 @@ Also, learn more about [Validators Vs Matchers](https://zerocode-tdd.tddfy.com/a
 
 ## JSON Schema for Test Scenario
 
-A JSON Schema (Draft-07) for scenario files is published at [`schema/zerocode-scenario-schema.json`](schema/zerocode-scenario-schema.json) and pointed to from `robots.txt` at the project root. Use it to:
+A JSON Schema (Draft-07) for scenario files is published at [`schema/zerocode-scenario-schema.json`](schema/zerocode-scenario-schema.json) and pointed to from `robots.txt` at the project root. See [here](https://github.com/authorjapps/zerocode/wiki/JSON-Schema-For-Scenario-Validation) how to validate if you're developing custom tools.
 
-- **Validate scenarios from the CLI**, e.g. with `ajv-cli`:
-
-  ```bash
-  # Note: This is optional step, only do this if you have npx and ajv-cli already installed
-  # npx: Runs npm package without global install
-  npx ajv-cli validate -s schema/zerocode-scenario-schema.json -d core/src/test/resources/templates/example_scenario_1.json
-  ```
-
-## AI Prompt :  Generate a Scenarios using `Claude Code` or `CoPilot` or others:
+## AI Prompt | Generate a Test Scenarios using `Claude Code` | `CoPilot` | `Codex` or others:
 > Write a Zerocode scenario that conforms to `schema/zerocode-scenario-schema.json` for `<your API or Kafka or Database test idea>`. Use the `assertions` block (not `verify`) and include retry of 3 attempts with 500ms delay.
-
-Two starter templates live under [`core/src/test/resources/templates/`](core/src/test/resources/templates/): `example_scenario_1.json` (typical REST flow with two steps), and `example_scenario_2.json` (parameterized scenario with both `valueSource` and `csvSource`).
 
 Happy Testing! <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>
 
