@@ -2,8 +2,11 @@ package org.jsmart.zerocode.core.di.main;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jsmart.zerocode.core.di.module.CsvParserModule;
 import org.jsmart.zerocode.core.di.module.GsonModule;
 import org.jsmart.zerocode.core.di.module.HttpClientModule;
@@ -30,12 +33,15 @@ import org.jsmart.zerocode.core.report.ZeroCodeReportGeneratorImpl;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunner;
 import org.jsmart.zerocode.core.runner.ZeroCodeMultiStepsScenarioRunnerImpl;
 
+import static org.jsmart.zerocode.core.utils.EnvUtils.getEnvValueString;
 import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.checkAndLoadOldProperties;
 import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsoluteProperties;
 import static org.jsmart.zerocode.core.utils.SmartUtils.isValidAbsolutePath;
 
 public class ApplicationMainModule extends AbstractModule {
     private static final Logger LOGGER = Logger.getLogger(ApplicationMainModule.class.getName());
+
+    private static final Pattern ENV_PLACEHOLDER_PATTERN = Pattern.compile("\\$\\{([^}]+)\\}");
 
     private final String serverEnv;
 
@@ -79,7 +85,7 @@ public class ApplicationMainModule extends AbstractModule {
         final Properties properties = new Properties();
 
         if(isValidAbsolutePath(host)){
-            return loadAbsoluteProperties(host, properties);
+            return resolveEnvPlaceholders(loadAbsoluteProperties(host, properties));
         }
 
         try {
@@ -96,7 +102,54 @@ public class ApplicationMainModule extends AbstractModule {
             throw new RuntimeException("could not read the target-env properties file --" + host + "-- from the classpath.");
         }
 
+        return resolveEnvPlaceholders(properties);
+    }
+
+    /**
+     * Resolves any {@code ${name}} placeholders found in the loaded property values against
+     * system properties and OS environment variables (in that order, via
+     * {@link org.jsmart.zerocode.core.utils.EnvUtils#getEnvValueString(String)}).
+     * <p>
+     * This lets a target-env properties file reference values supplied on the command line, e.g.
+     * <pre>
+     *     db.username=${db.username}
+     * </pre>
+     * run with {@code -Ddb.username=alice} so the injected value becomes {@code alice}.
+     * <p>
+     * A placeholder whose name resolves to no system property or env var is left untouched, so
+     * files that legitimately contain {@code ${...}} for downstream tooling are not corrupted.
+     * Values without any placeholder are returned unchanged.
+     */
+    public Properties resolveEnvPlaceholders(Properties properties) {
+        if (properties == null) {
+            return null;
+        }
+
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                properties.setProperty((String) entry.getKey(), resolvePlaceholders((String) value));
+            }
+        }
+
         return properties;
+    }
+
+    private static String resolvePlaceholders(String value) {
+        Matcher matcher = ENV_PLACEHOLDER_PATTERN.matcher(value);
+        StringBuffer resolved = new StringBuffer();
+
+        while (matcher.find()) {
+            String placeholderName = matcher.group(1);
+            String replacement = getEnvValueString(placeholderName);
+
+            // Leave the placeholder literally in place when it cannot be resolved (backward compatible).
+            String token = replacement != null ? replacement : matcher.group(0);
+            matcher.appendReplacement(resolved, Matcher.quoteReplacement(token));
+        }
+        matcher.appendTail(resolved);
+
+        return resolved.toString();
     }
 
 }
