@@ -1,0 +1,21 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testEnum/{pathEnum} - Test scenario",
+  "steps" : [ {
+    "name" : "/testEnum/{pathEnum} - Enum generation in body and params",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/testEnum/penum1",
+    "request" : {
+      "queryParams" : {
+        "queryEnum" : "qenum1"
+      },
+      "body" : {
+        "intEnum" : 5,
+        "strEnum" : "yellow"
+      }
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

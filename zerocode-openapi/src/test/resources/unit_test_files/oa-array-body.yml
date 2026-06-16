@@ -1,0 +1,12 @@
+openapi: "3.0.0"
+paths:
+  /testArrayBody:
+    get:
+      summary: Body is not an object (array)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
