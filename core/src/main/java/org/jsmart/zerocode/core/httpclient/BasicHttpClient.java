@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.httpclient;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -186,12 +187,28 @@ public class BasicHttpClient {
      */
     public Response createCharsetResponse(CloseableHttpResponse httpResponse) throws IOException {
         HttpEntity entity = httpResponse.getEntity();
-        Charset charset = ContentType.getOrDefault(httpResponse.getEntity()).getCharset();
+        Charset charset = entity == null ? null : ContentType.getOrDefault(entity).getCharset();
         charset = (charset == null) ? Charset.defaultCharset() : charset;
         return Response
                 .status(httpResponse.getStatusLine().getStatusCode())
-                .entity(entity != null ? IOUtils.toString(entity.getContent(), charset) : null)
+                .entity(readResponseEntity(entity, charset))
                 .build();
+    }
+
+    private String readResponseEntity(HttpEntity entity, Charset charset) throws IOException {
+        if (entity == null || entity.getContentLength() == 0) {
+            return null;
+        }
+
+        try {
+            return IOUtils.toString(entity.getContent(), charset);
+        } catch (EOFException ex) {
+            if (entity.getContentLength() < 0) {
+                LOGGER.warn("Received EOF while reading response body with unknown content length. Treating body as empty.");
+                return null;
+            }
+            throw ex;
+        }
     }
 
     /**
