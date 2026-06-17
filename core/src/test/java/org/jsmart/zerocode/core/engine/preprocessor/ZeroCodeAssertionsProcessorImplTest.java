@@ -30,12 +30,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static com.jayway.jsonpath.JsonPath.read;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.readJsonPath;
+import static org.jsmart.zerocode.core.utils.DateTimeUtils.parseLocalDateTime;
 import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
 import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
@@ -978,6 +980,46 @@ public class ZeroCodeAssertionsProcessorImplTest {
     }
 
     @Test
+    public void testDateAfterBefore_withTimeZoneOffsetsAndHttpDate() throws Exception {
+        TimeZone defaultTimeZone = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        try {
+            String resolvedAssertions =
+                    "{\n"
+                            + "    \"status\": 200,\n"
+                            + "    \"body\": {\n"
+                            + "        \"projectDetails\": {\n"
+                            + "            \"startDateTime\": \"$LOCAL.DATETIME.BEFORE:2019-06-15T10:00:00.000Z\",\n"
+                            + "            \"endDateTime\": \"$LOCAL.DATETIME.AFTER:2019-06-15T10:00:00.000Z\",\n"
+                            + "            \"lastModified\": \"$LOCAL.DATETIME.BEFORE:Sat, 06 Jul 2019 17:07:15 GMT\"\n"
+                            + "        }\n"
+                            + "    }\n"
+                            + "}";
+
+            List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+            assertThat(asserters.size(), is(4));
+
+            String mockTestResponse =
+                    "{\n"
+                            + "    \"status\": 200,\n"
+                            + "    \"body\": {\n"
+                            + "        \"projectDetails\": {\n"
+                            + "            \"startDateTime\": \"2019-06-15T11:30:00.000+02:00\",\n"
+                            + "            \"endDateTime\": \"2019-06-15T12:30:00.000+02:00\",\n"
+                            + "            \"lastModified\": \"Sat, 06 Jul 2019 16:07:15 GMT\"\n"
+                            + "        }\n"
+                            + "    }\n"
+                            + "}";
+
+            List<FieldAssertionMatcher> failedReports =
+                    jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+            assertThat(failedReports.size(), is(0));
+        } finally {
+            TimeZone.setDefault(defaultTimeZone);
+        }
+    }
+
+    @Test
     public void testDateAfterBefore_fail_both() throws Exception {
         ScenarioSpec scenarioSpec =
                 smartUtils.scenarioFileToJava(
@@ -1018,12 +1060,12 @@ public class ZeroCodeAssertionsProcessorImplTest {
                 failedReports.get(0).toString(),
                 is(
                         "Assertion jsonPath '$.body.projectDetails.startDateTime' with actual value '2017-04-14T11:49:56.000Z' "
-                                + "did not match the expected value 'Date Before:2016-09-14T09:49:34'"));
+                                + "did not match the expected value 'Date Before:" + parseLocalDateTime("2016-09-14T09:49:34.000Z") + "'"));
         assertThat(
                 failedReports.get(1).toString(),
                 is(
                         "Assertion jsonPath '$.body.projectDetails.endDateTime' with actual value '2018-11-12T09:39:34.000Z' "
-                                + "did not match the expected value 'Date After:2019-09-14T09:49:34'"));
+                                + "did not match the expected value 'Date After:" + parseLocalDateTime("2019-09-14T09:49:34.000Z") + "'"));
     }
 
     @Test
@@ -1063,7 +1105,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
                 failedReports.get(0).toString(),
                 is(
                         "Assertion jsonPath '$.body.projectDetails.startDateTime' with actual value '2015-09-14T09:49:34.000Z' "
-                                + "did not match the expected value 'Date After:2015-09-14T09:49:34'"));
+                                + "did not match the expected value 'Date After:" + parseLocalDateTime("2015-09-14T09:49:34.000Z") + "'"));
     }
 
     @Test
@@ -1103,7 +1145,7 @@ public class ZeroCodeAssertionsProcessorImplTest {
                 failedReports.get(0).toString(),
                 is(
                         "Assertion jsonPath '$.body.projectDetails.startDateTime' with actual value '2015-09-14T09:49:34.000Z' "
-                                + "did not match the expected value 'Date Before:2015-09-14T09:49:34'"));
+                                + "did not match the expected value 'Date Before:" + parseLocalDateTime("2015-09-14T09:49:34.000Z") + "'"));
     }
 
     @Test
