@@ -1,0 +1,8 @@
+[
+  {
+    "key": "${$.timestamp_step.response}",
+    "value": {
+      "test": "1"
+    }
+  }
+]
