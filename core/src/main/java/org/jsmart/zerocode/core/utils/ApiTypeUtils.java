@@ -28,26 +28,24 @@ public class ApiTypeUtils {
     }
 
     public static ApiType apiType(String serviceName, String methodName) {
-        ApiType apiType;
 
         if (StringUtils.isEmpty(serviceName) || isEmpty(methodName)) {
-            apiType = ApiType.NONE;
+            return ApiType.NONE;
 
         } else if (serviceName.contains("://") && !serviceName.startsWith("http")) {
-            apiType = ApiType.JAVA_CALL;
+            return ApiType.JAVA_CALL;
 
-        } else if (serviceName != null && serviceName.contains("/")) {
-            apiType = ApiType.REST_CALL;
+        } else if (serviceName.contains("/")) {
+            return ApiType.REST_CALL;
 
         } else if (serviceName != null && serviceName.contains(KAFKA)) {
-            apiType = ApiType.KAFKA_CALL;
+            return ApiType.KAFKA_CALL;
 
         } else {
-            apiType = ApiType.JAVA_CALL;
+            return ApiType.JAVA_CALL;
 
         }
 
-        return apiType;
     }
 
     public String getQualifiedJavaApi(String url) {
