@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -22,26 +23,33 @@ public class ConsumerJsonRecordTest {
     @Test
     public void testSer() throws IOException {
         // TODO: Use assert iso sysout
-        JsonNode key = objectMapper.readTree("\"key1\"");
+        JsonNode key1 = objectMapper.readTree("\"key1\"");
         JsonNode value = objectMapper.readTree("\"val1\"");
 
-        ConsumerJsonRecord record = new ConsumerJsonRecord(key, value, null);
+        ConsumerJsonRecord record = new ConsumerJsonRecord(key1, value, null);
         String json = objectMapper.writeValueAsString(record);
         System.out.println("1 json >> " + json);
 
 
-        JsonNode key1 = objectMapper.readTree("123");
-
-        record = new ConsumerJsonRecord(key1, value, null);
-        json = objectMapper.writeValueAsString(record);
-        System.out.println("1 json >> " + json);
-
-
-        JsonNode key2 = objectMapper.readTree("23.45");
+        JsonNode key2 = objectMapper.readTree("123");
 
         record = new ConsumerJsonRecord(key2, value, null);
         json = objectMapper.writeValueAsString(record);
         System.out.println("2 json >> " + json);
+
+
+        JsonNode key3 = objectMapper.readTree("23.45");
+
+        record = new ConsumerJsonRecord(key3, value, null);
+        json = objectMapper.writeValueAsString(record);
+        System.out.println("2 json >> " + json);
+
+//      UUID/Object Key
+        JsonNode key4 = objectMapper.readTree(objectMapper.writeValueAsString(UUID.randomUUID().toString()));
+
+        record = new ConsumerJsonRecord(key4, value, null);
+        json = objectMapper.writeValueAsString(record);
+        System.out.println("4 json >> " + json);
     }
 
     @Test
