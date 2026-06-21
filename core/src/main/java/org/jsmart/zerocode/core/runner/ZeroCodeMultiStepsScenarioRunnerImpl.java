@@ -489,6 +489,20 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJsonMaskRemoved, scenarioExecutionState);
                 break;
 
+            case S3_CALL:
+                correlLogger.aRequestBuilder()
+                        .relationshipId(logPrefixRelationshipId)
+                        .requestTimeStamp(requestTimeStamp)
+                        .step(thisStepName)
+                        .url(url)
+                        .method(operationName)
+                        .id(stepId)
+                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
+
+                String bucketName = url.substring("s3-bucket:".length());
+                executionResult = apiExecutor.executeS3Service(bucketName, operationName, resolvedRequestJsonMaskRemoved, scenarioExecutionState);
+                break;
+
             case NONE:
                 correlLogger.aRequestBuilder()
                         .relationshipId(logPrefixRelationshipId)
