@@ -10,7 +10,7 @@ Next, install the [Steply](https://github.com/QABEES/steply?tab=readme-ov-file#s
 
 ---
 
-**Latest release:🏹** [![Maven](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmart/zerocode-tdd/) <br/>
+**Latest release:** [![Maven Central](https://img.shields.io/maven-central/v/org.jsmart/zerocode-tdd.svg)](https://search.maven.org/artifact/org.jsmart/zerocode-tdd) [ [All releases](https://search.maven.org/artifact/org.jsmart/zerocode-tdd) 🏹 ]<br/>
 **CI Testing:** ![example workflow](https://github.com/authorjapps/zerocode/actions/workflows/main.yml/badge.svg)
 <br/>
 **Issue Discussions:** [Slack](https://join.slack.com/t/zerocode-workspace/shared_invite/enQtNzYxMDAwNTQ3MjY1LTA2YmJjODJhNzQ4ZjBiYTQwZDBmZmNkNmExYjA3ZDk2OGFiZWFmNWJlNGRkOTdiMDQ4ZmQyNzcyNzVjNWQ4ODQ) <br/> 
