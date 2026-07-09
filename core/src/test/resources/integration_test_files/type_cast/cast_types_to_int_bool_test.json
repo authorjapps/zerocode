@@ -16,9 +16,7 @@
             "assertions": {
                 "status": 200,
                 "headers": {
-                    "Content-Type": [
-                        "application/json"
-                    ]
+                    "Content-Type": "application/json"
                 },
                 "body": {
                     "id": "$EQ.1",

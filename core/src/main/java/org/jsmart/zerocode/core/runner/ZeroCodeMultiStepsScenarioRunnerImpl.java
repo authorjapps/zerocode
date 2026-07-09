@@ -22,7 +22,6 @@ import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
-import static org.jsmart.zerocode.core.engine.mocker.RestEndPointMocker.wireMockServer;
 import org.jsmart.zerocode.core.engine.preprocessor.ScenarioExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.StepExecutionState;
 import org.jsmart.zerocode.core.engine.preprocessor.ZeroCodeAssertionsProcessor;
@@ -141,8 +140,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
             ioWriterBuilder.result(resultReportBuilder.build());
         }
-
-        stopIfWireMockServerRunning();
 
         ioWriterBuilder.printToFile(scenario.getScenarioName() + correlLogger.getCorrelationId() + ".json");
 
@@ -538,14 +535,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     public void overrideApplicationContext(String applicationContext) {
         this.applicationContext = applicationContext;
-    }
-
-    private void stopIfWireMockServerRunning() {
-        if (null != wireMockServer) {
-            wireMockServer.stop();
-            wireMockServer = null;
-            LOGGER.debug("Scenario: All mockings done via WireMock server. Dependant end points executed. Stopped WireMock.");
-        }
     }
 
     private int deriveScenarioLoopTimes(ScenarioSpec scenario) {

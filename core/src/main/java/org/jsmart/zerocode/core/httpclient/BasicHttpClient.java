@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
-import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -108,11 +108,11 @@ public class BasicHttpClient {
      *
      * returns : Http response consists of status code, entity, headers, cookies etc
      */
-    public Response execute(String httpUrl,
-                            String methodName,
-                            Map<String, Object> headers,
-                            Map<String, Object> queryParams,
-                            Object body) throws Exception {
+    public HttpResponse execute(String httpUrl,
+                                String methodName,
+                                Map<String, Object> headers,
+                                Map<String, Object> queryParams,
+                                Object body) throws Exception {
 
         httpclient = createHttpClient();
 
@@ -155,19 +155,17 @@ public class BasicHttpClient {
      *   : Effective response with handled http session.
      * @throws IOException
      */
-    public Response handleResponse(CloseableHttpResponse httpResponse) throws IOException {
-        Response serverResponse = createCharsetResponse(httpResponse);
+    public HttpResponse handleResponse(CloseableHttpResponse httpResponse) throws IOException {
+        HttpResponse serverResponse = createCharsetResponse(httpResponse);
 
-        Header[] allHeaders = httpResponse.getAllHeaders();
-        Response.ResponseBuilder responseBuilder = Response.fromResponse(serverResponse);
-        for (Header thisHeader : allHeaders) {
+        Map<String, Object> headers = new HashMap<>(serverResponse.getHeaders());
+        for (Header thisHeader : httpResponse.getAllHeaders()) {
             String headerKey = thisHeader.getName();
-            responseBuilder = responseBuilder.header(headerKey, thisHeader.getValue());
-
+            headers.put(headerKey, thisHeader.getValue());
             handleHttpSession(serverResponse, headerKey);
         }
 
-        return responseBuilder.build();
+        return new HttpResponse(serverResponse.getStatus(), headers, serverResponse.getBody());
     }
 
     /**
@@ -184,14 +182,13 @@ public class BasicHttpClient {
      * A http response compatible with Charset received from the http server e.g. UTF-8, UTF-16 etc
      *
      */
-    public Response createCharsetResponse(CloseableHttpResponse httpResponse) throws IOException {
+    public HttpResponse createCharsetResponse(CloseableHttpResponse httpResponse) throws IOException {
         HttpEntity entity = httpResponse.getEntity();
         Charset charset = ContentType.getOrDefault(httpResponse.getEntity()).getCharset();
         charset = (charset == null) ? Charset.defaultCharset() : charset;
-        return Response
-                .status(httpResponse.getStatusLine().getStatusCode())
-                .entity(entity != null ? IOUtils.toString(entity.getContent(), charset) : null)
-                .build();
+        int status = httpResponse.getStatusLine().getStatusCode();
+        String body = entity != null ? IOUtils.toString(entity.getContent(), charset) : null;
+        return new HttpResponse(status, new HashMap<>(), body);
     }
 
     /**
@@ -361,13 +358,13 @@ public class BasicHttpClient {
      * serverResponse
      * headerKey
      */
-    public void handleHttpSession(Response serverResponse, String headerKey) {
+    public void handleHttpSession(HttpResponse serverResponse, String headerKey) {
         /** ---------------
          * Session handled
          * ----------------
          */
         if ("Set-Cookie".equals(headerKey)) {
-            COOKIE_JSESSIONID_VALUE = serverResponse.getMetadata().get(headerKey);
+            COOKIE_JSESSIONID_VALUE = serverResponse.getHeaders().get(headerKey);
         }
     }
 

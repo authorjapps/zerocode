@@ -17,9 +17,7 @@
             "assertions": {
                 "status": 200,
                 "headers": {
-                    "key1": [
-                        "value1"
-                    ]
+                    "key1": "value1"
                 },
                 "body": {
                     "result": "via custom http client"

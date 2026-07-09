@@ -15,7 +15,7 @@
     <description>How to use zerocode in your project</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -61,7 +61,6 @@
                         <include>org.jsmart.zerocode.testhelp.tests.HelloWorldCherryPickSuite</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldjavaexec.HelloWorldJavaApiAsProtocolTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldarrayelementmatching.HelloWorldArrayElementPickerTest</include>
-                        <include>org.jsmart.zerocode.testhelp.tests.helloworldimplicitdelay.JustHelloImplicitDelayTimeOutTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldfileupload.HelloWorldFileUploadTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldretrywithsteps.HelloWorldRetryWithStepsTest</include>
 

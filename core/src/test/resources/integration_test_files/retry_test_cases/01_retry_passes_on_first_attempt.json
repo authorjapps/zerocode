@@ -1,0 +1,23 @@
+{
+    "scenarioName": "Retry configured but passes on first attempt",
+    "steps": [
+        {
+            "name": "get_bathroom",
+            "url": "/home/bathroom/1",
+            "operation": "GET",
+            "retry": {
+                "max": 3,
+                "delay": 0
+            },
+            "request": {},
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "id": 1,
+                    "name": "Shower",
+                    "availability": true
+                }
+            }
+        }
+    ]
+}
