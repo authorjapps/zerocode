@@ -24,7 +24,7 @@ public class MockStep {
     private final String url;
     private final JsonNode request;
     private final JsonNode response;
-    private final JsonNode assertions; //<-- In case the wiremock or simulator mock throws a status code etc
+    private final JsonNode assertions; //<-- In case the simulator mock throws a status code etc
 
     // derived value i.e. body as JSON string
     private String body;
