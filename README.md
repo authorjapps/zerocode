@@ -21,6 +21,16 @@ Next, install the [Steply](https://github.com/QABEES/steply?tab=readme-ov-file#s
 Zerocode makes it easy to create and maintain automated tests with absolute minimum overhead for [REST](https://github.com/authorjapps/zerocode/wiki/User-journey:-Create,-Update-and-GET-Employee-Details),[SOAP](https://github.com/authorjapps/zerocode/blob/master/README.md#soap-method-invocation-example-with-xml-input), [Kafka Real Time Data Streams](https://github.com/authorjapps/zerocode/wiki/Kafka-Testing-Introduction) and much more. 
 It has the best of best ideas and practices from the community to keep it super simple, and the adoption is rapidly growing among the developers & testers community.
 
+---
+> ⚠️ **TEMPORARY NOTICE**
+> 
+> This is a temporary notice with respect to removal of Wiremock integraiton using zerocode dsl.
+> 
+> [More details here:]
+https://github.com/authorjapps/zerocode/issues/783#issue-4893473279
+---
+
+
 # Quick Start
 Install Steply CLI from [here](https://github.com/QABEES/steply?tab=readme-ov-file#steply) 
 and run an automated validation test:
