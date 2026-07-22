@@ -1,19 +1,18 @@
 {
-    "scenarioName": "GIVEN-the GitHub REST end point, WHEN-I invoke GET, THEN-I will receive the 200 status with body",
+    "scenarioName": "GIVEN-a public REST end point, WHEN-I invoke GET, THEN-I will receive the 200 status with user details",
     "steps": [
         {
             "name": "get_user_details",
-            "url": "/users/octocat",
+            "url": "/users/1",
             "operation": "GET",
             "request": {
             },
             "verify": {
                 "status": 200,
                 "body": {
-                    "login" : "octocat",
-                    "id" : 583231,
-                    "type" : "User",
-                    "location" : "$MATCHES.STRING:San Fra(.*)"
+                    "id" : 1,
+                    "username" : "Bret",
+                    "email" : "Sincere@april.biz"
                 }
             }
         }

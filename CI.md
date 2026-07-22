@@ -86,8 +86,8 @@ level**.
 
 What the Java 11 CI job validates:
 - The project compiles and all tests pass when Maven runs on JDK 11.
-- Dependencies that require JDK 11 at runtime (e.g. WireMock 3.x,
-  Logback 1.4+, RESTEasy 4.x) do not break the build environment.
+- Dependencies that require JDK 11 at runtime (e.g. Logback 1.4+,
+  RESTEasy 4.x) do not break the build environment.
 
 It does **not** mean the output bytecode is compiled to Java 11 level.
 
