@@ -1,10 +1,11 @@
 name: "get_user_details"
-url: "/users/googlebot"
+url: "/users/1"
 operation: "GET"
 request:
   -
 verify:
   status: 200
   body:
-    login: "googlebot"
-    type: "User"
+    id: 1
+    username: "Bret"
+    email: "Sincere@april.biz"
