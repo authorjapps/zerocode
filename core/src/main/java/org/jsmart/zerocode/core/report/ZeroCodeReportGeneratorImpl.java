@@ -514,8 +514,8 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
 
         for (ZeroCodeCsvReport row : rows) {
             String scen = trunc(row.getScenarioName(), SCEN_WIDTH);
-            String step = pad(row.getStepName(), STEP_WIDTH);
-            String method = pad(row.getMethod(), METH_WIDTH);
+            String step = trunc(row.getStepName(), STEP_WIDTH);
+            String method = trunc(row.getMethod(), METH_WIDTH);
             boolean isPass = RESULT_PASS.equals(row.getResult());
             String resCell = isPass ? "PASSED ✅" : "FAILED ❌";
             double delay = row.getResponseDelayMilliSec() != null ? row.getResponseDelayMilliSec() : 0.0;
@@ -559,7 +559,10 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
         if (text == null) text = "";
         text = text.trim();
         if (text.length() <= width) return pad(text, width);
-        return text.substring(0, width - 2) + "..";
+        int keep = width - 3;
+        int head = (keep + 1) / 2;
+        int tail = keep - head;
+        return text.substring(0, head) + "..." + text.substring(text.length() - tail);
     }
 
     private static String rpad(double value, int width) {
