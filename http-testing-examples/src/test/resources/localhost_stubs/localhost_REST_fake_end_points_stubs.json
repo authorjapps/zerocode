@@ -220,6 +220,31 @@
                     "dob": "1989-07-09"
                 }
             }
+        },
+        {
+            "name": "Mock POST question, generates an id containing special characters",
+            "operation": "POST",
+            "url": "/api/v1/questions",
+            "ignoreBody": true,
+            "response": {
+                "status": 201,
+                "body": {
+                    "id": "#37:29",
+                    "question": "zerocode"
+                }
+            }
+        },
+        {
+            "name": "Mock GET question by its url encoded id, i.e. #37:29 as %2337%3A29",
+            "operation": "GET",
+            "url": "/api/v1/questions/%2337%3A29",
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": "#37:29",
+                    "question": "zerocode"
+                }
+            }
         }
 
     ]

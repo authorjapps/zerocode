@@ -64,6 +64,7 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.ASS
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeAssertionTokens.RAW_BODY;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.$VALUE;
 import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.JSON_CONTENT;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.URL_ENCODED;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.deepTypeCast;
 import static org.jsmart.zerocode.core.utils.FieldTypeConversionUtils.fieldTypes;
 import static org.jsmart.zerocode.core.utils.HelperJsonUtils.readJsonPath;
@@ -75,6 +76,7 @@ import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksRemoved;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksReplaced;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
+import static org.jsmart.zerocode.core.utils.TokenUtils.urlEncoded;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProcessor {
@@ -112,6 +114,15 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
 
             if (isPropertyKey(runTimeToken)) {
                 paramMap.put(runTimeToken, properties.get(runTimeToken));
+
+            } else if (runTimeToken.startsWith(URL_ENCODED)
+                    && isPropertyKey(runTimeToken.substring(URL_ENCODED.length()))) {
+                /*
+                 * e.g. ${URLENCODED:web.application.endpoint.context}, the property value needs to
+                 * be picked first, then encoded. Overrides the literal encoding done by populateParamMap.
+                 */
+                String propertyKey = runTimeToken.substring(URL_ENCODED.length());
+                paramMap.put(runTimeToken, urlEncoded(String.valueOf(properties.get(propertyKey))));
             }
 
         });
@@ -164,6 +175,35 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
                 throw new RuntimeException("\nJSON:" + jsonString + "\nPossibly comments in the JSON found or bad JSON path found: " + thisPath + ",\nDetails: " + e);
             }
         });
+
+        StringSubstitutor sub = new StringSubstitutor(paramMap);
+
+        return resolveUrlEncodedJsonPaths(sub.replace(jsonString), scenarioState);
+    }
+
+    /**
+     * Resolves the JSON paths which need to be URL encoded before they are used, e.g.
+     * "url": "/questions/${URLENCODED:$.POST_QUESTION.response.body.id}" where the id
+     * "#37:29" of the earlier step becomes "%2337%3A29".
+     */
+    private String resolveUrlEncodedJsonPaths(String jsonString, String scenarioState) {
+        Map<String, String> paramMap = new HashMap<>();
+
+        getTestCaseTokens(jsonString).stream()
+                .filter(thisToken -> thisToken.startsWith(URL_ENCODED + "$."))
+                .distinct()
+                .forEach(thisToken -> {
+                    String thisPath = thisToken.substring(URL_ENCODED.length());
+                    String pathValue = readJsonPath(scenarioState, thisPath, String.class);
+
+                    /*
+                     * An absent path resolves to null, in that case the token is left as it is,
+                     * which is the same behaviour as of the plain(not encoded) JSON paths.
+                     */
+                    if (pathValue != null) {
+                        paramMap.put(thisToken, urlEncoded(pathValue));
+                    }
+                });
 
         StringSubstitutor sub = new StringSubstitutor(paramMap);
 
