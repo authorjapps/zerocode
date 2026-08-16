@@ -75,6 +75,22 @@ public class ZeroCodeAssertionsProcessorImplTest {
         placeHolders = getTestCaseTokens(aString);
         assertThat(placeHolders.size(), is(1));
         assertThat(placeHolders.get(0), is("$.step_name"));
+
+        aString = "Hello_{{web.application.endpoint.host}}";
+        placeHolders = getTestCaseTokens(aString);
+        assertThat(placeHolders.size(), is(1));
+        assertThat(placeHolders.get(0), is("web.application.endpoint.host"));
+    }
+
+    @Test
+    public void willResolveDoubleBracePropertiesAndMixedJsonPaths() throws Exception {
+        String scenarioState = "{\"previous\":{\"response\":{\"body\":{\"name\":\"Shower\"}}}}";
+        String resolved = jsonPreProcessor.resolveStringJson(
+                "{\"url\":\"{{web.application.endpoint.host}}/${web.application.endpoint.port}\",\"name\":\"{{$.previous.response.body.name}}\"}",
+                scenarioState);
+
+        assertThat(readJsonPath(resolved, "$.url", String.class), is("http://localhost-test/8820"));
+        assertThat(readJsonPath(resolved, "$.name", String.class), is("Shower"));
     }
 
     @Test

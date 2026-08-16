@@ -1,0 +1,32 @@
+{
+  "scenarioName": "Double-brace placeholder resolution",
+  "steps": [
+    {
+      "name": "get_bathroom",
+      "url": "{{my_new_url}}/home/bathroom/{{PARAM.id}}",
+      "method": "GET",
+      "request": {
+        "headers": {
+          "X-Random": "{{RANDOM.NUMBER.FIXED}}",
+          "X-System-Property": "{{SYSTEM.PROPERTY:file.encoding}}",
+          "X-Masked": "{{MASKED:secret}}",
+          "X-Handlebars": "{{localdatetime offset='-1 days'}}"
+        }
+      },
+      "verify": {
+        "status": 200,
+        "body": {
+          "name": "${$.get_bathroom.response.body.name}",
+          "id": 1
+        }
+      }
+    }
+  ],
+  "parameterized": {
+    "withHeaders": true,
+    "csvSource": [
+      "id",
+      "1"
+    ]
+  }
+}

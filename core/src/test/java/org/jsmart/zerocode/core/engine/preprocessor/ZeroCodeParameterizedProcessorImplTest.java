@@ -122,8 +122,20 @@ public class ZeroCodeParameterizedProcessorImplTest {
         assertThat(scenarioSpecResolved.getSteps().get(0).getRequest().get("body").get("name").asText(), is("octocat"));
     }
 
+    @Test
+    public void testProcessParameterized_csv_with_double_brace_headers() throws Exception {
+        String json = "{\"steps\":[{\"name\":\"get_user\",\"url\":\"/users/{{PARAM.id}}/{{0}}\",\"request\":{\"body\":{\"name\":\"{{PARAM.name}}\"}},\"assertions\":{\"status\":\"{{PARAM.status}}\"}}],\"parameterized\":{\"withHeaders\":true,\"csvSource\":[\"id,name,status\",\"1,octocat,200\"]}}";
+        ScenarioSpec scenarioSpec = mapper.readValue(json, ScenarioSpec.class);
+
+        ScenarioSpec resolved = parameterizedProcessor.resolveParameterized(scenarioSpec, 0);
+
+        assertThat(resolved.getSteps().get(0).getUrl(), is("/users/1/1"));
+        assertThat(resolved.getSteps().get(0).getRequest().get("body").get("name").asText(), is("octocat"));
+        assertThat(resolved.getSteps().get(0).getAssertions().get("status").asInt(), is(200));
+    }
+
    @Test
-    public void testProcessParameterized_csv_with_invalid_header_throws_exception() throws Exception {
+   public void testProcessParameterized_csv_with_invalid_header_throws_exception() throws Exception {
         String jsonDocumentAsString = smartUtils
                 .getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/11.4_scenario_parameterized_csv_with_invalid_header.json");
         ScenarioSpec scenarioSpec = mapper.readValue(jsonDocumentAsString, ScenarioSpec.class);
@@ -140,6 +152,20 @@ public class ZeroCodeParameterizedProcessorImplTest {
 
             org.junit.Assert.assertTrue("Message should contain the available headers", 
                     ex.getMessage().contains("Available headers are: [id, name]."));
+        }
+    }
+
+    @Test
+    public void testProcessParameterized_csv_with_invalid_double_brace_header_throws_exception() throws Exception {
+        String json = "{\"steps\":[{\"name\":\"get_user\",\"url\":\"/users/{{PARAM.typoHere}}\"}],\"parameterized\":{\"withHeaders\":true,\"csvSource\":[\"id,name\",\"1,octocat\"]}}";
+        ScenarioSpec scenarioSpec = mapper.readValue(json, ScenarioSpec.class);
+
+        try {
+            parameterizedProcessor.resolveParameterized(scenarioSpec, 0);
+            org.junit.Assert.fail("Expected RuntimeException was not thrown for missing CSV header");
+        } catch (RuntimeException ex) {
+            org.junit.Assert.assertTrue(ex.getMessage().contains("The column 'typoHere' does not exist"));
+            org.junit.Assert.assertTrue(ex.getMessage().contains("Available headers are: [id, name]."));
         }
     }
 }

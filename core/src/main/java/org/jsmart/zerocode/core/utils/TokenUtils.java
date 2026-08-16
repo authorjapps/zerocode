@@ -23,6 +23,9 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.*;
 
 public class TokenUtils {
 
+    private static final Pattern TEST_CASE_TOKEN_PATTERN = Pattern.compile("\\$\\{(.+?)\\}|\\{\\{(.+?)\\}\\}");
+    private static final Pattern MASKED_TOKEN_PATTERN = Pattern.compile("\\$\\{MASKED:([^}]*)\\}|\\{\\{MASKED:([^}]*)\\}\\}");
+
     public static String resolveKnownTokens(String requestJsonOrAnyString) {
         Map<String, Object> paramMap = new HashMap<>();
 
@@ -31,9 +34,7 @@ public class TokenUtils {
             populateParamMap(paramMap, runTimeToken);
         });
 
-        StringSubstitutor sub = new StringSubstitutor(paramMap);
-
-        return sub.replace(requestJsonOrAnyString);
+        return replaceTokens(requestJsonOrAnyString, paramMap);
     }
 
     public static void populateParamMap(Map<String, Object> paramaMap, String runTimeToken) {
@@ -141,21 +142,19 @@ public class TokenUtils {
      */
     public static List<String> getTestCaseTokens(String aString) {
 
-        Pattern pattern = Pattern.compile("\\$\\{(.+?)\\}");
-        Matcher matcher = pattern.matcher(aString);
+        Matcher matcher = TEST_CASE_TOKEN_PATTERN.matcher(aString);
 
         List<String> keyTokens = new ArrayList<>();
 
         while (matcher.find()) {
-            keyTokens.add(matcher.group(1));
+            keyTokens.add(matcher.group(1) != null ? matcher.group(1) : matcher.group(2));
         }
 
         return keyTokens;
     }
 
     public static String getMasksReplaced(String aString) {
-        String regex = "\\$\\{MASKED:([^\\}]*)\\}";
-        Matcher maskMatcher = Pattern.compile(regex).matcher(aString);
+        Matcher maskMatcher = MASKED_TOKEN_PATTERN.matcher(aString);
         while(maskMatcher.find()) {
             String foundMatch = maskMatcher.group(0);
             aString = aString.replace(foundMatch, MASKED_STR);
@@ -165,15 +164,35 @@ public class TokenUtils {
     }
 
     public static String getMasksRemoved(String aString) {
-        String regex = "\\$\\{MASKED:([^\\}]*)\\}";
-        Matcher maskMatcher = Pattern.compile(regex).matcher(aString);
+        Matcher maskMatcher = MASKED_TOKEN_PATTERN.matcher(aString);
         while(maskMatcher.find()) {
             String foundFullMatch = maskMatcher.group(0);
-            String innerContent = maskMatcher.group(1);
+            String innerContent = maskMatcher.group(1) != null ? maskMatcher.group(1) : maskMatcher.group(2);
             aString = aString.replace(foundFullMatch, innerContent);
         }
 
         return aString;
+    }
+
+    /**
+     * Replaces values in both supported placeholder styles. Existing ${...} replacement is
+     * deliberately performed first to preserve its long-standing StringSubstitutor behaviour.
+     * A double-brace token is replaced only when a corresponding non-null map value exists;
+     * unrelated template expressions therefore remain literal.
+     */
+    public static String replaceTokens(String value, Map<String, ?> paramMap) {
+        String resolved = new StringSubstitutor(paramMap).replace(value);
+        Matcher matcher = Pattern.compile("\\{\\{(.+?)\\}\\}").matcher(resolved);
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            Object replacement = paramMap.get(matcher.group(1));
+            String token = replacement != null ? replacement.toString() : matcher.group(0);
+            matcher.appendReplacement(result, Matcher.quoteReplacement(token));
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
     }
 
     public static String createRandomAlphaString(int length) {
