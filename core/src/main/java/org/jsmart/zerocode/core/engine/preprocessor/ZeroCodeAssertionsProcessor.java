@@ -22,8 +22,4 @@ public interface ZeroCodeAssertionsProcessor {
 
     Step resolveJsonContent(Step thisStep, ScenarioExecutionState scenarioExecutionState);
 
-    String fieldMasksRemoved(String resolvedRequestJson);
-
-    String fieldMasksApplied(String resolvedRequestJson);
-
 }

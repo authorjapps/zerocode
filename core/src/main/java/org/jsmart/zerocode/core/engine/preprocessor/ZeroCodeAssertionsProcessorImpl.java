@@ -70,8 +70,6 @@ import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsolut
 import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
 import static org.jsmart.zerocode.core.utils.SmartUtils.getJsonFilePhToken;
 import static org.jsmart.zerocode.core.utils.SmartUtils.isValidAbsolutePath;
-import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksRemoved;
-import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksReplaced;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
 import static org.jsmart.zerocode.core.utils.TokenUtils.replaceTokens;
@@ -399,16 +397,6 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
             LOGGER.error("Json content reading exception - {}", e.getMessage());
             throw new RuntimeException("Json content reading exception. Details - " + e);
         }
-    }
-
-    @Override
-    public String fieldMasksRemoved(String resolvedRequestJson) {
-        return getMasksRemoved(resolvedRequestJson);
-    }
-
-    @Override
-    public String fieldMasksApplied(String resolvedRequestJson) {
-        return getMasksReplaced(resolvedRequestJson);
     }
 
     private void loadAnnotatedHostProperties() {

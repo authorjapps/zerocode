@@ -24,7 +24,6 @@ import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.*;
 public class TokenUtils {
 
     private static final Pattern TEST_CASE_TOKEN_PATTERN = Pattern.compile("\\$\\{(.+?)\\}|\\{\\{(.+?)\\}\\}");
-    private static final Pattern MASKED_TOKEN_PATTERN = Pattern.compile("\\$\\{MASKED:([^}]*)\\}|\\{\\{MASKED:([^}]*)\\}\\}");
 
     public static String resolveKnownTokens(String requestJsonOrAnyString) {
         Map<String, Object> paramMap = new HashMap<>();
@@ -151,27 +150,6 @@ public class TokenUtils {
         }
 
         return keyTokens;
-    }
-
-    public static String getMasksReplaced(String aString) {
-        Matcher maskMatcher = MASKED_TOKEN_PATTERN.matcher(aString);
-        while(maskMatcher.find()) {
-            String foundMatch = maskMatcher.group(0);
-            aString = aString.replace(foundMatch, MASKED_STR);
-        }
-
-        return aString;
-    }
-
-    public static String getMasksRemoved(String aString) {
-        Matcher maskMatcher = MASKED_TOKEN_PATTERN.matcher(aString);
-        while(maskMatcher.find()) {
-            String foundFullMatch = maskMatcher.group(0);
-            String innerContent = maskMatcher.group(1) != null ? maskMatcher.group(1) : maskMatcher.group(2);
-            aString = aString.replace(foundFullMatch, innerContent);
-        }
-
-        return aString;
     }
 
     /**
