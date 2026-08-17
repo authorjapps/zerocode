@@ -3,6 +3,7 @@ package org.jsmart.zerocode.core.httpclient.utils;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +49,26 @@ public class UrlQueryParamsUtilsTest {
         String qualifiedQueryParams = UrlQueryParamsUtils.setQueryParams(BASE_URL, queryParamsMap);
 
         assertThat(qualifiedQueryParams, is(BASE_URL + "?q2=value2&state%2Fregion=singapore+north"));
+    }
+
+    @Test
+    public void testMultiValue_queryParams() throws URISyntaxException {
+        Map<String, Object> queryParamsMap = new HashMap<>();
+        queryParamsMap.put("tag", Arrays.asList("one", "two"));
+
+        String qualifiedQueryParams = UrlQueryParamsUtils.setQueryParams(BASE_URL, queryParamsMap);
+
+        assertThat(qualifiedQueryParams, is(BASE_URL + "?tag=one&tag=two"));
+    }
+
+    @Test
+    public void testSingleValueArray_queryParams() throws URISyntaxException {
+        Map<String, Object> queryParamsMap = new HashMap<>();
+        queryParamsMap.put("tag", Arrays.asList("one"));
+
+        String qualifiedQueryParams = UrlQueryParamsUtils.setQueryParams(BASE_URL, queryParamsMap);
+
+        assertThat(qualifiedQueryParams, is(BASE_URL + "?tag=one"));
     }
 
     @Test

@@ -104,6 +104,29 @@ public class BasicHttpClientTest {
     }
 
     @Test
+    public void createRequestBuilder_multiValue() throws IOException {
+        header.put("Content-Type", "application/x-www-form-urlencoded");
+        String reqBodyAsString = "{\"Company\":\"Amazon\",\"city\":[\"London\",\"Sydney\"]}";
+        RequestBuilder requestBuilder = basicHttpClient.createRequestBuilder("/api/v1/founder", "POST", header, reqBodyAsString);
+        String nameValuePairString = EntityUtils.toString(requestBuilder.getEntity(), "UTF-8");
+        List<String> params = Arrays.asList(nameValuePairString.split("&"));
+
+        assertThat(params.size(), is(3));
+        assertThat(params.contains("Company=Amazon"), is(true));
+        assertThat(params.contains("city=London"), is(true));
+        assertThat(params.contains("city=Sydney"), is(true));
+    }
+
+    @Test
+    public void test_multiValueQueryParams() throws URISyntaxException {
+        Map<String, Object> queryParamsMap = new HashMap<>();
+        queryParamsMap.put("city", Arrays.asList("London", "Sydney"));
+        String effectiveUrl = basicHttpClient.handleUrlAndQueryParams("http://abc.com", queryParamsMap);
+
+        assertThat(effectiveUrl, is("http://abc.com?city=London&city=Sydney"));
+    }
+
+    @Test
     public void test_emptyQueryParams() throws URISyntaxException {
         String effectiveUrl = basicHttpClient.handleUrlAndQueryParams("http://test-url", new HashMap<>());
         assertThat(effectiveUrl, is("http://test-url"));
