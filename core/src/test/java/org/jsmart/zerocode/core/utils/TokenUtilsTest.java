@@ -86,6 +86,21 @@ public class TokenUtilsTest {
     }
 
     @Test
+    public void testDoubleBraceTokensHaveParityAndUnknownTemplatesRemainLiteral() {
+        System.setProperty("zc.double.brace.test", "resolved-value");
+
+        String resolved = resolveKnownTokens("${SYSTEM.PROPERTY:zc.double.brace.test}|{{SYSTEM.PROPERTY:zc.double.brace.test}}|${RANDOM.NUMBER.FIXED}|{{RANDOM.NUMBER.FIXED}}");
+        String[] tokens = resolved.split("\\|");
+
+        assertThat(tokens[0], is("resolved-value"));
+        assertThat(tokens[1], is("resolved-value"));
+        assertThat(tokens[2], is(tokens[3]));
+        assertThat(resolveKnownTokens("{{localdatetime offset='-1 days'}}"), is("{{localdatetime offset='-1 days'}}"));
+
+        System.clearProperty("zc.double.brace.test");
+    }
+
+    @Test
     public void testFixedRandomGenerator_success() {
         IntStream.rangeClosed(1, 19).forEach(i -> {
             assertTrue(FixedLengthRandomGenerator.getGenerator(i).generateRandomNumber().length() == i);
@@ -194,6 +209,11 @@ public class TokenUtilsTest {
     }
 
     @Test
+    public void testGetDoubleBraceMaskedTokensReplaced(){
+        assertEquals("***masked*** and ***masked***", getMasksReplaced("{{MASKED:abc@123}} and {{MASKED:!@#$%^}}"));
+    }
+
+    @Test
     public void testGetMaskedTokensRemoved_multipleOccurrences(){
         assertEquals("This is a secret message with masked tokens.", getMasksRemoved("This is a ${MASKED:secret} message with ${MASKED:masked} tokens."));
     }
@@ -211,6 +231,11 @@ public class TokenUtilsTest {
     @Test
     public void testGetMaskedTokensRemoved_specialCharacters(){
         assertEquals("abc@123 and !@#$%^", getMasksRemoved("${MASKED:abc@123} and ${MASKED:!@#$%^}"));
+    }
+
+    @Test
+    public void testGetDoubleBraceMaskedTokensRemoved(){
+        assertEquals("abc@123 and !@#$%^", getMasksRemoved("{{MASKED:abc@123}} and {{MASKED:!@#$%^}}"));
     }
 
     @Test

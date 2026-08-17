@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.text.StringSubstitutor;
 import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.utils.TokenUtils;
@@ -162,12 +161,11 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
     }
 
     private String replaceWithValues(String stepJson, Map<String, Object> valuesMap) {
-        StringSubstitutor sub = new StringSubstitutor(valuesMap);
-        return sub.replace(stepJson);
+        return TokenUtils.replaceTokens(stepJson, valuesMap);
     }
 
     private void ensureAllParamsResolved(String resultantStepJson, String[] availableHeaders) {
-        Pattern pattern = Pattern.compile("\\$\\{PARAM\\.([^}]+)\\}");
+        Pattern pattern = Pattern.compile("\\$\\{PARAM\\.([^}]+)\\}|\\{\\{PARAM\\.([^}]+)\\}\\}");
         Matcher matcher = pattern.matcher(resultantStepJson);
         
         if (matcher.find()) {
@@ -177,7 +175,8 @@ public class ZeroCodeParameterizedProcessorImpl implements ZeroCodeParameterized
             } else {
                 msg = "Available headers are: [" + String.join(", ", availableHeaders) + "].";
             }
-            throw new RuntimeException("Invalid CSV header referenced in scenario. The column '" + matcher.group(1) + "' does not exist. " + msg);
+            String missingHeader = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
+            throw new RuntimeException("Invalid CSV header referenced in scenario. The column '" + missingHeader + "' does not exist. " + msg);
             
         }
     }

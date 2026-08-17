@@ -144,6 +144,14 @@ public class SmartUtilsTest {
     }
 
     @Test
+    public void testReplaceDoubleBraceTokensOrPlaceHolders() {
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("ENV_PROPERTY_NAME", "ci2");
+
+        assertThat(SmartUtils.resolveToken("_{{ENV_PROPERTY_NAME}}", paramMap), is("_ci2"));
+    }
+
+    @Test
     public void testEnvValue() {
 
         final String javaHomeValue = SmartUtils.getEnvPropertyValue("JAVA_HOME");

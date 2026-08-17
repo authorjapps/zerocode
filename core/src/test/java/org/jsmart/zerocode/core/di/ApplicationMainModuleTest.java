@@ -64,6 +64,7 @@ public class ApplicationMainModuleTest {
         Properties properties = module.getProperties("config_hosts_test.properties");
 
         assertThat(properties.getProperty("placeholder.resolved.host"), is("http://resolved-host"));
+        assertThat(properties.getProperty("placeholder.resolved.double.host"), is("http://resolved-host"));
     }
 
     @Test
@@ -73,6 +74,7 @@ public class ApplicationMainModuleTest {
 
         // No matching system property / env var -> placeholder is preserved verbatim (backward compatible).
         assertThat(properties.getProperty("placeholder.unresolved.host"), is("${zc.test.absent.host}"));
+        assertThat(properties.getProperty("placeholder.unresolved.double.host"), is("{{zc.test.absent.host}}"));
     }
 
     @Test
