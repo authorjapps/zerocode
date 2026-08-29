@@ -30,8 +30,6 @@ import org.jsmart.zerocode.core.engine.assertion.field.FieldMatchesRegexPatternA
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -70,6 +68,7 @@ import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsolut
 import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
 import static org.jsmart.zerocode.core.utils.SmartUtils.getJsonFilePhToken;
 import static org.jsmart.zerocode.core.utils.SmartUtils.isValidAbsolutePath;
+import static org.jsmart.zerocode.core.utils.DateTimeUtils.parseLocalDateTime;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksRemoved;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksReplaced;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
@@ -431,10 +430,6 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
 
     private boolean isPropertyKey(String runTimeToken) {
         return propertyKeys.contains(runTimeToken);
-    }
-
-    private LocalDateTime parseLocalDateTime(String value) {
-        return LocalDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME);
     }
 
     boolean isPathValueJson(Object jsonPathValue) {

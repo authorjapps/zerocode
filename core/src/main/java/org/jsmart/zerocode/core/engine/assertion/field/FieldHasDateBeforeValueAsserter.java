@@ -2,13 +2,13 @@
 package org.jsmart.zerocode.core.engine.assertion.field;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aMatchingMessage;
 import static org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher.aNotMatchingMessage;
+import static org.jsmart.zerocode.core.utils.DateTimeUtils.parseLocalDateTime;
 
 public class FieldHasDateBeforeValueAsserter implements JsonAsserter {
     private final String path;
@@ -40,8 +40,7 @@ public class FieldHasDateBeforeValueAsserter implements JsonAsserter {
         } else {
             LocalDateTime resultDT = null;
             try {
-                resultDT = LocalDateTime.parse((String) result,
-                        DateTimeFormatter.ISO_DATE_TIME);
+                resultDT = parseLocalDateTime((String) result);
                 areEqual = resultDT.isBefore(expected);
             } catch (DateTimeParseException ex) {
                 areEqual = false;
