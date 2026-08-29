@@ -1,0 +1,27 @@
+openapi: "3.0.0"
+paths:
+  /testAdditionalProperties:
+    post:
+      summary: Additional properties in body, primitive and non primitive
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Maps"
+components:
+  schemas:
+    Maps:
+      properties:
+        primitiveMap:
+          type: object
+          additionalProperties:
+            type: string
+        objectMap:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              prop1:
+                type: integer
+              prop2:
+                type: string

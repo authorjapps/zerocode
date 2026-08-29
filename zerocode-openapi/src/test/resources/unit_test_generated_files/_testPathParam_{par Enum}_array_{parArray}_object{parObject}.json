@@ -1,0 +1,13 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testPathParam/{par Enum}/array/{parArray}/object{parObject} - Test scenario",
+  "steps" : [ {
+    "name" : "/testPathParam/{par Enum}/array/{parArray}/object{parObject} - Path parameters",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/testPathParam/item%24two/array/{parArray}/object{parObject}",
+    "request" : { },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

@@ -1,0 +1,19 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Header parameters
+paths:
+  /testHeaderParamMediatype:
+    get:
+      summary: Header parameters and mediatype header
+      parameters:
+      - in: header
+        name: headerParam
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary

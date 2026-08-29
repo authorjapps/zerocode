@@ -1,0 +1,14 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Header from media type
+paths:
+  /testHeaderMediatype:
+    get:
+      summary: Header from mediatype
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary # no standard format, handled as string
