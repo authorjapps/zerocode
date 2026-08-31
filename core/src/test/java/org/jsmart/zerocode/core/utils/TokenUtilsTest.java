@@ -10,8 +10,6 @@ import org.junit.rules.ExpectedException;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.jsmart.zerocode.core.utils.TokenUtils.absolutePathOf;
-import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksReplaced;
-import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksRemoved;
 import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
 import static org.junit.Assert.*;
 
@@ -83,6 +81,21 @@ public class TokenUtilsTest {
         // normal string
         assertThat(unResolvedToken.equals("${SYSTEM.PROPERTY:dummy_property_one}"), is(true));
 
+    }
+
+    @Test
+    public void testDoubleBraceTokensHaveParityAndUnknownTemplatesRemainLiteral() {
+        System.setProperty("zc.double.brace.test", "resolved-value");
+
+        String resolved = resolveKnownTokens("${SYSTEM.PROPERTY:zc.double.brace.test}|{{SYSTEM.PROPERTY:zc.double.brace.test}}|${RANDOM.NUMBER.FIXED}|{{RANDOM.NUMBER.FIXED}}");
+        String[] tokens = resolved.split("\\|");
+
+        assertThat(tokens[0], is("resolved-value"));
+        assertThat(tokens[1], is("resolved-value"));
+        assertThat(tokens[2], is(tokens[3]));
+        assertThat(resolveKnownTokens("{{localdatetime offset='-1 days'}}"), is("{{localdatetime offset='-1 days'}}"));
+
+        System.clearProperty("zc.double.brace.test");
     }
 
     @Test
@@ -172,46 +185,6 @@ public class TokenUtilsTest {
                 containsString("zerocode/core/target/test-classes/unit_test_files/jks_files/dummy_key_store.jks"));
     }
 
-
-    @Test
-    public void testGetMaskedTokensReplaced_multipleOccurrences(){
-        assertEquals("This is a ***masked*** message with ***masked*** tokens.", getMasksReplaced("This is a ${MASKED:secret} message with ${MASKED:masked} tokens."));
-    }
-
-    @Test
-    public void testGetMaskedTokensReplaced_noOccurrences(){
-        assertEquals("This string has no masked tokens.", getMasksReplaced("This string has no masked tokens."));
-    }
-
-    @Test
-    public void testGetMaskedTokensReplaced_emptyString(){
-        assertEquals("", getMasksReplaced(""));
-    }
-
-    @Test
-    public void testGetMaskedTokensReplaced_specialCharacters(){
-        assertEquals("***masked*** and ***masked***", getMasksReplaced("${MASKED:abc@123} and ${MASKED:!@#$%^}"));
-    }
-
-    @Test
-    public void testGetMaskedTokensRemoved_multipleOccurrences(){
-        assertEquals("This is a secret message with masked tokens.", getMasksRemoved("This is a ${MASKED:secret} message with ${MASKED:masked} tokens."));
-    }
-
-    @Test
-    public void testGetMaskedTokensRemoved_noOccurrences(){
-        assertEquals("This string has no masked tokens.", getMasksRemoved("This string has no masked tokens."));
-    }
-
-    @Test
-    public void testGetMaskedTokensRemoved_emptyString(){
-        assertEquals("", getMasksRemoved(""));
-    }
-
-    @Test
-    public void testGetMaskedTokensRemoved_specialCharacters(){
-        assertEquals("abc@123 and !@#$%^", getMasksRemoved("${MASKED:abc@123} and ${MASKED:!@#$%^}"));
-    }
 
     @Test
     public void shouldResolveSqlFileToken_simple_only_sql() {

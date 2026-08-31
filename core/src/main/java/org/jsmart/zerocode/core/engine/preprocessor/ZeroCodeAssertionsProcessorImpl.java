@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
-import org.apache.commons.text.StringSubstitutor;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
@@ -71,10 +70,9 @@ import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadAbsolut
 import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
 import static org.jsmart.zerocode.core.utils.SmartUtils.getJsonFilePhToken;
 import static org.jsmart.zerocode.core.utils.SmartUtils.isValidAbsolutePath;
-import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksRemoved;
-import static org.jsmart.zerocode.core.utils.TokenUtils.getMasksReplaced;
 import static org.jsmart.zerocode.core.utils.TokenUtils.getTestCaseTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.populateParamMap;
+import static org.jsmart.zerocode.core.utils.TokenUtils.replaceTokens;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProcessor {
@@ -116,9 +114,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
 
         });
 
-        StringSubstitutor sub = new StringSubstitutor(paramMap);
-
-        return sub.replace(requestJsonOrAnyString);
+        return replaceTokens(requestJsonOrAnyString, paramMap);
     }
 
     @Override
@@ -165,9 +161,7 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
             }
         });
 
-        StringSubstitutor sub = new StringSubstitutor(paramMap);
-
-        return sub.replace(jsonString);
+        return replaceTokens(jsonString, paramMap);
     }
 
     @Override
@@ -403,16 +397,6 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
             LOGGER.error("Json content reading exception - {}", e.getMessage());
             throw new RuntimeException("Json content reading exception. Details - " + e);
         }
-    }
-
-    @Override
-    public String fieldMasksRemoved(String resolvedRequestJson) {
-        return getMasksRemoved(resolvedRequestJson);
-    }
-
-    @Override
-    public String fieldMasksApplied(String resolvedRequestJson) {
-        return getMasksReplaced(resolvedRequestJson);
     }
 
     private void loadAnnotatedHostProperties() {

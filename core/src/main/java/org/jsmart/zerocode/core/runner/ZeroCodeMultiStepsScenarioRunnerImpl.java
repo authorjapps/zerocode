@@ -428,13 +428,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         // --------------------------------
         url = zeroCodeAssertionsProcessor.resolveStringJson(url, scenarioExecutionState.getResolvedScenarioState());
 
-        // ------------------------------------------------
-        // 1) Removed the MASKED wrapper for API execution (For logging)
-        // 2) Replace the MASKED field with masked content (For API executions)
-        // ------------------------------------------------
-        String resolvedRequestJsonMaskRemoved = zeroCodeAssertionsProcessor.fieldMasksRemoved(resolvedRequestJson);
-        String resolvedRequestJsonMaskApplied = zeroCodeAssertionsProcessor.fieldMasksApplied(resolvedRequestJson);
-
         final LocalDateTime requestTimeStamp = LocalDateTime.now();
 
         String executionResult;
@@ -449,9 +442,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .url(url)
                         .method(operationName)
                         .id(stepId)
-                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
+                        .request(prettyPrintJson(resolvedRequestJson));
 
-                executionResult = apiExecutor.executeHttpApi(url, operationName, resolvedRequestJsonMaskRemoved);
+                executionResult = apiExecutor.executeHttpApi(url, operationName, resolvedRequestJson);
                 break;
 
             case JAVA_CALL:
@@ -462,10 +455,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .id(stepId)
                         .url(url)
                         .method(operationName)
-                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
+                        .request(prettyPrintJson(resolvedRequestJson));
 
                 url = apiTypeUtils.getQualifiedJavaApi(url);
-                executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJsonMaskRemoved);
+                executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJson);
                 break;
 
             case KAFKA_CALL:
@@ -480,10 +473,10 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .url(url)
                         .method(operationName.toUpperCase())
                         .id(stepId)
-                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
+                        .request(prettyPrintJson(resolvedRequestJson));
 
                 String topicName = url.substring(KAFKA_TOPIC.length());
-                executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJsonMaskRemoved, scenarioExecutionState);
+                executionResult = apiExecutor.executeKafkaService(kafkaServers, topicName, operationName, resolvedRequestJson, scenarioExecutionState);
                 break;
 
             case NONE:
@@ -494,9 +487,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .id(stepId)
                         .url(url)
                         .method(operationName)
-                        .request(prettyPrintJson(resolvedRequestJsonMaskApplied));
+                        .request(prettyPrintJson(resolvedRequestJson));
 
-                executionResult = prettyPrintJson(resolvedRequestJsonMaskApplied);
+                executionResult = prettyPrintJson(resolvedRequestJson);
                 break;
 
             default:
@@ -563,8 +556,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private List<FieldAssertionMatcher> compareStepResults(Step thisStep, String actualResult, String expectedResult, String resolvedScenarioState) {
         List<FieldAssertionMatcher> failureResults = new ArrayList<>();
-
-        expectedResult = zeroCodeAssertionsProcessor.fieldMasksRemoved(expectedResult);
 
         // --------------------
         //  Validators (pyrest)
