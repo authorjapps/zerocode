@@ -239,8 +239,32 @@ public class ZeroCodeReportGeneratorImplTest {
         );
 
         String table = zeroCodeReportGenerator.buildTableReportContent(rows);
-        // truncated text ends with ".." and is exactly 48 chars (46 base + "..")
-        assertThat(table, containsString("GIVEN the very long scenario name that exceeds.."));
+        // truncated text keeps first 23 + "..." + last 22 chars, exactly 48 chars wide
+        assertThat(table, containsString("GIVEN the very long sce...imit set for the table"));
+    }
+
+    @Test
+    public void buildTableReport_truncatesLongStepAt25CharsKeepingFirstAndLastPart() {
+        String longStep = "verify_the_response_contains_all_expected_fields_correctly";
+        List<ZeroCodeCsvReport> rows = Arrays.asList(
+                csvRow("Scenario", longStep, "GET", RESULT_PASS, 50.0)
+        );
+
+        String table = zeroCodeReportGenerator.buildTableReportContent(rows);
+        // truncated text keeps first 11 + "..." + last 11 chars, exactly 25 chars wide
+        assertThat(table, containsString("verify_the_...s_correctly"));
+    }
+
+    @Test
+    public void buildTableReport_truncatesLongMethodAt22CharsKeepingFirstAndLastPart() {
+        String longMethod = "PATCH_WITH_CUSTOM_HEADERS_AND_LONG_NAME";
+        List<ZeroCodeCsvReport> rows = Arrays.asList(
+                csvRow("Scenario", "step", longMethod, RESULT_PASS, 50.0)
+        );
+
+        String table = zeroCodeReportGenerator.buildTableReportContent(rows);
+        // truncated text keeps first 10 + "..." + last 9 chars, exactly 22 chars wide
+        assertThat(table, containsString("PATCH_WITH...LONG_NAME"));
     }
 
     @Test
