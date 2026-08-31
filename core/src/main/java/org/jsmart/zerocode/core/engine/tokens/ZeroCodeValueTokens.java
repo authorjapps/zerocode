@@ -33,16 +33,12 @@ public class ZeroCodeValueTokens {
     public static final String $VALUE = ".$VALUE";
     public static final String ABS_PATH = "ABS.PATH:";
     public static final String JSON_CONTENT = "JSON.CONTENT:";
-    public static final String MASKED = "MASKED:";
-    public static final String MASKED_STR = "***masked***";
     public static final String URL_ENCODED = "URLENCODED:";
-
 
     public static Map<String, Object> globalTokenCache = new HashMap<>();
 
     public static List<String> getKnownTokens() {
         return asList(
-                MASKED,
                 PREFIX_ASU,
                 RANDOM_NUMBER,
                 GLOBAL_RANDOM_NUMBER,

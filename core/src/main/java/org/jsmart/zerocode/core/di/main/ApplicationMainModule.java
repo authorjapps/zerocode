@@ -41,7 +41,7 @@ import static org.jsmart.zerocode.core.utils.SmartUtils.isValidAbsolutePath;
 public class ApplicationMainModule extends AbstractModule {
     private static final Logger LOGGER = Logger.getLogger(ApplicationMainModule.class.getName());
 
-    private static final Pattern ENV_PLACEHOLDER_PATTERN = Pattern.compile("\\$\\{([^}]+)\\}");
+    private static final Pattern ENV_PLACEHOLDER_PATTERN = Pattern.compile("\\$\\{([^}]+)\\}|\\{\\{([^}]+)\\}\\}");
 
     private final String serverEnv;
 
@@ -106,18 +106,18 @@ public class ApplicationMainModule extends AbstractModule {
     }
 
     /**
-     * Resolves any {@code ${name}} placeholders found in the loaded property values against
+     * Resolves any {@code ${name}} or {@code {{name}}} placeholders found in the loaded property values against
      * system properties and OS environment variables (in that order, via
      * {@link org.jsmart.zerocode.core.utils.EnvUtils#getEnvValueString(String)}).
      * <p>
      * This lets a target-env properties file reference values supplied on the command line, e.g.
      * <pre>
-     *     db.username=${db.username}
+     *     db.username={{db.username}}
      * </pre>
      * run with {@code -Ddb.username=alice} so the injected value becomes {@code alice}.
      * <p>
      * A placeholder whose name resolves to no system property or env var is left untouched, so
-     * files that legitimately contain {@code ${...}} for downstream tooling are not corrupted.
+     * files that legitimately contain either placeholder style for downstream tooling are not corrupted.
      * Values without any placeholder are returned unchanged.
      */
     public Properties resolveEnvPlaceholders(Properties properties) {
@@ -140,7 +140,7 @@ public class ApplicationMainModule extends AbstractModule {
         StringBuffer resolved = new StringBuffer();
 
         while (matcher.find()) {
-            String placeholderName = matcher.group(1);
+            String placeholderName = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
             String replacement = getEnvValueString(placeholderName);
 
             // Leave the placeholder literally in place when it cannot be resolved (backward compatible).
