@@ -198,7 +198,7 @@ public class BasicHttpClient {
     /**
      * If(optionally) query parameters was sent as a JSON in the request below, this gets available to this method
      * for processing them with the url.
-     *<pre>{@code
+     *
      * e.g.
      * "url": "/api/v1/search/people"
      * "request": {
@@ -207,15 +207,15 @@ public class BasicHttpClient {
      *         "lang":"Awesome"
      *     }
      * }
-     * }</pre>
+     * 
      * will resolve to effective url "/api/v1/search/people?city=Lon{@literal &}lang=Awesome".
      *
      * A value can also be an array, in which case the key is repeated once per element e.g.
-     *<pre>{@code
+     *
      * "queryParams": {
      *     "city":["Lon", "Syd"]
      * }
-     * }</pre>
+     *
      * will resolve to "/api/v1/search/people?city=Lon{@literal &}city=Syd".
      *
      * In case you need to handle it differently you can override this method to change this behaviour to roll your own
