@@ -1,0 +1,35 @@
+{
+  "scenarioName": "Url encode the id of an earlier step and use it in the next url",
+  "steps": [
+    {
+      "name": "POST_QUESTION",
+      "url": "/api/v1/questions",
+      "operation": "POST",
+      "request": {
+        "body": {
+          "question": "zerocode"
+        }
+      },
+      "assertions": {
+        "status": 201,
+        "body": {
+          "id": "#37:29"
+        }
+      }
+    },
+    {
+      "name": "GET_QUESTION",
+      // The id "#37:29" of the earlier step is sent as "%2337%3A29"
+      "url": "/api/v1/questions/${URLENCODED:$.POST_QUESTION.response.body.id}",
+      "operation": "GET",
+      "request": {},
+      "assertions": {
+        "status": 200,
+        "body": {
+          "id": "#37:29",
+          "question": "zerocode"
+        }
+      }
+    }
+  ]
+}

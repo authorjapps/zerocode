@@ -64,6 +64,7 @@
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldimplicitdelay.JustHelloImplicitDelayTimeOutTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldfileupload.HelloWorldFileUploadTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldretrywithsteps.HelloWorldRetryWithStepsTest</include>
+                        <include>org.jsmart.zerocode.testhelp.tests.helloworldurlencoded.HelloWorldUrlEncodedTest</include>
 
                     </includes>
                 </configuration>
