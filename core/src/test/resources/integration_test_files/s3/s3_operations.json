@@ -1,0 +1,41 @@
+{
+  "scenarioName": "S3 Operations",
+  "steps": [
+    {
+      "name": "upload_to_S3",
+      "url": "s3-bucket:test-bucket",
+      "operation": "upload",
+      "request": {
+        "key": "folder/file.txt",
+        "filePath": "src/test/resources/integration_test_files/s3/input.txt"
+      },
+      "verify": {
+        "status": 200,
+        "bucket": "test-bucket"
+      }
+    },
+    {
+      "name": "list_files_in_S3",
+      "url": "s3-bucket:test-bucket",
+      "operation": "list",
+      "request": {
+        "folder": "folder/"
+      },
+      "verify": {
+        "files.SIZE": 1
+      }
+    },
+    {
+      "name": "download_from_S3",
+      "url": "s3-bucket:test-bucket",
+      "operation": "download",
+      "request": {
+        "key": "folder/file.txt",
+        "saveAs": "target/downloaded.txt"
+      },
+      "verify": {
+        "downloaded": true
+      }
+    }
+  ]
+}
