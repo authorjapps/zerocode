@@ -476,6 +476,83 @@ public class ZeroCodeAssertionsProcessorImplTest {
     }
 
     @Test
+    public void testUrlEncoded_jsonPathOfEarlierStep() throws Exception {
+        // Issue #675 - the id "#37:29" created by an earlier step needs to be
+        // URL encoded before it can be used in the url of the next step
+        String scenarioState = "{\n" +
+                "    \"POST_QUESTION\": {\n" +
+                "        \"response\": {\n" +
+                "            \"status\": 201,\n" +
+                "            \"body\": {\n" +
+                "                \"id\": \"#37:29\"\n" +
+                "            }\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+
+        String url = "/questions/${URLENCODED:$.POST_QUESTION.response.body.id}";
+
+        assertThat(jsonPreProcessor.resolveStringJson(url, scenarioState), is("/questions/%2337%3A29"));
+    }
+
+    @Test
+    public void testUrlEncoded_jsonPathAndPlainJsonPathTogether() throws Exception {
+        String scenarioState = "{\n" +
+                "    \"POST_QUESTION\": {\n" +
+                "        \"response\": {\n" +
+                "            \"body\": {\n" +
+                "                \"id\": \"#37:29\",\n" +
+                "                \"category\": \"a b\"\n" +
+                "            }\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+
+        String requestJson = "{\n" +
+                "    \"id\": \"${$.POST_QUESTION.response.body.id}\",\n" +
+                "    \"encodedId\": \"${URLENCODED:$.POST_QUESTION.response.body.id}\",\n" +
+                "    \"encodedCategory\": \"${URLENCODED:$.POST_QUESTION.response.body.category}\"\n" +
+                "}";
+
+        String resolvedJson = jsonPreProcessor.resolveStringJson(requestJson, scenarioState);
+
+        assertThat(readJsonPath(resolvedJson, "$.id", String.class), is("#37:29"));
+        assertThat(readJsonPath(resolvedJson, "$.encodedId", String.class), is("%2337%3A29"));
+        assertThat(readJsonPath(resolvedJson, "$.encodedCategory", String.class), is("a+b"));
+    }
+
+    @Test
+    public void testUrlEncoded_jsonPathOfNumericValue() throws Exception {
+        String scenarioState = "{\"POST_QUESTION\": {\"response\": {\"body\": {\"id\": 1001}}}}";
+
+        String url = "/questions/${URLENCODED:$.POST_QUESTION.response.body.id}";
+
+        assertThat(jsonPreProcessor.resolveStringJson(url, scenarioState), is("/questions/1001"));
+    }
+
+    @Test
+    public void testUrlEncoded_jsonPathAbsent_leftAsItIs() throws Exception {
+        String scenarioState = "{\"POST_QUESTION\": {\"response\": {\"body\": {}}}}";
+
+        String url = "/questions/${URLENCODED:$.POST_QUESTION.response.body.id}";
+
+        assertThat(jsonPreProcessor.resolveStringJson(url, scenarioState), is(url));
+    }
+
+    @Test
+    public void testUrlEncoded_staticValue() throws Exception {
+        assertThat(jsonPreProcessor.resolveStringJson("/questions/${URLENCODED:#37:29}", "{}"),
+                is("/questions/%2337%3A29"));
+    }
+
+    @Test
+    public void testUrlEncoded_propertyValue() throws Exception {
+        // web.application.endpoint.context=/google-map-services in config_hosts_test.properties
+        assertThat(jsonPreProcessor.resolveStringJson("${URLENCODED:web.application.endpoint.context}", "{}"),
+                is("%2Fgoogle-map-services"));
+    }
+
+    @Test
     public void testIgnoreCaseWith_containsNoMatch() throws Exception {
         ScenarioSpec scenarioSpec =
                 smartUtils.scenarioFileToJava(

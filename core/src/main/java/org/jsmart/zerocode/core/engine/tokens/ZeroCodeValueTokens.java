@@ -33,6 +33,7 @@ public class ZeroCodeValueTokens {
     public static final String $VALUE = ".$VALUE";
     public static final String ABS_PATH = "ABS.PATH:";
     public static final String JSON_CONTENT = "JSON.CONTENT:";
+    public static final String URL_ENCODED = "URLENCODED:";
 
     public static Map<String, Object> globalTokenCache = new HashMap<>();
 
@@ -53,7 +54,8 @@ public class ZeroCodeValueTokens {
                 RANDOM_UU_ID,
                 RECORD_DUMP,
                 ABS_PATH,
-                SYSTEM_ENV
+                SYSTEM_ENV,
+                URL_ENCODED
         );
     }
 }

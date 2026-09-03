@@ -1,7 +1,10 @@
 package org.jsmart.zerocode.core.utils;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -127,6 +130,17 @@ public class TokenUtils {
                         } else if (runTimeToken.startsWith(ABS_PATH)) {
                             String propertyName = runTimeToken.substring(ABS_PATH.length());
                             paramaMap.put(runTimeToken, absolutePathOf(propertyName));
+
+                        } else if (runTimeToken.startsWith(URL_ENCODED)) {
+                            String valueToEncode = runTimeToken.substring(URL_ENCODED.length());
+                            /*
+                             * A JSON path e.g. ${URLENCODED:$.step_name.response.body.id} is only
+                             * known after the previous steps ran, hence it is left as it is here and
+                             * gets encoded while the JSON paths are resolved against the scenario state.
+                             */
+                            if (!valueToEncode.startsWith("$.")) {
+                                paramaMap.put(runTimeToken, urlEncoded(resolveNestedToken(valueToEncode)));
+                            }
                         }
                     }
                 }
@@ -134,6 +148,32 @@ public class TokenUtils {
 
     }
 
+
+    /**
+     * URL encodes a value, e.g. "#37:29" becomes "%2337%3A29", so that it can be safely
+     * used in the url of a subsequent step.
+     */
+    public static String urlEncoded(String value) {
+        try {
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            // Can not happen as UTF-8 is always supported, still no swallowing of the cause
+            throw new RuntimeException("Oops! Problem occurred while URL encoding '" + value + "', details:" + e);
+        }
+    }
+
+    /**
+     * Resolves a known token wrapped inside another token, e.g. the "RANDOM.STRING:5" of
+     * "URLENCODED:RANDOM.STRING:5". A plain value is simply returned as it is.
+     */
+    private static String resolveNestedToken(String nestedToken) {
+        Map<String, Object> nestedParamMap = new HashMap<>();
+        populateParamMap(nestedParamMap, nestedToken);
+
+        Object resolvedValue = nestedParamMap.get(nestedToken);
+
+        return resolvedValue == null ? nestedToken : resolvedValue.toString();
+    }
 
     /**
      * This method was introduced later,

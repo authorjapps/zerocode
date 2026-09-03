@@ -1,0 +1,27 @@
+{
+    "scenarioName": "Url encode the id of an earlier step, issue #675",
+    "steps": [
+        {
+            "name": "CREATE_QUESTION",
+            "url": "org.jsmart.zerocode.integrationtests.urlencoded.QuestionService",
+            "operation": "createQuestion",
+            "request": {},
+            "assertions": {
+                "id": "#37:29"
+            }
+        },
+        {
+            "name": "GET_QUESTION",
+            "url": "org.jsmart.zerocode.integrationtests.urlencoded.QuestionService",
+            "operation": "echoUrl",
+            "request": {
+                "url": "/questions/${URLENCODED:$.CREATE_QUESTION.response.id}",
+                "plainUrl": "/questions/${$.CREATE_QUESTION.response.id}"
+            },
+            "assertions": {
+                "url": "/questions/%2337%3A29",
+                "plainUrl": "/questions/#37:29"
+            }
+        }
+    ]
+}

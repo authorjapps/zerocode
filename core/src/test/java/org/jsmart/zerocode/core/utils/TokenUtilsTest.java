@@ -1,5 +1,8 @@
 package org.jsmart.zerocode.core.utils;
 
+import java.net.URLDecoder;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.stream.IntStream;
 import org.junit.Ignore;
@@ -9,8 +12,11 @@ import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.URL_ENCODED;
+import static org.jsmart.zerocode.core.engine.tokens.ZeroCodeValueTokens.getKnownTokens;
 import static org.jsmart.zerocode.core.utils.TokenUtils.absolutePathOf;
 import static org.jsmart.zerocode.core.utils.TokenUtils.resolveKnownTokens;
+import static org.jsmart.zerocode.core.utils.TokenUtils.urlEncoded;
 import static org.junit.Assert.*;
 
 public class TokenUtilsTest {
@@ -185,6 +191,46 @@ public class TokenUtilsTest {
                 containsString("zerocode/core/target/test-classes/unit_test_files/jks_files/dummy_key_store.jks"));
     }
 
+    @Test
+    public void testUrlEncoded_specialCharacters() {
+        // e.g. an id like #37:29 of an earlier step used in the url of the next step
+        assertEquals("%2337%3A29", urlEncoded("#37:29"));
+        assertEquals("a%2Fb%3Fc%3Dd%26e", urlEncoded("a/b?c=d&e"));
+        assertEquals("", urlEncoded(""));
+    }
+
+    @Test
+    public void testResolveUrlEncodedToken_staticValue() {
+        assertEquals("/questions/%2337%3A29", resolveKnownTokens("/questions/${URLENCODED:#37:29}"));
+    }
+
+    @Test
+    public void testResolveUrlEncodedToken_multipleTokens() {
+        assertEquals("%2337%3A29-and-%2343%3A118",
+                resolveKnownTokens("${URLENCODED:#37:29}-and-${URLENCODED:#43:118}"));
+    }
+
+    @Test
+    public void testResolveUrlEncodedToken_nestedKnownToken() throws Exception {
+        String resolvedValue = resolveKnownTokens("${URLENCODED:LOCAL.DATE.TODAY:yyyy/MM/dd}");
+
+        assertThat(resolvedValue, containsString("%2F"));
+        assertEquals(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")),
+                URLDecoder.decode(resolvedValue, "UTF-8"));
+    }
+
+    @Test
+    public void testResolveUrlEncodedToken_jsonPathIsLeftAsItIs() {
+        // A JSON path is resolved against the scenario state later, hence untouched here
+        String jsonPathToken = "/questions/${URLENCODED:$.POST_QUESTION.response.body.id}";
+
+        assertEquals(jsonPathToken, resolveKnownTokens(jsonPathToken));
+    }
+
+    @Test
+    public void testKnownTokens_containsUrlEncoded() {
+        assertTrue(getKnownTokens().contains(URL_ENCODED));
+    }
 
     @Test
     public void shouldResolveSqlFileToken_simple_only_sql() {
