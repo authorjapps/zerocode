@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
@@ -197,7 +198,7 @@ public class BasicHttpClient {
     /**
      * If(optionally) query parameters was sent as a JSON in the request below, this gets available to this method
      * for processing them with the url.
-     *<pre>{@code
+     *
      * e.g.
      * "url": "/api/v1/search/people"
      * "request": {
@@ -206,8 +207,16 @@ public class BasicHttpClient {
      *         "lang":"Awesome"
      *     }
      * }
-     * }</pre>
+     * 
      * will resolve to effective url "/api/v1/search/people?city=Lon{@literal &}lang=Awesome".
+     *
+     * A value can also be an array, in which case the key is repeated once per element e.g.
+     *
+     * "queryParams": {
+     *     "city":["Lon", "Syd"]
+     * }
+     *
+     * will resolve to "/api/v1/search/people?city=Lon{@literal &}city=Syd".
      *
      * In case you need to handle it differently you can override this method to change this behaviour to roll your own
      * feature.
@@ -296,6 +305,10 @@ public class BasicHttpClient {
      * is passed in the request.  In case you want to build or prepare the requests differently,
      * you can override this method via @UseHttpClient(YourCustomHttpClient.class).
      *
+     * When a value in the body is an array, the key is repeated once per element, so that the
+     * server receives it as a multivalue field e.g. {@code {"city":["Lon", "Syd"]}} is sent as
+     * "city=Lon{@literal &}city=Syd".
+     *
      */
     public RequestBuilder createFormUrlEncodedRequestBuilder(String httpUrl, String methodName, String reqBodyAsString) throws IOException {
         RequestBuilder requestBuilder = RequestBuilder
@@ -304,8 +317,15 @@ public class BasicHttpClient {
         if (reqBodyAsString != null) {
             Map<String, Object> reqBodyMap = HelperJsonUtils.readObjectAsMap(reqBodyAsString);
             List<NameValuePair> reqBody = new ArrayList<>();
-             for(String key : reqBodyMap.keySet()) {
-                 reqBody.add(new BasicNameValuePair(key, reqBodyMap.get(key).toString()));
+             for(Map.Entry<String, Object> entry : reqBodyMap.entrySet()) {
+                 Object value = entry.getValue();
+                 if (value instanceof Collection) {
+                     for (Object eachValue : (Collection<?>) value) {
+                         reqBody.add(new BasicNameValuePair(entry.getKey(), String.valueOf(eachValue)));
+                     }
+                 } else {
+                     reqBody.add(new BasicNameValuePair(entry.getKey(), value.toString()));
+                 }
              }
              HttpEntity httpEntity = new UrlEncodedFormEntity(reqBody);
              requestBuilder.setEntity(httpEntity);
