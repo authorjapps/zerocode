@@ -1,8 +1,8 @@
 <img width="135"  height="120" alt="Zerocode" src="https://user-images.githubusercontent.com/12598420/51964581-e5a78e80-245e-11e9-9400-72c4c02ac555.png"> Zerocode
 ===
-A no-code automated testing framework for Data streams(Kafka), microservices APIs, and databases using JSON.
+ZerocodeTDD is a no-code low-code automated testing tool for Data streams(Kafka), microservices APIs, and databases using JSON.
 
-Next, install the [Steply](https://github.com/QABEES/steply?tab=readme-ov-file#steply) CLI to run tests in language-independent mode.
+See also, CLI only tool [Steply](https://github.com/QABEES/steply?tab=readme-ov-file#steply) to run tests directly from the terminal.
 
 [![API](https://img.shields.io/badge/api-automation-blue)](https://github.com/authorjapps/zerocode/wiki/What-is-Zerocode-Testing)
 [![Performance Testing](https://img.shields.io/badge/performance-testing-8A2BE2)](https://github.com/authorjapps/zerocode/wiki/Load-or-Performance-Testing-(IDE-based))
