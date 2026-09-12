@@ -15,4 +15,10 @@ public class HelloWorldDateAfterBeforeTest {
     public void testCreatedDateAfterBefore() throws Exception {
 
     }
+
+    @Test
+    @JsonTestCase("helloworld_date/hello_world_date_timezone_aware_test.json")
+    public void testTimezoneAwareDateTimeAssertions() throws Exception {
+
+    }
 }

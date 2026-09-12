@@ -1,0 +1,53 @@
+{
+    "scenarioName": "Assert timezone-aware datetime parsing across ISO offset, UTC Zulu, RFC-1123 and legacy local formats",
+    "steps": [
+        {
+            "name": "assert_iso_offset_format",
+            "url": "/users/octocat",
+            "method": "GET",
+            "request": {},
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "created_at": "$LOCAL.DATETIME.BEFORE:2019-07-06T22:37:15+05:30"
+                }
+            }
+        },
+        {
+            "name": "assert_iso_utc_zulu_format",
+            "url": "/users/octocat",
+            "method": "GET",
+            "request": {},
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "created_at": "$LOCAL.DATETIME.BEFORE:2019-07-06T17:07:15.000Z"
+                }
+            }
+        },
+        {
+            "name": "assert_rfc_1123_http_date_format",
+            "url": "/users/octocat",
+            "method": "GET",
+            "request": {},
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "created_at": "$LOCAL.DATETIME.BEFORE:Sat, 06 Jul 2019 17:07:15 GMT"
+                }
+            }
+        },
+        {
+            "name": "assert_legacy_local_format_backward_compatibility",
+            "url": "/users/octocat",
+            "method": "GET",
+            "request": {},
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "created_at": "$LOCAL.DATETIME.BEFORE:2019-07-06T17:07:15.000"
+                }
+            }
+        }
+    ]
+}
