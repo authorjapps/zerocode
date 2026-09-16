@@ -11,6 +11,9 @@ import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -18,6 +21,7 @@ import static java.lang.Double.valueOf;
 import static java.lang.Integer.parseInt;
 import static java.lang.Thread.sleep;
 import static java.time.LocalDateTime.now;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public class ExecutorServiceRunner {
@@ -29,6 +33,7 @@ public class ExecutorServiceRunner {
     private int numberOfThreads;
     private int rampUpPeriod;
     private int loopCount;
+    private int abortAfterTimeLapsedInSeconds;
 
     private Double delayBetweenTwoThreadsInMilliSecs;
 
@@ -37,6 +42,7 @@ public class ExecutorServiceRunner {
         numberOfThreads = parseInt(properties.getProperty("number.of.threads"));
         rampUpPeriod = parseInt(properties.getProperty("ramp.up.period.in.seconds"));
         loopCount = parseInt(properties.getProperty("loop.count"));
+        abortAfterTimeLapsedInSeconds = parseInt(properties.getProperty("abort.after.time.lapsed.in.seconds"));
 
         calculateAndSetDelayBetweenTwoThreadsInSecs(rampUpPeriod);
 
@@ -47,6 +53,17 @@ public class ExecutorServiceRunner {
         this.numberOfThreads = numberOfThreads;
         this.loopCount = loopCount;
         this.rampUpPeriod = rampUpPeriod;
+        this.abortAfterTimeLapsedInSeconds = Integer.MAX_VALUE;
+
+        calculateAndSetDelayBetweenTwoThreadsInSecs(this.rampUpPeriod);
+        logLoadingProperties();
+    }
+
+    public ExecutorServiceRunner(int numberOfThreads, int loopCount, int rampUpPeriod, int abortAfterTimeLapsedInSeconds) {
+        this.numberOfThreads = numberOfThreads;
+        this.loopCount = loopCount;
+        this.rampUpPeriod = rampUpPeriod;
+        this.abortAfterTimeLapsedInSeconds = abortAfterTimeLapsedInSeconds;
 
         calculateAndSetDelayBetweenTwoThreadsInSecs(this.rampUpPeriod);
         logLoadingProperties();
@@ -64,16 +81,60 @@ public class ExecutorServiceRunner {
 
 
     public void runRunnables() {
+        executeWithAbortTimeout(() -> {
+            if (runnables == null || runnables.size() == 0) {
+                throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
+            }
 
-        if (runnables == null || runnables.size() == 0) {
-            throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
-        }
+            ExecutorService executorService = newFixedThreadPool(numberOfThreads);
 
-        ExecutorService executorService = newFixedThreadPool(numberOfThreads);
+            try {
+                for (int i = 0; i < loopCount; i++) {
+                    runnables.stream().forEach(thisFunction -> {
+                        for (int j = 0; j < numberOfThreads; j++) {
+                            try {
+                                LOGGER.debug("Waiting for the next test flight to adjust the overall ramp up time, " +
+                                        "waiting time in the transit now = " + delayBetweenTwoThreadsInMilliSecs);
+                                sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
 
-        try {
-            for (int i = 0; i < loopCount; i++) {
-                runnables.stream().forEach(thisFunction -> {
+                            LOGGER.debug(Thread.currentThread().getName() + " Executor - *Start... Time = " + now());
+
+                            executorService.execute(thisFunction);
+
+                            LOGGER.debug(Thread.currentThread().getName() + " Executor - *Finished Time = " + now());
+                        }
+                    });
+                }
+            } catch (Exception interruptEx) {
+                throw new RuntimeException(interruptEx);
+            } finally {
+                executorService.shutdown();
+                while (!executorService.isTerminated()) {
+                    // --------------------------------------
+                    // wait for all tasks to finish execution
+                    // --------------------------------------
+                    //LOGGER.info("Still waiting for all threads to complete execution...");
+                }
+                LOGGER.debug("**Finished executing all threads**");
+            }
+        });
+    }
+
+    public void runRunnablesMulti() {
+        executeWithAbortTimeout(() -> {
+            if (runnables == null || runnables.size() == 0) {
+                throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
+            }
+
+            ExecutorService executorService = newFixedThreadPool(numberOfThreads);
+
+            try {
+                final AtomicInteger functionIndex = new AtomicInteger();
+
+                for (int i = 0; i < loopCount; i++) {
                     for (int j = 0; j < numberOfThreads; j++) {
                         try {
                             LOGGER.debug("Waiting for the next test flight to adjust the overall ramp up time, " +
@@ -85,70 +146,29 @@ public class ExecutorServiceRunner {
 
                         LOGGER.debug(Thread.currentThread().getName() + " Executor - *Start... Time = " + now());
 
-                        executorService.execute(thisFunction);
+                        executorService.execute(runnables.get(functionIndex.getAndIncrement()));
 
                         LOGGER.debug(Thread.currentThread().getName() + " Executor - *Finished Time = " + now());
-                    }
-                });
-            }
-        } catch (Exception interruptEx) {
-            throw new RuntimeException(interruptEx);
-        } finally {
-            executorService.shutdown();
-            while (!executorService.isTerminated()) {
-                // --------------------------------------
-                // wait for all tasks to finish execution
-                // --------------------------------------
-                //LOGGER.info("Still waiting for all threads to complete execution...");
-            }
-            LOGGER.debug("**Finished executing all threads**");
-        }
-    }
 
-    public void runRunnablesMulti() {
-        if (runnables == null || runnables.size() == 0) {
-            throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
-        }
-
-        ExecutorService executorService = newFixedThreadPool(numberOfThreads);
-
-        try {
-            final AtomicInteger functionIndex = new AtomicInteger();
-
-            for (int i = 0; i < loopCount; i++) {
-                for (int j = 0; j < numberOfThreads; j++) {
-                    try {
-                        LOGGER.debug("Waiting for the next test flight to adjust the overall ramp up time, " +
-                                "waiting time in the transit now = " + delayBetweenTwoThreadsInMilliSecs);
-                        sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        if (functionIndex.get() == runnables.size()) {
+                            functionIndex.set(0);
+                        }
                     }
 
-                    LOGGER.debug(Thread.currentThread().getName() + " Executor - *Start... Time = " + now());
-
-                    executorService.execute(runnables.get(functionIndex.getAndIncrement()));
-
-                    LOGGER.debug(Thread.currentThread().getName() + " Executor - *Finished Time = " + now());
-
-                    if(functionIndex.get() == runnables.size()){
-                        functionIndex.set(0);
-                    }
                 }
-
+            } catch (Exception interruptEx) {
+                throw new RuntimeException(interruptEx);
+            } finally {
+                executorService.shutdown();
+                while (!executorService.isTerminated()) {
+                    // --------------------------------------
+                    // wait for all tasks to finish execution
+                    // --------------------------------------
+                    //LOGGER.info("Still waiting for all threads to complete execution...");
+                }
+                LOGGER.warn("** Completed executing all virtual-user scenarios! **");
             }
-        } catch (Exception interruptEx) {
-            throw new RuntimeException(interruptEx);
-        } finally {
-            executorService.shutdown();
-            while (!executorService.isTerminated()) {
-                // --------------------------------------
-                // wait for all tasks to finish execution
-                // --------------------------------------
-                //LOGGER.info("Still waiting for all threads to complete execution...");
-            }
-            LOGGER.warn("** Completed executing all virtual-user scenarios! **");
-        }
+        });
     }
 
     public void runCallables() {
@@ -156,42 +176,42 @@ public class ExecutorServiceRunner {
     }
 
     public void runCallableFutures() {
+        executeWithAbortTimeout(() -> {
 
-        if (callables == null || callables.size() == 0) {
-            throw new RuntimeException("No callable(s) was found to run. You can add one or more callables using 'addCallable(Callable callable)'");
-        }
-
-        ExecutorService executorService = newFixedThreadPool(numberOfThreads);
-
-        try {
-            executorService.invokeAll(callables).stream().forEach(future -> {
-                for (int j = 0; j < numberOfThreads; j++) {
-                    try {
-                        LOGGER.debug("Waiting in the transit for next test flight to adjust overall ramp up time, wait time now = " + delayBetweenTwoThreadsInMilliSecs);
-                        sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    LOGGER.debug(Thread.currentThread().getName() + " Future execution- Start.... Time = " + now());
-
-                    execute(future);
-
-                    LOGGER.debug(Thread.currentThread().getName() + " Future execution- *Finished Time = " + now());
-                }
-            });
-        } catch (InterruptedException interruptEx) {
-            throw new RuntimeException(interruptEx);
-        } finally {
-            executorService.shutdown();
-            while (!executorService.isTerminated()) {
-                // wait for all tasks to finish executing
-                // LOGGER.info("Still waiting for all threads to complete execution...");
+            if (callables == null || callables.size() == 0) {
+                throw new RuntimeException("No callable(s) was found to run. You can add one or more callables using 'addCallable(Callable callable)'");
             }
-            LOGGER.warn("* Completed executing all virtual-user scenarios! *");
-        }
 
+            ExecutorService executorService = newFixedThreadPool(numberOfThreads);
 
+            try {
+                executorService.invokeAll(callables).stream().forEach(future -> {
+                    for (int j = 0; j < numberOfThreads; j++) {
+                        try {
+                            LOGGER.debug("Waiting in the transit for next test flight to adjust overall ramp up time, wait time now = " + delayBetweenTwoThreadsInMilliSecs);
+                            sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        LOGGER.debug(Thread.currentThread().getName() + " Future execution- Start.... Time = " + now());
+
+                        execute(future);
+
+                        LOGGER.debug(Thread.currentThread().getName() + " Future execution- *Finished Time = " + now());
+                    }
+                });
+            } catch (InterruptedException interruptEx) {
+                throw new RuntimeException(interruptEx);
+            } finally {
+                executorService.shutdown();
+                while (!executorService.isTerminated()) {
+                    // wait for all tasks to finish executing
+                    // LOGGER.info("Still waiting for all threads to complete execution...");
+                }
+                LOGGER.warn("* Completed executing all virtual-user scenarios! *");
+            }
+        });
     }
 
     public <T extends Object> Callable<Object> createCallableFuture(T objectToConsumer, Consumer<T> consumer) {
@@ -210,6 +230,24 @@ public class ExecutorServiceRunner {
         }
     }
 
+    private void executeWithAbortTimeout(Runnable runnable) {
+        ExecutorService executorService = newSingleThreadExecutor();
+        Future<?> future = executorService.submit(runnable);
+        try {
+            future.get(abortAfterTimeLapsedInSeconds, TimeUnit.SECONDS);
+        } catch (TimeoutException timeoutEx) {
+            future.cancel(true);
+            throw new RuntimeException(timeoutEx);
+        } catch (InterruptedException interruptEx) {
+            Thread.currentThread().interrupt();
+            future.cancel(true);
+            throw new RuntimeException(interruptEx);
+        } catch (ExecutionException executionEx) {
+            throw new RuntimeException(executionEx);
+        } finally {
+            executorService.shutdownNow();
+        }
+    }
 
     private void calculateAndSetDelayBetweenTwoThreadsInSecs(int rampUpPeriod) {
         if (rampUpPeriod == 0) {
@@ -242,6 +280,7 @@ public class ExecutorServiceRunner {
                 "\n   ### numberOfThreads : " + numberOfThreads +
                 "\n   ### rampUpPeriodInSeconds : " + rampUpPeriod +
                 "\n   ### loopCount : " + loopCount +
+                "\n   ### abortAfterTimeLapsedInSeconds : " + abortAfterTimeLapsedInSeconds +
                 "\n-----------------------------------\n");
 
     }
