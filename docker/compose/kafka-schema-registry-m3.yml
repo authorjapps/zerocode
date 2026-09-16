@@ -2,13 +2,13 @@
 version: '3'
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.5.1
+    image: confluentinc/cp-zookeeper:7.8.2
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:5.5.1
+    image: confluentinc/cp-kafka:7.8.2
     depends_on:
       - zookeeper
     ports:
@@ -22,7 +22,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   schema-registry:
-      image: confluentinc/cp-schema-registry:5.5.1
+      image: confluentinc/cp-schema-registry:7.8.2
       depends_on:
         - kafka
         - zookeeper
@@ -34,7 +34,7 @@ services:
         - "8081:8081"
 
   rest-proxy:
-      image: confluentinc/cp-kafka-rest:5.5.1
+      image: confluentinc/cp-kafka-rest:7.8.2
       depends_on:
         - zookeeper
         - kafka
