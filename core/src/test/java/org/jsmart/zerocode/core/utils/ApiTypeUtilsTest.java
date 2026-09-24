@@ -46,4 +46,16 @@ public class ApiTypeUtilsTest {
         String qualifiedClass = apiTypeUtils.getQualifiedJavaApi("foo://v1/s1");
     }
 
+    @Test
+    public void testApiTypeS3() {
+        ApiType apiType = ApiTypeUtils.apiType("s3-bucket:test-bucket", "upload");
+        assertThat(apiType, is(ApiType.S3_CALL));
+        
+        apiType = ApiTypeUtils.apiType("s3-bucket:another", "download");
+        assertThat(apiType, is(ApiType.S3_CALL));
+        
+        apiType = ApiTypeUtils.apiType("s3-bucket:", "list");
+        assertThat(apiType, is(ApiType.S3_CALL));
+    }
+
 }

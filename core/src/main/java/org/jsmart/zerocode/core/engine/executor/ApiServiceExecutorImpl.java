@@ -21,6 +21,9 @@ public class ApiServiceExecutorImpl implements ApiServiceExecutor {
     @Inject
     private BasicKafkaClient kafkaClient;
 
+    @Inject
+    private org.jsmart.zerocode.core.s3.S3Client s3Client;
+
     @Inject(optional = true)
     @Named("mock.api.port")
     private int mockPort;
@@ -57,5 +60,10 @@ public class ApiServiceExecutorImpl implements ApiServiceExecutor {
     @Override
     public String executeKafkaService(String kafkaServers, String kafkaTopic, String operation, String requestJson, ScenarioExecutionState scenarioExecutionState) {
         return kafkaClient.execute(kafkaServers, kafkaTopic, operation, requestJson, scenarioExecutionState);
+    }
+
+    @Override
+    public String executeS3Service(String bucketName, String operation, String requestJson, ScenarioExecutionState scenarioExecutionState) {
+        return s3Client.execute(bucketName, operation, requestJson, scenarioExecutionState);
     }
 }
