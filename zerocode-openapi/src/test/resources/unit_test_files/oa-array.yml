@@ -1,0 +1,33 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Array generation
+paths:
+  /testArray:
+    post:
+      summary: Array of primitives and objects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestArray"
+components:
+  schemas:
+    TestArray:
+      properties:
+        arrPrimInt:
+          type: array
+          items:
+            type: integer
+        arrPrimString:
+          type: array
+          items:
+            type: string
+        arrObj:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: string
+       

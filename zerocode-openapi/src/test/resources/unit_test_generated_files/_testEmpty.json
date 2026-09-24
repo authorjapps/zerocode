@@ -1,0 +1,13 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testEmpty - Test scenario",
+  "steps" : [ {
+    "name" : "/testEmpty - Neither params nor body",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/testEmpty",
+    "request" : { },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

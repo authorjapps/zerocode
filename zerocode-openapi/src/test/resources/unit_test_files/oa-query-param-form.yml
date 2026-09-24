@@ -1,0 +1,32 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Array in query params, form format
+paths:
+  /testQueryParamForm:
+    get:
+      summary: Query parameters, form style
+      parameters:
+      - in: query
+        name: parExpl
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+      - in: query
+        name: parNoExpl
+        explode: false
+        schema:
+          type: array
+          items:
+            type: integer
+      # test url encoding on name and values
+      - in: query
+        name: "param Enum"
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            enum: ["item$one", "item$two", "item$three", "item$four" , "item$five"]

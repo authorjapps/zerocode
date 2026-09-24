@@ -1,0 +1,23 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testArray - Test scenario",
+  "steps" : [ {
+    "name" : "/testArray - Array of primitives and objects",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/testArray",
+    "request" : {
+      "body" : {
+        "arrPrimInt" : [ "${RANDOM.NUMBER:8}", "${RANDOM.NUMBER:8}" ],
+        "arrPrimString" : [ "${RANDOM.STRING:12}${RANDOM.NUMBER:4}", "${RANDOM.STRING:12}${RANDOM.NUMBER:4}" ],
+        "arrObj" : [ {
+          "value" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+        }, {
+          "value" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+        } ]
+      }
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

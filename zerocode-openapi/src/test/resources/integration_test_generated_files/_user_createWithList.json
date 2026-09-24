@@ -1,0 +1,35 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/user/createWithList - Test scenario",
+  "steps" : [ {
+    "name" : "/user/createWithList - Creates list of users with given input array",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/user/createWithList",
+    "request" : {
+      "body" : [ {
+        "id" : "${RANDOM.NUMBER:8}",
+        "username" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "firstName" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "lastName" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "email" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "password" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "phone" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "userStatus" : "${RANDOM.NUMBER:8}"
+      }, {
+        "id" : "${RANDOM.NUMBER:8}",
+        "username" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "firstName" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "lastName" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "email" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "password" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "phone" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "userStatus" : "${RANDOM.NUMBER:8}"
+      } ]
+    },
+    "assertions" : {
+      "status" : 200
+    },
+    "ignoreStep" : false
+  } ]
+}

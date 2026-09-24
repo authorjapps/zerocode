@@ -1,0 +1,20 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/user/login - Test scenario",
+  "steps" : [ {
+    "name" : "/user/login - Logs user into the system",
+    "operation" : "GET",
+    "method" : "GET",
+    "url" : "/user/login",
+    "request" : {
+      "queryParams" : {
+        "username" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "password" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+      }
+    },
+    "assertions" : {
+      "status" : 200
+    },
+    "ignoreStep" : false
+  } ]
+}

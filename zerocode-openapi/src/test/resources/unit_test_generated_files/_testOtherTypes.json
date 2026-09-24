@@ -1,0 +1,22 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testOtherTypes - Test scenario",
+  "steps" : [ {
+    "name" : "/testOtherTypes - Other types in body, different from integer, string",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/testOtherTypes",
+    "request" : {
+      "body" : {
+        "numberField" : "${RANDOM.NUMBER:8}.${RANDOM.NUMBER:4}",
+        "booleanField1" : false,
+        "booleanField2" : false,
+        "booleanField3" : true,
+        "dateField" : "${LOCAL.DATE.NOW:yyyy-MM-dd}",
+        "dateTimeField" : "${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ss}"
+      }
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

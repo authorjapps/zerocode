@@ -1,0 +1,30 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Generation continues if some step fails
+paths:
+  /testFailedStep:
+    post:
+      summary: First step fails
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestKo"
+    get:
+      summary: Second step des not fail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestOk"
+components:
+  schemas:
+    TestOk:
+      properties:
+        okField:
+          type: string
+    TestKo:
+      properties:
+        koField:
+          type: strong
