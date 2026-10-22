@@ -1,0 +1,15 @@
+{
+    "scenarioName": "Java call - assertions omitted",
+    "steps": [
+        {
+            "name": "java_call_without_assertions",
+            "url": "org.jsmart.zerocode.converter.MimeTypeConverter",
+            "operation": "jsonBlockToJson",
+            "request": {
+                "body": {
+                    "id": 1001
+                }
+            }
+        }
+    ]
+}
