@@ -1,0 +1,31 @@
+[
+    {
+        "name": "create_user",
+        "url": "/api/v1/users",
+        "method": "POST",
+        "request": {
+            "body": {
+                "username": "${PARAM.username}",
+                "role": "${PARAM.role}",
+                "retries": "(int)${PARAM.retries}",
+                "active": "(boolean)${PARAM.active}"
+            }
+        },
+        "assertions": {
+            "status": 201
+        }
+    },
+    {
+        "name": "get_user",
+        "url": "/api/v1/users/${PARAM.username}",
+        "method": "GET",
+        "request": {},
+        "assertions": {
+            "status": 200,
+            "body": {
+                "username": "${PARAM.username}",
+                "role": "{{PARAM.role}}"
+            }
+        }
+    }
+]

@@ -1,0 +1,49 @@
+{
+    "scenarioName": "Reuse a step file twice with different parameters",
+    "steps": [
+        {
+            "name": "signup",
+            "url": "",
+            "operation": "",
+            "request": {
+                "role": "ADMIN"
+            },
+            "assertions": {}
+        },
+        {
+            "id": "create_admin",
+            "stepFiles": "${JSON.FILE:integration_test_files/multi_step/param_echo_steps.json}",
+            "parameters": {
+                "username": "alice",
+                "role": "${$.signup.request.role}",
+                "retries": 3,
+                "active": true,
+                "tag": "t_${RANDOM.NUMBER}"
+            }
+        },
+        {
+            "id": "create_viewer",
+            "stepFiles": "${JSON.FILE:integration_test_files/multi_step/param_echo_steps.json}",
+            "parameters": {
+                "username": "bob",
+                "role": "VIEWER",
+                "retries": 1,
+                "active": false,
+                "tag": "t_${RANDOM.NUMBER}"
+            }
+        },
+        {
+            "name": "latest_echo_user_is_viewer",
+            "url": "",
+            "operation": "",
+            "request": {
+                "username": "${$.echo_user.request.username}",
+                "retries": "${$.echo_user.response.retries}"
+            },
+            "assertions": {
+                "username": "bob",
+                "retries": "1"
+            }
+        }
+    ]
+}

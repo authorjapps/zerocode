@@ -65,6 +65,7 @@
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldfileupload.HelloWorldFileUploadTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldretrywithsteps.HelloWorldRetryWithStepsTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldurlencoded.HelloWorldUrlEncodedTest</include>
+                        <include>org.jsmart.zerocode.testhelp.tests.helloworldstepfileparameters.HelloWorldStepFileParametersTest</include>
 
                     </includes>
                 </configuration>

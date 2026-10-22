@@ -1,0 +1,35 @@
+{
+    "scenarioName": "Reuse the same step file to create an admin and a viewer user",
+    "steps": [
+        {
+            "id": "create_admin",
+            "name": "create_admin_reuse",
+            "stepFiles": "${JSON.FILE:helloworld_step_file_parameters/common/create_and_verify_user.json}",
+            "parameters": {
+                "username": "alice",
+                "role": "ADMIN"
+            }
+        },
+        {
+            "id": "create_viewer",
+            "stepFiles": "${JSON.FILE:helloworld_step_file_parameters/common/create_and_verify_user.json}",
+            "parameters": {
+                "username": "bob",
+                "role": "VIEWER"
+            }
+        },
+        {
+            "name": "latest_user_is_viewer",
+            "url": "/api/v1/users/${$.get_user.response.body.username}",
+            "operation": "GET",
+            "request": {},
+            "assertions": {
+                "status": 200,
+                "body": {
+                    "username": "bob",
+                    "role": "VIEWER"
+                }
+            }
+        }
+    ]
+}
