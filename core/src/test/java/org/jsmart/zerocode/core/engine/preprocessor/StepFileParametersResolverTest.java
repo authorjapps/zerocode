@@ -35,6 +35,7 @@ public class StepFileParametersResolverTest {
         assertThat(read(innerStepsJson, "$[1].assertions.body.username"), is("alice"));
     }
 
+    // Making sure both type supported: ${..} and {{..}}
     @Test
     public void testResolveDoubleCurlyBraceTokenWillReplaceParameter() throws IOException {
         final Step rawStep = stepFilesStep(STEP_FILES_PATH,

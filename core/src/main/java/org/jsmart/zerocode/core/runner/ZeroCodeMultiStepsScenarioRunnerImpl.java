@@ -410,7 +410,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     /**
      * Name to show in logs and reports. A step from a stepFile/stepFiles is shown with the step
-     * that used it, e.g. "create_admin_reuse (id: create_admin) -> get_user".
+     * that used it,
+     * e.g.
+     * "create_admin_reuse (id: create_admin) -> get_user".
      * The step's own name stays the same, so ${$.get_user...} still works.
      */
     private String displayNameOf(Step thisStep) {

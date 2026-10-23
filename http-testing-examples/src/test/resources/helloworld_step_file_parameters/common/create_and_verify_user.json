@@ -21,7 +21,7 @@
         "assertions": {
             "status": 200,
             "body": {
-                "username": "${PARAM.username}XXX",
+                "username": "${PARAM.username}",
                 "role": "${PARAM.role}"
             }
         }

@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 /**
  * Shows how the same "stepFiles" is reused twice in one scenario with different "parameters",
  * read inside the step file as ${PARAM.username} and ${PARAM.role}.
- * <p>
  * Starts and stops the local mock REST server itself, hence needs no manual setup.
  */
 @TargetEnv("hello_world_host.properties")

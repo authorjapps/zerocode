@@ -23,9 +23,10 @@ import static org.jsmart.zerocode.core.utils.SmartUtils.getJsonFilePhToken;
 /**
  * Replaces ${PARAM.name} (or {{PARAM.name}}) tokens inside an inlined "stepFile"/"stepFiles" with the
  * values from the "parameters" of the referencing step.
- *
+ * -
  * Runs before the usual token resolution, so a parameter value may itself carry tokens such as
  * ${RANDOM.NUMBER} or ${$.earlier_step.response.body.id}, which are then resolved as normal.
+ * -
  * The parameters apply only to the steps of that one reference and do not leak into the scenario.
  */
 public class StepFileParametersResolver {
@@ -54,10 +55,12 @@ public class StepFileParametersResolver {
         final boolean hasParameters = parameters != null && !parameters.isNull();
 
         if (!hasStepFileContent(inlinedStep)) {
+            // If this is regular DSL step, then "parameters" not allowed, throw an exception.
             failIfParametersPresent(hasParameters, inlinedStep);
             return inlinedStep;
         }
         if (hasParameters && !parameters.isObject()) {
+            // "parameters" should be of shape JSON object
             throw new RuntimeException(describeSource(rawStep, inlinedStep.getId())
                     + " has \"parameters\" that is not a JSON object: " + parameters);
         }
@@ -103,6 +106,13 @@ public class StepFileParametersResolver {
         return node;
     }
 
+    /**
+     * Replaces every ${PARAM.x} and {{PARAM.x}} in one text value. Other tokens are left for later resolution.
+     * e.g.
+     * with "parameters": { "username": "alice", "role": "ADMIN", "retries": 3, "tag": "t_${RANDOM.NUMBER}" }
+     * -  "/api/v1/users/${PARAM.username}"                  -> "/api/v1/users/alice"
+     * -  "{{PARAM.role}}:${PARAM.retries}:${PARAM.tag}"     -> "ADMIN:3:t_${RANDOM.NUMBER}"
+     */
     private String replaceParamTokens(String text, ParameterContext context) {
         final Matcher matcher = PARAM_TOKEN_PATTERN.matcher(text);
         final StringBuffer resolved = new StringBuffer();
