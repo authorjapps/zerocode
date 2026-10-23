@@ -4,7 +4,7 @@
     <parent>
         <artifactId>zerocode-tdd-parent</artifactId>
         <groupId>org.jsmart</groupId>
-        <version>1.4.4</version>
+        <version>1.4.5</version>
     </parent>
 
     <groupId>org.jsmart</groupId>
@@ -65,6 +65,7 @@
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldfileupload.HelloWorldFileUploadTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldretrywithsteps.HelloWorldRetryWithStepsTest</include>
                         <include>org.jsmart.zerocode.testhelp.tests.helloworldurlencoded.HelloWorldUrlEncodedTest</include>
+                        <include>org.jsmart.zerocode.testhelp.tests.helloworldstepfileparameters.HelloWorldStepFileParametersTest</include>
 
                     </includes>
                 </configuration>

@@ -34,6 +34,7 @@ public class ZeroCodeValueTokens {
     public static final String ABS_PATH = "ABS.PATH:";
     public static final String JSON_CONTENT = "JSON.CONTENT:";
     public static final String URL_ENCODED = "URLENCODED:";
+    public static final String STEP_FILE_PARAM = "PARAM.";
 
     public static Map<String, Object> globalTokenCache = new HashMap<>();
 

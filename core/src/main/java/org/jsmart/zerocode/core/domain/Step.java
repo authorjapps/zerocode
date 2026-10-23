@@ -2,6 +2,7 @@ package org.jsmart.zerocode.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,9 +34,15 @@ public class Step {
 
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<JsonNode> stepFiles;
+    private JsonNode parameters;
     private List<Object> parameterized;
     private List<String> parameterizedCsv;
     private String customLog;
+
+    // Not part of the DSL:
+    // set only on steps read from a stepFile/stepFiles, to show where they came from
+    @JsonIgnore
+    private String stepFileParent;
 
     public Integer getLoop() {
         return loop;
@@ -109,6 +116,14 @@ public class Step {
         this.stepFile = stepFile;
     }
 
+    public JsonNode getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(JsonNode parameters) {
+        this.parameters = parameters;
+    }
+
 
     public List<Object> getParameterized() {
         return parameterized;
@@ -127,6 +142,18 @@ public class Step {
     }
 
     public String getCustomLog(){ return customLog; }
+
+    /**
+     * @return the "name (id: ...)" of the step that referenced the stepFile/stepFiles this step came from,
+     * or null when this step is written directly in the scenario
+     */
+    public String getStepFileParent() {
+        return stepFileParent;
+    }
+
+    public void setStepFileParent(String stepFileParent) {
+        this.stepFileParent = stepFileParent;
+    }
 
     public void setCustomLog(String customLog) { this.customLog = customLog; }
 
@@ -181,6 +208,7 @@ public class Step {
                 ", id='" + id + '\'' +
                 ", stepFile=" + stepFile +
                 ", stepFiles=" + stepFiles +
+                ", parameters=" + parameters +
                 ", parameterized=" + parameterized +
                 ", customLog=" + customLog +
                 '}';

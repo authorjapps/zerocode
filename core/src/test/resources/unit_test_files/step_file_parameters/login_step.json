@@ -1,0 +1,14 @@
+{
+    "name": "login",
+    "url": "/api/v1/login",
+    "method": "POST",
+    "request": {
+        "body": {
+            "username": "${PARAM.username}",
+            "password": "${PARAM.password}"
+        }
+    },
+    "assertions": {
+        "status": 200
+    }
+}

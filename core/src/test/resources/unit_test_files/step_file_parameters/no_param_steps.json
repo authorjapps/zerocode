@@ -1,0 +1,11 @@
+[
+    {
+        "name": "plain_step",
+        "url": "/api/v1/health",
+        "method": "GET",
+        "request": {},
+        "assertions": {
+            "status": 200
+        }
+    }
+]

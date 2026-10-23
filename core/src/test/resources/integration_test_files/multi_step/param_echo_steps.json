@@ -1,0 +1,21 @@
+[
+    {
+        "name": "echo_user",
+        "url": "",
+        "operation": "",
+        "request": {
+            "username": "${PARAM.username}",
+            "role": "${PARAM.role}",
+            "retries": "(int)${PARAM.retries}",
+            "active": "(boolean)${PARAM.active}",
+            "tag": "${PARAM.tag}"
+        },
+        "assertions": {
+            "username": "${PARAM.username}",
+            "role": "${PARAM.role}",
+            "retries": "(int)${PARAM.retries}",
+            "active": "(boolean)${PARAM.active}",
+            "tag": "$CONTAINS.STRING:t_"
+        }
+    }
+]
