@@ -1,0 +1,32 @@
+{
+    "scenarioName": "Echo step - url, operation and assertions omitted",
+    "steps": [
+        {
+            "name": "store_ids",
+            "request": {
+                "orderId": 1001,
+                "customer": "Jane"
+            }
+        },
+        {
+            "name": "echo_with_assertions",
+            "request": {
+                "orderId": "${$.store_ids.response.orderId}"
+            },
+            "assertions": {
+                "orderId": "1001"
+            }
+        },
+        {
+            "name": "echo_with_empty_values",
+            "url": "",
+            "operation": "",
+            "request": {
+                "customer": "${$.store_ids.response.customer}"
+            },
+            "assertions": {
+                "customer": "Jane"
+            }
+        }
+    ]
+}

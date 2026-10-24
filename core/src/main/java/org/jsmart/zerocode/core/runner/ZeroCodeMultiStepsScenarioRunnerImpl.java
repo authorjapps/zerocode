@@ -31,6 +31,7 @@ import org.jsmart.zerocode.core.engine.sorter.ZeroCodeSorter;
 import org.jsmart.zerocode.core.engine.validators.ZeroCodeValidator;
 import static org.jsmart.zerocode.core.kafka.helper.KafkaCommonUtils.printBrokerProperties;
 import org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger;
+import org.jsmart.zerocode.core.utils.ApiType;
 import org.jsmart.zerocode.core.utils.ApiTypeUtils;
 import static org.jsmart.zerocode.core.utils.ApiTypeUtils.apiType;
 import static org.jsmart.zerocode.core.utils.RunnerUtils.getFullyQualifiedUrl;
@@ -434,7 +435,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                               String resolvedRequestJson,
                               ScenarioExecutionState scenarioExecutionState) {
 
-        String url = thisStep.getUrl();
+        // A step without a url is an echo step: no call, the request is the response
+        String url = ofNullable(thisStep.getUrl()).orElse("");
         String operationName = thisStep.getOperation();
         String stepId = thisStep.getId();
         String thisStepName = displayNameOf(thisStep);
@@ -572,6 +574,15 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private List<FieldAssertionMatcher> compareStepResults(Step thisStep, String actualResult, String expectedResult, String resolvedScenarioState) {
         List<FieldAssertionMatcher> failureResults = new ArrayList<>();
+
+        // ------------------------------------------------
+        // Echo step (no call made) with nothing to compare
+        // ------------------------------------------------
+        if (apiType(thisStep.getUrl(), thisStep.getOperation()) == ApiType.NONE
+                && thisStep.getAssertions() == null
+                && thisStep.getValidators() == null) {
+            return failureResults;
+        }
 
         // --------------------
         //  Validators (pyrest)
