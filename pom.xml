@@ -4,7 +4,7 @@
 
     <artifactId>zerocode-tdd-parent</artifactId>
     <groupId>org.jsmart</groupId>
-    <version>1.4.5</version>
+    <version>1.4.6-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>ZeroCode TDD Parent</name>
@@ -379,7 +379,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.4.0</version>
+                <version>0.12.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
