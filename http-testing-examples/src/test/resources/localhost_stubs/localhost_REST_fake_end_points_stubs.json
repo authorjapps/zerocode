@@ -245,6 +245,64 @@
                     "question": "zerocode"
                 }
             }
+        },
+        {
+            "name": "Mock POST user alice with role ADMIN",
+            "operation": "POST",
+            "url": "/api/v1/users",
+            "ignoreBody": false,
+            "body": {
+                "username": "alice",
+                "role": "ADMIN"
+            },
+            "response": {
+                "status": 201,
+                "body": {
+                    "username": "alice",
+                    "role": "ADMIN"
+                }
+            }
+        },
+        {
+            "name": "Mock GET user alice",
+            "operation": "GET",
+            "url": "/api/v1/users/alice",
+            "response": {
+                "status": 200,
+                "body": {
+                    "username": "alice",
+                    "role": "ADMIN"
+                }
+            }
+        },
+        {
+            "name": "Mock POST user bob with role VIEWER",
+            "operation": "POST",
+            "url": "/api/v1/users",
+            "ignoreBody": false,
+            "body": {
+                "username": "bob",
+                "role": "VIEWER"
+            },
+            "response": {
+                "status": 201,
+                "body": {
+                    "username": "bob",
+                    "role": "VIEWER"
+                }
+            }
+        },
+        {
+            "name": "Mock GET user bob",
+            "operation": "GET",
+            "url": "/api/v1/users/bob",
+            "response": {
+                "status": 200,
+                "body": {
+                    "username": "bob",
+                    "role": "VIEWER"
+                }
+            }
         }
 
     ]

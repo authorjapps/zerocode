@@ -46,8 +46,11 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Singleton
 public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFileProcessor {
     private static final Logger LOGGER = getLogger(ZeroCodeExternalFileProcessorImpl.class);
+    private static final String UNNAMED_STEP_FILE_PARENT = "(stepFile)";
 
     private final ObjectMapper objectMapper;
+
+    private final StepFileParametersResolver stepFileParametersResolver;
 
     @Inject
     @Named("YamlMapper")
@@ -56,6 +59,7 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
     @Inject
     public ZeroCodeExternalFileProcessorImpl(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+        this.stepFileParametersResolver = new StepFileParametersResolver(objectMapper);
     }
 
     /**
@@ -98,6 +102,11 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
     }
 
     @Override
+    public Step resolveStepFileParameters(Step rawStep, Step inlinedStep) {
+        return stepFileParametersResolver.resolve(rawStep, inlinedStep);
+    }
+
+    @Override
     public List<Step> createFromStepFile(Step thisStep, String stepId) {
         List<Step> thisSteps = new ArrayList<>();
         if (thisStep.getStepFile() != null) {
@@ -118,7 +127,24 @@ public class ZeroCodeExternalFileProcessorImpl implements ZeroCodeExternalFilePr
                 throw new RuntimeException(e);
             }
         }
+        final String stepFileParent = describeStepFileParent(thisStep);
+        thisSteps.forEach(innerStep -> innerStep.setStepFileParent(stepFileParent));
         return thisSteps;
+    }
+
+    private String describeStepFileParent(Step parentStep) {
+        final String name = parentStep.getName();
+        final String id = parentStep.getId();
+        if (name == null && id == null) {
+            return UNNAMED_STEP_FILE_PARENT;
+        }
+        if (name == null) {
+            return "(id: " + id + ")";
+        }
+        if (id == null) {
+            return name;
+        }
+        return name + " (id: " + id + ")";
     }
 
     /**

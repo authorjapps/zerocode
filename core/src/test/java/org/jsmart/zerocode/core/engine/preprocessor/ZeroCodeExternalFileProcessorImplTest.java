@@ -10,10 +10,12 @@ import static org.jsmart.zerocode.core.utils.SmartUtils.checkDigNeeded;
 
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import static com.jayway.jsonpath.JsonPath.read;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.jsmart.zerocode.core.utils.SmartUtils.readJsonAsString;
 import static org.junit.Assert.assertThat;
 
@@ -110,6 +112,70 @@ public class ZeroCodeExternalFileProcessorImplTest {
 
         assertThat(read(resultJsonStep, "$.request.body.id"), is("Emp-No-${RANDOM.NUMBER}"));
         assertThat(read(resultJsonStep, "$.request.headers.api_key"), is("hello key"));
+    }
+
+    @Test
+    public void testCreateFromStepFilesWithNameAndIdWillTagStepsWithNameAndId() throws IOException {
+        final List<Step> innerSteps = createInnerSteps("\"name\": \"create_admin_reuse\", \"id\": \"create_admin\", ");
+
+        assertThat(innerSteps.get(0).getStepFileParent(), is("create_admin_reuse (id: create_admin)"));
+        assertThat(innerSteps.get(1).getStepFileParent(), is("create_admin_reuse (id: create_admin)"));
+    }
+
+    @Test
+    public void testCreateFromStepFilesWithIdOnlyWillTagStepsWithId() throws IOException {
+        final List<Step> innerSteps = createInnerSteps("\"id\": \"create_admin\", ");
+
+        assertThat(innerSteps.get(0).getStepFileParent(), is("(id: create_admin)"));
+    }
+
+    @Test
+    public void testCreateFromStepFilesWithNameOnlyWillTagStepsWithName() throws IOException {
+        final List<Step> innerSteps = createInnerSteps("\"name\": \"create_admin_reuse\", ");
+
+        assertThat(innerSteps.get(0).getStepFileParent(), is("create_admin_reuse"));
+    }
+
+    @Test
+    public void testCreateFromStepFilesWithoutNameOrIdWillTagStepsAsStepFile() throws IOException {
+        final List<Step> innerSteps = createInnerSteps("");
+
+        assertThat(innerSteps.get(0).getStepFileParent(), is("(stepFile)"));
+    }
+
+    @Test
+    public void testCreateFromSingleStepFileWillTagStepWithId() throws IOException {
+        final Step parentStep = objectMapper.readValue("{\"id\": \"single_step_file\", "
+                + "\"stepFile\": \"${JSON.FILE:integration_test_files/multi_step/single_step.json}\"}", Step.class);
+
+        final List<Step> innerSteps = externalFileProcessor.createFromStepFile(
+                externalFileProcessor.resolveExtJsonFile(parentStep), parentStep.getId());
+
+        assertThat(innerSteps.get(0).getStepFileParent(), is("(id: single_step_file)"));
+    }
+
+    @Test
+    public void testSerializeStepFromStepFilesWillGetNoStepFileParentField() throws IOException {
+        final List<Step> innerSteps = createInnerSteps("\"id\": \"create_admin\", ");
+
+        final String innerStepJson = objectMapper.writeValueAsString(innerSteps.get(0));
+
+        assertThat(innerStepJson.contains("stepFileParent"), is(false));
+    }
+
+    @Test
+    public void testParseStepWithoutStepFileWillGetNoStepFileParent() throws IOException {
+        final Step plainStep = objectMapper.readValue("{\"name\": \"plain\", \"url\": \"\", \"operation\": \"\", "
+                + "\"request\": {}, \"assertions\": {}}", Step.class);
+
+        assertThat(plainStep.getStepFileParent(), is(nullValue()));
+    }
+
+    private List<Step> createInnerSteps(String parentNameAndIdJson) throws IOException {
+        final Step parentStep = objectMapper.readValue("{" + parentNameAndIdJson
+                + "\"stepFiles\": \"${JSON.FILE:integration_test_files/multi_step/multi_step_file.json}\"}", Step.class);
+        return externalFileProcessor.createFromStepFile(
+                externalFileProcessor.resolveExtJsonFile(parentStep), parentStep.getId());
     }
 
 }

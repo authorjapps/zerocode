@@ -183,7 +183,9 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                                           Description description,
                                           ScenarioExecutionState scenarioExecutionState,
                                           ScenarioSpec scenario, Step thisStep) {
+        final Step rawStep = thisStep;
         thisStep = extFileProcessor.resolveExtJsonFile(thisStep);
+        thisStep = extFileProcessor.resolveStepFileParameters(rawStep, thisStep);
         thisStep = zeroCodeAssertionsProcessor.resolveJsonContent(thisStep, scenarioExecutionState);
 
         List<Step> thisSteps = extFileProcessor.createFromStepFile(thisStep, thisStep.getId());
@@ -234,12 +236,12 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             retryTillSuccess = true;
         }
 
-        String thisStepName = thisStep.getName();
+        final String thisStepName = displayNameOf(thisStep);
 
         for (int retryCounter = 0; retryCounter < retryMaxTimes; retryCounter++) {
             if(retryCounter > 0){
                 LOGGER.warn("\n\n------------>Retrying...[step][attempt-{}][executions-{}]:'{}' -> '{}'",
-                        retryCounter, (retryCounter+1), scenario.getScenarioName(), thisStep.getName());
+                        retryCounter, (retryCounter+1), scenario.getScenarioName(), thisStepName);
             }
             try {
                 if (retryCounter > 0 && !isEmpty(thisStep.getRetry().getWithSteps())) {
@@ -407,6 +409,20 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         return null;
     }
 
+    /**
+     * Name to show in logs and reports. A step from a stepFile/stepFiles is shown with the step
+     * that used it,
+     * e.g.
+     * "create_admin_reuse (id: create_admin) -> get_user".
+     * The step's own name stays the same, so ${$.get_user...} still works.
+     */
+    private String displayNameOf(Step thisStep) {
+        if (thisStep.getStepFileParent() == null) {
+            return thisStep.getName();
+        }
+        return thisStep.getStepFileParent() + " -> " + thisStep.getName();
+    }
+
     private String expectedValidatorsAsJson(Step thisStep) throws JsonProcessingException {
         if(thisStep.getValidators() == null){
             return "No validators were found for this step";
@@ -423,7 +439,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         String url = ofNullable(thisStep.getUrl()).orElse("");
         String operationName = thisStep.getOperation();
         String stepId = thisStep.getId();
-        String thisStepName = thisStep.getName();
+        String thisStepName = displayNameOf(thisStep);
 
         // --------------------------------
         // Resolve the URL patterns if any
