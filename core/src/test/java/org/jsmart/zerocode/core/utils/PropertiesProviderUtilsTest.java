@@ -27,4 +27,10 @@ public class PropertiesProviderUtilsTest {
         assertNull(props.getProperty("zerocode.report.nonexistent.key"));
     }
 
+    @Test
+    public void testLoadCustomZerocodePropertiesWillGetReportStepCaptureValue() {
+        Properties props = loadCustomZerocodeProperties();
+        assertThat(props.getProperty("zerocode.report.step.capture"), is("ALL"));
+    }
+
 }

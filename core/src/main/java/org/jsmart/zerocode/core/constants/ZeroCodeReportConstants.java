@@ -25,6 +25,7 @@ public interface ZeroCodeReportConstants {
     String ZEROCODE_PROPERTIES_FILE = "zerocode.properties";
     String REPORT_HTML_FILE_NAME_KEY = "zerocode.report.html.name";
     String REPORT_CSV_FILE_NAME_KEY = "zerocode.report.csv.name";
+    String REPORT_STEP_CAPTURE_KEY = "zerocode.report.step.capture";
 
     // Custom js and css for extent report
     String EXTENT_ADDITIONAL_JS = "document.querySelector('.vheader').insertAdjacentHTML('afterbegin'," +
