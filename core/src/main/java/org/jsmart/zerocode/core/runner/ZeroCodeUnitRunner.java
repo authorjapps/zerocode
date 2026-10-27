@@ -369,7 +369,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
 
         ZeroCodeIoWriteBuilder reportBuilder = ZeroCodeIoWriteBuilder.newInstance().timeStamp(LocalDateTime.now());
         reportBuilder.result(reportResultBuilder.build());
-        reportBuilder.printToFile(description.getClassName() + corrLogger.getCorrelationId() + ".json");
+        reportBuilder.printToFile(description.getClassName() + "-" + corrLogger.getCorrelationId() + ".json");
     }
 
     private void prepareResponseReport(String logPrefixRelationshipId) {

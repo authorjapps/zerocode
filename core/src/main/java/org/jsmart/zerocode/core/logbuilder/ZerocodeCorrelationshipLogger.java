@@ -1,5 +1,6 @@
 package org.jsmart.zerocode.core.logbuilder;
 
+import org.jsmart.zerocode.core.constants.ReportStepCaptureMode;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeReportStepBuilder;
 import org.jsmart.zerocode.core.domain.reports.ZeroCodeReportStep;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ public class ZerocodeCorrelationshipLogger {
     private Integer stepLoop;
     private Boolean result;
     private Double responseDelay;
+    private ReportStepCaptureMode reportStepCaptureMode = ReportStepCaptureMode.FAILED_ONLY;
 
     public ZerocodeCorrelationshipLogger(Logger logger) {
         this.logger = logger;
@@ -57,17 +59,20 @@ public class ZerocodeCorrelationshipLogger {
         return this;
     }
 
+    public ZerocodeCorrelationshipLogger stepCaptureMode(ReportStepCaptureMode reportStepCaptureMode) {
+        this.reportStepCaptureMode = reportStepCaptureMode;
+        return this;
+    }
+
     public ZeroCodeReportStep buildReportSingleStep() {
 
-        result = result != null ? result : false;
+        boolean isStepPassed = Boolean.TRUE.equals(result);
 
         ZeroCodeReportStepBuilder zeroCodeReportStep = ZeroCodeReportStepBuilder.newInstance()
-                //.request(requestLogBuilder.request) //TODO
-                //.response(responseLogBuilder.response) //TODO
                 .loop(stepLoop)
                 .name(requestLogBuilder.getStepName())
                 .correlationId(getCorrelationId())
-                .result(result ? RESULT_PASS : RESULT_FAIL)
+                .result(isStepPassed ? RESULT_PASS : RESULT_FAIL)
                 .url(requestLogBuilder.getUrl())
                 .operation(requestLogBuilder.getMethod())
                 .assertions(responseLogBuilder.getAssertion())
@@ -75,7 +80,7 @@ public class ZerocodeCorrelationshipLogger {
                 .responseTimeStamp(responseLogBuilder.responseTimeStamp)
                 .responseDelay(responseDelay)
                 .id(requestLogBuilder.getId());
-        if (!result) {
+        if (reportStepCaptureMode.shouldCapture(isStepPassed)) {
             zeroCodeReportStep.response(responseLogBuilder.getResponse());
             zeroCodeReportStep.request(requestLogBuilder.getRequest());
         }

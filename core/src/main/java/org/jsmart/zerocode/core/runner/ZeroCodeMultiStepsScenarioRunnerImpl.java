@@ -10,14 +10,16 @@ import com.google.inject.name.Named;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.jsmart.zerocode.core.constants.ZerocodeConstants.KAFKA_TOPIC;
+import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.REPORT_STEP_CAPTURE_KEY;
+import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadCustomZerocodeProperties;
 
+import org.jsmart.zerocode.core.constants.ReportStepCaptureMode;
 import org.jsmart.zerocode.core.di.provider.CsvParserProvider;
 import org.jsmart.zerocode.core.domain.Parameterized;
 import org.jsmart.zerocode.core.domain.ScenarioSpec;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder;
 
-import static org.jsmart.zerocode.core.di.provider.CsvParserProvider.LINE_SEPARATOR;
 import static org.jsmart.zerocode.core.domain.builders.ZeroCodeExecReportBuilder.newInstance;
 import org.jsmart.zerocode.core.domain.builders.ZeroCodeIoWriteBuilder;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
@@ -46,7 +48,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 @Singleton
@@ -108,6 +109,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
 
     private Boolean stepOutcomeGreen;
 
+    private ReportStepCaptureMode reportStepCaptureMode;
+
     @Override
     public synchronized boolean runScenario(ScenarioSpec scenario, RunNotifier notifier, Description description) {
 
@@ -142,7 +145,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
             ioWriterBuilder.result(resultReportBuilder.build());
         }
 
-        ioWriterBuilder.printToFile(scenario.getScenarioName() + correlLogger.getCorrelationId() + ".json");
+        ioWriterBuilder.printToFile(scenario.getScenarioName() + "-" + correlLogger.getCorrelationId() + ".json");
 
         if (wasExecSuccessful) {
             return stepOutcomeGreen;
@@ -170,7 +173,8 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 continue;
             }
 
-            correlLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER);
+            correlLogger = ZerocodeCorrelationshipLogger.newInstance(LOGGER)
+                    .stepCaptureMode(getStepCaptureMode());
 
             Boolean wasExecSuccess = executeRetryWithSteps(notifier, description, scenarioExecutionState, scenario, thisStep);
             if (wasExecSuccess != null) return wasExecSuccess;
@@ -401,7 +405,6 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                  */
                 if (!stepOutcomeGreen) {
                     //ioWriterBuilder.result(resultReportBuilder.build());
-                    //ioWriterBuilder.printToFile(scenario.getScenarioName() + correlLogger.getCorrelationId() + ".json");
                 }
             }
         }
@@ -606,6 +609,14 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         }
 
         return failureResults;
+    }
+
+    ReportStepCaptureMode getStepCaptureMode() {
+        if (reportStepCaptureMode == null) {
+            String captureValue = loadCustomZerocodeProperties().getProperty(REPORT_STEP_CAPTURE_KEY);
+            reportStepCaptureMode = ReportStepCaptureMode.fromProperty(captureValue);
+        }
+        return reportStepCaptureMode;
     }
 
 }

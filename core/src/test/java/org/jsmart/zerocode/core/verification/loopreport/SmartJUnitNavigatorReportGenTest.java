@@ -84,7 +84,7 @@ public class SmartJUnitNavigatorReportGenTest {
     }
 
     private String retrieveCorrelationIdFromFileName(String reportFileUnderTest) {
-        String fileNameStartWith = "Loop Scenario - Will Get A bath Room";
+        String fileNameStartWith = "Loop Scenario - Will Get A bath Room-";
         String fileNameWithXtn = (new File(reportFileUnderTest)).getName();
         String fileNameWithOutExt = FilenameUtils.removeExtension(fileNameWithXtn);
 
