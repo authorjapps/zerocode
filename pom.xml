@@ -4,7 +4,7 @@
 
     <artifactId>zerocode-tdd-parent</artifactId>
     <groupId>org.jsmart</groupId>
-    <version>1.4.6-SNAPSHOT</version>
+    <version>1.4.6</version>
 
     <packaging>pom</packaging>
     <name>ZeroCode TDD Parent</name>
