@@ -1,0 +1,1138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zerocode Execution Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --page: #f4f5f7;
+    --card: #ffffff;
+    --text: #0f141a;
+    --muted: #5f6b7a;
+    --border: #d5dbdb;
+    --row-hover: #f2f8fd;
+    --row-selected: #f0f7ff;
+    --blue: #0972d3;
+    --green: #037f0c;
+    --red: #d91515;
+    --red-tint: #fff5f5;
+    --amber: #a35a00;
+    --amber-tint: #fff4e0;
+    --track: #e9ebed;
+    --code-bg: #fbfbfc;
+    --code-key: #0f141a;
+    --code-string: #a31515;
+    --code-number: #067d17;
+    --code-literal: #0451a5;
+    --code-null: #7a3e9d;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  button { font-family: inherit; font-size: inherit; }
+  .topbar { background: #161d26; color: #fff; padding: 8px 24px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+  .brand { font-weight: 600; display: flex; gap: 10px; align-items: center; }
+  .brand small { color: #aab7c4; font-weight: 400; }
+  .top-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .top-btn { border: 1px solid #5f6b7a; color: #fff; background: transparent; border-radius: 999px; padding: 2px 12px; cursor: pointer; font-size: 13px; font-weight: 500; }
+  .top-btn:hover { background: #2a3440; }
+  .top-btn:disabled { opacity: 0.4; cursor: default; background: transparent; }
+  .top-btn input { display: none; }
+  main { max-width: 1480px; margin: 0 auto; padding: 16px 24px 48px; }
+  .notice { background: var(--amber-tint); border: 1px solid #f0c98c; color: var(--amber); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; word-break: break-word; }
+  .crumbs { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center; margin-bottom: 8px; color: var(--muted); }
+  .crumbs a { color: var(--blue); cursor: pointer; text-decoration: underline; }
+  .page-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 4px 0 16px; }
+  .page-head h1 { font-size: 22px; font-weight: 600; margin: 0; word-break: break-word; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { border: 1px solid var(--border); background: var(--card); border-radius: 999px; padding: 2px 12px; font-size: 13px; font-weight: 500; }
+  button.chip { cursor: pointer; }
+  .chip.pass { color: var(--green); border-color: #b7dfb9; }
+  .chip.fail { color: var(--red); border-color: #f5b8b8; }
+  .chip.retry { color: var(--amber); border-color: #f0c98c; background: var(--amber-tint); }
+  .chip.active { outline: 2px solid var(--blue); outline-offset: 1px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; margin-bottom: 18px; min-width: 0; }
+  .card h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
+  .card h2 .count { color: var(--muted); font-weight: 400; }
+  .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; }
+  .details-grid > div + div { border-left: 1px solid var(--border); padding-left: 32px; }
+  .field { margin-bottom: 14px; }
+  .field-label { font-weight: 600; }
+  .field-value { word-break: break-word; }
+  .sub-note { color: var(--amber); font-size: 12px; margin-left: 6px; }
+  .pill-btn { border: 2px solid var(--blue); color: var(--blue); background: var(--card); border-radius: 999px; padding: 3px 14px; font-weight: 600; cursor: pointer; }
+  .pill-btn:hover { background: var(--row-hover); }
+  .pill-btn:disabled { border-color: var(--border); color: var(--muted); cursor: default; background: var(--card); }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .toolbar input, .toolbar select { font-family: inherit; font-size: 14px; border: 1px solid #8c8c94; border-radius: 8px; padding: 6px 10px; background: var(--card); }
+  .toolbar input { flex: 1 1 260px; min-width: 0; }
+  .toolbar .matches { color: var(--muted); }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; }
+  th { text-align: left; font-weight: 600; padding: 8px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th .sort-mark { color: var(--muted); font-size: 11px; margin-left: 4px; }
+  td { padding: 7px 6px; border-bottom: 1px solid #eef0f1; white-space: nowrap; vertical-align: middle; }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: var(--row-hover); }
+  tr.selected { background: var(--row-selected); box-shadow: inset 0 0 0 2px var(--blue); }
+  tr.failed-row { background: var(--red-tint); }
+  tr.failed-row.selected { background: #ffecec; }
+  tr.attempt-row td { color: var(--muted); font-size: 13px; }
+  tr.attempt-row td.name-cell { padding-left: 44px; }
+  .name-cell { max-width: 300px; overflow: hidden; text-overflow: ellipsis; }
+  .name-text { display: inline-block; max-width: 190px; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
+  .list-name { max-width: 300px; }
+  .link { color: var(--blue); text-decoration: underline; }
+  .resource { max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+  .type-cell { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+  .radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #8c8c94; display: inline-block; vertical-align: middle; }
+  tr.selected .radio { border: 5px solid var(--blue); }
+  .expander { border: none; background: none; cursor: pointer; padding: 0 4px 0 0; color: var(--muted); font-size: 12px; width: 18px; }
+  .expander-space { display: inline-block; width: 18px; }
+  .retry-badge { display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px; background: var(--amber-tint); color: var(--amber); font-size: 12px; font-weight: 600; }
+  .status { display: inline-flex; align-items: center; gap: 5px; font-weight: 500; }
+  .status-main { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .status.pass { color: var(--green); }
+  .status.fail { color: var(--red); }
+  .status .note { font-weight: 400; font-size: 12px; }
+  .status.pass .note { color: var(--amber); }
+  .status.fail .note { color: var(--red); }
+  .status-cell .status { flex-wrap: wrap; }
+  .status-cell .note { flex-basis: 100%; padding-left: 20px; line-height: 1.2; }
+  .timeline { position: relative; width: 100px; height: 10px; background: var(--track); border: 1px solid #c8cdd2; border-radius: 2px; }
+  .timeline.wide { width: 180px; }
+  .segment { position: absolute; top: 0; bottom: 0; min-width: 2px; background: #414d5c; }
+  .segment.fail { background: var(--red); }
+  .segment.pass-retry { background: var(--green); }
+  .split { display: grid; grid-template-columns: minmax(0, 2fr) minmax(340px, 1fr); gap: 18px; align-items: start; }
+  .split > .card { margin-bottom: 0; }
+  .panel-head h2 { margin-bottom: 2px; word-break: break-word; }
+  .panel-sub { color: var(--muted); font-size: 13px; word-break: break-all; margin-bottom: 10px; }
+  .attempts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 4px 0 12px; }
+  .attempts-label { color: var(--muted); margin-right: 4px; }
+  .attempt-pill { border: 1px solid var(--border); background: var(--card); border-radius: 999px; padding: 1px 10px; cursor: pointer; font-weight: 500; }
+  .attempt-pill.fail { color: var(--red); }
+  .attempt-pill.pass { color: var(--green); }
+  .attempt-pill.active { border: 2px solid var(--blue); }
+  .attempts-summary { margin-left: auto; color: var(--amber); font-size: 13px; }
+  .attempts-summary.fail { color: var(--red); }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+  .tab { border: none; background: none; padding: 8px 16px; cursor: pointer; font-weight: 600; color: var(--muted); border-bottom: 4px solid transparent; }
+  .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .io-actions { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 8px; }
+  .section { margin-bottom: 12px; }
+  .section-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .section-toggle { border: none; background: none; cursor: pointer; padding: 4px 0; font-weight: 600; font-size: 15px; display: inline-flex; gap: 8px; align-items: center; }
+  .section-toggle .caret { font-size: 11px; width: 12px; }
+  .section-toggle.errors { color: var(--red); }
+  .copy-btn { border: 1px solid var(--border); background: var(--card); border-radius: 6px; font-size: 12px; padding: 1px 8px; cursor: pointer; color: var(--blue); }
+  .code { border: 1px solid var(--border); border-radius: 8px; background: var(--code-bg); font-family: var(--mono); font-size: 12.5px; padding: 6px 0; max-height: 460px; overflow: auto; }
+  .code-line { display: flex; }
+  .code-line.hidden { display: none; }
+  .gutter { flex: 0 0 52px; text-align: right; padding-right: 10px; color: #8d99a8; user-select: none; border-right: 1px solid #eceff1; display: inline-flex; justify-content: flex-end; gap: 2px; }
+  .fold { border: none; background: none; padding: 0; cursor: pointer; color: #8d99a8; width: 12px; font-size: 10px; }
+  .fold-space { display: inline-block; width: 12px; }
+  .code-text { padding-left: 10px; white-space: pre-wrap; word-break: break-all; flex: 1; }
+  .code-line.folded .code-text::after { content: " … "; color: var(--muted); background: var(--track); border-radius: 4px; margin-left: 4px; }
+  .tok-key { color: var(--code-key); }
+  .tok-string { color: var(--code-string); }
+  .tok-number { color: var(--code-number); }
+  .tok-literal { color: var(--code-literal); }
+  .tok-null { color: var(--code-null); }
+  .not-captured { color: var(--muted); font-style: italic; background: var(--code-bg); border: 1px dashed var(--border); border-radius: 8px; padding: 10px 12px; }
+  .errors-list { list-style: none; margin: 0; padding: 0; border: 1px solid #f5b8b8; border-radius: 8px; background: var(--red-tint); }
+  .errors-list li { padding: 8px 12px; border-bottom: 1px solid #f9d4d4; word-break: break-word; }
+  .errors-list li:last-child { border-bottom: none; }
+  .errors-list code { font-family: var(--mono); font-size: 12.5px; }
+  .errors-list .actual { color: var(--red); font-weight: 600; }
+  .errors-list .expected { color: var(--green); font-weight: 600; }
+  .kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; }
+  .kv dt { font-weight: 600; }
+  .kv dd { margin: 0; word-break: break-all; }
+  .empty-state { text-align: center; padding: 60px 20px; border: 2px dashed var(--border); border-radius: 16px; background: var(--card); }
+  .empty-state.drag { border-color: var(--blue); background: var(--row-hover); }
+  .empty-state .pill-btn input { display: none; }
+  .empty-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .muted { color: var(--muted); }
+  @media (max-width: 1200px) {
+    .split { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 640px) {
+    main { padding: 12px 16px 40px; }
+    .topbar { padding: 8px 16px; }
+    .details-grid { grid-template-columns: 1fr; }
+    .details-grid > div + div { border-left: none; padding-left: 0; }
+    .card { padding: 14px; }
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">Zerocode <small>Execution report</small></div>
+  <div class="top-actions">
+    <label class="top-btn">Open files<input type="file" id="open-files" accept=".json,application/json" multiple></label>
+    <label class="top-btn">Open folder<input type="file" id="open-folder" webkitdirectory multiple></label>
+    <button class="top-btn" id="save-html" data-action="save" disabled>Save shareable HTML</button>
+  </div>
+</header>
+<main id="app"></main>
+
+<script id="report-data" type="application/json">/*__REPORT_DATA__*/</script>
+<script>
+"use strict";
+
+// Page source captured before rendering, used by "Save shareable HTML".
+const PAGE_SOURCE = "<!doctype html>\n" + document.documentElement.outerHTML;
+const REPORT_DATA_PATTERN = /(<script id="report-data" type="application\/json">)([\s\S]*?)(<\/script>)/;
+
+const state = {
+  report: null,
+  scenarios: [],
+  runStart: NaN,
+  runEnd: NaN,
+  notice: "",
+  list: { text: "", status: "ALL", sortKey: "start", sortDir: 1 },
+  view: null
+};
+
+const ICON_PASS = '<svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.8 8.2l2.2 2.2 4.2-4.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+const ICON_FAIL = '<svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 5.5l5 5M10.5 5.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+const TOKEN_PATTERN = /("(?:\\.|[^"\\])*")(\s*:)?|\b(true|false)\b|\b(null)\b|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g;
+const ERROR_PATTERN = /Assertion jsonPath '(.+?)' with actual value '(.*?)' did not match the expected value '(.*?)'/;
+
+// ---------- formatting helpers ----------
+
+function esc(text) {
+  return String(text === undefined || text === null ? "" : text)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function toMillis(text) {
+  if (!text) return NaN;
+  return new Date(String(text).slice(0, 23)).getTime();
+}
+
+function pad(number, width) {
+  return String(number).padStart(width || 2, "0");
+}
+
+function formatDuration(ms) {
+  if (!isFinite(ms) || ms <= 0) return "0";
+  const hours = Math.floor(ms / 3600000);
+  const minutes = Math.floor((ms % 3600000) / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  const millis = Math.round(ms % 1000);
+  return pad(hours) + ":" + pad(minutes) + ":" + pad(seconds) + "." + pad(millis, 3);
+}
+
+function formatDateTime(ms) {
+  if (!isFinite(ms)) return "-";
+  const date = new Date(ms);
+  const day = date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const time = pad(date.getHours()) + ":" + pad(date.getMinutes()) + ":" + pad(date.getSeconds()) + "." + pad(date.getMilliseconds(), 3);
+  return day + ", " + time;
+}
+
+function plural(count, word, many) {
+  return count + " " + (count === 1 ? word : (many || word + "s"));
+}
+
+function retriesText(count) {
+  return count === 1 ? "1 retry" : count + " retries";
+}
+
+// ---------- data model ----------
+
+// Raw Zerocode keys (target/zerocode-test-reports) first, then the aws_* sample keys.
+function pick(raw, rawKey, awsKey) {
+  return raw[rawKey] !== undefined ? raw[rawKey] : raw[awsKey];
+}
+
+function toAttempt(raw) {
+  const requestTime = pick(raw, "requestTimeStamp", "RequestTime");
+  const responseTime = pick(raw, "responseTimeStamp", "ResponseTime");
+  return {
+    name: pick(raw, "name", "Step") || "-",
+    resource: pick(raw, "url", "Resource") || "-",
+    type: pick(raw, "operation", "Task") || "-",
+    correlationId: pick(raw, "correlationId", "CorrelationId") || "",
+    requestTime: requestTime,
+    responseTime: responseTime,
+    start: toMillis(requestTime),
+    end: toMillis(responseTime),
+    duration: Number(pick(raw, "responseDelay", "Duration")) || 0,
+    status: String(pick(raw, "result", "Status") || "").toUpperCase(),
+    input: pick(raw, "request", "Input"),
+    output: pick(raw, "response", "Output"),
+    assertions: pick(raw, "assertions", "ExpectedOutput"),
+    customLog: raw.customLog
+  };
+}
+
+// One logical step = all attempts with the same correlationId; the last attempt is the outcome.
+function buildLogicalStep(attempts) {
+  attempts.sort((first, second) => first.start - second.start);
+  const last = attempts[attempts.length - 1];
+  const retried = attempts.length > 1;
+  return {
+    name: last.name,
+    type: last.type,
+    resource: last.resource,
+    correlationId: last.correlationId,
+    attempts: attempts,
+    status: last.status,
+    start: attempts[0].start,
+    end: retried ? last.end : attempts[0].start + last.duration,
+    retries: attempts.length - 1,
+    duration: retried ? last.end - attempts[0].start : last.duration,
+    callMs: attempts.reduce((total, attempt) => total + attempt.duration, 0)
+  };
+}
+
+function groupAttempts(entries) {
+  const groups = new Map();
+  entries.forEach((entry, position) => {
+    const key = entry.correlationId || "#" + position;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(entry);
+  });
+  return Array.from(groups.values()).map(buildLogicalStep);
+}
+
+function bounds(items) {
+  const starts = items.map(item => item.start).filter(isFinite);
+  const ends = items.map(item => item.end).filter(isFinite);
+  return {
+    start: starts.length ? Math.min.apply(null, starts) : NaN,
+    end: ends.length ? Math.max.apply(null, ends) : NaN
+  };
+}
+
+function displayNames(results) {
+  const seen = {};
+  return results.map(result => {
+    const name = result.scenarioName || "Scenario";
+    seen[name] = (seen[name] || 0) + 1;
+    const suffix = seen[name] > 1 ? " #" + seen[name] : "";
+    const loop = result.loop > 0 ? " · loop " + result.loop : "";
+    return name + suffix + loop;
+  });
+}
+
+function buildScenario(result, index, displayName) {
+  const entries = (result.steps || []).map(toAttempt);
+  const steps = groupAttempts(entries);
+  const range = bounds(entries);
+  const retried = steps.filter(step => step.retries > 0);
+  const failedSteps = steps.filter(step => step.status !== "PASSED").length;
+  return {
+    index: index,
+    displayName: displayName,
+    loop: result.loop || 0,
+    steps: steps,
+    entryCount: entries.length,
+    status: failedSteps > 0 || steps.length === 0 ? "FAILED" : "PASSED",
+    failedSteps: failedSteps,
+    start: range.start,
+    end: range.end,
+    duration: range.end - range.start,
+    retriedSteps: retried.length,
+    retries: retried.reduce((total, step) => total + step.retries, 0),
+    passedOnRetry: retried.filter(step => step.status === "PASSED").length
+  };
+}
+
+function isReport(doc) {
+  return doc !== null && typeof doc === "object" && Array.isArray(doc.results);
+}
+
+function firstRequestTime(result) {
+  const first = (result.steps || [])[0];
+  return first ? String(pick(first, "requestTimeStamp", "RequestTime") || "") : "";
+}
+
+function compareByStart(left, right) {
+  const leftTime = firstRequestTime(left);
+  const rightTime = firstRequestTime(right);
+  if (leftTime === rightTime) return 0;
+  if (!leftTime) return 1;
+  if (!rightTime) return -1;
+  return leftTime < rightTime ? -1 : 1;
+}
+
+// Same rules as template/build_report.py: concatenate results, sort by first request time.
+function mergeReports(docs) {
+  const results = docs.reduce((all, doc) => all.concat(doc.results), []);
+  results.sort(compareByStart);
+  const stamps = docs.map(doc => doc.timeStamp).filter(Boolean).sort();
+  return { timeStamp: stamps[0] || "", results: results };
+}
+
+function loadReport(report) {
+  const results = report.results || [];
+  const names = displayNames(results);
+  state.report = report;
+  state.scenarios = results.map((result, index) => buildScenario(result, index, names[index]));
+  const range = bounds(state.scenarios);
+  state.runStart = range.start;
+  state.runEnd = range.end;
+  state.view = null;
+  document.getElementById("save-html").disabled = state.scenarios.length === 0;
+  render();
+}
+
+// Newly opened files start on the executions list, not on a scenario index from the old run.
+function clearRoute() {
+  if (location.hash && location.hash !== "#/") {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+}
+
+// ---------- shared view pieces ----------
+
+function statusBadge(status, retries) {
+  const passed = status === "PASSED";
+  const css = passed ? "pass" : "fail";
+  let note = "";
+  if (retries > 0 && passed) note = '<span class="note">· ' + retriesText(retries) + "</span>";
+  if (retries > 0 && !passed) note = '<span class="note">· ' + plural(retries + 1, "attempt") + "</span>";
+  return '<span class="status ' + css + '"><span class="status-main">' + (passed ? ICON_PASS : ICON_FAIL) +
+    (passed ? "Succeeded" : "Failed") + "</span>" + note + "</span>";
+}
+
+function segmentHtml(segment, rangeStart, span) {
+  const left = Math.max(0, (segment.start - rangeStart) / span * 100);
+  const width = Math.max(0.8, (segment.end - segment.start) / span * 100);
+  return '<span class="segment ' + (segment.css || "") + '" style="left:' + left.toFixed(2) + "%;width:" + width.toFixed(2) + '%"></span>';
+}
+
+function timelineBar(segments, rangeStart, rangeEnd, wide) {
+  const span = Math.max(1, rangeEnd - rangeStart);
+  const inner = segments.map(segment => segmentHtml(segment, rangeStart, span)).join("");
+  return '<div class="timeline' + (wide ? " wide" : "") + '">' + inner + "</div>";
+}
+
+function attemptSegment(attempt) {
+  return { start: attempt.start, end: attempt.start + attempt.duration, css: attempt.status === "PASSED" ? "pass-retry" : "fail" };
+}
+
+function stepSegments(step) {
+  if (step.retries > 0) return step.attempts.map(attemptSegment);
+  return [{ start: step.start, end: step.end, css: step.status === "PASSED" ? "" : "fail" }];
+}
+
+function field(label, value) {
+  return '<div class="field"><div class="field-label">' + esc(label) + '</div><div class="field-value">' + value + "</div></div>";
+}
+
+function noticeHtml() {
+  return state.notice ? '<div class="notice">' + esc(state.notice) + "</div>" : "";
+}
+
+// ---------- routing ----------
+
+function parseRoute() {
+  const match = /^#\/scenario\/(\d+)/.exec(location.hash);
+  return match ? Number(match[1]) : null;
+}
+
+function goTo(index) {
+  location.hash = index === null ? "#/" : "#/scenario/" + index;
+}
+
+function render() {
+  const app = document.getElementById("app");
+  if (!state.scenarios.length) {
+    renderEmpty(app);
+    return;
+  }
+  if (state.scenarios.length === 1) {
+    renderScenario(app, 0);
+    return;
+  }
+  const index = parseRoute();
+  if (index === null || !state.scenarios[index]) {
+    state.view = null;
+    renderList(app);
+    return;
+  }
+  renderScenario(app, index);
+}
+
+// ---------- executions list ----------
+
+function isPassedOnRetry(scenario) {
+  return scenario.status === "PASSED" && scenario.retriedSteps > 0;
+}
+
+function listChips(failed, passed, passedOnRetry) {
+  const status = state.list.status;
+  let chips = '<span class="chip pass">✓ ' + passed + " succeeded</span>";
+  if (failed) {
+    chips += '<button class="chip fail' + (status === "FAILED" ? " active" : "") +
+      '" data-action="filter-status" data-status="FAILED">✗ ' + failed + " failed</button>";
+  }
+  if (passedOnRetry) {
+    chips += '<button class="chip retry' + (status === "RETRIED" ? " active" : "") +
+      '" data-action="filter-status" data-status="RETRIED">↻ ' + passedOnRetry + " passed on retry</button>";
+  }
+  return '<div class="chips">' + chips + "</div>";
+}
+
+function renderList(app) {
+  const failed = state.scenarios.filter(scenario => scenario.status !== "PASSED").length;
+  const passed = state.scenarios.length - failed;
+  const passedOnRetry = state.scenarios.filter(isPassedOnRetry).length;
+  const totalSteps = state.scenarios.reduce((total, scenario) => total + scenario.steps.length, 0);
+  const retriedSteps = state.scenarios.reduce((total, scenario) => total + scenario.retriedSteps, 0);
+  const totalRetries = state.scenarios.reduce((total, scenario) => total + scenario.retries, 0);
+  app.innerHTML = noticeHtml() +
+    '<div class="crumbs"><span>Executions</span></div>' +
+    '<div class="page-head"><h1>Test run</h1>' + listChips(failed, passed, passedOnRetry) + "</div>" +
+    '<section class="card"><h2>Details</h2><div class="details-grid"><div>' +
+      field("Run status", statusBadge(failed ? "FAILED" : "PASSED", 0) + ' <span class="muted">(' + passed + " succeeded, " + failed + " failed)</span>") +
+      field("Start time", esc(formatDateTime(state.runStart))) +
+      field("End time", esc(formatDateTime(state.runEnd))) +
+      field("Duration", esc(formatDuration(state.runEnd - state.runStart))) +
+    "</div><div>" +
+      field("Scenarios", String(state.scenarios.length)) +
+      field("Steps", String(totalSteps)) +
+      field("Retried steps", retriedSteps ? plural(retriedSteps, "step") + " · " + retriesText(totalRetries) : "-") +
+      field("Report time", esc(state.report.timeStamp || "-")) +
+    "</div></div></section>" +
+    '<section class="card"><h2>Executions <span class="count">(' + state.scenarios.length + ")</span></h2>" +
+    '<div class="toolbar">' +
+      '<input id="filter-text" type="search" placeholder="Filter executions by name" value="' + esc(state.list.text) + '">' +
+      '<select id="filter-status">' + statusOption("ALL", "All") + statusOption("PASSED", "Succeeded") +
+        statusOption("FAILED", "Failed") + statusOption("RETRIED", "Passed on retry") + "</select>" +
+      '<span class="matches" id="matches"></span>' +
+    "</div>" +
+    '<div class="table-wrap"><table><thead><tr>' +
+      sortHeader("name", "Name") + sortHeader("status", "Status") + sortHeader("start", "Start Time") +
+      sortHeader("end", "End Time") + sortHeader("duration", "Duration") + sortHeader("steps", "Steps") +
+      "<th>Timeline</th>" +
+    '</tr></thead><tbody id="list-rows"></tbody></table></div></section>';
+  document.getElementById("filter-text").addEventListener("input", event => {
+    state.list.text = event.target.value;
+    renderListRows();
+  });
+  document.getElementById("filter-status").addEventListener("change", event => {
+    state.list.status = event.target.value;
+    renderList(app);
+  });
+  renderListRows();
+}
+
+function statusOption(value, label) {
+  const selected = state.list.status === value ? " selected" : "";
+  return '<option value="' + value + '"' + selected + ">" + label + "</option>";
+}
+
+function sortHeader(key, label) {
+  const active = state.list.sortKey === key;
+  const mark = active ? (state.list.sortDir > 0 ? "▲" : "▼") : "";
+  return '<th class="sortable" data-action="sort" data-key="' + key + '">' + label + '<span class="sort-mark">' + mark + "</span></th>";
+}
+
+function matchesStatus(scenario) {
+  const wanted = state.list.status;
+  if (wanted === "ALL") return true;
+  if (wanted === "RETRIED") return isPassedOnRetry(scenario);
+  return scenario.status === wanted;
+}
+
+function sortValue(scenario, key) {
+  if (key === "name") return scenario.displayName.toLowerCase();
+  if (key === "steps") return scenario.steps.length;
+  return scenario[key];
+}
+
+function visibleScenarios() {
+  const text = state.list.text.trim().toLowerCase();
+  const key = state.list.sortKey;
+  return state.scenarios
+    .filter(scenario => scenario.displayName.toLowerCase().includes(text))
+    .filter(matchesStatus)
+    .sort((first, second) => {
+      const left = sortValue(first, key);
+      const right = sortValue(second, key);
+      if (left === right) return first.index - second.index;
+      return (left > right ? 1 : -1) * state.list.sortDir;
+    });
+}
+
+function listRow(scenario) {
+  const failed = scenario.status !== "PASSED";
+  const stepsCell = scenario.steps.length + (scenario.retries ? ' <span class="retry-badge">↻' + scenario.retries + "</span>" : "");
+  const retryNote = isPassedOnRetry(scenario) ? '<span class="sub-note">↻ ' + plural(scenario.retriedSteps, "step") + " retried</span>" : "";
+  const bar = timelineBar([{ start: scenario.start, end: scenario.end, css: failed ? "fail" : "" }], state.runStart, state.runEnd, true);
+  return '<tr class="' + (failed ? "failed-row" : "") + '" data-action="open-scenario" data-index="' + scenario.index + '">' +
+    '<td class="name-cell list-name" title="' + esc(scenario.displayName) + '"><span class="link">' + esc(scenario.displayName) + "</span></td>" +
+    "<td>" + statusBadge(scenario.status, 0) + retryNote + "</td>" +
+    "<td>" + esc(formatDateTime(scenario.start)) + "</td>" +
+    "<td>" + esc(formatDateTime(scenario.end)) + "</td>" +
+    "<td>" + esc(formatDuration(scenario.duration)) + "</td>" +
+    "<td>" + stepsCell + "</td>" +
+    "<td>" + bar + "</td></tr>";
+}
+
+function renderListRows() {
+  const rows = visibleScenarios();
+  document.getElementById("list-rows").innerHTML = rows.length
+    ? rows.map(listRow).join("")
+    : '<tr><td colspan="7" class="muted">No executions match the filter.</td></tr>';
+  document.getElementById("matches").textContent = plural(rows.length, "match", "matches");
+}
+
+// ---------- steps view ----------
+
+// S1: open on the first failed step, else the first step; the last attempt is shown first.
+function newView(scenario) {
+  const failedIndex = scenario.steps.findIndex(step => step.status !== "PASSED");
+  const stepIndex = failedIndex >= 0 ? failedIndex : 0;
+  const step = scenario.steps[stepIndex];
+  return {
+    index: scenario.index,
+    step: stepIndex,
+    attempt: step ? step.attempts.length - 1 : 0,
+    tab: "io",
+    expanded: new Set(),
+    collapsed: new Set(),
+    retriedOnly: false
+  };
+}
+
+function currentScenario() {
+  return state.scenarios[state.view.index];
+}
+
+function currentStep() {
+  return currentScenario().steps[state.view.step];
+}
+
+function currentAttempt() {
+  const step = currentStep();
+  return step ? step.attempts[state.view.attempt] : null;
+}
+
+function scenarioCrumbs(scenario) {
+  if (state.scenarios.length === 1) return "";
+  const prevDisabled = scenario.index === 0 ? " disabled" : "";
+  const nextDisabled = scenario.index === state.scenarios.length - 1 ? " disabled" : "";
+  return '<div class="crumbs"><span><a data-action="go-list">Executions</a> › ' + esc(scenario.displayName) + "</span>" +
+    '<span class="chips"><button class="pill-btn" data-action="prev"' + prevDisabled + ">‹ Prev</button>" +
+    '<button class="pill-btn" data-action="next"' + nextDisabled + ">Next ›</button></span></div>";
+}
+
+function scenarioChips(scenario) {
+  const passed = scenario.steps.length - scenario.failedSteps;
+  let chips = '<span class="chip pass">✓ ' + passed + " passed</span>";
+  if (scenario.failedSteps) chips += '<span class="chip fail">✗ ' + scenario.failedSteps + " failed</span>";
+  if (scenario.passedOnRetry) {
+    const active = state.view.retriedOnly ? " active" : "";
+    chips += '<button class="chip retry' + active + '" data-action="toggle-retried" title="Show retried steps only">⚠ ' +
+      scenario.passedOnRetry + " passed on retry</button>";
+  }
+  return '<div class="chips">' + chips + "</div>";
+}
+
+function renderScenario(app, index) {
+  const scenario = state.scenarios[index];
+  if (!state.view || state.view.index !== index) state.view = newView(scenario);
+  const withRetries = scenario.retriedSteps ? '<span class="sub-note">with retries</span>' : "";
+  const retried = scenario.retriedSteps ? plural(scenario.retriedSteps, "step") + " · " + retriesText(scenario.retries) : "-";
+  app.innerHTML = noticeHtml() +
+    scenarioCrumbs(scenario) +
+    '<div class="page-head"><h1>Execution: ' + esc(scenario.displayName) + "</h1>" + scenarioChips(scenario) + "</div>" +
+    '<section class="card"><h2>Details</h2><div class="details-grid"><div>' +
+      field("Execution status", statusBadge(scenario.status, 0) + withRetries) +
+      field("Start time", esc(formatDateTime(scenario.start))) +
+      field("End time", esc(formatDateTime(scenario.end))) +
+      field("Duration", esc(formatDuration(scenario.duration))) +
+    "</div><div>" +
+      field("State transitions", String(scenario.entryCount)) +
+      field("Retried steps", retried) +
+      field("Report time", esc(state.report.timeStamp || "-")) +
+      field("Loop", String(scenario.loop)) +
+    "</div></div></section>" +
+    '<div class="split">' +
+      '<section class="card"><h2>Table view</h2><div class="table-wrap"><table><thead><tr>' +
+        "<th></th><th>Name</th><th>Type</th><th>Status</th><th>Resource</th><th>Duration</th><th>Timeline</th><th>Started After</th>" +
+      '</tr></thead><tbody id="step-rows"></tbody></table></div></section>' +
+      '<section class="card" id="step-panel"></section>' +
+    "</div>";
+  renderStepRows();
+  renderStepPanel();
+  window.scrollTo(0, 0);
+}
+
+function durationTitle(step) {
+  if (step.retries === 0) return "";
+  return ' title="' + plural(step.attempts.length, "attempt") + " · " + Math.round(step.callMs) + " ms in calls · ~" +
+    formatDuration(step.duration - step.callMs) + ' waiting between retries"';
+}
+
+function stepRow(step, stepIndex, scenario) {
+  const view = state.view;
+  const selected = view.step === stepIndex ? " selected" : "";
+  const failed = step.status !== "PASSED" ? " failed-row" : "";
+  const hasAttempts = step.retries > 0;
+  const expander = hasAttempts
+    ? '<button class="expander" data-action="toggle-attempts" data-step="' + stepIndex + '">' + (view.expanded.has(stepIndex) ? "▾" : "▸") + "</button>"
+    : '<span class="expander-space"></span>';
+  const badge = hasAttempts ? '<span class="retry-badge" title="' + plural(step.attempts.length, "attempt") + '">↻' + step.attempts.length + "</span>" : "";
+  return '<tr class="' + selected + failed + '" data-action="select-step" data-step="' + stepIndex + '">' +
+    '<td><span class="radio"></span></td>' +
+    '<td class="name-cell" title="' + esc(step.name) + '">' + expander + '<span class="name-text">' + esc(step.name) + "</span>" + badge + "</td>" +
+    '<td class="type-cell" title="' + esc(step.type) + '">' + esc(step.type) + "</td>" +
+    '<td class="status-cell">' + statusBadge(step.status, step.retries) + "</td>" +
+    '<td class="resource" title="' + esc(step.resource) + '">' + esc(step.resource) + "</td>" +
+    "<td" + durationTitle(step) + ">" + esc(formatDuration(step.duration)) + "</td>" +
+    "<td>" + timelineBar(stepSegments(step), scenario.start, scenario.end, false) + "</td>" +
+    "<td>" + esc(formatDuration(step.start - scenario.start)) + "</td></tr>";
+}
+
+function attemptRow(attempt, attemptIndex, stepIndex, scenario) {
+  const view = state.view;
+  const selected = view.step === stepIndex && view.attempt === attemptIndex ? " selected" : "";
+  return '<tr class="attempt-row' + selected + '" data-action="select-attempt" data-step="' + stepIndex + '" data-attempt="' + attemptIndex + '">' +
+    '<td></td><td class="name-cell">Attempt ' + (attemptIndex + 1) + "</td><td></td>" +
+    "<td>" + statusBadge(attempt.status, 0) + "</td><td></td>" +
+    "<td>" + esc(formatDuration(attempt.duration)) + "</td>" +
+    "<td>" + timelineBar([attemptSegment(attempt)], scenario.start, scenario.end, false) + "</td>" +
+    "<td>" + esc(formatDuration(attempt.start - scenario.start)) + "</td></tr>";
+}
+
+function renderStepRows() {
+  const scenario = currentScenario();
+  const html = [];
+  scenario.steps.forEach((step, stepIndex) => {
+    if (state.view.retriedOnly && step.retries === 0) return;
+    html.push(stepRow(step, stepIndex, scenario));
+    if (!state.view.expanded.has(stepIndex)) return;
+    step.attempts.forEach((attempt, attemptIndex) => html.push(attemptRow(attempt, attemptIndex, stepIndex, scenario)));
+  });
+  document.getElementById("step-rows").innerHTML = html.join("") || '<tr><td colspan="8" class="muted">No steps recorded.</td></tr>';
+}
+
+// ---------- step panel ----------
+
+function attemptsBar(step) {
+  if (step.retries === 0) return "";
+  const pills = step.attempts.map((attempt, attemptIndex) => {
+    const css = (attempt.status === "PASSED" ? "pass" : "fail") + (attemptIndex === state.view.attempt ? " active" : "");
+    const mark = attempt.status === "PASSED" ? "✓" : "✗";
+    return '<button class="attempt-pill ' + css + '" data-action="select-attempt" data-step="' + state.view.step +
+      '" data-attempt="' + attemptIndex + '">' + (attemptIndex + 1) + " " + mark + "</button>";
+  }).join("");
+  const passed = step.status === "PASSED";
+  const summary = passed
+    ? "↻ Passed on retry, attempt " + step.attempts.length + " of " + step.attempts.length
+    : "✗ Failed after " + plural(step.attempts.length, "attempt");
+  return '<div class="attempts"><span class="attempts-label">Attempts:</span>' + pills +
+    '<span class="attempts-summary' + (passed ? "" : " fail") + '">' + summary + "</span></div>";
+}
+
+function renderStepPanel() {
+  const panel = document.getElementById("step-panel");
+  const step = currentStep();
+  if (!step) {
+    panel.innerHTML = '<p class="muted">Select a step.</p>';
+    return;
+  }
+  const tab = state.view.tab;
+  panel.innerHTML =
+    '<div class="panel-head"><h2>' + esc(step.name) + "</h2></div>" +
+    '<div class="panel-sub">' + esc(step.type) + " · " + esc(step.resource) + "</div>" +
+    attemptsBar(step) +
+    '<div class="tabs">' +
+      '<button class="tab' + (tab === "io" ? " active" : "") + '" data-action="tab" data-tab="io">Input/Output</button>' +
+      '<button class="tab' + (tab === "details" ? " active" : "") + '" data-action="tab" data-tab="details">Details</button>' +
+    "</div>" +
+    (tab === "io" ? inputOutputHtml(currentAttempt()) : detailsHtml(step, currentAttempt()));
+}
+
+// U8: a failed attempt's assertions text is "Assumed Payload: <json> Assertion Errors: <lines>".
+function splitAssertions(text) {
+  const marker = "Assertion Errors:";
+  if (!text) return { expected: "", errors: [] };
+  if (!String(text).startsWith("Assumed Payload:")) return { expected: text, errors: [] };
+  const errorsAt = text.indexOf(marker);
+  const expected = text.slice("Assumed Payload:".length, errorsAt < 0 ? undefined : errorsAt).trim();
+  const errors = errorsAt < 0 ? [] : text.slice(errorsAt + marker.length).split("\n").map(line => line.trim()).filter(Boolean);
+  return { expected: expected, errors: errors };
+}
+
+function ioSections(attempt) {
+  const assertions = splitAssertions(attempt.assertions);
+  const sections = [
+    { key: "input", title: "State input", text: attempt.input },
+    { key: "output", title: "State output", text: attempt.output },
+    { key: "expected", title: "Expected output", text: assertions.expected }
+  ];
+  if (assertions.errors.length) sections.push({ key: "errors", title: "Assertion errors", errors: assertions.errors });
+  return sections;
+}
+
+function inputOutputHtml(attempt) {
+  return '<div class="io-actions"><button class="pill-btn" data-action="collapse-all">Collapse all</button>' +
+    '<button class="pill-btn" data-action="expand-all">Expand all</button></div>' +
+    ioSections(attempt).map(sectionHtml).join("");
+}
+
+function sectionHtml(section) {
+  const collapsed = state.view.collapsed.has(section.key);
+  const css = section.errors ? " errors" : "";
+  const copyable = !collapsed && !section.errors && prettyText(section.text) !== null;
+  const copy = !copyable ? "" : '<button class="copy-btn" data-action="copy" data-section="' + section.key + '">Copy</button>';
+  const count = section.errors ? " (" + section.errors.length + ")" : "";
+  const head = '<div class="section-head"><button class="section-toggle' + css + '" data-action="toggle-section" data-section="' +
+    section.key + '"><span class="caret">' + (collapsed ? "▶" : "▼") + "</span>" + esc(section.title) + count + "</button>" + copy + "</div>";
+  if (collapsed) return '<div class="section">' + head + "</div>";
+  const body = section.errors ? errorsHtml(section.errors) : codeBlock(section.text);
+  return '<div class="section">' + head + body + "</div>";
+}
+
+function errorsHtml(errors) {
+  const items = errors.map(line => {
+    const match = ERROR_PATTERN.exec(line);
+    if (!match) return "<li>" + esc(line) + "</li>";
+    return "<li><code>" + esc(match[1]) + '</code> actual <span class="actual">' + esc(match[2]) +
+      '</span> ≠ expected <span class="expected">' + esc(match[3]) + "</span></li>";
+  }).join("");
+  return '<ul class="errors-list">' + items + "</ul>";
+}
+
+function detailsHtml(step, attempt) {
+  const rows = [
+    ["Correlation ID", step.correlationId || "-"],
+    ["Attempt", step.retries ? (state.view.attempt + 1) + " of " + step.attempts.length : "1"],
+    ["Task", step.type],
+    ["Resource", step.resource],
+    ["Request time", attempt.requestTime || "-"],
+    ["Response time", attempt.responseTime || "-"],
+    ["Duration", formatDuration(attempt.duration) + " (" + Math.round(attempt.duration) + " ms)"],
+    ["Status", attempt.status === "PASSED" ? "Succeeded" : "Failed"]
+  ];
+  if (attempt.customLog) rows.push(["Custom log", attempt.customLog]);
+  return '<dl class="kv">' + rows.map(row => "<dt>" + esc(row[0]) + "</dt><dd>" + esc(row[1]) + "</dd>").join("") + "</dl>";
+}
+
+// ---------- JSON code block (with S3 folding) ----------
+
+function prettyText(text) {
+  if (text === undefined || text === null || text === "") return null;
+  try {
+    const parsed = JSON.parse(text);
+    // Zerocode already pretty-prints payloads; only re-format single-line JSON.
+    return String(text).includes("\n") ? String(text) : JSON.stringify(parsed, null, 2);
+  } catch (error) {
+    return String(text);
+  }
+}
+
+function tokenHtml(str, colon, literal, nullWord, number) {
+  if (str && colon) return '<span class="tok-key">' + esc(str) + "</span>" + esc(colon);
+  if (str) return '<span class="tok-string">' + esc(str) + "</span>";
+  if (literal) return '<span class="tok-literal">' + literal + "</span>";
+  if (nullWord) return '<span class="tok-null">null</span>';
+  return '<span class="tok-number">' + esc(number) + "</span>";
+}
+
+function highlightLine(line) {
+  let html = "";
+  let last = 0;
+  line.replace(TOKEN_PATTERN, (match, str, colon, literal, nullWord, number, offset) => {
+    html += esc(line.slice(last, offset)) + tokenHtml(str, colon, literal, nullWord, number);
+    last = offset + match.length;
+    return match;
+  });
+  return html + esc(line.slice(last));
+}
+
+// Line ranges that can fold: a line ending in "{" or "[" up to its closing line.
+function findFoldRanges(lines) {
+  const ranges = new Map();
+  const open = [];
+  lines.forEach((line, lineIndex) => {
+    const trimmed = line.trim();
+    if (/^[}\]]/.test(trimmed) && open.length) {
+      const start = open.pop();
+      if (lineIndex - start > 1) ranges.set(start, lineIndex);
+    }
+    if (/[{[]$/.test(trimmed)) open.push(lineIndex);
+  });
+  return ranges;
+}
+
+function codeBlock(text) {
+  const pretty = prettyText(text);
+  if (pretty === null) {
+    return '<div class="not-captured">Not captured. Set <code>zerocode.report.step.capture=ALL</code> to keep this payload.</div>';
+  }
+  const lines = pretty.split("\n");
+  const folds = findFoldRanges(lines);
+  const rows = lines.map((line, lineIndex) => {
+    const end = folds.get(lineIndex);
+    const fold = end !== undefined
+      ? '<button class="fold" data-action="fold" data-line="' + lineIndex + '" data-end="' + end + '">▾</button>'
+      : '<span class="fold-space"></span>';
+    return '<div class="code-line" data-line="' + lineIndex + '"><span class="gutter">' + (lineIndex + 1) + fold +
+      '</span><span class="code-text">' + highlightLine(line) + "</span></div>";
+  }).join("");
+  return '<div class="code">' + rows + "</div>";
+}
+
+function refreshFolds(block) {
+  const folded = Array.from(block.querySelectorAll(".code-line.folded")).map(line => {
+    const button = line.querySelector(".fold");
+    return [Number(button.dataset.line), Number(button.dataset.end)];
+  });
+  block.querySelectorAll(".code-line").forEach(line => {
+    const lineIndex = Number(line.dataset.line);
+    const hidden = folded.some(range => lineIndex > range[0] && lineIndex < range[1]);
+    line.classList.toggle("hidden", hidden);
+  });
+}
+
+function toggleFold(button) {
+  const line = button.closest(".code-line");
+  const folded = line.classList.toggle("folded");
+  button.textContent = folded ? "▸" : "▾";
+  refreshFolds(button.closest(".code"));
+}
+
+function copySection(button) {
+  const section = ioSections(currentAttempt()).find(item => item.key === button.dataset.section);
+  const text = prettyText(section.text) || "";
+  const done = () => {
+    button.textContent = "Copied";
+    setTimeout(() => { button.textContent = "Copy"; }, 1200);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, done);
+}
+
+// ---------- save shareable HTML ----------
+
+function shareableHtml() {
+  const json = JSON.stringify(state.report).replace(/<\//g, "<\\/");
+  return PAGE_SOURCE.replace(REPORT_DATA_PATTERN, (match, open, body, close) => open + json + close);
+}
+
+function saveShareable() {
+  const blob = new Blob([shareableHtml()], { type: "text/html" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "zerocode-tabular-report.html";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+
+// ---------- events ----------
+
+function selectStep(stepIndex, attemptIndex) {
+  const step = currentScenario().steps[stepIndex];
+  state.view.step = stepIndex;
+  state.view.attempt = attemptIndex === undefined ? step.attempts.length - 1 : attemptIndex;
+  renderStepRows();
+  renderStepPanel();
+}
+
+function moveScenario(offset) {
+  const target = state.view.index + offset;
+  if (target >= 0 && target < state.scenarios.length) goTo(target);
+}
+
+function toggleListSort(key) {
+  state.list.sortDir = state.list.sortKey === key ? -state.list.sortDir : 1;
+  state.list.sortKey = key;
+  renderList(document.getElementById("app"));
+}
+
+function toggleInSet(set, key) {
+  if (set.has(key)) set.delete(key); else set.add(key);
+}
+
+const ACTIONS = {
+  "open-scenario": target => goTo(Number(target.dataset.index)),
+  "go-list": () => goTo(null),
+  "prev": () => moveScenario(-1),
+  "next": () => moveScenario(1),
+  "sort": target => toggleListSort(target.dataset.key),
+  "filter-status": target => {
+    state.list.status = state.list.status === target.dataset.status ? "ALL" : target.dataset.status;
+    renderList(document.getElementById("app"));
+  },
+  "select-step": target => selectStep(Number(target.dataset.step)),
+  "select-attempt": target => selectStep(Number(target.dataset.step), Number(target.dataset.attempt)),
+  "toggle-attempts": target => {
+    toggleInSet(state.view.expanded, Number(target.dataset.step));
+    renderStepRows();
+  },
+  "toggle-retried": target => {
+    state.view.retriedOnly = !state.view.retriedOnly;
+    target.classList.toggle("active", state.view.retriedOnly);
+    renderStepRows();
+  },
+  "tab": target => {
+    state.view.tab = target.dataset.tab;
+    renderStepPanel();
+  },
+  "toggle-section": target => {
+    toggleInSet(state.view.collapsed, target.dataset.section);
+    renderStepPanel();
+  },
+  "collapse-all": () => {
+    ioSections(currentAttempt()).forEach(section => state.view.collapsed.add(section.key));
+    renderStepPanel();
+  },
+  "expand-all": () => {
+    state.view.collapsed.clear();
+    renderStepPanel();
+  },
+  "copy": target => copySection(target),
+  "fold": target => toggleFold(target),
+  "save": () => saveShareable()
+};
+
+document.addEventListener("click", event => {
+  const target = event.target.closest("[data-action]");
+  if (!target || target.disabled) return;
+  const action = ACTIONS[target.dataset.action];
+  if (!action) return;
+  event.stopPropagation();
+  action(target);
+});
+
+// U6: left/right arrows switch attempts of a retried step.
+document.addEventListener("keydown", event => {
+  if (!state.view || !document.getElementById("step-panel")) return;
+  if (event.target instanceof Element && event.target.closest("input, select, textarea")) return;
+  const step = currentStep();
+  if (!step || step.retries === 0) return;
+  const offset = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+  const target = state.view.attempt + offset;
+  if (offset && target >= 0 && target < step.attempts.length) selectStep(state.view.step, target);
+});
+
+window.addEventListener("hashchange", render);
+
+// ---------- loading: embedded data, then ?file=, then files / folder ----------
+
+function renderEmpty(app) {
+  app.innerHTML = noticeHtml() + '<div class="empty-state" id="drop-zone"><h2>Open Zerocode JSON reports</h2>' +
+    '<p class="muted">Drop one or more <code>.json</code> reports here, or open files or a whole ' +
+    "<code>target/zerocode-test-reports/</code> folder.</p>" +
+    '<div class="empty-actions">' +
+      '<label class="pill-btn">Open files<input type="file" id="empty-files" accept=".json,application/json" multiple></label>' +
+      '<label class="pill-btn">Open folder<input type="file" id="empty-folder" webkitdirectory multiple></label>' +
+    "</div></div>";
+  const zone = document.getElementById("drop-zone");
+  document.getElementById("empty-files").addEventListener("change", event => readFiles(event.target.files));
+  document.getElementById("empty-folder").addEventListener("change", event => readFiles(topLevelJson(event.target.files)));
+  zone.addEventListener("dragover", event => { event.preventDefault(); zone.classList.add("drag"); });
+  zone.addEventListener("dragleave", () => zone.classList.remove("drag"));
+  zone.addEventListener("drop", event => {
+    event.preventDefault();
+    zone.classList.remove("drag");
+    readFiles(event.dataTransfer.files);
+  });
+}
+
+// A folder pick lists nested files too; keep only *.json directly inside the chosen folder.
+function topLevelJson(fileList) {
+  return Array.from(fileList).filter(file => {
+    const depth = (file.webkitRelativePath || file.name).split("/").length;
+    return file.name.toLowerCase().endsWith(".json") && depth <= 2;
+  });
+}
+
+function readText(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = () => resolve({ name: file.name, text: reader.result });
+    reader.onerror = () => resolve({ name: file.name, text: null });
+    reader.readAsText(file);
+  });
+}
+
+function parseReport(entry) {
+  try {
+    const doc = JSON.parse(entry.text);
+    return isReport(doc) ? doc : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function readFiles(fileList) {
+  const files = Array.from(fileList || []);
+  if (!files.length) return;
+  Promise.all(files.map(readText)).then(entries => {
+    const docs = [];
+    const skipped = [];
+    entries.forEach(entry => {
+      const doc = parseReport(entry);
+      if (doc) docs.push(doc); else skipped.push(entry.name);
+    });
+    state.notice = skipped.length ? "Skipped " + plural(skipped.length, "file") + " (not a Zerocode report): " + skipped.join(", ") : "";
+    if (!docs.length) {
+      render();
+      return;
+    }
+    clearRoute();
+    loadReport(mergeReports(docs));
+  });
+}
+
+function embeddedReport() {
+  const text = document.getElementById("report-data").textContent.trim();
+  if (!text || text.startsWith("/*")) return null;
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("Embedded report is not valid JSON", error);
+    return null;
+  }
+}
+
+function start() {
+  document.getElementById("open-files").addEventListener("change", event => readFiles(event.target.files));
+  document.getElementById("open-folder").addEventListener("change", event => readFiles(topLevelJson(event.target.files)));
+  const embedded = embeddedReport();
+  if (embedded) {
+    loadReport(mergeReports([embedded]));
+    return;
+  }
+  const fileParam = new URLSearchParams(location.search).get("file");
+  if (!fileParam) {
+    render();
+    return;
+  }
+  fetch(fileParam)
+    .then(response => response.json())
+    .then(doc => loadReport(mergeReports([doc])))
+    .catch(error => {
+      console.error("Could not load " + fileParam, error);
+      render();
+    });
+}
+
+start();
+</script>
+</body>
+</html>

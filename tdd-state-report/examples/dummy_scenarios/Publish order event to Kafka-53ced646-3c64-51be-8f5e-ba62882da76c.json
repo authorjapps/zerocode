@@ -1,0 +1,63 @@
+{
+    "timeStamp": "2026-10-26T09:00:00.100",
+    "results": [
+        {
+            "scenarioName": "Publish order event to Kafka",
+            "steps": [
+                {
+                    "name": "produce_order_created",
+                    "url": "kafka-topic:orders.v1",
+                    "correlationId": "972e45e4-fad2-5fb6-9b04-d7b75302858d",
+                    "operation": "produce",
+                    "requestTimeStamp": "2026-10-26T09:00:07.100",
+                    "responseTimeStamp": "2026-10-26T09:00:07.345",
+                    "responseDelay": 245.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"recordType\" : \"JSON\",\n  \"records\" : [\n    {\n      \"key\" : \"ORD-5001\",\n      \"value\" : {\n        \"type\" : \"ORDER_CREATED\",\n        \"orderId\" : \"ORD-5001\",\n        \"total\" : 161.98\n      }\n    }\n  ]\n}",
+                    "response": "{\n  \"status\" : \"Ok\",\n  \"recordMetadata\" : {\n    \"topicPartition\" : {\n      \"partition\" : 0,\n      \"topic\" : \"orders.v1\"\n    },\n    \"offset\" : 4182\n  }\n}",
+                    "assertions": "{\n  \"status\" : \"Ok\"\n}"
+                },
+                {
+                    "name": "consume_order_created",
+                    "url": "kafka-topic:orders.v1",
+                    "correlationId": "f166d467-960d-5588-989b-81b62f4f993c",
+                    "operation": "consume",
+                    "requestTimeStamp": "2026-10-26T09:00:07.360",
+                    "responseTimeStamp": "2026-10-26T09:00:08.672",
+                    "responseDelay": 1312.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"consumerLocalConfigs\" : {\n    \"recordType\" : \"JSON\",\n    \"commitSync\" : true,\n    \"maxNoOfRetryPollsOrTimeouts\" : 3\n  }\n}",
+                    "response": "{\n  \"records\" : [\n    {\n      \"key\" : \"ORD-5001\",\n      \"value\" : {\n        \"type\" : \"ORDER_CREATED\",\n        \"orderId\" : \"ORD-5001\",\n        \"total\" : 161.98\n      }\n    }\n  ],\n  \"size\" : 1\n}",
+                    "assertions": "{\n  \"size\" : 1,\n  \"records\" : [\n    {\n      \"value\" : {\n        \"type\" : \"ORDER_CREATED\"\n      }\n    }\n  ]\n}"
+                },
+                {
+                    "name": "produce_order_shipped",
+                    "url": "kafka-topic:orders.v1",
+                    "correlationId": "9fdfe169-643f-5d96-bc3d-43f648d07af4",
+                    "operation": "produce",
+                    "requestTimeStamp": "2026-10-26T09:00:08.687",
+                    "responseTimeStamp": "2026-10-26T09:00:08.885",
+                    "responseDelay": 198.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"recordType\" : \"JSON\",\n  \"records\" : [\n    {\n      \"key\" : \"ORD-5001\",\n      \"value\" : {\n        \"type\" : \"ORDER_SHIPPED\",\n        \"orderId\" : \"ORD-5001\",\n        \"carrier\" : \"DHL\"\n      }\n    }\n  ]\n}",
+                    "response": "{\n  \"status\" : \"Ok\",\n  \"recordMetadata\" : {\n    \"topicPartition\" : {\n      \"partition\" : 0,\n      \"topic\" : \"orders.v1\"\n    },\n    \"offset\" : 4182\n  }\n}",
+                    "assertions": "{\n  \"status\" : \"Ok\"\n}"
+                },
+                {
+                    "name": "consume_order_shipped",
+                    "url": "kafka-topic:orders.v1",
+                    "correlationId": "53ced646-3c64-51be-8f5e-ba62882da76c",
+                    "operation": "consume",
+                    "requestTimeStamp": "2026-10-26T09:00:08.900",
+                    "responseTimeStamp": "2026-10-26T09:00:10.004",
+                    "responseDelay": 1104.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"consumerLocalConfigs\" : {\n    \"recordType\" : \"JSON\",\n    \"commitSync\" : true,\n    \"maxNoOfRetryPollsOrTimeouts\" : 3\n  }\n}",
+                    "response": "{\n  \"records\" : [\n    {\n      \"key\" : \"ORD-5001\",\n      \"value\" : {\n        \"type\" : \"ORDER_SHIPPED\",\n        \"orderId\" : \"ORD-5001\",\n        \"carrier\" : \"DHL\"\n      }\n    }\n  ],\n  \"size\" : 1\n}",
+                    "assertions": "{\n  \"size\" : 1,\n  \"records\" : [\n    {\n      \"value\" : {\n        \"type\" : \"ORDER_SHIPPED\"\n      }\n    }\n  ]\n}"
+                }
+            ],
+            "loop": 0
+        }
+    ]
+}

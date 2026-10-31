@@ -1,0 +1,50 @@
+{
+    "timeStamp": "2026-10-26T09:00:00.100",
+    "results": [
+        {
+            "scenarioName": "Create and fetch customer",
+            "steps": [
+                {
+                    "name": "create_customer",
+                    "url": "https://api.example-shop.test/customers",
+                    "correlationId": "a4b57193-b078-5a72-9967-0440b09859fc",
+                    "operation": "POST",
+                    "requestTimeStamp": "2026-10-26T09:00:00.100",
+                    "responseTimeStamp": "2026-10-26T09:00:00.312",
+                    "responseDelay": 212.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\"\n  },\n  \"body\" : {\n    \"name\" : \"Ada Lovelace\",\n    \"email\" : \"ada@example-shop.test\"\n  }\n}",
+                    "response": "{\n  \"status\" : 201,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"id\" : \"C-1001\",\n    \"name\" : \"Ada Lovelace\",\n    \"email\" : \"ada@example-shop.test\",\n    \"tier\" : \"GOLD\"\n  }\n}",
+                    "assertions": "{\n  \"status\" : 201,\n  \"body\" : {\n    \"id\" : \"$NOT.NULL\",\n    \"name\" : \"Ada Lovelace\"\n  }\n}"
+                },
+                {
+                    "name": "get_customer",
+                    "url": "https://api.example-shop.test/customers/C-1001",
+                    "correlationId": "c8627287-f14e-5df6-a61f-74de12f56aa9",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:00.327",
+                    "responseTimeStamp": "2026-10-26T09:00:00.415",
+                    "responseDelay": 88.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"id\" : \"C-1001\",\n    \"name\" : \"Ada Lovelace\",\n    \"email\" : \"ada@example-shop.test\",\n    \"tier\" : \"GOLD\"\n  }\n}",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"id\" : \"C-1001\",\n    \"tier\" : \"GOLD\"\n  }\n}"
+                },
+                {
+                    "name": "update_customer_email",
+                    "url": "https://api.example-shop.test/customers/C-1001",
+                    "correlationId": "70b6adaf-a04e-5e9c-bfb5-7ba78ecf65e5",
+                    "operation": "PUT",
+                    "requestTimeStamp": "2026-10-26T09:00:00.430",
+                    "responseTimeStamp": "2026-10-26T09:00:00.571",
+                    "responseDelay": 141.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\"\n  },\n  \"body\" : {\n    \"email\" : \"ada.l@example-shop.test\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"id\" : \"C-1001\",\n    \"name\" : \"Ada Lovelace\",\n    \"email\" : \"ada.l@example-shop.test\",\n    \"tier\" : \"GOLD\"\n  }\n}",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"email\" : \"ada.l@example-shop.test\"\n  }\n}"
+                }
+            ],
+            "loop": 0
+        }
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "timeStamp": "2026-10-25T22:09:50.898",
+    "results": [
+        {
+            "scenarioName": "Assert that file has been uploaded successfully",
+            "steps": [
+                {
+                    "Step": "post_file",
+                    "Resource": "https://postman-echo.com/post",
+                    "CorrelationId": "b6eb6c39-7dfa-41f6-a9b9-18f55333a81a",
+                    "Task": "POST",
+                    "RequestTime": "2026-10-25T22:09:50.925",
+                    "ResponseTime": "2026-10-25T22:09:51.261",
+                    "Duration": 336.0,
+                    "Status": "PASSED",
+                    "Input": "{\n  \"headers\" : {\n    \"Content-Type\" : \"multipart/form-data\"\n  },\n  \"body\" : {\n    \"files\" : [ \"file:helloworld_file_upload/textfile.txt\" ]\n  }\n}",
+                    "Output": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"cf-cache-status\" : [ \"DYNAMIC\" ],\n    \"CF-RAY\" : [ \"a5048c46a995af90-LHR\" ],\n    \"Connection\" : [ \"keep-alive\" ],\n    \"Content-Type\" : [ \"application/json; charset=utf-8\" ],\n    \"Date\" : [ \"Sun, 25 Oct 2026 22:09:51 GMT\" ],\n    \"etag\" : [ \"W/\\\"1a9-iL49SAldQQwHA5bsc0pNTui0Bbc\\\"\" ],\n    \"Server\" : [ \"cloudflare\" ],\n    \"Set-Cookie\" : [ \"sails.sid=s%3A8pP7VcPw4lC8sV2VEkcnJdGRn9pI0OO3.7s6%2FyGw1a6JiFCWsjh98SWYZ4DjpWPKyzjTiQk8XRsQ; Path=/; HttpOnly\", \"__cf_bm=dummy-cookie-value; HttpOnly; SameSite=None; Secure; Path=/; Domain=postman-echo.com; Expires=Sun, 25 Oct 2026 22:39:51 GMT\", \"_cfuvid=dummy-cookie-value; HttpOnly; SameSite=None; Secure; Path=/; Domain=postman-echo.com\" ],\n    \"Transfer-Encoding\" : [ \"chunked\" ],\n    \"vary\" : [ \"Accept-Encoding\" ],\n    \"x-envoy-upstream-service-time\" : [ \"6\" ]\n  },\n  \"body\" : {\n    \"args\" : { },\n    \"data\" : { },\n    \"files\" : {\n      \"textfile.txt\" : \"data:application/octet-stream;base64,SGVsbG9Xb3JsZA==\"\n    },\n    \"form\" : { },\n    \"headers\" : {\n      \"host\" : \"postman-echo.com\",\n      \"accept-encoding\" : \"gzip, br\",\n      \"user-agent\" : \"Apache-HttpClient/4.5.13 (Java/1.8.0_392)\",\n      \"content-type\" : \"multipart/form-data; boundary=\\\"17929661910312026-10-25T22:09:51.031\\\"\",\n      \"x-forwarded-proto\" : \"https\",\n      \"content-length\" : \"241\"\n    },\n    \"json\" : null,\n    \"url\" : \"https://postman-echo.com/post\"\n  }\n}",
+                    "ExpectedOutput": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"files\" : {\n      \"['textfile.txt']\" : \"data:application/octet-stream;base64,SGVsbG9Xb3JsZA==\"\n    }\n  }\n}"
+                },
+                {
+                    "Step": "get_uploaded_file",
+                    "Resource": "https://postman-echo.com/get?file=textfile.txt",
+                    "CorrelationId": "0d5f2c1e-3b7a-4c4e-9f0a-7e2b1c9d8a01",
+                    "Task": "GET",
+                    "RequestTime": "2026-10-25T22:09:51.300",
+                    "ResponseTime": "2026-10-25T22:09:51.802",
+                    "Duration": 502.0,
+                    "Status": "FAILED",
+                    "Output": "<html><body><h1>502 Bad Gateway</h1></body></html>",
+                    "ExpectedOutput": "{\n  \"status\" : 200\n}"
+                }
+            ],
+            "loop": 0
+        }
+    ]
+}

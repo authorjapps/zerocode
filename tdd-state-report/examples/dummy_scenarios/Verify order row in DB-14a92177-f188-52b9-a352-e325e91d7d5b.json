@@ -1,0 +1,37 @@
+{
+    "timeStamp": "2026-10-26T09:00:00.100",
+    "results": [
+        {
+            "scenarioName": "Verify order row in DB",
+            "steps": [
+                {
+                    "name": "select_order_row",
+                    "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+                    "correlationId": "a2f18a35-bef4-5b1b-8fbc-187061181f68",
+                    "operation": "EXECUTE",
+                    "requestTimeStamp": "2026-10-26T09:00:08.000",
+                    "responseTimeStamp": "2026-10-26T09:00:08.046",
+                    "responseDelay": 46.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"sql\" : \"SELECT id, status, total FROM orders WHERE id = ?\",\n  \"parameters\" : [\n    \"ORD-5001\"\n  ]\n}",
+                    "response": "{\n  \"rows\" : [\n    {\n      \"ID\" : \"ORD-5001\",\n      \"STATUS\" : \"SHIPPED\",\n      \"TOTAL\" : 161.98\n    }\n  ]\n}",
+                    "assertions": "{\n  \"rows.SIZE\" : 1,\n  \"rows\" : [\n    {\n      \"STATUS\" : \"SHIPPED\"\n    }\n  ]\n}"
+                },
+                {
+                    "name": "select_order_lines",
+                    "url": "org.jsmart.zerocode.core.db.DbSqlExecutor",
+                    "correlationId": "14a92177-f188-52b9-a352-e325e91d7d5b",
+                    "operation": "EXECUTE",
+                    "requestTimeStamp": "2026-10-26T09:00:08.061",
+                    "responseTimeStamp": "2026-10-26T09:00:08.100",
+                    "responseDelay": 39.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"sql\" : \"SELECT product_id, qty FROM order_lines WHERE order_id = ?\",\n  \"parameters\" : [\n    \"ORD-5001\"\n  ]\n}",
+                    "response": "{\n  \"rows\" : [\n    {\n      \"PRODUCT_ID\" : \"P-77\",\n      \"QTY\" : 2\n    }\n  ]\n}",
+                    "assertions": "{\n  \"rows.SIZE\" : 1,\n  \"rows\" : [\n    {\n      \"QTY\" : 2\n    }\n  ]\n}"
+                }
+            ],
+            "loop": 0
+        }
+    ]
+}

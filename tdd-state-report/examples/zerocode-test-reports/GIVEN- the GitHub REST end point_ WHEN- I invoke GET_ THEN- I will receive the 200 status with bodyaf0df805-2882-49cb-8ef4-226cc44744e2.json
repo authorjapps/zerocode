@@ -1,0 +1,22 @@
+{
+    "timeStamp": "2026-10-25T17:01:19.383",
+    "results": [
+        {
+            "scenarioName": "GIVEN- the GitHub REST end point, WHEN- I invoke GET, THEN- I will receive the 200 status with body",
+            "steps": [
+                {
+                    "name": "get_user_details",
+                    "url": "https://api.github.com/users/octocat",
+                    "correlationId": "af0df805-2882-49cb-8ef4-226cc44744e2",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-25T17:01:19.413",
+                    "responseTimeStamp": "2026-10-25T17:01:19.845",
+                    "responseDelay": 432.0,
+                    "result": "PASSED",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"login\" : \"octocat\",\n    \"id\" : 583231,\n    \"type\" : \"User\"\n  }\n}"
+                }
+            ],
+            "loop": 0
+        }
+    ]
+}

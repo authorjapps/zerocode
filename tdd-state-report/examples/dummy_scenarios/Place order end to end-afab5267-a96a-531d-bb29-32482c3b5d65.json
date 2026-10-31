@@ -1,0 +1,167 @@
+{
+    "timeStamp": "2026-10-26T09:00:00.100",
+    "results": [
+        {
+            "scenarioName": "Place order end to end",
+            "steps": [
+                {
+                    "name": "login",
+                    "url": "https://api.example-shop.test/auth/token",
+                    "correlationId": "6450129a-d7d9-5564-937a-50934ff5f400",
+                    "operation": "POST",
+                    "requestTimeStamp": "2026-10-26T09:00:00.700",
+                    "responseTimeStamp": "2026-10-26T09:00:00.874",
+                    "responseDelay": 174.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\"\n  },\n  \"body\" : {\n    \"username\" : \"ada\",\n    \"password\" : \"******\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"token\" : \"eyJhbGciOi.dummy.token\",\n    \"expiresIn\" : 3600\n  }\n}",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"token\" : \"$NOT.NULL\"\n  }\n}"
+                },
+                {
+                    "name": "get_product",
+                    "url": "https://api.example-shop.test/products/P-77",
+                    "correlationId": "b97742c7-7a1f-5d37-9768-87791cfce37b",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:00.889",
+                    "responseTimeStamp": "2026-10-26T09:00:00.952",
+                    "responseDelay": 63.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"id\" : \"P-77\",\n    \"title\" : \"Mechanical keyboard\",\n    \"price\" : 89.99,\n    \"stock\" : 12\n  }\n}",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"id\" : \"P-77\",\n    \"stock\" : \"$GT.0\"\n  }\n}"
+                },
+                {
+                    "name": "add_to_cart",
+                    "url": "https://api.example-shop.test/carts/CART-1/items",
+                    "correlationId": "f4d7130e-fd3b-5472-b5fb-8daca51634b8",
+                    "operation": "POST",
+                    "requestTimeStamp": "2026-10-26T09:00:00.967",
+                    "responseTimeStamp": "2026-10-26T09:00:01.086",
+                    "responseDelay": 119.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  },\n  \"body\" : {\n    \"productId\" : \"P-77\",\n    \"qty\" : 2\n  }\n}",
+                    "response": "{\n  \"status\" : 201,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"cartId\" : \"CART-1\",\n    \"items\" : [\n      {\n        \"productId\" : \"P-77\",\n        \"qty\" : 2\n      }\n    ]\n  }\n}",
+                    "assertions": "{\n  \"status\" : 201,\n  \"body\" : {\n    \"items.SIZE\" : 1\n  }\n}"
+                },
+                {
+                    "name": "get_cart",
+                    "url": "https://api.example-shop.test/carts/CART-1",
+                    "correlationId": "8ba8dd2e-5d1e-5019-8ed4-b841deef531c",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:01.101",
+                    "responseTimeStamp": "2026-10-26T09:00:01.158",
+                    "responseDelay": 57.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"cartId\" : \"CART-1\",\n    \"items\" : [\n      {\n        \"productId\" : \"P-77\",\n        \"qty\" : 2,\n        \"lineTotal\" : 179.98\n      }\n    ],\n    \"total\" : 179.98\n  }\n}",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"total\" : 179.98\n  }\n}"
+                },
+                {
+                    "name": "apply_discount",
+                    "url": "https://api.example-shop.test/carts/CART-1/discount",
+                    "correlationId": "1b09ffe1-b384-5901-8c50-a17947b25d03",
+                    "operation": "POST",
+                    "requestTimeStamp": "2026-10-26T09:00:01.173",
+                    "responseTimeStamp": "2026-10-26T09:00:01.269",
+                    "responseDelay": 96.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  },\n  \"body\" : {\n    \"code\" : \"AUTUMN10\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"cartId\" : \"CART-1\",\n    \"discount\" : 18.0,\n    \"total\" : 161.98\n  }\n}",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"total\" : 161.98\n  }\n}"
+                },
+                {
+                    "name": "checkout",
+                    "url": "https://api.example-shop.test/orders",
+                    "correlationId": "159284a2-fb41-5be6-bafd-6c30137f27b8",
+                    "operation": "POST",
+                    "requestTimeStamp": "2026-10-26T09:00:01.284",
+                    "responseTimeStamp": "2026-10-26T09:00:01.589",
+                    "responseDelay": 305.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  },\n  \"body\" : {\n    \"cartId\" : \"CART-1\",\n    \"shipTo\" : \"1 Analytical St, London\"\n  }\n}",
+                    "response": "{\n  \"status\" : 202,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"orderId\" : \"ORD-5001\",\n    \"status\" : \"CREATED\"\n  }\n}",
+                    "assertions": "{\n  \"status\" : 202,\n  \"body\" : {\n    \"orderId\" : \"$NOT.NULL\",\n    \"status\" : \"CREATED\"\n  }\n}"
+                },
+                {
+                    "name": "pay_order",
+                    "url": "https://api.example-shop.test/payments",
+                    "correlationId": "106c6ed5-591e-513e-a773-4a5ab2a92838",
+                    "operation": "POST",
+                    "requestTimeStamp": "2026-10-26T09:00:01.604",
+                    "responseTimeStamp": "2026-10-26T09:00:02.016",
+                    "responseDelay": 412.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  },\n  \"body\" : {\n    \"orderId\" : \"ORD-5001\",\n    \"amount\" : 161.98,\n    \"card\" : \"**** 4242\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"paymentId\" : \"PAY-9001\",\n    \"status\" : \"CAPTURED\"\n  }\n}",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"status\" : \"CAPTURED\"\n  }\n}"
+                },
+                {
+                    "name": "order_status_shipped",
+                    "url": "https://api.example-shop.test/orders/ORD-5001",
+                    "correlationId": "818d5d07-18c5-5ea6-877c-40e5d9e41ac9",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:02.031",
+                    "responseTimeStamp": "2026-10-26T09:00:02.102",
+                    "responseDelay": 71.0,
+                    "result": "FAILED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"orderId\" : \"ORD-5001\",\n    \"status\" : \"PENDING\",\n    \"carrier\" : null\n  }\n}",
+                    "assertions": "Assumed Payload: \n{\n  \"status\" : 200,\n  \"body\" : {\n    \"orderId\" : \"ORD-5001\",\n    \"status\" : \"SHIPPED\"\n  }\n}\nAssertion Errors: \nAssertion jsonPath '$.body.status' with actual value 'PENDING' did not match the expected value 'SHIPPED'\n"
+                },
+                {
+                    "name": "order_status_shipped",
+                    "url": "https://api.example-shop.test/orders/ORD-5001",
+                    "correlationId": "818d5d07-18c5-5ea6-877c-40e5d9e41ac9",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:04.102",
+                    "responseTimeStamp": "2026-10-26T09:00:04.170",
+                    "responseDelay": 68.0,
+                    "result": "FAILED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"orderId\" : \"ORD-5001\",\n    \"status\" : \"PENDING\",\n    \"carrier\" : null\n  }\n}",
+                    "assertions": "Assumed Payload: \n{\n  \"status\" : 200,\n  \"body\" : {\n    \"orderId\" : \"ORD-5001\",\n    \"status\" : \"SHIPPED\"\n  }\n}\nAssertion Errors: \nAssertion jsonPath '$.body.status' with actual value 'PENDING' did not match the expected value 'SHIPPED'\n"
+                },
+                {
+                    "name": "order_status_shipped",
+                    "url": "https://api.example-shop.test/orders/ORD-5001",
+                    "correlationId": "818d5d07-18c5-5ea6-877c-40e5d9e41ac9",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:06.170",
+                    "responseTimeStamp": "2026-10-26T09:00:06.244",
+                    "responseDelay": 74.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"orderId\" : \"ORD-5001\",\n    \"status\" : \"SHIPPED\",\n    \"carrier\" : \"DHL\",\n    \"tracking\" : \"DHL-7781\"\n  }\n}",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"orderId\" : \"ORD-5001\",\n    \"status\" : \"SHIPPED\"\n  }\n}"
+                },
+                {
+                    "name": "get_invoice",
+                    "url": "https://api.example-shop.test/orders/ORD-5001/invoice",
+                    "correlationId": "6ea3a65b-ef76-5dd1-879f-ee75c347cd9a",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:06.259",
+                    "responseTimeStamp": "2026-10-26T09:00:06.392",
+                    "responseDelay": 133.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"invoiceId\" : \"INV-3301\",\n    \"orderId\" : \"ORD-5001\",\n    \"total\" : 161.98\n  }\n}",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"invoiceId\" : \"$NOT.NULL\"\n  }\n}"
+                },
+                {
+                    "name": "send_confirmation_email",
+                    "url": "https://api.example-shop.test/notifications",
+                    "correlationId": "afab5267-a96a-531d-bb29-32482c3b5d65",
+                    "operation": "POST",
+                    "requestTimeStamp": "2026-10-26T09:00:06.407",
+                    "responseTimeStamp": "2026-10-26T09:00:06.565",
+                    "responseDelay": 158.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  },\n  \"body\" : {\n    \"to\" : \"ada.l@example-shop.test\",\n    \"template\" : \"ORDER_SHIPPED\"\n  }\n}",
+                    "response": "{\n  \"status\" : 202,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"notificationId\" : \"N-12\",\n    \"queued\" : true\n  }\n}",
+                    "assertions": "{\n  \"status\" : 202,\n  \"body\" : {\n    \"queued\" : true\n  }\n}"
+                }
+            ],
+            "loop": 0
+        }
+    ]
+}

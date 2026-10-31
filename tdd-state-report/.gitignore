@@ -1,0 +1,17 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+build/
+dist/
+*.egg-info/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Generated reports
+/out/
+zerocode-tabular-report.html

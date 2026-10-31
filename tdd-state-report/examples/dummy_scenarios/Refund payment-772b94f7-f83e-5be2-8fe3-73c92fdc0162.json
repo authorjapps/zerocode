@@ -1,0 +1,102 @@
+{
+    "timeStamp": "2026-10-26T09:00:00.100",
+    "results": [
+        {
+            "scenarioName": "Refund payment",
+            "steps": [
+                {
+                    "name": "login",
+                    "url": "https://api.example-shop.test/auth/token",
+                    "correlationId": "a954b6ba-60a1-52a0-b0a9-bf14cb01fe7d",
+                    "operation": "POST",
+                    "requestTimeStamp": "2026-10-26T09:00:10.600",
+                    "responseTimeStamp": "2026-10-26T09:00:10.766",
+                    "responseDelay": 166.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\"\n  },\n  \"body\" : {\n    \"username\" : \"ada\",\n    \"password\" : \"******\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"token\" : \"eyJhbGciOi.dummy.token\",\n    \"expiresIn\" : 3600\n  }\n}",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"token\" : \"$NOT.NULL\"\n  }\n}"
+                },
+                {
+                    "name": "create_refund",
+                    "url": "https://api.example-shop.test/refunds",
+                    "correlationId": "8b3e6a21-f8aa-5021-baa1-cf40d7a1f1c5",
+                    "operation": "POST",
+                    "requestTimeStamp": "2026-10-26T09:00:10.781",
+                    "responseTimeStamp": "2026-10-26T09:00:11.068",
+                    "responseDelay": 287.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  },\n  \"body\" : {\n    \"paymentId\" : \"PAY-9001\",\n    \"amount\" : 161.98,\n    \"reason\" : \"DAMAGED\"\n  }\n}",
+                    "response": "{\n  \"status\" : 202,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"refundId\" : \"RF-301\",\n    \"status\" : \"REQUESTED\"\n  }\n}",
+                    "assertions": "{\n  \"status\" : 202,\n  \"body\" : {\n    \"refundId\" : \"$NOT.NULL\"\n  }\n}"
+                },
+                {
+                    "name": "get_refund",
+                    "url": "https://api.example-shop.test/refunds/RF-301",
+                    "correlationId": "26573d69-c6b6-5d02-ad03-fe7c7178b5c2",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:11.083",
+                    "responseTimeStamp": "2026-10-26T09:00:11.157",
+                    "responseDelay": 74.0,
+                    "result": "PASSED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"refundId\" : \"RF-301\",\n    \"status\" : \"PROCESSING\"\n  }\n}",
+                    "assertions": "{\n  \"status\" : 200,\n  \"body\" : {\n    \"refundId\" : \"RF-301\"\n  }\n}"
+                },
+                {
+                    "name": "refund_status_completed",
+                    "url": "https://api.example-shop.test/refunds/RF-301",
+                    "correlationId": "772b94f7-f83e-5be2-8fe3-73c92fdc0162",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:11.172",
+                    "responseTimeStamp": "2026-10-26T09:00:11.253",
+                    "responseDelay": 81.0,
+                    "result": "FAILED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"refundId\" : \"RF-301\",\n    \"status\" : \"PROCESSING\",\n    \"settledAt\" : null\n  }\n}",
+                    "assertions": "Assumed Payload: \n{\n  \"status\" : 200,\n  \"body\" : {\n    \"refundId\" : \"RF-301\",\n    \"status\" : \"COMPLETED\",\n    \"settledAt\" : \"$NOT.NULL\"\n  }\n}\nAssertion Errors: \nAssertion jsonPath '$.body.status' with actual value 'PROCESSING' did not match the expected value 'COMPLETED'\nAssertion jsonPath '$.body.settledAt' with actual value 'null' did not match the expected value 'NOT NULL'\n"
+                },
+                {
+                    "name": "refund_status_completed",
+                    "url": "https://api.example-shop.test/refunds/RF-301",
+                    "correlationId": "772b94f7-f83e-5be2-8fe3-73c92fdc0162",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:14.253",
+                    "responseTimeStamp": "2026-10-26T09:00:14.330",
+                    "responseDelay": 77.0,
+                    "result": "FAILED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"refundId\" : \"RF-301\",\n    \"status\" : \"PROCESSING\",\n    \"settledAt\" : null\n  }\n}",
+                    "assertions": "Assumed Payload: \n{\n  \"status\" : 200,\n  \"body\" : {\n    \"refundId\" : \"RF-301\",\n    \"status\" : \"COMPLETED\",\n    \"settledAt\" : \"$NOT.NULL\"\n  }\n}\nAssertion Errors: \nAssertion jsonPath '$.body.status' with actual value 'PROCESSING' did not match the expected value 'COMPLETED'\nAssertion jsonPath '$.body.settledAt' with actual value 'null' did not match the expected value 'NOT NULL'\n"
+                },
+                {
+                    "name": "refund_status_completed",
+                    "url": "https://api.example-shop.test/refunds/RF-301",
+                    "correlationId": "772b94f7-f83e-5be2-8fe3-73c92fdc0162",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:17.330",
+                    "responseTimeStamp": "2026-10-26T09:00:17.420",
+                    "responseDelay": 90.0,
+                    "result": "FAILED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"refundId\" : \"RF-301\",\n    \"status\" : \"PROCESSING\",\n    \"settledAt\" : null\n  }\n}",
+                    "assertions": "Assumed Payload: \n{\n  \"status\" : 200,\n  \"body\" : {\n    \"refundId\" : \"RF-301\",\n    \"status\" : \"COMPLETED\",\n    \"settledAt\" : \"$NOT.NULL\"\n  }\n}\nAssertion Errors: \nAssertion jsonPath '$.body.status' with actual value 'PROCESSING' did not match the expected value 'COMPLETED'\nAssertion jsonPath '$.body.settledAt' with actual value 'null' did not match the expected value 'NOT NULL'\n"
+                },
+                {
+                    "name": "refund_status_completed",
+                    "url": "https://api.example-shop.test/refunds/RF-301",
+                    "correlationId": "772b94f7-f83e-5be2-8fe3-73c92fdc0162",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-26T09:00:20.420",
+                    "responseTimeStamp": "2026-10-26T09:00:20.505",
+                    "responseDelay": 85.0,
+                    "result": "FAILED",
+                    "request": "{\n  \"headers\" : {\n    \"Content-Type\" : \"application/json\",\n    \"Authorization\" : \"Bearer ${$.login.response.body.token}\"\n  }\n}",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Content-Type\" : [\n      \"application/json; charset=utf-8\"\n    ],\n    \"Server\" : [\n      \"example-shop\"\n    ]\n  },\n  \"body\" : {\n    \"refundId\" : \"RF-301\",\n    \"status\" : \"PROCESSING\",\n    \"settledAt\" : null\n  }\n}",
+                    "assertions": "Assumed Payload: \n{\n  \"status\" : 200,\n  \"body\" : {\n    \"refundId\" : \"RF-301\",\n    \"status\" : \"COMPLETED\",\n    \"settledAt\" : \"$NOT.NULL\"\n  }\n}\nAssertion Errors: \nAssertion jsonPath '$.body.status' with actual value 'PROCESSING' did not match the expected value 'COMPLETED'\nAssertion jsonPath '$.body.settledAt' with actual value 'null' did not match the expected value 'NOT NULL'\n"
+                }
+            ],
+            "loop": 0
+        }
+    ]
+}

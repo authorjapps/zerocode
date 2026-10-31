@@ -1,0 +1,24 @@
+{
+    "timeStamp": "2026-10-25T17:03:18.240",
+    "results": [
+        {
+            "scenarioName": "GIVEN- the GitHub REST end point, WHEN- I invoke GET, THEN- I will receive the 200 status with body",
+            "steps": [
+                {
+                    "name": "get_user_details",
+                    "url": "https://api.github.com/users/octocat",
+                    "correlationId": "7e1900bb-b490-4c7b-9da6-1ce7b547c9e0",
+                    "operation": "GET",
+                    "requestTimeStamp": "2026-10-25T17:03:18.269",
+                    "responseTimeStamp": "2026-10-25T17:03:18.663",
+                    "responseDelay": 394.0,
+                    "result": "FAILED",
+                    "request": "{ }",
+                    "response": "{\n  \"status\" : 200,\n  \"headers\" : {\n    \"Accept-Ranges\" : [ \"bytes\" ],\n    \"Access-Control-Allow-Origin\" : [ \"*\" ],\n    \"Access-Control-Expose-Headers\" : [ \"ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning\" ],\n    \"Cache-Control\" : [ \"public, max-age=60, s-maxage=60\" ],\n    \"Content-Security-Policy\" : [ \"default-src 'none'\" ],\n    \"Content-Type\" : [ \"application/json; charset=utf-8\" ],\n    \"Date\" : [ \"Sun, 25 Oct 2026 17:03:18 GMT\" ],\n    \"ETag\" : [ \"W/\\\"f1fe7fba288790262529039d36ad5b2d163b8c5a4aba38ba0b844ea89f733be1\\\"\" ],\n    \"Last-Modified\" : [ \"Thu, 22 Oct 2026 11:50:51 GMT\" ],\n    \"Referrer-Policy\" : [ \"origin-when-cross-origin, strict-origin-when-cross-origin\" ],\n    \"Server\" : [ \"github.com\" ],\n    \"Strict-Transport-Security\" : [ \"max-age=31536000; includeSubdomains; preload\" ],\n    \"Vary\" : [ \"Accept,Accept-Encoding, Accept, X-Requested-With\" ],\n    \"X-Content-Type-Options\" : [ \"nosniff\" ],\n    \"X-Frame-Options\" : [ \"deny\" ],\n    \"x-github-api-version-selected\" : [ \"2022-11-28\" ],\n    \"x-github-edge-region\" : [ \"uksouth\" ],\n    \"X-GitHub-Media-Type\" : [ \"github.v3; format=json\" ],\n    \"X-GitHub-Request-Id\" : [ \"E955:18BB14:1B5CD40:29FF67E:6ADE3656\" ],\n    \"X-RateLimit-Limit\" : [ \"60\" ],\n    \"X-RateLimit-Remaining\" : [ \"58\" ],\n    \"X-RateLimit-Reset\" : [ \"1792951279\" ],\n    \"X-RateLimit-Resource\" : [ \"core\" ],\n    \"X-RateLimit-Used\" : [ \"2\" ],\n    \"X-XSS-Protection\" : [ \"0\" ]\n  },\n  \"body\" : {\n    \"login\" : \"octocat\",\n    \"id\" : 583231,\n    \"node_id\" : \"MDQ6VXNlcjU4MzIzMQ==\",\n    \"avatar_url\" : \"https://avatars.githubusercontent.com/u/583231?v=4\",\n    \"gravatar_id\" : \"\",\n    \"url\" : \"https://api.github.com/users/octocat\",\n    \"html_url\" : \"https://github.com/octocat\",\n    \"followers_url\" : \"https://api.github.com/users/octocat/followers\",\n    \"following_url\" : \"https://api.github.com/users/octocat/following{/other_user}\",\n    \"gists_url\" : \"https://api.github.com/users/octocat/gists{/gist_id}\",\n    \"starred_url\" : \"https://api.github.com/users/octocat/starred{/owner}{/repo}\",\n    \"subscriptions_url\" : \"https://api.github.com/users/octocat/subscriptions\",\n    \"organizations_url\" : \"https://api.github.com/users/octocat/orgs\",\n    \"repos_url\" : \"https://api.github.com/users/octocat/repos\",\n    \"events_url\" : \"https://api.github.com/users/octocat/events{/privacy}\",\n    \"received_events_url\" : \"https://api.github.com/users/octocat/received_events\",\n    \"type\" : \"User\",\n    \"user_view_type\" : \"public\",\n    \"site_admin\" : false,\n    \"name\" : \"The Octocat\",\n    \"company\" : \"@github\",\n    \"blog\" : \"https://github.blog\",\n    \"location\" : \"San Francisco\",\n    \"email\" : null,\n    \"hireable\" : null,\n    \"bio\" : null,\n    \"twitter_username\" : null,\n    \"public_repos\" : 8,\n    \"public_gists\" : 8,\n    \"followers\" : 24752,\n    \"following\" : 9,\n    \"created_at\" : \"2011-01-25T18:44:36Z\",\n    \"updated_at\" : \"2026-10-22T11:50:51Z\"\n  }\n}",
+                    "assertions": "Assumed Payload: \n{\n  \"status\" : 200,\n  \"body\" : {\n    \"login\" : \"octocatX\",\n    \"id\" : 58323100,\n    \"type\" : \"User\"\n  }\n}\nAssertion Errors: \nAssertion jsonPath '$.body.id' with actual value '583231' did not match the expected value '58323100'\nAssertion jsonPath '$.body.login' with actual value 'octocat' did not match the expected value 'octocatX'\n"
+                }
+            ],
+            "loop": 0
+        }
+    ]
+}
