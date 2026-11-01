@@ -13,6 +13,7 @@ import static org.jsmart.zerocode.core.utils.SmartUtils.prettyPrintJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -108,6 +109,12 @@ public class JavaMethodExecutorImpl implements JavaMethodExecutor {
             }
 
 
+        } catch (InvocationTargetException e) {
+            Throwable target = e.getTargetException();
+            String errMsg = format("Java exec(): Invocation failed for method %s in class %s. Cause: %s",
+                    methodName, qualifiedClassName, target);
+            LOGGER.error(errMsg, target);
+            throw new RuntimeException(errMsg, e);
         } catch (Exception e) {
             String errMsg = format("Java exec(): Invocation failed for method %s in class %s", methodName, qualifiedClassName);
             LOGGER.error(errMsg + ". Exception - " + e);
