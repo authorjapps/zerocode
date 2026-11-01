@@ -145,6 +145,7 @@ public class JavaMethodExecutorImplTest {
 		});
         exception.printStackTrace();
         assertThat(exception.getMessage(), containsString("Invocation failed for method squareRoot"));
+        assertThat(exception.getMessage(), containsString("Cause: java.lang.RuntimeException: Can not square root a negative number"));
         // The target exception is included in this exception (inside of the InvocationTargetException)
         assertThat(exception.getCause(), is(notNullValue()));
         assertThat(((InvocationTargetException)exception.getCause()).getTargetException().getMessage(), 
