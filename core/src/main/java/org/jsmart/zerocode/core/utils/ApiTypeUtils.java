@@ -42,6 +42,9 @@ public class ApiTypeUtils {
         } else if (serviceName != null && serviceName.contains(KAFKA)) {
             apiType = ApiType.KAFKA_CALL;
 
+        } else if (serviceName != null && serviceName.startsWith("s3-bucket:")) {
+            apiType =  ApiType.S3_CALL;
+
         } else {
             apiType = ApiType.JAVA_CALL;
 

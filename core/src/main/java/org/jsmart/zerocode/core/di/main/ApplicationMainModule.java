@@ -74,6 +74,7 @@ public class ApplicationMainModule extends AbstractModule {
         bind(ZeroCodeExternalFileProcessor.class).to(ZeroCodeExternalFileProcessorImpl.class);
         bind(ZeroCodeParameterizedProcessor.class).to(ZeroCodeParameterizedProcessorImpl.class);
         bind(ZeroCodeSorter.class).to(ZeroCodeSorterImpl.class);
+        bind(org.jsmart.zerocode.core.s3.S3Client.class).to(org.jsmart.zerocode.core.s3.BasicS3Client.class);
 
         // ------------------------------------------------
         // Bind properties for localhost, CI, DIT, SIT etc
