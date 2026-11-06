@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import static java.time.LocalDateTime.parse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.jsmart.zerocode.core.logbuilder.ZerocodeCorrelationshipLogger.durationMilliSecBetween;
 
@@ -77,6 +78,23 @@ public class ZerocodeCorrelationshipLoggerTest {
 
         assertThat(reportStep.getRequest(), is(SAMPLE_REQUEST));
         assertThat(reportStep.getResponse(), is(SAMPLE_RESPONSE));
+    }
+
+    @Test
+    public void testFailedStepWithExceptionWillShowExceptionReasonInAssertions() {
+        ZerocodeCorrelationshipLogger correlationshipLogger = ZerocodeCorrelationshipLogger
+                .newInstance(LoggerFactory.getLogger(ZerocodeCorrelationshipLoggerTest.class))
+                .stepOutcome(false);
+        correlationshipLogger.aRequestBuilder()
+                .request(SAMPLE_REQUEST)
+                .requestTimeStamp(parse("2018-02-05T19:46:32.001"));
+        correlationshipLogger.aResponseBuilder()
+                .exceptionMessage("Cause: java.lang.RuntimeException: Can not square root a negative number");
+        correlationshipLogger.buildResponseDelay();
+
+        ZeroCodeReportStep reportStep = correlationshipLogger.buildReportSingleStep();
+
+        assertThat(reportStep.getAssertions(), containsString("Can not square root a negative number"));
     }
 
     private ZeroCodeReportStep buildStep(boolean stepPassed, ReportStepCaptureMode reportStepCaptureMode) {

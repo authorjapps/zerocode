@@ -59,6 +59,10 @@ public class ResponseLogBuilder {
         return assertion;
     }
 
+    public String getExceptionMsg() {
+        return exceptionMsg;
+    }
+
     public String getCustomLog() {
         return customLog;
     }

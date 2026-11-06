@@ -75,7 +75,7 @@ public class ZerocodeCorrelationshipLogger {
                 .result(isStepPassed ? RESULT_PASS : RESULT_FAIL)
                 .url(requestLogBuilder.getUrl())
                 .operation(requestLogBuilder.getMethod())
-                .assertions(responseLogBuilder.getAssertion())
+                .assertions(assertionsForReport())
                 .requestTimeStamp(requestLogBuilder.getRequestTimeStamp())
                 .responseTimeStamp(responseLogBuilder.responseTimeStamp)
                 .responseDelay(responseDelay)
@@ -93,6 +93,14 @@ public class ZerocodeCorrelationshipLogger {
 
     public ResponseLogBuilder aResponseBuilder() {
         return responseLogBuilder;
+    }
+
+    private String assertionsForReport() {
+        String exceptionMsg = responseLogBuilder.getExceptionMsg();
+        if (exceptionMsg != null) {
+            return "{Step failed with exception. " + exceptionMsg + "}";
+        }
+        return responseLogBuilder.getAssertion();
     }
 
     public void buildResponseDelay() {

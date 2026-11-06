@@ -378,7 +378,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                         .relationshipId(logPrefixRelationshipId)
                         .responseTimeStamp(responseTimeStampEx)
                         .response(executionResult)
-                        .exceptionMessage(ex.getMessage());
+                        .exceptionMessage(exceptionReason(ex));
 
                 // Step threw an exception. Handle Exception cases
                 stepOutcomeGreen = notificationHandler.handleAssertion(
@@ -410,6 +410,21 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         }
 
         return null;
+    }
+
+    /**
+     * Reason for a step exception to show in the report. Adds the root cause when it differs
+     * from the top-level message, e.g. a Java method failure.
+     */
+    private static String exceptionReason(Throwable ex) {
+        Throwable root = ex;
+        while (root.getCause() != null) {
+            root = root.getCause();
+        }
+        if (root == ex) {
+            return ex.getMessage();
+        }
+        return ex.getMessage() + " Cause: " + root;
     }
 
     /**
