@@ -14,6 +14,8 @@ import org.jsmart.zerocode.core.di.module.ObjectMapperModule;
 import org.jsmart.zerocode.core.di.module.PropertiesInjectorModule;
 import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutor;
 import org.jsmart.zerocode.core.engine.executor.ApiServiceExecutorImpl;
+import org.jsmart.zerocode.core.engine.executor.DelayExecutor;
+import org.jsmart.zerocode.core.engine.executor.DelayExecutorImpl;
 import org.jsmart.zerocode.core.engine.executor.httpapi.HttpApiExecutor;
 import org.jsmart.zerocode.core.engine.executor.httpapi.HttpApiExecutorImpl;
 import org.jsmart.zerocode.core.engine.executor.javaapi.JavaMethodExecutor;
@@ -66,6 +68,7 @@ public class ApplicationMainModule extends AbstractModule {
          */
         bind(ZeroCodeMultiStepsScenarioRunner.class).to(ZeroCodeMultiStepsScenarioRunnerImpl.class);
         bind(ApiServiceExecutor.class).to(ApiServiceExecutorImpl.class);
+        bind(DelayExecutor.class).to(DelayExecutorImpl.class);
         bind(HttpApiExecutor.class).to(HttpApiExecutorImpl.class);
         bind(JavaMethodExecutor.class).to(JavaMethodExecutorImpl.class);
         bind(ZeroCodeAssertionsProcessor.class).to(ZeroCodeAssertionsProcessorImpl.class);

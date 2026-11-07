@@ -30,6 +30,8 @@ public interface ApiServiceExecutor {
      * @param scenarioExecutionState The state of the scenario execution
      * @return String The broker acknowledgement in JSON
      */
+    String executeDelay(String url, String operationName, String requestJson);
+
     String executeKafkaService(String kafkaServers, String kafkaTopic, String methodName, String requestJson, ScenarioExecutionState scenarioExecutionState);
 
 }
