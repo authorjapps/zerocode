@@ -33,7 +33,7 @@ public class ApiTypeUtils {
         if (StringUtils.isEmpty(serviceName) || isEmpty(methodName)) {
             apiType = ApiType.NONE;
 
-        } else if (serviceName.equalsIgnoreCase("delay") || serviceName.startsWith("delay:")) {
+        } else if (serviceName.equalsIgnoreCase("util://DelayExecutor")) {
             apiType = ApiType.DELAY_CALL;
 
         } else if (serviceName.contains("://") && !serviceName.startsWith("http")) {

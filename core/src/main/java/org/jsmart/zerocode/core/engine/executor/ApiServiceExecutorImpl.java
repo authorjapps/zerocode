@@ -59,12 +59,7 @@ public class ApiServiceExecutorImpl implements ApiServiceExecutor {
 
     @Override
     public String executeDelay(String url, String operationName, String requestJson) {
-        try {
-            return delayExecutor.execute(url, operationName, requestJson);
-        } catch (Exception e) {
-            LOGGER.error("Delay execution exception - " + e);
-            throw new RuntimeException(e);
-        }
+        return delayExecutor.execute(url, operationName, requestJson);
     }
 
     @Override
