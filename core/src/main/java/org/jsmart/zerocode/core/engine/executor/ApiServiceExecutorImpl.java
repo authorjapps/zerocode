@@ -19,6 +19,9 @@ public class ApiServiceExecutorImpl implements ApiServiceExecutor {
     private HttpApiExecutor httpApiExecutor;
 
     @Inject
+    private DelayExecutor delayExecutor;
+
+    @Inject
     private BasicKafkaClient kafkaClient;
 
     @Inject(optional = true)
@@ -50,6 +53,16 @@ public class ApiServiceExecutorImpl implements ApiServiceExecutor {
             return javaMethodExecutor.execute(className, methodName, requestJson);
         } catch (Exception e) {
             LOGGER.error("Java method execution exception - " + e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String executeDelay(String url, String operationName, String requestJson) {
+        try {
+            return delayExecutor.execute(url, operationName, requestJson);
+        } catch (Exception e) {
+            LOGGER.error("Delay execution exception - " + e);
             throw new RuntimeException(e);
         }
     }
