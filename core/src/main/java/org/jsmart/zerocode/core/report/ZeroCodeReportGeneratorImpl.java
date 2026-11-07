@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
+import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 import static org.jsmart.zerocode.core.constants.ZeroCodeReportConstants.*;
 import static org.jsmart.zerocode.core.domain.builders.ExtentReportsFactory.getReportName;
 import static org.jsmart.zerocode.core.utils.PropertiesProviderUtils.loadCustomZerocodeProperties;
@@ -162,7 +163,7 @@ public class ZeroCodeReportGeneratorImpl implements ZeroCodeReportGenerator {
                         step.info(MarkupHelper.createCodeBlock(thisStep.getOperation() + "\t" + thisStep.getUrl()));
                         step.info(MarkupHelper.createCodeBlock(thisStep.getRequest(), CodeLanguage.JSON));
                         step.info(MarkupHelper.createCodeBlock(thisStep.getResponse(), CodeLanguage.JSON));
-                        step.fail(MarkupHelper.createCodeBlock("Reason:\n" + thisStep.getAssertions()));
+                        step.fail(MarkupHelper.createCodeBlock("Reason:\n" + escapeHtml4(thisStep.getAssertions())));
                     }
                     extentReports.flush();
                 });

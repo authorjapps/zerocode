@@ -79,6 +79,21 @@ public class ZerocodeCorrelationshipLoggerTest {
         assertThat(reportStep.getResponse(), is(SAMPLE_RESPONSE));
     }
 
+    @Test
+    public void testFailedStepReportsTheExecutionException() {
+        ZerocodeCorrelationshipLogger logger = ZerocodeCorrelationshipLogger
+                .newInstance(LoggerFactory.getLogger(ZerocodeCorrelationshipLoggerTest.class))
+                .stepOutcome(false);
+        logger.aRequestBuilder().requestTimeStamp(parse("2018-02-05T19:46:32.001"));
+        logger.aResponseBuilder()
+                .responseTimeStamp(parse("2018-02-05T19:46:32.101"))
+                .exceptionMessage("Can not square root a negative number");
+        logger.buildResponseDelay();
+
+        assertThat(logger.buildReportSingleStep().getAssertions(),
+                is("Can not square root a negative number"));
+    }
+
     private ZeroCodeReportStep buildStep(boolean stepPassed, ReportStepCaptureMode reportStepCaptureMode) {
         ZerocodeCorrelationshipLogger correlationshipLogger = ZerocodeCorrelationshipLogger
                 .newInstance(LoggerFactory.getLogger(ZerocodeCorrelationshipLoggerTest.class))
