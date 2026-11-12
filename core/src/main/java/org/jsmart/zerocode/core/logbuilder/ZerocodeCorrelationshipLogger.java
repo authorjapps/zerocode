@@ -68,6 +68,11 @@ public class ZerocodeCorrelationshipLogger {
 
         boolean isStepPassed = Boolean.TRUE.equals(result);
 
+        String failureMessage = responseLogBuilder.exceptionMsg;
+        String reportReason = !isStepPassed && failureMessage != null && !failureMessage.isEmpty()
+                ? failureMessage
+                : responseLogBuilder.getAssertion();
+
         ZeroCodeReportStepBuilder zeroCodeReportStep = ZeroCodeReportStepBuilder.newInstance()
                 .loop(stepLoop)
                 .name(requestLogBuilder.getStepName())
@@ -75,7 +80,7 @@ public class ZerocodeCorrelationshipLogger {
                 .result(isStepPassed ? RESULT_PASS : RESULT_FAIL)
                 .url(requestLogBuilder.getUrl())
                 .operation(requestLogBuilder.getMethod())
-                .assertions(responseLogBuilder.getAssertion())
+                .assertions(reportReason)
                 .requestTimeStamp(requestLogBuilder.getRequestTimeStamp())
                 .responseTimeStamp(responseLogBuilder.responseTimeStamp)
                 .responseDelay(responseDelay)
