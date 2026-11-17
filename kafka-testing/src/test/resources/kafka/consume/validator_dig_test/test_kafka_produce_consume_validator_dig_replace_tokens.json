@@ -1,0 +1,44 @@
+{
+  "scenarioName": "Parameterized kafka test with validator and tokens to dig in validator value",
+  "steps": [
+    {
+      "name": "timestamp_step",
+      "url": "java.lang.System",
+      "method": "currentTimeMillis",
+      "assertions": "$NOT.NULL"
+    },
+    {
+      "name": "produce_step",
+      "url": "kafka-topic:kafka_dig_test_topic",
+      "operation": "produce",
+      "request": {
+        "recordType": "JSON",
+        "records": "${0}"
+      },
+      "assertions": {
+        "status" : "Ok"
+      }
+    },
+    {
+      "name": "consume_step",
+      "url": "kafka-topic:kafka_dig_test_topic",
+      "operation": "consume",
+      "request": {
+        "consumerLocalConfigs": {
+          "recordType": "JSON"
+        }
+      },
+      "validators": [
+        {
+          "field": "$.records[?(@.key == '${$.timestamp_step.response}')]",
+          "value": "${1}"
+        }
+      ]
+    }
+  ],
+  "parameterized": {
+    "csvSource":[
+      "${JSON.FILE:kafka/consume/validator_dig_test/produce_records.json}, ${JSON.FILE:kafka/consume/validator_dig_test/validation_value.json}"
+    ]
+  }
+}
