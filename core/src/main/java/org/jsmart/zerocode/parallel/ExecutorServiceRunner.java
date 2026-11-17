@@ -16,8 +16,10 @@ import java.util.function.Consumer;
 
 import static java.lang.Double.valueOf;
 import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 import static java.lang.Thread.sleep;
 import static java.time.LocalDateTime.now;
+import static java.time.LocalDateTime.ofInstant;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public class ExecutorServiceRunner {
@@ -29,6 +31,7 @@ public class ExecutorServiceRunner {
     private int numberOfThreads;
     private int rampUpPeriod;
     private int loopCount;
+    private long abortAfterTimeLapsedInSeconds;
 
     private Double delayBetweenTwoThreadsInMilliSecs;
 
@@ -37,6 +40,7 @@ public class ExecutorServiceRunner {
         numberOfThreads = parseInt(properties.getProperty("number.of.threads"));
         rampUpPeriod = parseInt(properties.getProperty("ramp.up.period.in.seconds"));
         loopCount = parseInt(properties.getProperty("loop.count"));
+        abortAfterTimeLapsedInSeconds = parseLong(properties.getProperty("abort.after.time.lapsed.in.seconds", "-1"));
 
         calculateAndSetDelayBetweenTwoThreadsInSecs(rampUpPeriod);
 
@@ -44,9 +48,14 @@ public class ExecutorServiceRunner {
     }
 
     public ExecutorServiceRunner(int numberOfThreads, int loopCount, int rampUpPeriod) {
+        this(numberOfThreads, loopCount, rampUpPeriod, -1);
+    }
+
+    public ExecutorServiceRunner(int numberOfThreads, int loopCount, int rampUpPeriod, long abortAfterTimeLapsedInSeconds) {
         this.numberOfThreads = numberOfThreads;
         this.loopCount = loopCount;
         this.rampUpPeriod = rampUpPeriod;
+        this.abortAfterTimeLapsedInSeconds = abortAfterTimeLapsedInSeconds;
 
         calculateAndSetDelayBetweenTwoThreadsInSecs(this.rampUpPeriod);
         logLoadingProperties();
@@ -69,18 +78,34 @@ public class ExecutorServiceRunner {
             throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
         }
 
+        long startTime = System.currentTimeMillis();
         ExecutorService executorService = newFixedThreadPool(numberOfThreads);
 
         try {
             for (int i = 0; i < loopCount; i++) {
+                // Check timeout before each loop iteration
+                if (isTimeoutExceeded(startTime)) {
+                    throw new RuntimeException("Load test aborted: abort.after.time.lapsed.in.seconds of " + abortAfterTimeLapsedInSeconds + " seconds exceeded");
+                }
+
                 runnables.stream().forEach(thisFunction -> {
                     for (int j = 0; j < numberOfThreads; j++) {
+                        // Check timeout before executing each thread
+                        if (isTimeoutExceeded(startTime)) {
+                            throw new RuntimeException("Load test aborted: abort.after.time.lapsed.in.seconds of " + abortAfterTimeLapsedInSeconds + " seconds exceeded");
+                        }
+
                         try {
                             LOGGER.debug("Waiting for the next test flight to adjust the overall ramp up time, " +
                                     "waiting time in the transit now = " + delayBetweenTwoThreadsInMilliSecs);
                             sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
+                        }
+
+                        // Check timeout again after sleep
+                        if (isTimeoutExceeded(startTime)) {
+                            throw new RuntimeException("Load test aborted: abort.after.time.lapsed.in.seconds of " + abortAfterTimeLapsedInSeconds + " seconds exceeded");
                         }
 
                         LOGGER.debug(Thread.currentThread().getName() + " Executor - *Start... Time = " + now());
@@ -96,10 +121,24 @@ public class ExecutorServiceRunner {
         } finally {
             executorService.shutdown();
             while (!executorService.isTerminated()) {
+                // Check timeout while waiting for tasks to finish
+                if (abortAfterTimeLapsedInSeconds > 0) {
+                    long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
+                    if (elapsedSeconds >= abortAfterTimeLapsedInSeconds) {
+                        LOGGER.warn("Timeout reached while waiting for tasks to complete. Initiating shutdown...");
+                        executorService.shutdownNow();
+                        throw new RuntimeException("Load test aborted: abort.after.time.lapsed.in.seconds of " + abortAfterTimeLapsedInSeconds + " seconds exceeded");
+                    }
+                }
                 // --------------------------------------
                 // wait for all tasks to finish execution
                 // --------------------------------------
-                //LOGGER.info("Still waiting for all threads to complete execution...");
+                try {
+                    Thread.sleep(100); // Small sleep to prevent busy-waiting
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
             }
             LOGGER.debug("**Finished executing all threads**");
         }
@@ -110,19 +149,35 @@ public class ExecutorServiceRunner {
             throw new RuntimeException("No runnable(s) was found to run. You can add one or more runnables using 'addRunnable(Runnable runnable)'");
         }
 
+        long startTime = System.currentTimeMillis();
         ExecutorService executorService = newFixedThreadPool(numberOfThreads);
 
         try {
             final AtomicInteger functionIndex = new AtomicInteger();
 
             for (int i = 0; i < loopCount; i++) {
+                // Check timeout before each loop iteration
+                if (isTimeoutExceeded(startTime)) {
+                    throw new RuntimeException("Load test aborted: abort.after.time.lapsed.in.seconds of " + abortAfterTimeLapsedInSeconds + " seconds exceeded");
+                }
+
                 for (int j = 0; j < numberOfThreads; j++) {
+                    // Check timeout before executing each thread
+                    if (isTimeoutExceeded(startTime)) {
+                        throw new RuntimeException("Load test aborted: abort.after.time.lapsed.in.seconds of " + abortAfterTimeLapsedInSeconds + " seconds exceeded");
+                    }
+
                     try {
                         LOGGER.debug("Waiting for the next test flight to adjust the overall ramp up time, " +
                                 "waiting time in the transit now = " + delayBetweenTwoThreadsInMilliSecs);
                         sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
+                    }
+
+                    // Check timeout again after sleep
+                    if (isTimeoutExceeded(startTime)) {
+                        throw new RuntimeException("Load test aborted: abort.after.time.lapsed.in.seconds of " + abortAfterTimeLapsedInSeconds + " seconds exceeded");
                     }
 
                     LOGGER.debug(Thread.currentThread().getName() + " Executor - *Start... Time = " + now());
@@ -142,10 +197,24 @@ public class ExecutorServiceRunner {
         } finally {
             executorService.shutdown();
             while (!executorService.isTerminated()) {
+                // Check timeout while waiting for tasks to finish
+                if (abortAfterTimeLapsedInSeconds > 0) {
+                    long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
+                    if (elapsedSeconds >= abortAfterTimeLapsedInSeconds) {
+                        LOGGER.warn("Timeout reached while waiting for tasks to complete. Initiating shutdown...");
+                        executorService.shutdownNow();
+                        throw new RuntimeException("Load test aborted: abort.after.time.lapsed.in.seconds of " + abortAfterTimeLapsedInSeconds + " seconds exceeded");
+                    }
+                }
                 // --------------------------------------
                 // wait for all tasks to finish execution
                 // --------------------------------------
-                //LOGGER.info("Still waiting for all threads to complete execution...");
+                try {
+                    Thread.sleep(100); // Small sleep to prevent busy-waiting
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
             }
             LOGGER.warn("** Completed executing all virtual-user scenarios! **");
         }
@@ -161,16 +230,27 @@ public class ExecutorServiceRunner {
             throw new RuntimeException("No callable(s) was found to run. You can add one or more callables using 'addCallable(Callable callable)'");
         }
 
+        long startTime = System.currentTimeMillis();
         ExecutorService executorService = newFixedThreadPool(numberOfThreads);
 
         try {
             executorService.invokeAll(callables).stream().forEach(future -> {
                 for (int j = 0; j < numberOfThreads; j++) {
+                    // Check timeout before each thread execution
+                    if (isTimeoutExceeded(startTime)) {
+                        throw new RuntimeException("Load test aborted: abort.after.time.lapsed.in.seconds of " + abortAfterTimeLapsedInSeconds + " seconds exceeded");
+                    }
+
                     try {
                         LOGGER.debug("Waiting in the transit for next test flight to adjust overall ramp up time, wait time now = " + delayBetweenTwoThreadsInMilliSecs);
                         sleep(delayBetweenTwoThreadsInMilliSecs.longValue());
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
+                    }
+
+                    // Check timeout again after sleep
+                    if (isTimeoutExceeded(startTime)) {
+                        throw new RuntimeException("Load test aborted: abort.after.time.lapsed.in.seconds of " + abortAfterTimeLapsedInSeconds + " seconds exceeded");
                     }
 
                     LOGGER.debug(Thread.currentThread().getName() + " Future execution- Start.... Time = " + now());
@@ -185,8 +265,23 @@ public class ExecutorServiceRunner {
         } finally {
             executorService.shutdown();
             while (!executorService.isTerminated()) {
+                // Check timeout while waiting for tasks to finish
+                if (abortAfterTimeLapsedInSeconds > 0) {
+                    long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
+                    if (elapsedSeconds >= abortAfterTimeLapsedInSeconds) {
+                        LOGGER.warn("Timeout reached while waiting for tasks to complete. Initiating shutdown...");
+                        executorService.shutdownNow();
+                        throw new RuntimeException("Load test aborted: abort.after.time.lapsed.in.seconds of " + abortAfterTimeLapsedInSeconds + " seconds exceeded");
+                    }
+                }
                 // wait for all tasks to finish executing
                 // LOGGER.info("Still waiting for all threads to complete execution...");
+                try {
+                    Thread.sleep(100); // Small sleep to prevent busy-waiting
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
             }
             LOGGER.warn("* Completed executing all virtual-user scenarios! *");
         }
@@ -244,5 +339,14 @@ public class ExecutorServiceRunner {
                 "\n   ### loopCount : " + loopCount +
                 "\n-----------------------------------\n");
 
+    }
+    
+    private boolean isTimeoutExceeded(long startTime) {
+        if (abortAfterTimeLapsedInSeconds <= 0) {
+            return false; // No timeout configured
+        }
+        
+        long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
+        return elapsedSeconds >= abortAfterTimeLapsedInSeconds;
     }
 }
