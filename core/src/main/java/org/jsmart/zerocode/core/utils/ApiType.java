@@ -4,5 +4,6 @@ public enum ApiType {
     REST_CALL,
     KAFKA_CALL,
     JAVA_CALL,
+    DELAY_CALL,
     NONE;
 }

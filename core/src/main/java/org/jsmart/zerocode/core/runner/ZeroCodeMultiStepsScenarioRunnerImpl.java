@@ -482,6 +482,19 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
                 executionResult = apiExecutor.executeJavaOperation(url, operationName, resolvedRequestJson);
                 break;
 
+            case DELAY_CALL:
+                correlLogger.aRequestBuilder()
+                        .relationshipId(logPrefixRelationshipId)
+                        .requestTimeStamp(requestTimeStamp)
+                        .step(thisStepName)
+                        .url(url)
+                        .method(operationName)
+                        .id(stepId)
+                        .request(prettyPrintJson(resolvedRequestJson));
+
+                executionResult = apiExecutor.executeDelay(url, operationName, resolvedRequestJson);
+                break;
+
             case KAFKA_CALL:
                 if (kafkaServers == null) {
                     throw new RuntimeException(">>> 'kafka.bootstrap.servers' property can not be null for kafka operations");

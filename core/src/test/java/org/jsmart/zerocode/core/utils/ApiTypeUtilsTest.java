@@ -46,4 +46,15 @@ public class ApiTypeUtilsTest {
         String qualifiedClass = apiTypeUtils.getQualifiedJavaApi("foo://v1/s1");
     }
 
+
+    @Test
+    public void shouldRecognizeDelayApiType() {
+        assertThat(ApiTypeUtils.apiType("util://DelayExecutor", "DELAY"), is(ApiType.DELAY_CALL));
+    }
+
+    @Test
+    public void shouldRecognizeDelayApiTypeRegardlessOfCase() {
+        assertThat(ApiTypeUtils.apiType("UTIL://DELAYEXECUTOR", "DELAY"), is(ApiType.DELAY_CALL));
+    }
+
 }
