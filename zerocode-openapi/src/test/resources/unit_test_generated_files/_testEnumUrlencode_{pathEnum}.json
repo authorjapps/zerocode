@@ -1,0 +1,20 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testEnumUrlencode/{pathEnum} - Test scenario",
+  "steps" : [ {
+    "name" : "/testEnumUrlencode/{pathEnum} - Enum generation urlencoded only in path params",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/testEnumUrlencode/p1+%5B%5D%40%21%24%26%27%28%29*%2B%2C%3B%3D-_.",
+    "request" : {
+      "queryParams" : {
+        "queryEnum" : "q1 []@!$&'()*+,;=-_."
+      },
+      "body" : {
+        "strEnum" : "b2 []@!$&'()*+,;=-_."
+      }
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

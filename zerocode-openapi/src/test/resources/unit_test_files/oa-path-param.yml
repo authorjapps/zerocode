@@ -1,0 +1,29 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Path parameters
+paths:
+  /testPathParam/{par Enum}/array/{parArray}/object{parObject}:
+    get:
+      summary: Path parameters
+      parameters:
+      # test url encoding on name and values
+      - in: path
+        name: "par Enum"
+        schema:
+          type: string
+          enum: ["item$one", "item$two", "item$three", "item$four" , "item$five"]
+      # non primitive are not supported
+      - in: path
+        name: parArray
+        schema:
+          type: array
+          items:
+            type: string
+      - in: path
+        name: parObject
+        schema:
+          type: object
+          properties:
+          - name: value
+            type: string

@@ -1,0 +1,30 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testAdditionalProperties - Test scenario",
+  "steps" : [ {
+    "name" : "/testAdditionalProperties - Additional properties in body, primitive and non primitive",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/testAdditionalProperties",
+    "request" : {
+      "body" : {
+        "primitiveMap" : {
+          "primitiveMapKey0" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+          "primitiveMapKey1" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+        },
+        "objectMap" : {
+          "objectMapKey0" : {
+            "prop1" : "${RANDOM.NUMBER:8}",
+            "prop2" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+          },
+          "objectMapKey1" : {
+            "prop1" : "${RANDOM.NUMBER:8}",
+            "prop2" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+          }
+        }
+      }
+    },
+    "assertions" : { },
+    "ignoreStep" : false
+  } ]
+}

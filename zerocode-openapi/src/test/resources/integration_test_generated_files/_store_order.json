@@ -1,0 +1,24 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/store/order - Test scenario",
+  "steps" : [ {
+    "name" : "/store/order - Place an order for a pet",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/store/order",
+    "request" : {
+      "body" : {
+        "id" : "${RANDOM.NUMBER:8}",
+        "petId" : "${RANDOM.NUMBER:8}",
+        "quantity" : "${RANDOM.NUMBER:8}",
+        "shipDate" : "${LOCAL.DATETIME.NOW:yyyy-MM-dd'T'HH:mm:ss}",
+        "status" : "placed",
+        "complete" : false
+      }
+    },
+    "assertions" : {
+      "status" : 200
+    },
+    "ignoreStep" : false
+  } ]
+}

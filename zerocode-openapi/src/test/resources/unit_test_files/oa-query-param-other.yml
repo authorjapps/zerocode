@@ -1,0 +1,45 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Array in query params, other formats
+paths:
+  /testQueryParamOther:
+    get:
+      summary: Query parameters, other formats and not supported features
+      parameters:
+      - in: query
+        name: parSpace
+        explode: false
+        style: spaceDelimited
+        schema:
+          type: array
+          items:
+            type: string
+      - in: query
+        name: parPipe
+        explode: false
+        style: pipeDelimited
+        schema:
+          type: array
+          items:
+            type: integer
+      # Others formats not supported (not generated and warning)
+      - in: query
+        name: parDeepObject
+        explode: false
+        style: deepObject
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: string
+      - in: query
+        name: parObject
+        schema:
+          type: object
+          properties:
+            value:
+              type: string
+

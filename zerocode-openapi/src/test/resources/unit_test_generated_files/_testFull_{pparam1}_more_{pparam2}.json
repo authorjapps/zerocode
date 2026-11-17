@@ -1,0 +1,27 @@
+{
+  "ignoreStepFailures" : false,
+  "scenarioName" : "/testFull/{pparam1}/more/{pparam2} - Test scenario",
+  "steps" : [ {
+    "name" : "/testFull/{pparam1}/more/{pparam2} - Basic types, in params and body",
+    "operation" : "POST",
+    "method" : "POST",
+    "url" : "/testFull/${RANDOM.STRING:12}${RANDOM.NUMBER:4}/more/${RANDOM.NUMBER:8}",
+    "request" : {
+      "queryParams" : {
+        "qparam1" : "${RANDOM.NUMBER:8}",
+        "qparam2" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+      },
+      "body" : {
+        "stringField" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}",
+        "intField" : "${RANDOM.NUMBER:8}",
+        "objField" : {
+          "value" : "${RANDOM.STRING:12}${RANDOM.NUMBER:4}"
+        }
+      }
+    },
+    "assertions" : {
+      "status" : 200
+    },
+    "ignoreStep" : false
+  } ]
+}
