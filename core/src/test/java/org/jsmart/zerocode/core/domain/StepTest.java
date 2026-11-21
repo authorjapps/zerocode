@@ -89,6 +89,19 @@ public class StepTest {
     }
 
     @Test
+    public void testStep_nullAssertionsAndVerify() throws Exception {
+        String jsonWithoutAssertions = "{\n" +
+                "    \"name\": \"step_without_assertions\",\n" +
+                "    \"url\": \"/api/test\",\n" +
+                "    \"operation\": \"GET\"\n" +
+                "}";
+        Step stepDeserialized = mapper.readValue(jsonWithoutAssertions, Step.class);
+
+        assertThat(stepDeserialized.getAssertions(), notNullValue());
+        assertThat(stepDeserialized.getAssertions().isNull(), is(true));
+    }
+
+    @Test
     public void testValidators_array() throws Exception {
         String jsonDocumentAsString =
                 smartUtils.getJsonDocumentAsString("unit_test_files/engine_unit_test_jsons/00_test_json_single_step_verifications.json");
