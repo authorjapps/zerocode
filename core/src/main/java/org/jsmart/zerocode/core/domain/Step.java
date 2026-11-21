@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 
 import java.util.List;
 
@@ -186,7 +187,7 @@ public class Step {
         this.request = request;
         this.url = url;
         this.sort = sort;
-        this.assertions = assertions == null || assertions.isNull() ? verify : assertions;
+        this.assertions = assertions != null && !assertions.isNull() ? assertions : (verify != null ? verify : NullNode.getInstance());
         this.verify = verify;
         this.ignoreStep = ignoreStep;
     }

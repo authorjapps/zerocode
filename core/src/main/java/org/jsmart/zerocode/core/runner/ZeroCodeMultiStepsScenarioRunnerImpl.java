@@ -582,7 +582,7 @@ public class ZeroCodeMultiStepsScenarioRunnerImpl implements ZeroCodeMultiStepsS
         // Echo step (no call made) with nothing to compare
         // ------------------------------------------------
         if (apiType(thisStep.getUrl(), thisStep.getOperation()) == ApiType.NONE
-                && thisStep.getAssertions() == null
+                && (thisStep.getAssertions() == null || thisStep.getAssertions().isNull())
                 && thisStep.getValidators() == null) {
             return failureResults;
         }
