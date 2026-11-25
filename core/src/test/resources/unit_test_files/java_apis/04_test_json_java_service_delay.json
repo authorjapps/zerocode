@@ -1,0 +1,15 @@
+{
+  "scenarioName": "Given_When_Then-Flow name For Java Service Delay",
+  "steps": [
+    {
+      "name": "delay_50_millis",
+      "url": "org.jsmart.zerocode.core.utils.DelayExecutor",
+      "operation": "DELAY",
+      "request": "50",
+      "assertions": {
+        "status": "Success",
+        "delayMillis": 50
+      }
+    }
+  ]
+}
