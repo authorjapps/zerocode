@@ -155,3 +155,32 @@ A JSON Schema (Draft-07) for scenario files is published at [`schema/zerocode-sc
 Happy Testing! <g-emoji class="g-emoji" alias="panda_face" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f43c.png">🐼</g-emoji>
 
 🔆 Visit [Documentation](https://zerocode-tdd.tddfy.com) - Indexed, searchable & instantly finds you the results
+
+
+## Delay Executor
+
+Zerocode supports configurable delays in milliseconds through the `DelayExecutor`.
+
+Example:
+
+```json
+{
+  "scenarioName": "Scenario with a delay",
+  "steps": [
+    {
+      "name": "wait_for_100_ms",
+      "url": "util://DelayExecutor",
+      "operation": "DELAY",
+      "request": 100,
+      "assertions": {
+        "status": "Success",
+        "delayMillis": 100
+      }
+    }
+  ]
+}
+```
+
+The `request` value specifies the delay in milliseconds. The executor returns `status` as `Success` and the requested duration as `delayMillis`. Invalid delay values are rejected, and interrupted execution restores the thread interrupt status.
+
+This differs from `retry.delay`, which controls the wait between retry attempts.

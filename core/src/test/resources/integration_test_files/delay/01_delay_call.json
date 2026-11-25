@@ -1,0 +1,15 @@
+{
+    "scenarioName": "Delay call - executes configured delay",
+    "steps": [
+        {
+            "name": "wait_for_100_ms",
+            "url": "util://DelayExecutor",
+            "operation": "DELAY",
+            "request": 100,
+            "assertions": {
+                "status": "Success",
+                "delayMillis": 100
+            }
+        }
+    ]
+}
