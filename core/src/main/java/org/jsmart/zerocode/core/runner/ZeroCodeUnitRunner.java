@@ -258,6 +258,7 @@ public class ZeroCodeUnitRunner extends BlockJUnit4ClassRunner {
             passed = multiStepsRunner.runScenario(child, notifier, description);
 
         } catch (Exception ioEx) {
+            passed = false;
             ioEx.printStackTrace();
             notifier.fireTestFailure(new Failure(description, ioEx));
         }
