@@ -1,0 +1,19 @@
+{
+    "scenarioName": "Assert that a number and a boolean are one of array items",
+    "steps": [
+        {
+            "name": "get_person_job_details",
+            "url": "",
+            "operation": "",
+            "request": {
+            },
+            "assertions": {
+                "status": 200,
+                "body": {
+                	"yearsOfExperience": "$ONE.OF:[2, 5.5, 10]",
+                	"available": "$ONE.OF:[true]"
+                }
+            }
+        }
+    ]
+}

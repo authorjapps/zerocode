@@ -1421,6 +1421,64 @@ public class ZeroCodeAssertionsProcessorImplTest {
     }
 
     @Test
+    public void testValueOneOf_NumberAndBooleanPresent() throws Exception {
+        List<JsonAsserter> asserters = oneOfNumberAndBooleanAsserters();
+
+        for (String yearsOfExperience : new String[]{"2", "2.0", "5.5", "10"}) {
+            String mockTestResponse =
+                    "{\n"
+                            + "    \"status\": 200,\n"
+                            + "    \"body\": {\n"
+                            + "        \"yearsOfExperience\": " + yearsOfExperience + ",\n"
+                            + "        \"available\": true\n"
+                            + "    }\n"
+                            + "}";
+            List<FieldAssertionMatcher> failedReports =
+                    jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+            assertThat(failedReports.size(), is(0));
+        }
+    }
+
+    @Test
+    public void testValueOneOf_NumberAndBooleanNotPresent() throws Exception {
+        List<JsonAsserter> asserters = oneOfNumberAndBooleanAsserters();
+
+        String mockTestResponse =
+                "{\n"
+                        + "    \"status\": 200,\n"
+                        + "    \"body\": {\n"
+                        + "        \"yearsOfExperience\": 3,\n"
+                        + "        \"available\": false\n"
+                        + "    }\n"
+                        + "}";
+        List<FieldAssertionMatcher> failedReports =
+                jsonPreProcessor.assertAllAndReturnFailed(asserters, mockTestResponse);
+
+        assertThat(failedReports.size(), is(2));
+    }
+
+    private List<JsonAsserter> oneOfNumberAndBooleanAsserters() throws Exception {
+        ScenarioSpec scenarioSpec =
+                smartUtils.scenarioFileToJava("unit_test_files/one_of/oneOf_test_numberAndBoolean.json", ScenarioSpec.class);
+
+        final String assertionsSectionAsString =
+                scenarioSpec.getSteps().get(0).getAssertions().toString();
+        String mockScenarioState = "{}";
+
+        final String resolvedAssertions =
+                jsonPreProcessor.resolveStringJson(assertionsSectionAsString, mockScenarioState);
+        assertThat(
+                resolvedAssertions,
+                containsString("\"yearsOfExperience\":\"$ONE.OF:[2, 5.5, 10]\""));
+
+        List<JsonAsserter> asserters = jsonPreProcessor.createJsonAsserters(resolvedAssertions);
+        assertThat(asserters.size(), is(3));
+
+        return asserters;
+    }
+
+    @Test
     public void testJsonPathValue_isArray() throws Exception {
         String scenarioStateJson =
                 "{\n"

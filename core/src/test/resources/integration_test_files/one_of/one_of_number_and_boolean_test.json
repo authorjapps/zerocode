@@ -1,0 +1,22 @@
+{
+    "scenarioName": "Assert that a number, a boolean and a text are one of array items",
+    "steps": [
+        {
+            "name": "echo_person",
+            "request": {
+                "age": 30,
+                "height": 5.5,
+                "score": 10.0,
+                "available": true,
+                "currentStatus": "Searching"
+            },
+            "assertions": {
+                "age": "$ONE.OF:[18, 30, 65]",
+                "height": "$IS.ONE.OF:[5.5, 6]",
+                "score": "$ONE.OF:[10, 20]",
+                "available": "$ONE.OF:[true]",
+                "currentStatus": "$ONE.OF:[Found, Searching, Not Looking]"
+            }
+        }
+    ]
+}
