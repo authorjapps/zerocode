@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import org.jsmart.zerocode.core.domain.Step;
 import org.jsmart.zerocode.core.engine.assertion.FieldAssertionMatcher;
 import org.jsmart.zerocode.core.engine.assertion.JsonAsserter;
@@ -503,38 +504,73 @@ public class ZeroCodeAssertionsProcessorImpl implements ZeroCodeAssertionsProces
 
 
     void digReplaceContent(Map<String, Object> map, ScenarioExecutionState scenarioExecutionState) {
-        map.entrySet().forEach(entry -> {
-            Object value = entry.getValue();
+        map.entrySet().forEach(entry ->
+                entry.setValue(digReplaceContentValue(entry.getValue(), scenarioExecutionState)));
+    }
 
-            if (value instanceof Map) {
-                digReplaceContent((Map<String, Object>) value, scenarioExecutionState);
-            } else {
-                LOGGER.debug("Leaf node found = {}, checking for any json content...", value);
-                if (value != null && (value.toString().contains(JSON_CONTENT))) {
-                    LOGGER.debug("Found JSON content place holder = {}. Replacing with content", value);
-                    String valueString = value.toString();
-                    String token = getJsonFilePhToken(valueString);
+    private Object digReplaceContentValue(Object value, ScenarioExecutionState scenarioExecutionState) {
+        if (value instanceof Map) {
+            digReplaceContent((Map<String, Object>) value, scenarioExecutionState);
+            return value;
+        }
 
-                    if (token != null && (token.startsWith(JSON_CONTENT))) {
-                        try {
-                            String resolvedRequestJson = resolveStringJson(
-                                "${" + token.substring(JSON_CONTENT.length()) + "}",
-                                scenarioExecutionState.getResolvedScenarioState());
-                            resolvedRequestJson = resolvedRequestJson.replaceAll("\\\\", "");
-                            try {
-                                JsonNode jsonNode = mapper.readTree(resolvedRequestJson);
-                                entry.setValue(jsonNode);
-                            } catch (JsonParseException e) {
-                                //value is not a json string, but a string value
-                                entry.setValue(resolvedRequestJson);
-                            }
-                        } catch (Exception exx) {
-                            LOGGER.error("External file reference exception - {}", exx.getMessage());
-                            throw new RuntimeException(exx);
-                        }
-                    }
-                }
+        if (value instanceof List) {
+            List<Object> list = (List<Object>) value;
+            for (int i = 0; i < list.size(); i++) {
+                list.set(i, digReplaceContentValue(list.get(i), scenarioExecutionState));
             }
-        });
+            return value;
+        }
+
+        LOGGER.debug("Leaf node found = {}, checking for any json content...", value);
+        if (value == null || !value.toString().contains(JSON_CONTENT)) {
+            return value;
+        }
+
+        LOGGER.debug("Found JSON content place holder = {}. Replacing with content", value);
+        String token = getJsonFilePhToken(value.toString());
+        if (token == null || !token.startsWith(JSON_CONTENT)) {
+            return value;
+        }
+
+        try {
+            String contentToken = token.substring(JSON_CONTENT.length());
+            String scenarioState = scenarioExecutionState.getResolvedScenarioState();
+
+            Object pathValue = readJsonPathValueAsIs(contentToken, scenarioState);
+            if (pathValue != null) {
+                return mapper.valueToTree(pathValue);
+            }
+
+            String resolvedRequestJson = resolveStringJson("${" + contentToken + "}", scenarioState);
+            resolvedRequestJson = resolvedRequestJson.replaceAll("\\\\", "");
+            try {
+                return mapper.readTree(resolvedRequestJson);
+            } catch (JsonParseException e) {
+                //value is not a json string, but a string value
+                return resolvedRequestJson;
+            }
+        } catch (Exception exx) {
+            LOGGER.error("External file reference exception - {}", exx.getMessage());
+            throw new RuntimeException(exx);
+        }
+    }
+
+    /**
+     * Reads the value of a JSON path with its type, e.g. an object, an array, a text or a number,
+     * so that the content is used as it is, without converting to a string and parsing it back.
+     * <p>
+     * returns: null if the token is not a JSON path, or the path is absent or has a null value.
+     */
+    private Object readJsonPathValueAsIs(String contentToken, String scenarioState) {
+        if (!contentToken.startsWith("$.") || contentToken.contains($VALUE)) {
+            return null;
+        }
+
+        try {
+            return JsonPath.read(scenarioState, contentToken);
+        } catch (PathNotFoundException pathNotFoundEx) {
+            return null;
+        }
     }
 }

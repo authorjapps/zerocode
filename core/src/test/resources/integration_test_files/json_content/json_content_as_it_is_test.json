@@ -1,0 +1,49 @@
+{
+    "scenarioName": "JSON content of an earlier step is reused as it is",
+    "steps": [
+        {
+            "name": "store_employee",
+            "request": {
+                "id": 38001,
+                "postCode": "0123",
+                "address": {
+                    "type": "Home \"sweet\" home",
+                    "line1": "12 High Street",
+                    "folder": "C:\\docs\\emma",
+                    "note": "Ring twice\nThen knock"
+                }
+            }
+        },
+        {
+            "name": "reuse_employee",
+            "request": {
+                "id": "${JSON.CONTENT:$.store_employee.response.id}",
+                "postCode": "${JSON.CONTENT:$.store_employee.response.postCode}",
+                "line1": "${JSON.CONTENT:$.store_employee.response.address.line1}",
+                "address": "${JSON.CONTENT:$.store_employee.response.address}",
+                "allAddresses": [
+                    "${JSON.CONTENT:$.store_employee.response.address}"
+                ]
+            },
+            "assertions": {
+                "id": 38001,
+                "postCode": "0123",
+                "line1": "12 High Street",
+                "address": {
+                    "type": "Home \"sweet\" home",
+                    "line1": "12 High Street",
+                    "folder": "C:\\docs\\emma",
+                    "note": "Ring twice\nThen knock"
+                },
+                "allAddresses.SIZE": 1,
+                "allAddresses": [
+                    {
+                        "type": "Home \"sweet\" home",
+                        "line1": "12 High Street",
+                        "folder": "C:\\docs\\emma"
+                    }
+                ]
+            }
+        }
+    ]
+}
