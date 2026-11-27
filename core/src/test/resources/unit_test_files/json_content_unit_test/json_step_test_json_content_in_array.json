@@ -1,0 +1,42 @@
+{
+  "scenarioName": "POST API - JSON content inside an array - Reuse body",
+  "steps": [
+    {
+      "name": "create_emp",
+      "url": "/api/v1/employees",
+      "method": "POST",
+      "request": {
+        "body": {
+          "name": "Emma",
+          "surName": "Norton"
+        }
+      },
+      "verify": {
+        "status": 201
+      }
+    },
+    {
+      "name": "get_user_details",
+      "url": "/api/v1/employees/${$.create_emp.response.body.id}",
+      "method": "GET",
+      "request": {
+        "body": {
+          "fullName": "Bob Luis",
+          "ids": [
+            "${JSON.CONTENT:$.create_emp.response.body.id}"
+          ],
+          "allAddresses": [
+            "${JSON.CONTENT:$.create_emp.response.body.address}",
+            {
+              "type": "Office",
+              "sameAs": "${JSON.CONTENT:$.create_emp.response.body.address}"
+            }
+          ]
+        }
+      },
+      "verify": {
+        "status": 200
+      }
+    }
+  ]
+}
